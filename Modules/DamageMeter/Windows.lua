@@ -34,6 +34,22 @@ local function DamageMeterMenu(DMFrame, rootDescription)
     end
 end
 
+local function EncounterMenu(DMFrame, rootDescription)
+    local Sessions = C_DamageMeter.GetAvailableCombatSessions()
+    for _, Session in ipairs(Sessions) do
+        local Name = Session.name ~= "" and Session.name or DAMAGE_METER_COMBAT_NUMBER:format(Session.sessionID)
+        if Session.durationSeconds then Name = ("%s [%s]"):format(Name, SecondsToClock(Session.durationSeconds)) end
+        rootDescription:CreateRadio(Name,
+            function(value) return DMFrame.EncounterSegment and DMFrame.EncounterSegment.sessionID == value.sessionID end,
+            function(value) Private:SetEncounter(value) end,
+        Session)
+    end
+    rootDescription:CreateRadio(DAMAGE_METER_CURRENT_SESSION,
+        function() return not DMFrame.EncounterSegment and DMFrame.SessionType == Enum.DamageMeterSessionType.Current end,
+        function() Private:SetEncounter(nil)
+    end)
+end
+
 local function TitleBar_OnClick(DMTitleBar, Button)
     local DMFrame = DMTitleBar:GetParent()
     if Button == "LeftButton" then
@@ -76,6 +92,18 @@ function Private:CreateDamageMeter(DMFrameName, DB)
     DM.TitleBar.ResetButton:SetNormalTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset.png")
     DM.TitleBar.ResetButton:SetHighlightTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset_Highlight.png", "BLEND")
     DM.TitleBar.ResetButton:SetScript("OnClick", function() C_DamageMeter.ResetAllCombatSessions() end)
+
+    DM.TitleBar.EncountersButton = CreateFrame("Button", nil, DM.TitleBar)
+    DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
+    DM.TitleBar.EncountersButton:SetPoint("RIGHT", DM.TitleBar.ResetButton, "LEFT", -3, 0)
+    DM.TitleBar.EncountersButton:SetNormalTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Encounters.png")
+    DM.TitleBar.EncountersButton:SetHighlightTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Encounters_Highlight.png", "BLEND")
+    DM.TitleBar.EncountersButton:SetScript("OnClick", function(Button)
+        if not C_DamageMeter.IsDamageMeterAvailable() then return end
+        local RootDescription = MenuUtil.CreateRootMenuDescription(MenuVariants.GetDefaultContextMenuMixin())
+        Menu.PopulateDescription(EncounterMenu, DM, RootDescription)
+        Menu.GetManager():OpenMenu(Button, RootDescription, AnchorUtil.CreateAnchor("BOTTOMRIGHT", DM.TitleBar, "TOPRIGHT", 0, 0))
+    end)
 
     Private:LayoutDamageMeter(DM, DB)
 

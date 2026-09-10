@@ -12,12 +12,23 @@ function Private:SetDamageMeterTestMode(value)
 end
 
 function Private:SetDamageMeterType(DMFrame, MeterType, SessionType)
-    if DMFrame.DB.MeterType ~= MeterType or (SessionType and DMFrame.SessionType ~= SessionType) then DMFrame.ScrollOffset = 0 end
+    if DMFrame.DB.MeterType ~= MeterType or (SessionType and (DMFrame.SessionType ~= SessionType or DMFrame.EncounterSegment)) then DMFrame.ScrollOffset = 0 end
+    if SessionType then DMFrame.EncounterSegment = nil end
     DMFrame.DB.MeterType = MeterType
     DMFrame.SessionType = SessionType or DMFrame.SessionType
     DMFrame.DB.SessionType = DMFrame.SessionType
-    DMFrame.Title:SetFormattedText("%s %s", Private.MeterTypes[MeterType], DMFrame.SessionType == Enum.DamageMeterSessionType.Current and "" or "Overall")
+    DMFrame.Title:SetFormattedText("%s %s", Private.MeterTypes[MeterType], (DMFrame.SessionType == Enum.DamageMeterSessionType.Current and "" or "Overall"))
     Private:PopulateDamageMeterBars(DMFrame, DMFrame.DB)
+end
+
+function Private:SetEncounter(encounterSegment)
+    if Private.DamageMeterDrilldown then Private.DamageMeterDrilldown:Hide() end
+
+    for _, DMFrame in pairs(Private.DamageMeterFrames) do
+        DMFrame.EncounterSegment = encounterSegment
+        DMFrame.ScrollOffset = 0
+        Private:SetDamageMeterType(DMFrame, DMFrame.DB.MeterType, not encounterSegment and Enum.DamageMeterSessionType.Current or nil)
+    end
 end
 
 function Private:SetupDamageMeter()
@@ -30,10 +41,15 @@ function Private:SetupDamageMeter()
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_LOGOUT")
     Private.DamageMeterEventFrame:SetScript("OnEvent", function(_, event, meterType, sessionID)
-        if event == "DAMAGE_METER_COMBAT_SESSION_UPDATED" and sessionID ~= 0 then return end
+        if event == "DAMAGE_METER_RESET" and Private.DamageMeterDrilldown then Private.DamageMeterDrilldown:Hide() end
         for IDX, DB in pairs(Private.DB.global.DamageMeter) do
-            if DB.Enabled and Private.DamageMeterFrames[IDX] and (event ~= "DAMAGE_METER_COMBAT_SESSION_UPDATED" or DB.MeterType == meterType) then
-                Private:PopulateDamageMeterBars(Private.DamageMeterFrames[IDX], DB)
+            local DMFrame = Private.DamageMeterFrames[IDX]
+            if DMFrame and event == "DAMAGE_METER_RESET" then
+                DMFrame.EncounterSegment = nil
+                DMFrame.ScrollOffset = 0
+                Private:SetDamageMeterType(DMFrame, DB.MeterType)
+            elseif DB.Enabled and DMFrame and (event ~= "DAMAGE_METER_COMBAT_SESSION_UPDATED" or (DB.MeterType == meterType and sessionID == (DMFrame.EncounterSegment and DMFrame.EncounterSegment.sessionID or 0))) then
+                Private:PopulateDamageMeterBars(DMFrame, DB)
             end
         end
     end)

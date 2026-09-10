@@ -43,5 +43,6 @@
         "AnchorUtil",
         "MenuVariants",
         "UNKNOWN"
-    ]
+    ],
+    "Lua.type.weakUnionCheck": true
 }

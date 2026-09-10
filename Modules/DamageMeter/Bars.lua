@@ -25,7 +25,14 @@ function Private:Drilldown(DMBar)
 
     if issecretvalue(DataSource.sourceGUID) or issecretvalue(DataSource.sourceCreatureID) then return end
 
-    local SessionSource = C_DamageMeter.GetCombatSessionSourceFromType(DMFrame.SessionType, DB.MeterType, DataSource.sourceGUID, DataSource.sourceCreatureID)
+    local SessionSource;
+
+    if DMFrame.EncounterSegment then
+        SessionSource = C_DamageMeter.GetCombatSessionSourceFromID(DMFrame.EncounterSegment.sessionID, DB.MeterType, DataSource.sourceGUID, DataSource.sourceCreatureID)
+    else
+        SessionSource = C_DamageMeter.GetCombatSessionSourceFromType(DMFrame.SessionType, DB.MeterType, DataSource.sourceGUID, DataSource.sourceCreatureID)
+    end
+
     if not SessionSource then return end
 
     if not Popup then
@@ -41,6 +48,8 @@ function Private:Drilldown(DMBar)
         Popup.TitleBar:SetScript("OnEnter", nil)
         Popup.TitleBar:SetScript("OnLeave", nil)
         Popup.TitleBar:SetScript("OnMouseDown", nil)
+        Popup.TitleBar.ResetButton:Hide()
+        Popup.TitleBar.EncountersButton:Hide()
 
         Popup.Close = CreateFrame("Button", nil, Popup.TitleBar)
         Popup.Close:SetPoint("RIGHT", Popup.TitleBar, "RIGHT", -1, 0)
@@ -252,7 +261,11 @@ function Private:PopulateDamageMeterBars(DMFrame, DB)
     if Private.DamageMeterTestMode then
         DMSession = GetTestSession(DB.Rows.Num)
     elseif C_DamageMeter.IsDamageMeterAvailable() then
-        DMSession = C_DamageMeter.GetCombatSessionFromType(DMFrame.SessionType, DB.MeterType)
+        if DMFrame.EncounterSegment then
+            DMSession = C_DamageMeter.GetCombatSessionFromID(DMFrame.EncounterSegment.sessionID, DB.MeterType)
+        else
+            DMSession = C_DamageMeter.GetCombatSessionFromType(DMFrame.SessionType, DB.MeterType)
+        end
     end
 
     local DataSources = DMSession and DMSession.combatSources
