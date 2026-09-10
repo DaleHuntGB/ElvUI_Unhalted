@@ -136,6 +136,7 @@ local Defaults = {
                 RemoveLossOfControlFrame = false,
                 AutoSignUp = false,
                 TimeSpiralAlert = false,
+                PowerInfusionAlert = false,
             }
         },
         VendorHelper = {

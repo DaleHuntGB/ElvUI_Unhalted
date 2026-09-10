@@ -397,6 +397,8 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp = ACH:Toggle("Auto Sign Up", "Automatically signs you up for dungeons and raids.", 3, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSignUp end, function(_, value) DB.QualityOfLife.Toggles.AutoSignUp = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Toggles.args.PowerInfusionAlert = ACH:Toggle("Power Infusion Alert", "Displays an alert for the Power Infusion spell.", 9, nil, nil, "full", function() return DB.QualityOfLife.Toggles.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Toggles.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
+    GUI.args.QualityOfLife.args.Toggles.args.PowerInfusionAlert.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner = ACH:Toggle("Remove Boss Banner", "Removes the frame that displays all end of dungeon loot for you.", 4, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveBossBanner end, function(_, value) DB.QualityOfLife.Toggles.RemoveBossBanner = value Private:PromptReload() end)
     GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame = ACH:Toggle("Remove Loss Of Control Frame", "Removes the frame that displays loss of control effects for you.", 5, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveLossOfControlFrame end, function(_, value) DB.QualityOfLife.Toggles.RemoveLossOfControlFrame = value Private:PromptReload() end)
