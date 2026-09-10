@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 
 function Private:SetupPowerInfusionAlert()
-    local DB = Private.DB.global.QualityOfLife.Toggles.PowerInfusionAlert
+    local DB = Private.DB.global.QualityOfLife.Alerts.PowerInfusionAlert
 
     if not DB then if Private.PowerInfusionAlertContainer then Private.PowerInfusionAlertContainer:Hide() end return end
 

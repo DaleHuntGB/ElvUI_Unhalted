@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 
 function Private:SetupTimeSpiralAlert()
-    local DB = Private.DB.global.QualityOfLife.Toggles.TimeSpiralAlert
+    local DB = Private.DB.global.QualityOfLife.Alerts.TimeSpiralAlert
 
     if not DB then if Private.TimeSpiralAlertContainer then Private.TimeSpiralAlertContainer:Hide() end return end
 

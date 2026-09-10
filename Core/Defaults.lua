@@ -135,6 +135,8 @@ local Defaults = {
                 RemoveBossBanner = false,
                 RemoveLossOfControlFrame = false,
                 AutoSignUp = false,
+            },
+            Alerts = {
                 TimeSpiralAlert = false,
                 PowerInfusionAlert = false,
             }

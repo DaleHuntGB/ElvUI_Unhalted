@@ -397,18 +397,22 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp = ACH:Toggle("Auto Sign Up", "Automatically signs you up for dungeons and raids.", 3, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSignUp end, function(_, value) DB.QualityOfLife.Toggles.AutoSignUp = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.PowerInfusionAlert = ACH:Toggle("Power Infusion Alert", "Displays an alert when you receive Power Infusion. |cFFFFCC00An aura sound is played|r.", 9, nil, nil, "full", function() return DB.QualityOfLife.Toggles.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Toggles.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
-    GUI.args.QualityOfLife.args.Toggles.args.PowerInfusionAlert.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner = ACH:Toggle("Remove Boss Banner", "Removes the frame that displays all end of dungeon loot for you.", 4, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveBossBanner end, function(_, value) DB.QualityOfLife.Toggles.RemoveBossBanner = value Private:PromptReload() end)
     GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame = ACH:Toggle("Remove Loss Of Control Frame", "Removes the frame that displays loss of control effects for you.", 5, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveLossOfControlFrame end, function(_, value) DB.QualityOfLife.Toggles.RemoveLossOfControlFrame = value Private:PromptReload() end)
     GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.TimeSpiralAlert = ACH:Toggle("Time Spiral Alert", "Displays an alert when you receive Time Spiral. |cFFFFCC00An aura sound is played|r.", 6, nil, nil, "full", function() return DB.QualityOfLife.Toggles.TimeSpiralAlert end, function(_, value) DB.QualityOfLife.Toggles.TimeSpiralAlert = value Private:SetupTimeSpiralAlert() end)
-    GUI.args.QualityOfLife.args.Toggles.args.TimeSpiralAlert.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.HideTalkingHead = ACH:Toggle("Remove Talking Head", "Automatically removes the talking head for you.", 7, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveTalkingHead end, function(_, value) DB.QualityOfLife.Toggles.RemoveTalkingHead = value end)
     GUI.args.QualityOfLife.args.Toggles.args.HideTalkingHead.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.SkipCinematics = ACH:Toggle("Skip Cinematics", "Automatically skips all cinematics.", 8, nil, nil, "full", function() return DB.QualityOfLife.Toggles.SkipCinematics end, function(_, value) DB.QualityOfLife.Toggles.SkipCinematics = value end)
     GUI.args.QualityOfLife.args.Toggles.args.SkipCinematics.descStyle = "inline"
+
+    GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)
+    GUI.args.QualityOfLife.args.Alerts.inline = true
+
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert = ACH:Toggle("|T135939:18:18|t Power Infusion Alert", "Displays an alert when you receive Power Infusion. |cFFFFCC00An aura sound is played|r.", 9, nil, nil, "full", function() return DB.QualityOfLife.Alerts.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert = ACH:Toggle("|T4622479:18:18|t Time Spiral Alert", "Displays an alert when you receive Time Spiral. |cFFFFCC00An aura sound is played|r.", 6, nil, nil, "full", function() return DB.QualityOfLife.Alerts.TimeSpiralAlert end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlert = value Private:SetupTimeSpiralAlert() end)
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.descStyle = "inline"
 
     --#endregion
 
