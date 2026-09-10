@@ -9,6 +9,8 @@ Private.E = unpack(ElvUI)
 Private.Distributor = Private.E:GetModule("Distributor")
 Private.GUI = {}
 
+Private.LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Half Bar", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\Half_Bar.tga")
+
 Private.AP = {
     ["TOPLEFT"] = "TOPLEFT",
     ["TOP"] = "TOP",
