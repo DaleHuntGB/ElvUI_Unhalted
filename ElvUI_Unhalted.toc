@@ -1,0 +1,26 @@
+## Title: |cFF6080FFUnhalted|rUI
+## Interface: 120100
+## Dependencies: ElvUI
+## Group: ElvUI
+## SavedVariables: UnhaltedUIDB
+## IconTexture: Interface\\AddOns\\ElvUI_Unhalted\\Media\\Logo_64.png
+
+Core/Constants.lua
+Core/Defaults.lua
+Core/GUI.lua
+
+Modules/AutoDelete.lua
+Modules/AutoSellGreys.lua
+Modules/CombatAlert.lua
+Modules/CombatTimer.lua
+Modules/CVars.lua
+Modules/DamageMeter/Bars.lua
+Modules/DamageMeter/Windows.lua
+Modules/DamageMeter/Core.lua
+Modules/ElvUIEnhancements.lua
+Modules/LSToasts.lua
+Modules/ProfileManager.lua
+Modules/RemoveTalkingHead.lua
+Modules/SkipCinematics.lua
+
+Core/Main.lua
