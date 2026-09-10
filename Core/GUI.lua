@@ -22,16 +22,21 @@ function Private:CreateGUI()
     local GUI = Private.GUI
     local DB = Private.DB.global
 
-    GUI = ACH:Group(format("%s", Private.AddOnName), nil, 20, "tree")
-    GUI.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\Dashboard.tga"
+    GUI = ACH:Group(format("|T%s:18:18|t%s", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Logo_64.png", Private.AddOnName), nil, 20, "tree")
+
+    --#region - AddOn Skins
 
     GUI.args.AddOnSKins = ACH:Group("AddOn Skins", nil, 1)
-    GUI.args.AddOnSKins.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\Palette.tga"
+    GUI.args.AddOnSKins.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\AddOnSkins.tga"
     GUI.args.AddOnSKins.args.LSToasts = ACH:Toggle("LS: |cFF1CD3A2Toasts|r", "Add a custom skin for LS: |cFF1CD3A2Toasts|r.", 1, nil, nil, "full", function() return DB.AddOnSkins.LSToasts end, function(_, value) DB.AddOnSkins.LSToasts = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
     GUI.args.AddOnSKins.args.LSToasts.descStyle = "inline"
 
+    --#endregion
+
+    --#region - Combat Alert
+
     GUI.args.CombatAlert = ACH:Group("Combat Alert", nil, 2)
-    GUI.args.CombatAlert.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\Swords.tga"
+    GUI.args.CombatAlert.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\CombatAlert.tga"
     GUI.args.CombatAlert.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "full", function() return DB.CombatAlert.Enabled end, function(_, value) DB.CombatAlert.Enabled = value Private:UpdateCombatAlert() end)
 
     GUI.args.CombatAlert.args.Layout = ACH:Group("Layout", nil, 2)
@@ -68,8 +73,12 @@ function Private:CreateGUI()
     GUI.args.CombatAlert.args.Font.args.ExitingCombatText = ACH:Input("Text", nil, 10, nil, "relative", function() return DB.CombatAlert.ExitingCombat end, function(_, value) DB.CombatAlert.ExitingCombat = value Private:UpdateCombatAlert() end)
     GUI.args.CombatAlert.args.Font.args.ExitingCombatText.relWidth = 0.5
 
+    --#endregion
+
+    --#region - Combat Timer
+
     GUI.args.CombatTimer = ACH:Group("Combat Timer", nil, 2)
-    GUI.args.CombatTimer.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\Timer.tga"
+    GUI.args.CombatTimer.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\CombatTimer.tga"
     GUI.args.CombatTimer.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "full", function() return DB.CombatTimer.Enabled end, function(_, value) DB.CombatTimer.Enabled = value Private:UpdateCombatTimer() end)
 
     GUI.args.CombatTimer.args.Layout = ACH:Group("Layout", nil, 2)
@@ -96,8 +105,12 @@ function Private:CreateGUI()
     GUI.args.CombatTimer.args.Font.args.FontFlag.relWidth = 0.33
     GUI.args.CombatTimer.args.Font.args.OOCAlpha = ACH:Range("Out Of Combat Alpha", nil, 4, { min = 0, max = 1, step = 0.1 }, "full", function() return DB.CombatTimer.OutOfCombatAlpha end, function(_, value) DB.CombatTimer.OutOfCombatAlpha = value Private:UpdateCombatTimer() end)
 
+    --#endregion
+
+    --#region - CVars
+
     GUI.args.CVars = ACH:Group("CVars", nil, 3)
-    GUI.args.CVars.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\Tune.tga"
+    GUI.args.CVars.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\CVars.tga"
     GUI.args.CVars.args.SyncCVars = ACH:Toggle("Sync CVars", "Sync CVars across all characters on the account.", 1, nil, nil, "full", function() return DB.CVars.SyncCVars end, function(_, value) DB.CVars.SyncCVars = value Private:SyncCVars() Private:PromptReload() end)
     GUI.args.CVars.args.SyncCVars.descStyle = "inline"
 
@@ -128,6 +141,7 @@ function Private:CreateGUI()
     GUI.args.CVars.args.Sliders = ACH:Group("Sliders", nil, 2)
     GUI.args.CVars.args.Sliders.inline = true
 
+
     GUI.args.CVars.args.Sliders.args.SpellQueueWindow = ACH:Range("Spell Queue Window", nil, 1, { min = 0, max = 400, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("SpellQueueWindow")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.SpellQueueWindow = value end C_CVar.SetCVar("SpellQueueWindow", value) end)
     GUI.args.CVars.args.Sliders.args.SpellQueueWindow.relWidth = 0.5
     GUI.args.CVars.args.Sliders.args.RAIDWaterDetail = ACH:Range("Raid: Water Detail", nil, 2, { min = 0, max = 3, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("RAIDWaterDetail")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.RAIDWaterDetail = value end C_CVar.SetCVar("RAIDWaterDetail", value) end)
@@ -140,6 +154,125 @@ function Private:CreateGUI()
     GUI.args.ElvUIEnhancements.icon = "Interface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon.tga"
     GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll = ACH:Toggle("Loot Roll: Fix Backdrop", "Force the opacity of the backdrop to be consistent with the rest of the UI.", 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ForceAlphaOnLootRoll end, function(_, value) DB.ElvUIEnhancements.ForceAlphaOnLootRoll = value Private:PromptReload() end)
     GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll.descStyle = "inline"
+
+    --#endregion
+
+    --#region - Damage Meter
+
+    GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3.5, "tree")
+    GUI.args.DamageMeter.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\DamageMeter.tga"
+
+    for IDX, DMDB in ipairs(DB.DamageMeter) do
+        local Window = ACH:Group("Window " .. IDX, nil, IDX, "tab")
+        GUI.args.DamageMeter.args["Window" .. IDX] = Window
+
+        Window.args.General = ACH:Group("General", nil, 1)
+        Window.args.General.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Enabled end, function(_, value) DMDB.Enabled = value Private:UpdateDamageMeter() end)
+        Window.args.General.args.Enabled.relWidth = 0.5
+        -- Window.args.General.args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 2, nil, nil, "relative", function() return DMDB.ShowBackdrop end, function(_, value) DMDB.ShowBackdrop = value Private:UpdateDamageMeter() end, function() return not DMDB.Enabled end)
+        -- Window.args.General.args.ShowBackdrop.relWidth = 0.5
+
+        Window.args.General.args.MeterData = ACH:Group("Meter Data", nil, 3)
+        Window.args.General.args.MeterData.inline = true
+        Window.args.General.args.MeterData.disabled = function() return not DMDB.Enabled end
+        Window.args.General.args.MeterData.args.MeterType = ACH:Select("Type", nil, 1, Private.MeterTypes, nil, "relative", function() return DMDB.MeterType end, function(_, value) Private:SetDamageMeterType(Private.DamageMeterFrames[IDX], value, DMDB.SessionType) end)
+        Window.args.General.args.MeterData.args.MeterType.relWidth = 0.5
+        Window.args.General.args.MeterData.args.SessionType = ACH:Select("Session", nil, 2, { [Enum.DamageMeterSessionType.Current] = "Current", [Enum.DamageMeterSessionType.Overall] = "Overall" }, nil, "relative", function() return DMDB.SessionType end, function(_, value) Private:SetDamageMeterType(Private.DamageMeterFrames[IDX], DMDB.MeterType, value) end)
+        Window.args.General.args.MeterData.args.SessionType.relWidth = 0.5
+
+        Window.args.Layout = ACH:Group("Layout", nil, 2)
+        Window.args.Layout.disabled = function() return not DMDB.Enabled end
+        Window.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DMDB.Layout[1] end, function(_, value) DMDB.Layout[1] = value Private:UpdateDamageMeter() end)
+        Window.args.Layout.args.AnchorFrom.relWidth = 0.5
+        Window.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DMDB.Layout[2] end, function(_, value) DMDB.Layout[2] = value Private:UpdateDamageMeter() end)
+        Window.args.Layout.args.AnchorTo.relWidth = 0.5
+        Window.args.Layout.args.Width = ACH:Range("Width", nil, 3, { min = function() return math.max(100, math.ceil((DMDB.Size[2] - 2 - (DMDB.Rows.Num - 1) * DMDB.Rows.Spacing) / DMDB.Rows.Num) + 10) end, max = 1000, step = 1 }, "relative", function() return DMDB.Size[1] end, function(_, value) DMDB.Size[1] = value Private:UpdateDamageMeter() end)
+        Window.args.Layout.args.Width.relWidth = 0.5
+        Window.args.Layout.args.Height = ACH:Range("Height", nil, 4, { min = function() return 2 + DMDB.Rows.Num * 8 + (DMDB.Rows.Num - 1) * DMDB.Rows.Spacing end, max = function() return math.min(1000, 2 + DMDB.Rows.Num * (DMDB.Size[1] - 10) + (DMDB.Rows.Num - 1) * DMDB.Rows.Spacing) end, step = 1 }, "relative", function() return DMDB.Size[2] end, function(_, value) DMDB.Size[2] = value Private:UpdateDamageMeter() end)
+        Window.args.Layout.args.Height.relWidth = 0.5
+        Window.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 5, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Layout[3] end, function(_, value) DMDB.Layout[3] = value Private:UpdateDamageMeter() end)
+        Window.args.Layout.args.XOffset.relWidth = 0.5
+        Window.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Layout[4] end, function(_, value) DMDB.Layout[4] = value Private:UpdateDamageMeter() end)
+        Window.args.Layout.args.YOffset.relWidth = 0.5
+
+        Window.args.Header = ACH:Group("Header", nil, 3)
+        Window.args.Header.disabled = function() return not DMDB.Enabled end
+        -- Window.args.Header.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Header.Enabled end, function(_, value) DMDB.Header.Enabled = value Private:UpdateDamageMeter() end)
+        -- Window.args.Header.args.Enabled.relWidth = 1
+
+        Window.args.Header.args.Layout = ACH:Group("Layout", nil, 2)
+        Window.args.Header.args.Layout.inline = true
+        Window.args.Header.args.Layout.disabled = function() return not DMDB.Enabled or not DMDB.Header.Enabled end
+        Window.args.Header.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DMDB.Header.Layout[1] end, function(_, value) DMDB.Header.Layout[1] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Layout.args.AnchorFrom.relWidth = 0.5
+        Window.args.Header.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DMDB.Header.Layout[2] end, function(_, value) DMDB.Header.Layout[2] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Layout.args.AnchorTo.relWidth = 0.5
+        Window.args.Header.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Header.Layout[3] end, function(_, value) DMDB.Header.Layout[3] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Layout.args.XOffset.relWidth = 0.33
+        Window.args.Header.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Header.Layout[4] end, function(_, value) DMDB.Header.Layout[4] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Layout.args.YOffset.relWidth = 0.33
+        Window.args.Header.args.Layout.args.Height = ACH:Range("Height", nil, 5, { min = 8, max = 100, step = 1 }, "relative", function() return DMDB.Header.Height end, function(_, value) DMDB.Header.Height = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Layout.args.Height.relWidth = 0.33
+
+        Window.args.Header.args.Font = ACH:Group("Font", nil, 3)
+        Window.args.Header.args.Font.inline = true
+        Window.args.Header.args.Font.disabled = function() return not DMDB.Enabled or not DMDB.Header.Enabled end
+        Window.args.Header.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DMDB.Header.Font[1] end, function(_, value) DMDB.Header.Font[1] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Font.args.Font.relWidth = 0.5
+        Window.args.Header.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 2, "relative", function() return DMDB.Header.Font[3] end, function(_, value) DMDB.Header.Font[3] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Font.args.FontFlag.relWidth = 0.5
+        Window.args.Header.args.Font.args.Size = ACH:Range("Font Size", nil, 3, { min = 8, max = 32, step = 1 }, "relative", function() return DMDB.Header.Font[2] end, function(_, value) DMDB.Header.Font[2] = value Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Font.args.Size.relWidth = 0.5
+        Window.args.Header.args.Font.args.Colour = ACH:Color("Colour", nil, 4, true, "relative", function() return unpack(DMDB.Header.Colour) end, function(_, r, g, b, a) DMDB.Header.Colour = { r, g, b, a } Private:UpdateDamageMeter() end)
+        Window.args.Header.args.Font.args.Colour.relWidth = 0.5
+
+        Window.args.Rows = ACH:Group("Rows", nil, 4)
+        Window.args.Rows.disabled = function() return not DMDB.Enabled end
+        Window.args.Rows.args.Num = ACH:Range("Number of Rows", nil, 1, { min = function() return math.max(1, math.ceil((DMDB.Size[2] - 2 + DMDB.Rows.Spacing) / (DMDB.Size[1] - 10 + DMDB.Rows.Spacing))) end, max = function() return math.min(40, math.floor((DMDB.Size[2] - 2 + DMDB.Rows.Spacing) / (8 + DMDB.Rows.Spacing))) end, step = 1 }, "relative", function() return DMDB.Rows.Num end, function(_, value) DMDB.Rows.Num = value Private:UpdateDamageMeter() end)
+        Window.args.Rows.args.Num.relWidth = 0.5
+        Window.args.Rows.args.Spacing = ACH:Range("Spacing", nil, 2, { min = function() return DMDB.Rows.Num > 1 and math.max(0, math.ceil((DMDB.Size[2] - 2 - DMDB.Rows.Num * (DMDB.Size[1] - 10)) / (DMDB.Rows.Num - 1))) or 0 end, max = function() return DMDB.Rows.Num > 1 and math.min(20, math.floor((DMDB.Size[2] - 2 - DMDB.Rows.Num * 8) / (DMDB.Rows.Num - 1))) or 20 end, step = 1 }, "relative", function() return DMDB.Rows.Spacing end, function(_, value) DMDB.Rows.Spacing = value Private:UpdateDamageMeter() end)
+        Window.args.Rows.args.Spacing.relWidth = 0.5
+        Window.args.Rows.args.Texture = ACH:SharedMediaStatusbar("Texture", nil, 3, "relative", function() return DMDB.Rows.Texture end, function(_, value) DMDB.Rows.Texture = value Private:UpdateDamageMeter() end)
+        Window.args.Rows.args.Texture.relWidth = 1
+
+        Window.args.Text = ACH:Group("Text", nil, 5)
+        Window.args.Text.disabled = function() return not DMDB.Enabled end
+
+        for TextIDX, TextType in ipairs({ "Name", "Amount" }) do
+            local TextDB = DMDB[TextType]
+            local Text = ACH:Group(TextType, nil, TextIDX)
+            Text.inline = true
+            Window.args.Text.args[TextType] = Text
+
+            Text.args.Layout = ACH:Group("Layout", nil, 1)
+            Text.args.Layout.inline = true
+            Text.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return TextDB.Layout[1] end, function(_, value) TextDB.Layout[1] = value Private:UpdateDamageMeter() end)
+            Text.args.Layout.args.AnchorFrom.relWidth = 0.5
+            Text.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return TextDB.Layout[2] end, function(_, value) TextDB.Layout[2] = value Private:UpdateDamageMeter() end)
+            Text.args.Layout.args.AnchorTo.relWidth = 0.5
+            Text.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[3] end, function(_, value) TextDB.Layout[3] = value Private:UpdateDamageMeter() end)
+            Text.args.Layout.args.XOffset.relWidth = 0.5
+            Text.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[4] end, function(_, value) TextDB.Layout[4] = value Private:UpdateDamageMeter() end)
+            Text.args.Layout.args.YOffset.relWidth = 0.5
+
+            Text.args.Font = ACH:Group("Font", nil, 2)
+            Text.args.Font.inline = true
+            Text.args.Font.args.ColourByClass = ACH:Toggle("Colour By Class", nil, 1, nil, nil, "relative", function() return TextDB.ColourByClass end, function(_, value) TextDB.ColourByClass = value Private:UpdateDamageMeter() end)
+            Text.args.Font.args.ColourByClass.relWidth = 1
+            Text.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 2, "relative", function() return TextDB.Font[1] end, function(_, value) TextDB.Font[1] = value Private:UpdateDamageMeter() end)
+            Text.args.Font.args.Font.relWidth = 0.5
+            Text.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return TextDB.Font[3] end, function(_, value) TextDB.Font[3] = value Private:UpdateDamageMeter() end)
+            Text.args.Font.args.FontFlag.relWidth = 0.5
+            Text.args.Font.args.Size = ACH:Range("Font Size", nil, 4, { min = 8, max = 32, step = 1 }, "relative", function() return TextDB.Font[2] end, function(_, value) TextDB.Font[2] = value Private:UpdateDamageMeter() end)
+            Text.args.Font.args.Size.relWidth = 0.5
+            Text.args.Font.args.Colour = ACH:Color("Colour", nil, 5, true, "relative", function() return unpack(TextDB.Colour) end, function(_, r, g, b, a) TextDB.Colour = { r, g, b, a } Private:UpdateDamageMeter() end, function() return not DMDB.Enabled or TextDB.ColourByClass end)
+            Text.args.Font.args.Colour.relWidth = 0.5
+        end
+    end
+
+    --#endregion
+
+    --#region - ElvUI Enhancements
 
     GUI.args.ElvUIEnhancements.args.ActionStatus = ACH:Group("Action Status", nil, 2)
     GUI.args.ElvUIEnhancements.args.ActionStatus.inline = true
@@ -187,8 +320,12 @@ function Private:CreateGUI()
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.FontDesc = ACH:Description("|cFFCC4040PLEASE NOTE|r: Font, Font Flag & Font Size for this UI Element is controlled by |cFF1784D1ElvUI|r via their options.", 3, nil, nil, nil, nil, nil, "relative", nil)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.FontDesc.relWidth = 1
 
+    --#endregion
+
+    --#region - Profile Manager
+
     GUI.args.ProfileManager = ACH:Group("Profile Manager", nil, 4)
-    GUI.args.ProfileManager.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\ManageAccounts.tga"
+    GUI.args.ProfileManager.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\ProfileManager.tga"
 
     GUI.args.ProfileManager.args.ImportElvUI = ACH:Execute("Import |TInterface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon:16:16|t|cFF1784D1ElvUI|r", nil, 1, function()
         Private.Distributor:ImportProfile(Private:ImportElvUI()["PROFILE"])
@@ -204,8 +341,12 @@ function Private:CreateGUI()
     GUI.args.ProfileManager.args.ImportLSToasts.relWidth = 0.33
     GUI.args.ProfileManager.args.ImportLSToasts.descStyle = "inline"
 
+    --#endregion
+
+    --#region - Quality Of Life
+
     GUI.args.QualityOfLife = ACH:Group("Quality Of Life", nil, 5)
-    GUI.args.QualityOfLife.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\AutoAwesome.tga"
+    GUI.args.QualityOfLife.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\QualityOfLife.tga"
     GUI.args.QualityOfLife.args.Toggles = ACH:Group("Toggles", nil, 1)
     GUI.args.QualityOfLife.args.Toggles.inline = true
     GUI.args.QualityOfLife.args.Toggles.args.HideTalkingHead = ACH:Toggle("Remove Talking Head", "Automatically removes the talking head for you.", 1, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveTalkingHead end, function(_, value) DB.QualityOfLife.Toggles.RemoveTalkingHead = value end)
@@ -217,8 +358,14 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete = ACH:Toggle("Auto Delete", "Automatically fills the |cFFFFCC00DELETE|r prompt.", 4, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoDelete end, function(_, value) DB.QualityOfLife.Toggles.AutoDelete = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete.descStyle = "inline"
 
+    --#endregion
+
+    --#region - Vendor Helper
+
     GUI.args.VendorHelper = ACH:Group("Vendor Helper", nil, 6)
-    GUI.args.VendorHelper.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\Storefront.tga"
+    GUI.args.VendorHelper.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\VendorHelper.tga"
+
+    --#endregion
 
     if Private.E then Private.E.Options.args[Private.AddOnName] = GUI end
 end
