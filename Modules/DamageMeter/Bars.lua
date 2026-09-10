@@ -61,7 +61,7 @@ function Private:Drilldown(DMBar)
     Popup.Title:SetText(DataSource.name)
     Popup.Title:SetWordWrap(false)
     Popup.Title:SetPoint("RIGHT", Popup.Close, "LEFT", -3, 0)
-    Popup.Close:SetSize(DB.Header.Height * 0.7, DB.Header.Height * 0.7)
+    Popup.Close:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
 
     local Spells = SessionSource.combatSpells
     local ClassColour = DataSource.classFilename ~= "" and C_ClassColor.GetClassColor(DataSource.classFilename)

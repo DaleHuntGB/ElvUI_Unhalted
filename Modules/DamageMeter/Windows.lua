@@ -88,18 +88,18 @@ function Private:LayoutDamageMeter(DM, DB)
         DM:SetBackdrop(nil)
     end
 
-    DM.TitleBar:SetSize(DB.Size[1], DB.Header.Height)
+    DM.TitleBar:SetSize(DB.Size[1], DB.TitleBar.Height)
     DM.TitleBar:ClearAllPoints()
     DM.TitleBar:SetPoint("BOTTOMLEFT", DM, "TOPLEFT", 0, 1)
     DM.TitleBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
     DM.TitleBar:SetBackdropColor(unpack(DB.BackgroundColour))
     DM.TitleBar:SetBackdropBorderColor(0, 0, 0, 1)
-    DM.TitleBar:SetShown(DB.Header.Enabled)
+    DM.TitleBar:SetShown(DB.TitleBar.Enabled)
 
-    DM.Title:SetFont(Private.LSM:Fetch("font", DB.Header.Font[1]), DB.Header.Font[2], DB.Header.Font[3])
-    DM.Title:SetTextColor(unpack(DB.Header.Colour))
+    DM.Title:SetFont(Private.LSM:Fetch("font", DB.TitleBar.Font[1]), DB.TitleBar.Font[2], DB.TitleBar.Font[3])
+    DM.Title:SetTextColor(unpack(DB.TitleBar.Colour))
     DM.Title:ClearAllPoints()
-    DM.Title:SetPoint(DB.Header.Layout[1], DM.TitleBar, DB.Header.Layout[2], DB.Header.Layout[3], DB.Header.Layout[4])
+    DM.Title:SetPoint(DB.TitleBar.Layout[1], DM.TitleBar, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
     DM.Title:SetText(Private.MeterTypes[DB.MeterType])
 
     Private:LayoutDamageMeterBars(DM, DB)
