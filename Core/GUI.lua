@@ -150,10 +150,6 @@ function Private:CreateGUI()
     GUI.args.CVars.args.Sliders.args.RAIDweatherDensity.relWidth = 0.5
     GUI.args.CVars.args.Sliders.args.autoLootRate = ACH:Range("Auto Loot: Rate", nil, 4, { min = 0, max = 250, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("autoLootRate")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.autoLootRate = value end C_CVar.SetCVar("autoLootRate", value) end)
     GUI.args.CVars.args.Sliders.args.autoLootRate.relWidth = 0.5
-    GUI.args.ElvUIEnhancements = ACH:Group("|cFF1784D1ElvUI|r Enhancements", nil, 4)
-    GUI.args.ElvUIEnhancements.icon = "Interface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon.tga"
-    GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll = ACH:Toggle("Loot Roll: Fix Backdrop", "Force the opacity of the backdrop to be consistent with the rest of the UI.", 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ForceAlphaOnLootRoll end, function(_, value) DB.ElvUIEnhancements.ForceAlphaOnLootRoll = value Private:PromptReload() end)
-    GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll.descStyle = "inline"
 
     --#endregion
 
@@ -314,6 +310,11 @@ function Private:CreateGUI()
     --#endregion
 
     --#region - ElvUI Enhancements
+
+    GUI.args.ElvUIEnhancements = ACH:Group("|cFF1784D1ElvUI|r Enhancements", nil, 4)
+    GUI.args.ElvUIEnhancements.icon = "Interface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon.tga"
+    GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll = ACH:Toggle("Loot Roll: Fix Backdrop", "Force the opacity of the backdrop to be consistent with the rest of the UI.", 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ForceAlphaOnLootRoll end, function(_, value) DB.ElvUIEnhancements.ForceAlphaOnLootRoll = value Private:PromptReload() end)
+    GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll.descStyle = "inline"
 
     GUI.args.ElvUIEnhancements.args.ActionStatus = ACH:Group("Action Status", nil, 2)
     GUI.args.ElvUIEnhancements.args.ActionStatus.inline = true
