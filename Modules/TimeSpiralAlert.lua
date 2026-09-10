@@ -39,6 +39,17 @@ function Private:SetupTimeSpiralAlert()
         })
         AC:SetUnit("player")
         Private.TimeSpiralAlertContainer = AC
+
+        if not Private.TimeSpiralAlertSound then
+            Private.TimeSpiralAlertSound = C_UnitAuras.AddAuraSound(
+                Enum.UnitAuraSoundTrigger.Added, {
+                    unitToken = "player",
+                    spellID = 375234,
+                    soundFileName = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Sounds\\TimeSpiral.mp3",
+                    outputChannel = "Master",
+                }
+            )
+        end
     end
 
     Private.TimeSpiralAlertContainer:Show()
