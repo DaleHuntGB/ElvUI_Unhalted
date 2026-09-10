@@ -136,6 +136,11 @@ local Defaults = {
                 RemoveLossOfControlFrame = false,
                 AutoSignUp = false,
             }
+        },
+        VendorHelper = {
+            AutoVendor = false,
+            MinimumQuality = 3,
+            MinimumItemLevel = 266,
         }
     }
 }

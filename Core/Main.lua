@@ -21,4 +21,5 @@ function AddOn:OnEnable()
     Private:SetupRemoveLossOfControlFrame()
     Private:SetupRemoveTalkingHead()
     Private:SetupSkipCinematics()
+    Private:SetupVendorHelper()
 end

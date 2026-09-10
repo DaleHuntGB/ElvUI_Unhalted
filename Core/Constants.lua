@@ -49,6 +49,30 @@ Private.MeterTypes = {
 	[Enum.DamageMeterType.EnemyDamageTaken] = DAMAGE_METER_TYPE_ENEMY_DAMAGE_TAKEN,
 }
 
+Private.ItemQualities = {
+    [Enum.ItemQuality.Poor] = ITEM_QUALITY0_DESC,
+    [Enum.ItemQuality.Common] = ITEM_QUALITY1_DESC,
+    [Enum.ItemQuality.Uncommon] = ITEM_QUALITY2_DESC,
+    [Enum.ItemQuality.Rare] = ITEM_QUALITY3_DESC,
+    [Enum.ItemQuality.Epic] = ITEM_QUALITY4_DESC,
+}
+
+Private.ClassIDFilter = {
+    [Enum.ItemClass.Consumable] = true,
+    [Enum.ItemClass.Tradegoods] = true,
+    [Enum.ItemClass.Recipe] = true,
+    [Enum.ItemClass.Gem] = true,
+    [Enum.ItemClass.Battlepet] = true,
+    [Enum.ItemClass.Miscellaneous] = true,
+}
+
+Private.ItemFilter = {
+    [65360] = true, -- Cloak of Coordination
+    [63206] = true, -- Wrap of Unity
+    [63352] = true, -- Shroud of Cooperation
+    [132514] = true -- Auto Hammer
+}
+
 function Private:PromptReload()
     StaticPopupDialogs["RELOAD_UI"] = {
         text = "This change requires a reload to take effect, would you like to reload now?",
@@ -76,6 +100,7 @@ function Private:StopVendoring()
 end
 
 function Private:SellGreys()
+    if not Private.DB.global.QualityOfLife.Toggles.AutoSellGreys then return end
     for Bag = 0, NUM_BAG_SLOTS do
         for Slot = 1, C_Container.GetContainerNumSlots(Bag) do
             local ItemLink = C_Container.GetContainerItemLink(Bag, Slot)
@@ -92,6 +117,7 @@ function Private:SellGreys()
 end
 
 function Private:SellItems(minimumQuality, minimumItemLevel)
+    if not Private.DB.global.VendorHelper.AutoVendor then return end
     for Bag = 0, NUM_BAG_SLOTS do
         for Slot = 1, C_Container.GetContainerNumSlots(Bag) do
             local containerInfo = C_Container.GetContainerItemInfo(Bag, Slot)

@@ -393,7 +393,7 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.inline = true
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete = ACH:Toggle("Auto Delete", "Automatically fills the |cFFFFCC00DELETE|r prompt.", 1, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoDelete end, function(_, value) DB.QualityOfLife.Toggles.AutoDelete = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys = ACH:Toggle("Auto Sell Greys", "Automatically sells all grey items when going to a merchant.", 2, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSellGreys end, function(_, value) DB.QualityOfLife.Toggles.AutoSellGreys = value end)
+    GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys = ACH:Toggle("Auto Sell Greys", "Automatically sells all grey items when going to a merchant.", 2, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSellGreys end, function(_, value) DB.QualityOfLife.Toggles.AutoSellGreys = value Private:SetupAutoSellGreys() end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp = ACH:Toggle("Auto Sign Up", "Automatically signs you up for dungeons and raids.", 3, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSignUp end, function(_, value) DB.QualityOfLife.Toggles.AutoSignUp = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp.descStyle = "inline"
@@ -412,6 +412,19 @@ function Private:CreateGUI()
 
     GUI.args.VendorHelper = ACH:Group("Vendor Helper", nil, 6)
     GUI.args.VendorHelper.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\VendorHelper.tga"
+
+    GUI.args.VendorHelper.args.Enabled = ACH:Toggle("Enable Vendor Helper", "Automatically sells unwanted items when visiting a vendor.", 1, nil, nil, "full", function() return DB.VendorHelper.AutoVendor end, function(_, value) DB.VendorHelper.AutoVendor = value Private:SetupVendorHelper() end)
+    GUI.args.VendorHelper.args.Enabled.descStyle = "inline"
+
+    GUI.args.VendorHelper.args.MinimumQuality = ACH:Select("Minimum Quality", "Sets the minimum quality of items to sell automatically.", 2, Private.ItemQualities, nil, "relative", function() return DB.VendorHelper.MinimumQuality end, function(_, value) DB.VendorHelper.MinimumQuality = value end)
+    GUI.args.VendorHelper.args.MinimumQuality.descStyle = "inline"
+    GUI.args.VendorHelper.args.MinimumQuality.relWidth = 0.5
+    GUI.args.VendorHelper.args.MinimumQuality.disabled = function() return not DB.VendorHelper.AutoVendor end
+
+    GUI.args.VendorHelper.args.MinimumItemLevel = ACH:Range("Minimum Item Level", "Sets the minimum item level of items to sell automatically.", 3, { min = 0, max = 500, step = 1 }, "relative", function() return DB.VendorHelper.MinimumItemLevel end, function(_, value) DB.VendorHelper.MinimumItemLevel = value end)
+    GUI.args.VendorHelper.args.MinimumItemLevel.descStyle = "inline"
+    GUI.args.VendorHelper.args.MinimumItemLevel.relWidth = 0.5
+    GUI.args.VendorHelper.args.MinimumItemLevel.disabled = function() return not DB.VendorHelper.AutoVendor end
 
     --#endregion
 
