@@ -135,6 +135,7 @@ local Defaults = {
                 RemoveBossBanner = false,
                 RemoveLossOfControlFrame = false,
                 AutoSignUp = false,
+                TimeSpiralAlert = false,
             }
         },
         VendorHelper = {
