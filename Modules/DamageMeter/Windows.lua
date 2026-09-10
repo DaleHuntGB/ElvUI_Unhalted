@@ -137,5 +137,15 @@ function Private:LayoutDamageMeter(DM, DB)
     DM.Title:SetPoint(DB.TitleBar.Layout[1], DM.TitleBar, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
     DM.Title:SetText(Private.MeterTypes[DB.MeterType])
 
+    DM.TitleBar.ResetButton:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
+    DM.TitleBar.ResetButton:ClearAllPoints()
+    DM.TitleBar.ResetButton:SetPoint("RIGHT", DM.TitleBar, "RIGHT", -3, 0)
+    -- DM.TitleBar.ResetButton:SetShown(DB.TitleBar.ResetButton.Enabled)
+
+    DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
+    DM.TitleBar.EncountersButton:ClearAllPoints()
+    DM.TitleBar.EncountersButton:SetPoint("RIGHT", DM.TitleBar.ResetButton, "LEFT", -3, 0)
+    -- DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.EncountersButton.Enabled)
+
     Private:LayoutDamageMeterBars(DM, DB)
 end
