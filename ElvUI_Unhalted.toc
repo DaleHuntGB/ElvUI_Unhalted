@@ -3,7 +3,7 @@
 ## Dependencies: ElvUI
 ## Group: ElvUI
 ## SavedVariables: UnhaltedUIDB
-## IconTexture: Interface\\AddOns\\ElvUI_Unhalted\\Media\\Logo_64.png
+## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo_64.png
 
 Core/Constants.lua
 Core/Defaults.lua
