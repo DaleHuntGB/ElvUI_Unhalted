@@ -75,6 +75,18 @@ function Private:Drilldown(DMBar)
             Bar:SetScript("OnMouseDown", nil)
             Bar:EnableMouse(false)
             if Spell then
+                if DB.Name.ColourByClass and ClassColour then
+                    Bar.Name:SetTextColor(ClassColour.r, ClassColour.g, ClassColour.b, DB.Name.Colour[4])
+                else
+                    Bar.Name:SetTextColor(unpack(DB.Name.Colour))
+                end
+
+                if DB.Amount.ColourByClass and ClassColour then
+                    Bar.Number:SetTextColor(ClassColour.r, ClassColour.g, ClassColour.b, DB.Amount.Colour[4])
+                else
+                    Bar.Number:SetTextColor(unpack(DB.Amount.Colour))
+                end
+
                 Bar:SetMinMaxValues(0, SessionSource.maxAmount)
                 Bar:SetValue(Spell.totalAmount)
                 if ClassColour then
@@ -205,6 +217,18 @@ function Private:PopulateDamageMeterBars(DMFrame, DB)
         DMBar.DataSource = DataSource
         if DataSource then
             local ClassColour = DataSource.classFilename ~= "" and C_ClassColor.GetClassColor(DataSource.classFilename)
+            if DB.Name.ColourByClass and ClassColour then
+                DMBar.Name:SetTextColor(ClassColour.r, ClassColour.g, ClassColour.b, DB.Name.Colour[4])
+            else
+                DMBar.Name:SetTextColor(unpack(DB.Name.Colour))
+            end
+
+            if DB.Amount.ColourByClass and ClassColour then
+                DMBar.Number:SetTextColor(ClassColour.r, ClassColour.g, ClassColour.b, DB.Amount.Colour[4])
+            else
+                DMBar.Number:SetTextColor(unpack(DB.Amount.Colour))
+            end
+
             if ClassColour then
                 DMBar:SetStatusBarColor(ClassColour.r, ClassColour.g, ClassColour.b)
             else
