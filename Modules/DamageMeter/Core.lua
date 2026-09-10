@@ -1,5 +1,16 @@
 local Private = select(2, ...)
 
+function Private:SetDamageMeterTestMode(value)
+    Private.DamageMeterTestMode = value or nil
+
+    for _, DMFrame in pairs(Private.DamageMeterFrames) do
+        DMFrame.ScrollOffset = 0
+    end
+
+    if Private.DamageMeterDrilldown then Private.DamageMeterDrilldown:Hide() end
+    Private:UpdateDamageMeter()
+end
+
 function Private:SetDamageMeterType(DMFrame, MeterType, SessionType)
     if DMFrame.DB.MeterType ~= MeterType or (SessionType and DMFrame.SessionType ~= SessionType) then DMFrame.ScrollOffset = 0 end
     DMFrame.DB.MeterType = MeterType

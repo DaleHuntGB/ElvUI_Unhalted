@@ -21,7 +21,7 @@ function Private:Drilldown(DMBar)
     local Popup = Private.DamageMeterDrilldown
 
     if Popup then Popup:Hide() end
-    if not DataSource or not C_DamageMeter.IsDamageMeterAvailable() or DB.MeterType == Enum.DamageMeterType.Deaths then return end
+    if Private.DamageMeterTestMode or not DataSource or not C_DamageMeter.IsDamageMeterAvailable() or DB.MeterType == Enum.DamageMeterType.Deaths then return end
 
     if issecretvalue(DataSource.sourceGUID) or issecretvalue(DataSource.sourceCreatureID) then return end
 
@@ -201,10 +201,51 @@ local PerSecondMeterTypes = {
 	[Enum.DamageMeterType.Hps] = true,
 }
 
+-- The same sample names and classes used by Blizzard's Damage Meter in Edit Mode
+-- https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_DamageMeter/DamageMeterSessionWindow.lua#L76-L89
+local TestSources = {
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_1, classFilename = "DEATHKNIGHT" },
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_2, classFilename = "MAGE" },
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_3, classFilename = "WARLOCK" },
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_7, classFilename = "HUNTER" },
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_6, classFilename = "DEMONHUNTER" },
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_4, classFilename = "SHAMAN" },
+    { name = DAMAGE_METER_EDIT_MODE_SOURCE_5, classFilename = "PALADIN" },
+}
+
+local TestSessions = {}
+
+-- Thank you Luckyone for this idea
+-- https://github.com/Luckyone961/LuckyoneUI/blob/development/LuckyoneUI/Modules/DamageMeter/Session.lua#L126-L155
+local function GetTestSession(Count)
+    Count = math.max(Count, #TestSources)
+    if TestSessions[Count] then return TestSessions[Count] end
+
+    local Session = { combatSources = {}, maxAmount = 12400000 }
+    local Amount = Session.maxAmount
+    for IDX = 1, Count do
+        local Source = TestSources[(IDX - 1) % #TestSources + 1]
+        Session.combatSources[IDX] = {
+            name = Source.name,
+            classFilename = Source.classFilename,
+            totalAmount = Amount,
+            amountPerSecond = Amount / 300,
+            deathRecapID = IDX,
+            deathTimeSeconds = IDX * 10,
+        }
+        Amount = math.max(math.floor(Amount * 0.88), 1)
+    end
+
+    TestSessions[Count] = Session
+    return Session
+end
+
 function Private:PopulateDamageMeterBars(DMFrame, DB)
     local DMSession;
 
-    if C_DamageMeter.IsDamageMeterAvailable() then
+    if Private.DamageMeterTestMode then
+        DMSession = GetTestSession(DB.Rows.Num)
+    elseif C_DamageMeter.IsDamageMeterAvailable() then
         DMSession = C_DamageMeter.GetCombatSessionFromType(DMFrame.SessionType, DB.MeterType)
     end
 

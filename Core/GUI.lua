@@ -159,7 +159,7 @@ function Private:CreateGUI()
 
     --#region - Damage Meter
 
-    GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3.5, "tree")
+    GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3.5, "tab")
     GUI.args.DamageMeter.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\DamageMeter.tga"
 
     for IDX, DMDB in ipairs(DB.DamageMeter) do
@@ -169,6 +169,8 @@ function Private:CreateGUI()
         Window.args.General = ACH:Group("General", nil, 1)
         Window.args.General.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Enabled end, function(_, value) DMDB.Enabled = value Private:UpdateDamageMeter() end)
         Window.args.General.args.Enabled.relWidth = 0.5
+        Window.args.General.args.TestMode = ACH:Execute(function() return Private.DamageMeterTestMode and "Hide Test Data" or "Show Test Data" end, "Toggle test data for all enabled damage meter windows.", 2, function() Private:SetDamageMeterTestMode(not Private.DamageMeterTestMode) end, nil, nil, "relative", nil, nil, function() return not DMDB.Enabled end)
+        Window.args.General.args.TestMode.relWidth = 0.5
         -- Window.args.General.args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 2, nil, nil, "relative", function() return DMDB.ShowBackdrop end, function(_, value) DMDB.ShowBackdrop = value Private:UpdateDamageMeter() end, function() return not DMDB.Enabled end)
         -- Window.args.General.args.ShowBackdrop.relWidth = 0.5
 
