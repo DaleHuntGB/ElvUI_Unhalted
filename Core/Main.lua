@@ -16,6 +16,8 @@ function AddOn:OnEnable()
     Private:SetupDamageMeter()
     Private:SetupElvUIEnhancements()
     Private:SetupLSToasts()
+    Private:SetupRemoveBossBanner()
+    Private:SetupRemoveLossOfControlFrame()
     Private:SetupRemoveTalkingHead()
     Private:SetupSkipCinematics()
 end

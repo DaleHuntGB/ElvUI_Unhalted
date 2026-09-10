@@ -399,6 +399,10 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete = ACH:Toggle("Auto Delete", "Automatically fills the |cFFFFCC00DELETE|r prompt.", 4, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoDelete end, function(_, value) DB.QualityOfLife.Toggles.AutoDelete = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner = ACH:Toggle("Remove Boss Banner", "Removes the frame that displays all end of dungeon loot for you.", 5, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveBossBanner end, function(_, value) DB.QualityOfLife.Toggles.RemoveBossBanner = value Private:PromptReload() end)
+    GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame = ACH:Toggle("Remove Loss Of Control Frame", "Removes the frame that displays loss of control effects for you.", 6, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveLossOfControlFrame end, function(_, value) DB.QualityOfLife.Toggles.RemoveLossOfControlFrame = value Private:PromptReload() end)
+    GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame.descStyle = "inline"
 
     --#endregion
 

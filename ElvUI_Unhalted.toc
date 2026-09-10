@@ -21,6 +21,8 @@ Modules/DamageMeter/Conditions.lua
 Modules/ElvUIEnhancements.lua
 Modules/LSToasts.lua
 Modules/ProfileManager.lua
+Modules/RemoveBossBanner.lua
+Modules/RemoveLossOfControlFrame.lua
 Modules/RemoveTalkingHead.lua
 Modules/SkipCinematics.lua
 

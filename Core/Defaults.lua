@@ -132,6 +132,8 @@ local Defaults = {
                 AutoRepair = false,
                 AutoSellGreys = false,
                 AutoDelete = false,
+                RemoveBossBanner = false,
+                RemoveLossOfControlFrame = false,
             }
         }
     }
