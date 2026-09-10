@@ -22,6 +22,7 @@ Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Conditions.lua
 Modules/ElvUIEnhancements.lua
 Modules/LSToasts.lua
+Modules/PowerInfusionAlert.lua
 Modules/ProfileManager.lua
 Modules/RemoveBossBanner.lua
 Modules/RemoveLossOfControlFrame.lua
