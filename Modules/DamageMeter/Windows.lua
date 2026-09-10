@@ -70,6 +70,13 @@ function Private:CreateDamageMeter(DMFrameName, DB)
     DM.Title:SetJustifyH("LEFT")
     DM.Title:SetJustifyV("MIDDLE")
 
+    DM.TitleBar.ResetButton = CreateFrame("Button", nil, DM.TitleBar)
+    DM.TitleBar.ResetButton:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
+    DM.TitleBar.ResetButton:SetPoint("RIGHT", DM.TitleBar, "RIGHT", -3, 0)
+    DM.TitleBar.ResetButton:SetNormalTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset.png")
+    DM.TitleBar.ResetButton:SetHighlightTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset_Highlight.png", "BLEND")
+    DM.TitleBar.ResetButton:SetScript("OnClick", function() C_DamageMeter.ResetAllCombatSessions() end)
+
     Private:LayoutDamageMeter(DM, DB)
 
     return DM
