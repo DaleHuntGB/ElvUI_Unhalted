@@ -46,6 +46,10 @@ local Defaults = {
                     Layout = {"LEFT", "LEFT", 3, 0},
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
+                    Icons = {
+                        ResetButton = true,
+                        EncountersButton = true,
+                    }
                 },
                 Rows = {
                     Num = 5,
@@ -85,6 +89,10 @@ local Defaults = {
                     Layout = {"LEFT", "LEFT", 3, 0},
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
+                    Icons = {
+                        ResetButton = true,
+                        EncountersButton = true,
+                    }
                 },
                 Rows = {
                     Num = 5,

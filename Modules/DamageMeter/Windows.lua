@@ -92,6 +92,7 @@ function Private:CreateDamageMeter(DMFrameName, DB)
     DM.TitleBar.ResetButton:SetNormalTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset.png")
     DM.TitleBar.ResetButton:SetHighlightTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset_Highlight.png", "BLEND")
     DM.TitleBar.ResetButton:SetScript("OnClick", function() C_DamageMeter.ResetAllCombatSessions() end)
+    DM.TitleBar.ResetButton:SetShown(DB.TitleBar.Icons.ResetButton)
 
     DM.TitleBar.EncountersButton = CreateFrame("Button", nil, DM.TitleBar)
     DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
@@ -104,6 +105,7 @@ function Private:CreateDamageMeter(DMFrameName, DB)
         Menu.PopulateDescription(EncounterMenu, DM, RootDescription)
         Menu.GetManager():OpenMenu(Button, RootDescription, AnchorUtil.CreateAnchor("BOTTOMRIGHT", DM.TitleBar, "TOPRIGHT", 1, -4))
     end)
+    DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.Icons.EncountersButton)
 
     Private:LayoutDamageMeter(DM, DB)
 
@@ -140,12 +142,12 @@ function Private:LayoutDamageMeter(DM, DB)
     DM.TitleBar.ResetButton:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
     DM.TitleBar.ResetButton:ClearAllPoints()
     DM.TitleBar.ResetButton:SetPoint("RIGHT", DM.TitleBar, "RIGHT", -3, 0)
-    -- DM.TitleBar.ResetButton:SetShown(DB.TitleBar.ResetButton.Enabled)
+    DM.TitleBar.ResetButton:SetShown(DB.TitleBar.Icons.ResetButton)
 
     DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
     DM.TitleBar.EncountersButton:ClearAllPoints()
     DM.TitleBar.EncountersButton:SetPoint("RIGHT", DM.TitleBar.ResetButton, "LEFT", -3, 0)
-    -- DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.EncountersButton.Enabled)
+    DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.Icons.EncountersButton)
 
     Private:LayoutDamageMeterBars(DM, DB)
 end
