@@ -156,6 +156,12 @@ function Private:LayoutDamageMeterBars(DMFrame, DB)
         DMBar:SetScript("OnLeave", Bar_OnLeave)
         DMBar:SetScript("OnMouseDown", Bar_OnClick)
 
+        DMBar.TopBorder = DMBar.TopBorder or DMBar:CreateTexture(nil, "OVERLAY")
+        DMBar.TopBorder:SetPoint("TOPLEFT", DMBar.Icon, "TOPLEFT", 0, 1)
+        DMBar.TopBorder:SetPoint("TOPRIGHT", DMBar, "TOPRIGHT", 0, 1)
+        DMBar.TopBorder:SetHeight(1)
+        DMBar.TopBorder:SetColorTexture(0, 0, 0, 1)
+
         DMBar.BottomBorder = DMBar.BottomBorder or DMBar:CreateTexture(nil, "OVERLAY")
         DMBar.BottomBorder:SetPoint("BOTTOMLEFT", DMBar.Icon, "BOTTOMLEFT", 0, -1)
         DMBar.BottomBorder:SetPoint("BOTTOMRIGHT", DMBar, "BOTTOMRIGHT", 0, -1)
