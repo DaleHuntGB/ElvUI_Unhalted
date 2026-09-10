@@ -31,7 +31,7 @@ local Defaults = {
                 ShowBackdrop = true,
                 Size = {227, 150},
                 Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -1, 1},
-                BackgroundColour = {26/255, 26/255, 26/255, 1 },
+                BackgroundColour = {20/255, 20/255, 20/255, 1 },
                 MeterType = Enum.DamageMeterType.DamageDone,
                 SessionType = Enum.DamageMeterSessionType.Current,
                 Header = {
@@ -50,11 +50,13 @@ local Defaults = {
                     Layout = {"LEFT", "LEFT", 3, 0},
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
+                    ColourByClass = false,
                 },
                 Amount = {
                     Layout = {"RIGHT", "RIGHT", -3, 0},
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
+                    ColourByClass = false,
                 }
             },
             [2] = {
@@ -62,7 +64,7 @@ local Defaults = {
                 ShowBackdrop = true,
                 Size = {226, 150},
                 Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -229, 1},
-                BackgroundColour = {26/255, 26/255, 26/255, 1 },
+                BackgroundColour = {20/255, 20/255, 20/255, 1 },
                 MeterType = Enum.DamageMeterType.Interrupts,
                 SessionType = Enum.DamageMeterSessionType.Current,
                 Header = {
@@ -81,11 +83,13 @@ local Defaults = {
                     Layout = {"LEFT", "LEFT", 3, 0},
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
+                    ColourByClass = false,
                 },
                 Amount = {
                     Layout = {"RIGHT", "RIGHT", -3, 0},
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
+                    ColourByClass = false,
                 }
             },
         },
