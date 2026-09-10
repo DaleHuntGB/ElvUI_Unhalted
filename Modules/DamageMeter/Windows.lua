@@ -112,6 +112,31 @@ function Private:CreateDamageMeter(DMFrameName, DB)
     return DM
 end
 
+function Private:CreateDrilldownPopup(DMFrameName, DB)
+    if not DB.Enabled then return end
+
+    local DM = CreateFrame("Frame", DMFrameName, UIParent, "BackdropTemplate")
+    DM.SessionType = DB.SessionType
+    DM.Bars = {}
+    DM.ScrollOffset = 0
+    DM:EnableMouseWheel(true)
+    DM:SetScript("OnMouseWheel", function(DMFrame, Delta) DMFrame.ScrollOffset = DMFrame.ScrollOffset - Delta; Private:PopulateDamageMeterBars(DMFrame, DMFrame.DB) end)
+
+    DM.TitleBar = CreateFrame("Frame", nil, DM, "BackdropTemplate")
+    DM.TitleBar:EnableMouse(true)
+    DM.TitleBar:SetScript("OnEnter", TitleBar_OnEnter)
+    DM.TitleBar:SetScript("OnLeave", TitleBar_OnLeave)
+    DM.TitleBar:SetScript("OnMouseDown", TitleBar_OnClick)
+
+    DM.Title = DM.TitleBar:CreateFontString(nil, "OVERLAY")
+    DM.Title:SetJustifyH("LEFT")
+    DM.Title:SetJustifyV("MIDDLE")
+
+    Private:LayoutDamageMeter(DM, DB)
+
+    return DM
+end
+
 function Private:LayoutDamageMeter(DM, DB)
     DM.DB = DB
     DM:SetSize(DB.Size[1], DB.Size[2])
@@ -139,15 +164,49 @@ function Private:LayoutDamageMeter(DM, DB)
     DM.Title:SetPoint(DB.TitleBar.Layout[1], DM.TitleBar, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
     DM.Title:SetText(Private.MeterTypes[DB.MeterType])
 
-    DM.TitleBar.ResetButton:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
-    DM.TitleBar.ResetButton:ClearAllPoints()
-    DM.TitleBar.ResetButton:SetPoint("RIGHT", DM.TitleBar, "RIGHT", -3, 0)
-    DM.TitleBar.ResetButton:SetShown(DB.TitleBar.Icons.ResetButton)
+    if DM.TitleBar.ResetButton then
+        DM.TitleBar.ResetButton:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
+        DM.TitleBar.ResetButton:ClearAllPoints()
+        DM.TitleBar.ResetButton:SetPoint("RIGHT", DM.TitleBar, "RIGHT", -3, 0)
+        DM.TitleBar.ResetButton:SetShown(DB.TitleBar.Icons.ResetButton)
+    end
 
-    DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
-    DM.TitleBar.EncountersButton:ClearAllPoints()
-    DM.TitleBar.EncountersButton:SetPoint("RIGHT", DM.TitleBar.ResetButton, "LEFT", -3, 0)
-    DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.Icons.EncountersButton)
+    if DM.TitleBar.EncountersButton then
+        DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
+        DM.TitleBar.EncountersButton:ClearAllPoints()
+        DM.TitleBar.EncountersButton:SetPoint("RIGHT", DM.TitleBar.ResetButton, "LEFT", -3, 0)
+        DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.Icons.EncountersButton)
+    end
+
+    Private:LayoutDamageMeterBars(DM, DB)
+end
+
+function Private:LayoutDrilldownPopup(DM, DB)
+    DM.DB = DB
+    DM:SetSize(DB.Size[1], DB.Size[2])
+    DM:ClearAllPoints()
+    DM:SetPoint(DB.Layout[1], UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
+    if DB.ShowBackdrop then
+        DM:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+        DM:SetBackdropColor(unpack(DB.BackgroundColour))
+        DM:SetBackdropBorderColor(0, 0, 0, 1)
+    else
+        DM:SetBackdrop(nil)
+    end
+
+    DM.TitleBar:SetSize(DB.Size[1], DB.TitleBar.Height)
+    DM.TitleBar:ClearAllPoints()
+    DM.TitleBar:SetPoint("BOTTOMLEFT", DM, "TOPLEFT", 0, 1)
+    DM.TitleBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+    DM.TitleBar:SetBackdropColor(unpack(DB.BackgroundColour))
+    DM.TitleBar:SetBackdropBorderColor(0, 0, 0, 1)
+    DM.TitleBar:SetShown(DB.TitleBar.Enabled)
+
+    DM.Title:SetFont(Private.LSM:Fetch("font", DB.TitleBar.Font[1]), DB.TitleBar.Font[2], DB.TitleBar.Font[3])
+    DM.Title:SetTextColor(unpack(DB.TitleBar.Colour))
+    DM.Title:ClearAllPoints()
+    DM.Title:SetPoint(DB.TitleBar.Layout[1], DM.TitleBar, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
+    DM.Title:SetText(Private.MeterTypes[DB.MeterType])
 
     Private:LayoutDamageMeterBars(DM, DB)
 end

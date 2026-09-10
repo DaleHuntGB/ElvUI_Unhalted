@@ -36,7 +36,7 @@ function Private:Drilldown(DMBar)
     if not SessionSource then return end
 
     if not Popup then
-        Popup = Private:CreateDamageMeter(nil, DB)
+        Popup = Private:CreateDrilldownPopup(nil, DB)
 
         Private.DamageMeterDrilldown = Popup
 
@@ -48,8 +48,6 @@ function Private:Drilldown(DMBar)
         Popup.TitleBar:SetScript("OnEnter", nil)
         Popup.TitleBar:SetScript("OnLeave", nil)
         Popup.TitleBar:SetScript("OnMouseDown", nil)
-        Popup.TitleBar.ResetButton:Hide()
-        Popup.TitleBar.EncountersButton:Hide()
 
         Popup.Close = CreateFrame("Button", nil, Popup.TitleBar)
         Popup.Close:SetPoint("RIGHT", Popup.TitleBar, "RIGHT", -1, 0)
@@ -59,7 +57,7 @@ function Private:Drilldown(DMBar)
         Popup:SetScript("OnHide", function(DMFramePopup) DMFramePopup:SetScript("OnMouseWheel", nil) end)
 
     else
-        Private:LayoutDamageMeter(Popup, DB)
+        Private:LayoutDrilldownPopup(Popup, DB)
     end
 
     Popup:SetParent(DMFrame)
