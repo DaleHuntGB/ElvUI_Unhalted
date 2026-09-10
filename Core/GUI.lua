@@ -403,6 +403,8 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame = ACH:Toggle("Remove Loss Of Control Frame", "Removes the frame that displays loss of control effects for you.", 6, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveLossOfControlFrame end, function(_, value) DB.QualityOfLife.Toggles.RemoveLossOfControlFrame = value Private:PromptReload() end)
     GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp = ACH:Toggle("Auto Sign Up", "Automatically signs you up for dungeons and raids.", 7, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSignUp end, function(_, value) DB.QualityOfLife.Toggles.AutoSignUp = value end)
+    GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp.descStyle = "inline"
 
     --#endregion
 

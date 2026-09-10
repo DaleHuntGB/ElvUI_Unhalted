@@ -134,6 +134,7 @@ local Defaults = {
                 AutoDelete = false,
                 RemoveBossBanner = false,
                 RemoveLossOfControlFrame = false,
+                AutoSignUp = false,
             }
         }
     }

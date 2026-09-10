@@ -11,6 +11,7 @@ Core/GUI.lua
 
 Modules/AutoDelete.lua
 Modules/AutoSellGreys.lua
+Modules/AutoSignUp.lua
 Modules/CombatAlert.lua
 Modules/CombatTimer.lua
 Modules/CVars.lua
