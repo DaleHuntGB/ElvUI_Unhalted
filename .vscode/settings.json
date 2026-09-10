@@ -42,7 +42,8 @@
         "DAMAGE",
         "AnchorUtil",
         "MenuVariants",
-        "UNKNOWN"
+        "UNKNOWN",
+        "DELETE_ITEM_CONFIRM_STRING"
     ],
     "Lua.type.weakUnionCheck": true
 }
