@@ -169,7 +169,7 @@ function Private:CreateGUI()
         Window.args.General = ACH:Group("General", nil, 1)
         Window.args.General.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Enabled end, function(_, value) DMDB.Enabled = value Private:UpdateDamageMeter() end)
         Window.args.General.args.Enabled.relWidth = 0.5
-        Window.args.General.args.TestMode = ACH:Execute(function() return Private.DamageMeterTestMode and "Hide Test Data" or "Show Test Data" end, nil, 2, function() Private:SetDamageMeterTestMode(not Private.DamageMeterTestMode) end, nil, nil, "relative", nil, nil, function() return not DMDB.Enabled end)
+        Window.args.General.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DamageMeterTestMode end, function(_, value) Private:SetDamageMeterTestMode(value) end, function() return not DMDB.Enabled end)
         Window.args.General.args.TestMode.relWidth = 0.5
         -- Window.args.General.args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 2, nil, nil, "relative", function() return DMDB.ShowBackdrop end, function(_, value) DMDB.ShowBackdrop = value Private:UpdateDamageMeter() end, function() return not DMDB.Enabled end)
         -- Window.args.General.args.ShowBackdrop.relWidth = 0.5
