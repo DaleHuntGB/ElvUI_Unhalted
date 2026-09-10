@@ -197,36 +197,36 @@ function Private:CreateGUI()
         Window.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Layout[4] end, function(_, value) DMDB.Layout[4] = value Private:UpdateDamageMeter() end)
         Window.args.Layout.args.YOffset.relWidth = 0.5
 
-        Window.args.Header = ACH:Group("Header", nil, 3)
-        Window.args.Header.disabled = function() return not DMDB.Enabled end
-        -- Window.args.Header.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Header.Enabled end, function(_, value) DMDB.Header.Enabled = value Private:UpdateDamageMeter() end)
-        -- Window.args.Header.args.Enabled.relWidth = 1
+        Window.args.TitleBar = ACH:Group("Title Bar", nil, 3)
+        Window.args.TitleBar.disabled = function() return not DMDB.Enabled end
+        -- Window.args.TitleBar.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.TitleBar.Enabled end, function(_, value) DMDB.TitleBar.Enabled = value Private:UpdateDamageMeter() end)
+        -- Window.args.TitleBar.args.Enabled.relWidth = 1
 
-        Window.args.Header.args.Layout = ACH:Group("Layout", nil, 2)
-        Window.args.Header.args.Layout.inline = true
-        Window.args.Header.args.Layout.disabled = function() return not DMDB.Enabled or not DMDB.Header.Enabled end
-        Window.args.Header.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DMDB.Header.Layout[1] end, function(_, value) DMDB.Header.Layout[1] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Layout.args.AnchorFrom.relWidth = 0.5
-        Window.args.Header.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DMDB.Header.Layout[2] end, function(_, value) DMDB.Header.Layout[2] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Layout.args.AnchorTo.relWidth = 0.5
-        Window.args.Header.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Header.Layout[3] end, function(_, value) DMDB.Header.Layout[3] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Layout.args.XOffset.relWidth = 0.33
-        Window.args.Header.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Header.Layout[4] end, function(_, value) DMDB.Header.Layout[4] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Layout.args.YOffset.relWidth = 0.33
-        Window.args.Header.args.Layout.args.Height = ACH:Range("Height", nil, 5, { min = 8, max = 100, step = 1 }, "relative", function() return DMDB.Header.Height end, function(_, value) DMDB.Header.Height = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Layout.args.Height.relWidth = 0.33
+        Window.args.TitleBar.args.Layout = ACH:Group("Layout", nil, 2)
+        Window.args.TitleBar.args.Layout.inline = true
+        Window.args.TitleBar.args.Layout.disabled = function() return not DMDB.Enabled or not DMDB.TitleBar.Enabled end
+        Window.args.TitleBar.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DMDB.TitleBar.Layout[1] end, function(_, value) DMDB.TitleBar.Layout[1] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Layout.args.AnchorFrom.relWidth = 0.5
+        Window.args.TitleBar.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DMDB.TitleBar.Layout[2] end, function(_, value) DMDB.TitleBar.Layout[2] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Layout.args.AnchorTo.relWidth = 0.5
+        Window.args.TitleBar.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.TitleBar.Layout[3] end, function(_, value) DMDB.TitleBar.Layout[3] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Layout.args.XOffset.relWidth = 0.33
+        Window.args.TitleBar.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.TitleBar.Layout[4] end, function(_, value) DMDB.TitleBar.Layout[4] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Layout.args.YOffset.relWidth = 0.33
+        Window.args.TitleBar.args.Layout.args.Height = ACH:Range("Height", nil, 5, { min = 8, max = 100, step = 1 }, "relative", function() return DMDB.TitleBar.Height end, function(_, value) DMDB.TitleBar.Height = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Layout.args.Height.relWidth = 0.33
 
-        Window.args.Header.args.Font = ACH:Group("Font", nil, 3)
-        Window.args.Header.args.Font.inline = true
-        Window.args.Header.args.Font.disabled = function() return not DMDB.Enabled or not DMDB.Header.Enabled end
-        Window.args.Header.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DMDB.Header.Font[1] end, function(_, value) DMDB.Header.Font[1] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Font.args.Font.relWidth = 0.5
-        Window.args.Header.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 2, "relative", function() return DMDB.Header.Font[3] end, function(_, value) DMDB.Header.Font[3] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Font.args.FontFlag.relWidth = 0.5
-        Window.args.Header.args.Font.args.Size = ACH:Range("Font Size", nil, 3, { min = 8, max = 32, step = 1 }, "relative", function() return DMDB.Header.Font[2] end, function(_, value) DMDB.Header.Font[2] = value Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Font.args.Size.relWidth = 0.5
-        Window.args.Header.args.Font.args.Colour = ACH:Color("Colour", nil, 4, true, "relative", function() return unpack(DMDB.Header.Colour) end, function(_, r, g, b, a) DMDB.Header.Colour = { r, g, b, a } Private:UpdateDamageMeter() end)
-        Window.args.Header.args.Font.args.Colour.relWidth = 0.5
+        Window.args.TitleBar.args.Font = ACH:Group("Font", nil, 3)
+        Window.args.TitleBar.args.Font.inline = true
+        Window.args.TitleBar.args.Font.disabled = function() return not DMDB.Enabled or not DMDB.TitleBar.Enabled end
+        Window.args.TitleBar.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DMDB.TitleBar.Font[1] end, function(_, value) DMDB.TitleBar.Font[1] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Font.args.Font.relWidth = 0.5
+        Window.args.TitleBar.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 2, "relative", function() return DMDB.TitleBar.Font[3] end, function(_, value) DMDB.TitleBar.Font[3] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Font.args.FontFlag.relWidth = 0.5
+        Window.args.TitleBar.args.Font.args.Size = ACH:Range("Font Size", nil, 3, { min = 8, max = 32, step = 1 }, "relative", function() return DMDB.TitleBar.Font[2] end, function(_, value) DMDB.TitleBar.Font[2] = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Font.args.Size.relWidth = 0.5
+        Window.args.TitleBar.args.Font.args.Colour = ACH:Color("Colour", nil, 4, true, "relative", function() return unpack(DMDB.TitleBar.Colour) end, function(_, r, g, b, a) DMDB.TitleBar.Colour = { r, g, b, a } Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Font.args.Colour.relWidth = 0.5
 
         Window.args.Rows = ACH:Group("Rows", nil, 4)
         Window.args.Rows.disabled = function() return not DMDB.Enabled end
