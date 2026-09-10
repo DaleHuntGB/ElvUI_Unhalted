@@ -6,6 +6,7 @@ function AddOn:OnInitialize()
 end
 
 function AddOn:OnEnable()
+    if not C_AddOns.IsAddOnLoaded("ElvUI") then return Private:PrettyPrint("Requires |cFF1784D1ElvUI|r, please install it and reload.") end
     Private:CreateGUI()
     Private:SetupAutoDelete()
     Private:SetupAutoSellGreys()
