@@ -47,7 +47,6 @@ function Private:UpdateDamageMeter()
 
     for IDX, DB in pairs(DamageMeterDB) do
         if DB.Enabled then
-            if not C_CVar.GetCVarBool("damageMeterEnabled") then C_CVar.SetCVar("damageMeterEnabled", "1") end
             if not Private.DamageMeterFrames[IDX] then
                 Private.DamageMeterFrames[IDX] = Private:CreateDamageMeter("DamageMeterFrame" .. IDX, DB)
             else

@@ -34,6 +34,12 @@ local Defaults = {
                 BackgroundColour = {20/255, 20/255, 20/255, 1 },
                 MeterType = Enum.DamageMeterType.DamageDone,
                 SessionType = Enum.DamageMeterSessionType.Current,
+                Conditions = {
+                    Enabled = false,
+                    OpenWorld = {Enum.DamageMeterSessionType.Current, Enum.DamageMeterType.HealingDone},
+                    Dungeon = {Enum.DamageMeterSessionType.Current, Enum.DamageMeterType.HealingDone},
+                    Raid = {Enum.DamageMeterSessionType.Current, Enum.DamageMeterType.Deaths},
+                },
                 TitleBar = {
                     Enabled = true,
                     Height = 24,
@@ -67,6 +73,12 @@ local Defaults = {
                 BackgroundColour = {20/255, 20/255, 20/255, 1 },
                 MeterType = Enum.DamageMeterType.Interrupts,
                 SessionType = Enum.DamageMeterSessionType.Current,
+                Conditions = {
+                    Enabled = false,
+                    OpenWorld = {Enum.DamageMeterSessionType.Current, Enum.DamageMeterType.HealingDone},
+                    Dungeon = {Enum.DamageMeterSessionType.Overall, Enum.DamageMeterType.DamageDone},
+                    Raid = {Enum.DamageMeterSessionType.Current, Enum.DamageMeterType.Deaths},
+                },
                 TitleBar = {
                     Enabled = true,
                     Height = 24,
