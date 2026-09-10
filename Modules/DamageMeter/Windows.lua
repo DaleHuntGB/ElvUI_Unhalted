@@ -57,7 +57,7 @@ local function TitleBar_OnClick(DMTitleBar, Button)
     elseif Button == "RightButton" then
         local RootDescription = MenuUtil.CreateRootMenuDescription(MenuVariants.GetDefaultContextMenuMixin())
         Menu.PopulateDescription(DamageMeterMenu, DMFrame, RootDescription)
-        Menu.GetManager():OpenMenu(DMFrame, RootDescription, AnchorUtil.CreateAnchor("BOTTOMLEFT", DMTitleBar, "TOPLEFT", 0, 0))
+        Menu.GetManager():OpenMenu(DMFrame, RootDescription, AnchorUtil.CreateAnchor("BOTTOMLEFT", DMTitleBar, "TOPLEFT", -1, -4))
     elseif Button == "MiddleButton" then
         C_DamageMeter.ResetAllCombatSessions()
         if Private.DamageMeterDrilldown then
@@ -102,7 +102,7 @@ function Private:CreateDamageMeter(DMFrameName, DB)
         if not C_DamageMeter.IsDamageMeterAvailable() then return end
         local RootDescription = MenuUtil.CreateRootMenuDescription(MenuVariants.GetDefaultContextMenuMixin())
         Menu.PopulateDescription(EncounterMenu, DM, RootDescription)
-        Menu.GetManager():OpenMenu(Button, RootDescription, AnchorUtil.CreateAnchor("BOTTOMRIGHT", DM.TitleBar, "TOPRIGHT", 0, 0))
+        Menu.GetManager():OpenMenu(Button, RootDescription, AnchorUtil.CreateAnchor("BOTTOMRIGHT", DM.TitleBar, "TOPRIGHT", 1, -4))
     end)
 
     Private:LayoutDamageMeter(DM, DB)
