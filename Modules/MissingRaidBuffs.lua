@@ -81,14 +81,11 @@ local function FetchGroupMemberClasses()
 end
 
 function Private:SetupMissingRaidBuffs()
-    Private.MissingBuffFrame = CreateFrame("Frame")
-
-    Private:UpdateMissingRaidBuffs()
-
     Private.MissingBuffFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     Private.MissingBuffFrame:SetSize(1, 1)
     Private.MissingBuffFrame:SetPoint("CENTER", UIParent, "CENTER", -0.1, 175.1)
 
+    Private:UpdateMissingRaidBuffs()
 end
 
 function Private:UpdateMissingRaidBuffs()
@@ -98,8 +95,12 @@ function Private:UpdateMissingRaidBuffs()
         Private.MissingBuffFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
         Private.MissingBuffFrame:RegisterEvent("GROUP_JOINED")
         Private.MissingBuffFrame:SetScript("OnEvent", function(_, event) if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" or event == "GROUP_JOINED" then FetchGroupMemberClasses() end CheckForMissingBuffs() end)
+        FetchGroupMemberClasses()
+        CheckForMissingBuffs()
     else
         Private.MissingBuffFrame:UnregisterAllEvents()
         Private.MissingBuffFrame:SetScript("OnEvent", nil)
+        for auraID in pairs(MissingBuffs) do HideMissingBuff(auraID) end
+        Private.MissingBuffFrame:Hide()
     end
 end

@@ -407,7 +407,7 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.HideTalkingHead.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.SkipCinematics = ACH:Toggle("Skip Cinematics", "Automatically skips all cinematics.", 8, nil, nil, "full", function() return DB.QualityOfLife.Toggles.SkipCinematics end, function(_, value) DB.QualityOfLife.Toggles.SkipCinematics = value end)
     GUI.args.QualityOfLife.args.Toggles.args.SkipCinematics.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs = ACH:Toggle("Show Missing Raid Buffs", "Shows missing raid buffs.", 9, nil, nil, "full", function() return DB.QualityOfLife.Toggles.MissingRaidBuffs end, function(_, value) DB.QualityOfLife.Toggles.MissingRaidBuffs = value end)
+    GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs = ACH:Toggle("Show Missing Raid Buffs", "Shows missing raid buffs.", 9, nil, nil, "full", function() return DB.QualityOfLife.Toggles.MissingRaidBuffs end, function(_, value) DB.QualityOfLife.Toggles.MissingRaidBuffs = value Private:UpdateMissingRaidBuffs() end)
     GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs.descStyle = "inline"
 
     GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)
