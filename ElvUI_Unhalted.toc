@@ -22,7 +22,7 @@ Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Conditions.lua
 Modules/ElvUIEnhancements.lua
 Modules/LSToasts.lua
-Modules/MissingBuffs.lua
+Modules/MissingRaidBuffs.lua
 Modules/PositionRaidWarningFrame.lua
 Modules/PowerInfusionAlert.lua
 Modules/ProfileManager.lua

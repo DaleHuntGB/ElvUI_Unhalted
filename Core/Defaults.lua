@@ -136,7 +136,7 @@ local Defaults = {
                 RemoveLossOfControlFrame = false,
                 AutoSignUp = false,
                 PositionRaidWarningFrame = false,
-                MissingBuffs = false,
+                MissingRaidBuffs = false,
             },
             Alerts = {
                 TimeSpiralAlert = false,

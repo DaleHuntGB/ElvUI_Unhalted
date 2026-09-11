@@ -80,10 +80,10 @@ local function FetchGroupMemberClasses()
     end
 end
 
-function Private:SetupMissingBuffs()
+function Private:SetupMissingRaidBuffs()
     Private.MissingBuffFrame = CreateFrame("Frame")
 
-    Private:UpdateMissingBuffs()
+    Private:UpdateMissingRaidBuffs()
 
     Private.MissingBuffFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     Private.MissingBuffFrame:SetSize(1, 1)
@@ -91,8 +91,8 @@ function Private:SetupMissingBuffs()
 
 end
 
-function Private:UpdateMissingBuffs()
-    if Private.DB.global.QualityOfLife.Toggles.MissingBuffs then
+function Private:UpdateMissingRaidBuffs()
+    if Private.DB.global.QualityOfLife.Toggles.MissingRaidBuffs then
         Private.MissingBuffFrame:RegisterUnitEvent("UNIT_AURA", "player")
         Private.MissingBuffFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Private.MissingBuffFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
