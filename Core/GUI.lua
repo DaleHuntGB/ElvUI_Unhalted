@@ -387,6 +387,12 @@ function Private:CreateGUI()
     GUI.args.ProfileManager.args.ExportLSToasts.relWidth = 0.5
     GUI.args.ProfileManager.args.ExportLSToasts.descStyle = "inline"
 
+    GUI.args.ProfileManager.args.ImportPlatynator = ACH:Execute("Import |TInterface\\AddOns\\Platynator\\Assets\\logo.tga:16:16|tPlatynator", nil, 5, function() Platynator.API.ImportString(Private:ImportPlatynator(), "Default") end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("Platynator"))
+    GUI.args.ProfileManager.args.ImportPlatynator.relWidth = 1
+
+    GUI.args.ProfileManager.args.ImportBaganator = ACH:Execute("Import |TInterface\\AddOns\\Baganator\\Assets\\logo.tga:16:16|tBaganator", nil, 6, function() Baganator.API.ImportString(Private:ImportBaganator(), "Default") end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("Baganator"))
+    GUI.args.ProfileManager.args.ImportBaganator.relWidth = 1
+
     --#endregion
 
     --#region - Quality Of Life
