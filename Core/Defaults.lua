@@ -126,6 +126,13 @@ local Defaults = {
                 Layout = {"CENTER", "CENTER", 0, 125},
             },
         },
+        MouseCursor = {
+            Enabled = false,
+            ShowInCombatOnly = false,
+            Layout = {"CENTER", "CENTER", 0, 0, 32, 32},
+            Texture = "CURSOR_03",
+            Colour = { 1, 1, 1, 1 },
+        },
         QualityOfLife = {
             Toggles = {
                 RemoveTalkingHead = false,

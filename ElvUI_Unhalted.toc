@@ -36,6 +36,7 @@ Modules/CombatAlert.lua
 Modules/CombatTimer.lua
 Modules/CVars.lua
 Modules/ElvUIEnhancements.lua
+Modules/MouseCursor.lua
 Modules/ProfileManager.lua
 Modules/VendorHelper.lua
 

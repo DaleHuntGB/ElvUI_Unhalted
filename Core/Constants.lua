@@ -89,6 +89,33 @@ Private.PersonalBuffs = {
     ["Oils"] = { iconID = 7548987, dualWieldSpecIDs = { [259] = true, [260] = true, [261] = true, [263] = true, [72] = true } }
 }
 
+Private.MouseCursors = {
+    Path = {
+        ["CURSOR_01"] = "talents-search-notonactionbar",
+        ["CURSOR_02"] = "talents-search-notonactionbarhidden",
+        ["CURSOR_03"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_01.png",
+        ["CURSOR_04"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_02.png",
+        ["CURSOR_05"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_03.png",
+        ["CURSOR_06"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_04.png",
+        ["CURSOR_07"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_05.png",
+        ["CURSOR_08"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_06.png",
+        ["CURSOR_09"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_07.png",
+        ["CURSOR_10"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_08.png",
+    },
+    Preview = {
+        ["CURSOR_01"] = "|A:talents-search-notonactionbar:18:18|a",
+        ["CURSOR_02"] = "|A:talents-search-notonactionbarhidden:18:18|a",
+        ["CURSOR_03"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_01.png:18:18|t",
+        ["CURSOR_04"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_02.png:18:18|t",
+        ["CURSOR_05"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_03.png:18:18|t",
+        ["CURSOR_06"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_04.png:18:18|t",
+        ["CURSOR_07"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_05.png:18:18|t",
+        ["CURSOR_08"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_06.png:18:18|t",
+        ["CURSOR_09"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_07.png:18:18|t",
+        ["CURSOR_10"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_08.png:18:18|t",
+    },
+}
+
 function Private:PromptReload()
     StaticPopupDialogs["RELOAD_UI"] = {
         text = "This change requires a reload to take effect, would you like to reload now?",

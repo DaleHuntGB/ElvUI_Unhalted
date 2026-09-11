@@ -434,6 +434,59 @@ function Private:CreateGUI()
 
     --#endregion
 
+    --#region - Mouse Cursor
+    GUI.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 5)
+    GUI.args.MouseCursor.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\MouseCursor.tga"
+
+    GUI.args.MouseCursor.args.Toggles = ACH:Group("Toggles", nil, 1)
+    GUI.args.MouseCursor.args.Toggles.inline = true
+
+    GUI.args.MouseCursor.args.Toggles.args.Enabled = ACH:Toggle("Enable Mouse Cursor", "Shows an additional texture for the mouse cursor.", 1, nil, nil, "full", function() return DB.MouseCursor.Enabled end, function(_, value) DB.MouseCursor.Enabled = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Toggles.args.Enabled.descStyle = "inline"
+
+    GUI.args.MouseCursor.args.Toggles.args.ShowInCombatOnly = ACH:Toggle("Show In Combat Only", "Shows the mouse cursor indicator in combat.", 2, nil, nil, "full", function() return DB.MouseCursor.ShowInCombatOnly end, function(_, value) DB.MouseCursor.ShowInCombatOnly = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Toggles.args.ShowInCombatOnly.descStyle = "inline"
+
+    GUI.args.MouseCursor.args.Layout = ACH:Group("Layout", nil, 3)
+    GUI.args.MouseCursor.args.Layout.inline = true
+    GUI.args.MouseCursor.args.Layout.disabled = function() return not DB.MouseCursor.Enabled or DB.MouseCursor.Texture == "CURSOR_01" or DB.MouseCursor.Texture == "CURSOR_02" end
+
+    GUI.args.MouseCursor.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.MouseCursor.Layout[1] end, function(_, value) DB.MouseCursor.Layout[1] = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Layout.args.AnchorFrom.descStyle = "inline"
+    GUI.args.MouseCursor.args.Layout.args.AnchorFrom.relWidth = 0.5
+
+    GUI.args.MouseCursor.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.MouseCursor.Layout[2] end, function(_, value) DB.MouseCursor.Layout[2] = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Layout.args.AnchorTo.descStyle = "inline"
+    GUI.args.MouseCursor.args.Layout.args.AnchorTo.relWidth = 0.5
+
+    GUI.args.MouseCursor.args.Layout.args.OffsetX = ACH:Range("X Offset", nil, 3, { min = -100, max = 100, step = 1 }, "relative", function() return DB.MouseCursor.Layout[3] end, function(_, value) DB.MouseCursor.Layout[3] = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Layout.args.OffsetX.descStyle = "inline"
+    GUI.args.MouseCursor.args.Layout.args.OffsetX.relWidth = 0.33
+
+    GUI.args.MouseCursor.args.Layout.args.OffsetY = ACH:Range("Y Offset", nil, 4, { min = -100, max = 100, step = 1 }, "relative", function() return DB.MouseCursor.Layout[4] end, function(_, value) DB.MouseCursor.Layout[4] = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Layout.args.OffsetY.descStyle = "inline"
+    GUI.args.MouseCursor.args.Layout.args.OffsetY.relWidth = 0.33
+
+    GUI.args.MouseCursor.args.Layout.args.CursorSize = ACH:Range("Cursor Size", nil, 5, { min = 1, max = 100, step = 1 }, "relative", function() return DB.MouseCursor.Layout[5] end, function(_, value) DB.MouseCursor.Layout[5] = value DB.MouseCursor.Layout[6] = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Layout.args.CursorSize.descStyle = "inline"
+    GUI.args.MouseCursor.args.Layout.args.CursorSize.relWidth = 0.33
+
+    GUI.args.MouseCursor.args.Appearance = ACH:Group("Appearance", nil, 4)
+    GUI.args.MouseCursor.args.Appearance.inline = true
+    GUI.args.MouseCursor.args.Appearance.disabled = function() return not DB.MouseCursor.Enabled end
+
+    GUI.args.MouseCursor.args.Appearance.args.Texture = ACH:Select("Texture", "Select the texture for the mouse cursor.", 1, Private.MouseCursors.Preview, nil, "relative", function() return DB.MouseCursor.Texture end, function(_, value) DB.MouseCursor.Texture = value Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Appearance.args.Texture.descStyle = "inline"
+    GUI.args.MouseCursor.args.Appearance.args.Texture.relWidth = 0.5
+    GUI.args.MouseCursor.args.Appearance.args.Texture.disabled = function() return not DB.MouseCursor.Enabled end
+
+    GUI.args.MouseCursor.args.Appearance.args.Colour = ACH:Color("Colour", "Select the colour for the mouse cursor.", 2, true, "relative", function() return unpack(DB.MouseCursor.Colour) end, function(_, r, g, b, a) DB.MouseCursor.Colour = { r, g, b, a } Private:UpdateMouseCursor() end)
+    GUI.args.MouseCursor.args.Appearance.args.Colour.descStyle = "inline"
+    GUI.args.MouseCursor.args.Appearance.args.Colour.relWidth = 0.5
+    GUI.args.MouseCursor.args.Appearance.args.Colour.disabled = function() return not DB.MouseCursor.Enabled or DB.MouseCursor.Texture == "CURSOR_01" or DB.MouseCursor.Texture == "CURSOR_02" end
+
+    --#endregion
+
     --#region - Vendor Helper
 
     GUI.args.VendorHelper = ACH:Group("Vendor Helper", nil, 6)
