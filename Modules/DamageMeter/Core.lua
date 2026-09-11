@@ -40,9 +40,11 @@ function Private:SetupDamageMeter()
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_LOGOUT")
+    Private.DamageMeterEventFrame:RegisterEvent("CHALLENGE_MODE_START")
     Private.DamageMeterEventFrame:SetScript("OnEvent", function(_, event, meterType, sessionID)
+        if event == "CHALLENGE_MODE_START" then if Private.DB.global.DamageMeter.AutoResetOnMythicPlus then C_DamageMeter.ResetAllCombatSessions() end return end
         if event == "DAMAGE_METER_RESET" and Private.DamageMeterDrilldown then Private.DamageMeterDrilldown:Hide() end
-        for IDX, DB in pairs(Private.DB.global.DamageMeter) do
+        for IDX, DB in ipairs(Private.DB.global.DamageMeter) do
             local DMFrame = Private.DamageMeterFrames[IDX]
             if DMFrame and event == "DAMAGE_METER_RESET" then
                 DMFrame.EncounterSegment = nil
@@ -61,7 +63,7 @@ function Private:UpdateDamageMeter()
     local DamageMeterDB = Private.DB.global.DamageMeter
     if not Private.DamageMeterEventFrame then Private:SetupDamageMeter() return end
 
-    for IDX, DB in pairs(DamageMeterDB) do
+    for IDX, DB in ipairs(DamageMeterDB) do
         if DB.Enabled then
             if not Private.DamageMeterFrames[IDX] then
                 Private.DamageMeterFrames[IDX] = Private:CreateDamageMeter("DamageMeterFrame" .. IDX, DB)

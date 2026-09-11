@@ -15,7 +15,6 @@ Modules/AddOnSkins/BugSack.lua
 
 Modules/DamageMeter/Bars.lua
 Modules/DamageMeter/Core.lua
-Modules/DamageMeter/Conditions.lua
 Modules/DamageMeter/Windows.lua
 
 Modules/QualityOfLife/Alerts/BloodlustAlert.lua

@@ -160,6 +160,11 @@ function Private:CreateGUI()
     GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3.5, "tab")
     GUI.args.DamageMeter.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\DamageMeter.tga"
 
+    GUI.args.DamageMeter.args.AutoResetOnMythicPlus = ACH:Toggle("Auto Reset on Mythic+ Start", nil, 1, nil, nil, "relative", function() return DB.DamageMeter.AutoResetOnMythicPlus end, function(_, value) DB.DamageMeter.AutoResetOnMythicPlus = value Private:UpdateDamageMeter() end)
+    GUI.args.DamageMeter.args.AutoResetOnMythicPlus.relWidth = 0.5
+    GUI.args.DamageMeter.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DamageMeterTestMode end, function(_, value) Private:SetDamageMeterTestMode(value) end)
+    GUI.args.DamageMeter.args.TestMode.relWidth = 0.5
+
     for IDX, DMDB in ipairs(DB.DamageMeter) do
         local Window = ACH:Group("Window " .. IDX, nil, IDX, "tab")
         GUI.args.DamageMeter.args["Window" .. IDX] = Window
@@ -167,41 +172,8 @@ function Private:CreateGUI()
         Window.args.General = ACH:Group("General", nil, 1)
         Window.args.General.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Enabled end, function(_, value) DMDB.Enabled = value Private:UpdateDamageMeter() end)
         Window.args.General.args.Enabled.relWidth = 0.5
-        Window.args.General.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DamageMeterTestMode end, function(_, value) Private:SetDamageMeterTestMode(value) end, function() return not DMDB.Enabled end)
-        Window.args.General.args.TestMode.relWidth = 0.5
         -- Window.args.General.args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 2, nil, nil, "relative", function() return DMDB.ShowBackdrop end, function(_, value) DMDB.ShowBackdrop = value Private:UpdateDamageMeter() end, function() return not DMDB.Enabled end)
         -- Window.args.General.args.ShowBackdrop.relWidth = 0.5
-
-        Window.args.General.args.Conditions = ACH:Group("Conditions", nil, 3)
-        Window.args.General.args.Conditions.inline = true
-        Window.args.General.args.Conditions.disabled = function() return not DMDB.Conditions.Enabled or not DMDB.Enabled end
-
-        Window.args.General.args.Conditions.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Conditions.Enabled end, function(_, value) DMDB.Conditions.Enabled = value Private:UpdateDamageMeter() end, function() return not DMDB.Enabled end)
-        Window.args.General.args.Conditions.args.Enabled.relWidth = 0.5
-
-        Window.args.General.args.Conditions.args.OpenWorld = ACH:Group("Open World", nil, 1)
-        Window.args.General.args.Conditions.args.OpenWorld.inline = true
-        Window.args.General.args.Conditions.args.OpenWorld.disabled = function() return not DMDB.Conditions.Enabled or not DMDB.Enabled end
-        Window.args.General.args.Conditions.args.OpenWorld.args.SessionType = ACH:Select("Session", nil, 1, { [Enum.DamageMeterSessionType.Current] = "Current", [Enum.DamageMeterSessionType.Overall] = "Overall" }, nil, "relative", function() return DMDB.Conditions.OpenWorld[1] end, function(_, value) DMDB.Conditions.OpenWorld[1] = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Conditions.args.OpenWorld.args.SessionType.relWidth = 0.5
-        Window.args.General.args.Conditions.args.OpenWorld.args.MeterType = ACH:Select("Type", nil, 2, Private.MeterTypes, nil, "relative", function() return DMDB.Conditions.OpenWorld[2] end, function(_, value) DMDB.Conditions.OpenWorld[2] = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Conditions.args.OpenWorld.args.MeterType.relWidth = 0.5
-
-        Window.args.General.args.Conditions.args.Dungeon = ACH:Group("Dungeon", nil, 2)
-        Window.args.General.args.Conditions.args.Dungeon.inline = true
-        Window.args.General.args.Conditions.args.Dungeon.disabled = function() return not DMDB.Conditions.Enabled or not DMDB.Enabled end
-        Window.args.General.args.Conditions.args.Dungeon.args.SessionType = ACH:Select("Session", nil, 1, { [Enum.DamageMeterSessionType.Current] = "Current", [Enum.DamageMeterSessionType.Overall] = "Overall" }, nil, "relative", function() return DMDB.Conditions.Dungeon[1] end, function(_, value) DMDB.Conditions.Dungeon[1] = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Conditions.args.Dungeon.args.SessionType.relWidth = 0.5
-        Window.args.General.args.Conditions.args.Dungeon.args.MeterType = ACH:Select("Type", nil, 2, Private.MeterTypes, nil, "relative", function() return DMDB.Conditions.Dungeon[2] end, function(_, value) DMDB.Conditions.Dungeon[2] = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Conditions.args.Dungeon.args.MeterType.relWidth = 0.5
-
-        Window.args.General.args.Conditions.args.Raid = ACH:Group("Raid", nil, 3)
-        Window.args.General.args.Conditions.args.Raid.inline = true
-        Window.args.General.args.Conditions.args.Raid.disabled = function() return not DMDB.Conditions.Enabled or not DMDB.Enabled end
-        Window.args.General.args.Conditions.args.Raid.args.SessionType = ACH:Select("Session", nil, 1, { [Enum.DamageMeterSessionType.Current] = "Current", [Enum.DamageMeterSessionType.Overall] = "Overall" }, nil, "relative", function() return DMDB.Conditions.Raid[1] end, function(_, value) DMDB.Conditions.Raid[1] = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Conditions.args.Raid.args.SessionType.relWidth = 0.5
-        Window.args.General.args.Conditions.args.Raid.args.MeterType = ACH:Select("Type", nil, 2, Private.MeterTypes, nil, "relative", function() return DMDB.Conditions.Raid[2] end, function(_, value) DMDB.Conditions.Raid[2] = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Conditions.args.Raid.args.MeterType.relWidth = 0.5
 
         Window.args.General.args.MeterData = ACH:Group("Meter Data", nil, 4)
         Window.args.General.args.MeterData.inline = true

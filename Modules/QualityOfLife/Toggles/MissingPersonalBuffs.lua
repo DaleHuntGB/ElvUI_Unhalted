@@ -65,11 +65,20 @@ local function CheckForMissingPersonalBuffs()
             end
         else
             for _, spellName in ipairs(auraInfo.spellNames) do
-                if C_UnitAuras.GetAuraDataBySpellName("player", spellName) then hasAura = true break end
+                if C_Secrets.ShouldSpellAuraBeSecret(spellName) then
+                    return
+                else
+                    if issecretvalue(C_UnitAuras.GetAuraDataBySpellName("player", spellName)) then
+                        return
+                    elseif C_UnitAuras.GetAuraDataBySpellName("player", spellName) then
+                        hasAura = true
+                        break
+                    end
+                end
             end
         end
 
-        if not hasAura then
+        if hasAura == false then
             MissingPersonalBuffs[auraType] = MissingPersonalBuffs[auraType] or CreateMissingPersonalBuff(auraType, auraInfo.iconID)
         elseif MissingPersonalBuffs[auraType] then
             HideMissingPersonalBuff(auraType)
@@ -94,7 +103,14 @@ function Private:UpdateMissingPersonalBuffs()
         Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_ENCHANT_CHANGED")
         Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_SLOT_CHANGED")
         Private.MissingPersonalBuffFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-        Private.MissingPersonalBuffFrame:SetScript("OnEvent", function() CheckForMissingPersonalBuffs() end)
+        Private.MissingPersonalBuffFrame:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
+        Private.MissingPersonalBuffFrame:SetScript("OnEvent", function(_, event)
+            if event == "ADDON_RESTRICTION_STATE_CHANGED" then
+                RunNextFrame(function() if Private.DB.global.QualityOfLife.Toggles.MissingPersonalBuffs then CheckForMissingPersonalBuffs() end end)
+            else
+                CheckForMissingPersonalBuffs()
+            end
+        end)
         CheckForMissingPersonalBuffs()
     else
         Private.MissingPersonalBuffFrame:UnregisterAllEvents()

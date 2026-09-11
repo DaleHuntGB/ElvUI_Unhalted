@@ -53,7 +53,8 @@
         "class",
         "RaidWarningFrame",
         "INVSLOT_MAINHAND",
-        "INVSLOT_OFFHAND"
+        "INVSLOT_OFFHAND",
+        "RunNextFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }
