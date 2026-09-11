@@ -148,8 +148,12 @@ local Defaults = {
                 MissingRaidBuffs = false,
             },
             Alerts = {
+                BloodlustAlert = false,
+                BloodlustAlertSound = "|cFF6080FFUnhalted|r: Buff",
                 TimeSpiralAlert = false,
+                TimeSpiralAlertSound = "|cFF6080FFUnhalted|r: Time Spiral",
                 PowerInfusionAlert = false,
+                PowerInfusionAlertSound = "|cFF6080FFUnhalted|r: PI",
             }
         },
         VendorHelper = {

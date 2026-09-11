@@ -1,9 +1,14 @@
 local Private = select(2, ...)
 
 function Private:SetupPowerInfusionAlert()
-    local DB = Private.DB.global.QualityOfLife.Alerts.PowerInfusionAlert
+    local DB = Private.DB.global.QualityOfLife.Alerts
 
-    if not DB then if Private.PowerInfusionAlertContainer then Private.PowerInfusionAlertContainer:Hide() end return end
+    if Private.PowerInfusionAlertSound then
+        C_UnitAuras.RemoveAuraSound(Private.PowerInfusionAlertSound)
+        Private.PowerInfusionAlertSound = nil
+    end
+
+    if not DB.PowerInfusionAlert then if Private.PowerInfusionAlertContainer then Private.PowerInfusionAlertContainer:Hide() end return end
 
     if not Private.PowerInfusionAlertContainer then
         local AC = CreateFrame("AuraContainer", "PowerInfusionAlertContainer", UIParent, "CustomAuraContainerTemplate")
@@ -39,17 +44,18 @@ function Private:SetupPowerInfusionAlert()
         })
         AC:SetUnit("player")
         Private.PowerInfusionAlertContainer = AC
+    end
 
-        if not Private.PowerInfusionAlertSound then
-            Private.PowerInfusionAlertSound = C_UnitAuras.AddAuraSound(
-                Enum.UnitAuraSoundTrigger.Added, {
-                    unitToken = "player",
-                    spellID = 10060,
-                    soundFileName = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Sounds\\PowerInfusion.mp3",
-                    outputChannel = "Master",
-                }
-            )
-        end
+    if DB.PowerInfusionAlertSound ~= "None" then
+        local Sound = Private.LSM:Fetch("sound", DB.PowerInfusionAlertSound)
+        Private.PowerInfusionAlertSound = C_UnitAuras.AddAuraSound(
+            Enum.UnitAuraSoundTrigger.Added, {
+                unitToken = "player",
+                spellID = 10060,
+                soundFileName = Sound,
+                outputChannel = "Master",
+            }
+        )
     end
 
     Private.PowerInfusionAlertContainer:Show()

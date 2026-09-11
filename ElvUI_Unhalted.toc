@@ -18,6 +18,7 @@ Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Conditions.lua
 Modules/DamageMeter/Windows.lua
 
+Modules/QualityOfLife/Alerts/BloodlustAlert.lua
 Modules/QualityOfLife/Alerts/PowerInfusionAlert.lua
 Modules/QualityOfLife/Alerts/TimeSpiralAlert.lua
 

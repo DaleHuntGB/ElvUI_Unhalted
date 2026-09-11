@@ -427,10 +427,26 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)
     GUI.args.QualityOfLife.args.Alerts.inline = true
 
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert = ACH:Toggle("|T135939:18:18|t Power Infusion Alert", "Displays an alert when you receive Power Infusion. |cFFFFCC00An aura sound is played|r.", 1, nil, nil, "full", function() return DB.QualityOfLife.Alerts.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert = ACH:Toggle("|T135939:18:18|t Power Infusion Alert", nil, 1, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
     GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert = ACH:Toggle("|T4622479:18:18|t Time Spiral Alert", "Displays an alert when you receive Time Spiral. |cFFFFCC00An aura sound is played|r.", 2, nil, nil, "full", function() return DB.QualityOfLife.Alerts.TimeSpiralAlert end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlert = value Private:SetupTimeSpiralAlert() end)
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.relWidth = 0.5
+
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound = ACH:SharedMediaSound("Sound", "Power Infusion Alert Sound", 2, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlertSound end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlertSound = value Private:SetupPowerInfusionAlert() end, function() return not DB.QualityOfLife.Alerts.PowerInfusionAlert end)
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound.relWidth = 0.5
+
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert = ACH:Toggle("|T4622479:18:18|t Time Spiral Alert", nil, 3, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlert end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlert = value Private:SetupTimeSpiralAlert() end)
     GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.relWidth = 0.5
+
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound = ACH:SharedMediaSound("Sound", "Time Spiral Alert Sound", 4, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlertSound end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlertSound = value Private:SetupTimeSpiralAlert() end, function() return not DB.QualityOfLife.Alerts.TimeSpiralAlert end)
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound.relWidth = 0.5
+
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert = ACH:Toggle("|T136012:18:18|t Bloodlust Alert", nil, 5, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlert end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlert = value Private:SetupBloodlustAlert() end)
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert.relWidth = 0.5
+
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound = ACH:SharedMediaSound("Sound", "Bloodlust Alert Sound", 6, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlertSound end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlertSound = value Private:SetupBloodlustAlert() end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert end)
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound.relWidth = 0.5
 
     --#endregion
 

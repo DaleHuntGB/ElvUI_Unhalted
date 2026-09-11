@@ -1,9 +1,14 @@
 local Private = select(2, ...)
 
 function Private:SetupTimeSpiralAlert()
-    local DB = Private.DB.global.QualityOfLife.Alerts.TimeSpiralAlert
+    local DB = Private.DB.global.QualityOfLife.Alerts
 
-    if not DB then if Private.TimeSpiralAlertContainer then Private.TimeSpiralAlertContainer:Hide() end return end
+    if Private.TimeSpiralAlertSound then
+        C_UnitAuras.RemoveAuraSound(Private.TimeSpiralAlertSound)
+        Private.TimeSpiralAlertSound = nil
+    end
+
+    if not DB.TimeSpiralAlert then if Private.TimeSpiralAlertContainer then Private.TimeSpiralAlertContainer:Hide() end return end
 
     if not Private.TimeSpiralAlertContainer then
         local AC = CreateFrame("AuraContainer", "TimeSpiralAlertContainer", UIParent, "CustomAuraContainerTemplate")
@@ -39,17 +44,18 @@ function Private:SetupTimeSpiralAlert()
         })
         AC:SetUnit("player")
         Private.TimeSpiralAlertContainer = AC
+    end
 
-        if not Private.TimeSpiralAlertSound then
-            Private.TimeSpiralAlertSound = C_UnitAuras.AddAuraSound(
-                Enum.UnitAuraSoundTrigger.Added, {
-                    unitToken = "player",
-                    spellID = 375234,
-                    soundFileName = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Sounds\\TimeSpiral.mp3",
-                    outputChannel = "Master",
-                }
-            )
-        end
+    if DB.TimeSpiralAlertSound ~= "None" then
+        local Sound = Private.LSM:Fetch("sound", DB.TimeSpiralAlertSound)
+        Private.TimeSpiralAlertSound = C_UnitAuras.AddAuraSound(
+            Enum.UnitAuraSoundTrigger.Added, {
+                unitToken = "player",
+                spellID = 375234,
+                soundFileName = Sound,
+                outputChannel = "Master",
+            }
+        )
     end
 
     Private.TimeSpiralAlertContainer:Show()
