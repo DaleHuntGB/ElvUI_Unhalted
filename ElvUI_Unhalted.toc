@@ -13,7 +13,6 @@ Core/SharedMedia.lua
 Modules/AutoDelete.lua
 Modules/AutoSellGreys.lua
 Modules/AutoSignUp.lua
-Modules/BuffReminders.lua
 Modules/CombatAlert.lua
 Modules/CombatTimer.lua
 Modules/CVars.lua
@@ -23,6 +22,7 @@ Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Conditions.lua
 Modules/ElvUIEnhancements.lua
 Modules/LSToasts.lua
+Modules/MissingBuffs.lua
 Modules/PositionRaidWarningFrame.lua
 Modules/PowerInfusionAlert.lua
 Modules/ProfileManager.lua
