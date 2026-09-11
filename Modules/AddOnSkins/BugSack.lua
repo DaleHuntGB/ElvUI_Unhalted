@@ -28,6 +28,13 @@ function Private:SetupBugSack()
         Highlight:SetColorTexture(1, 1, 1, 0.15)
         Highlight:ClearAllPoints()
         Highlight:SetAllPoints(Button.icon)
+
+        Button:HookScript("OnEnter", function()
+            local Tooltip = DBIcon.tooltip
+            if not Tooltip:IsOwned(Button) then return end
+            Tooltip:ClearAllPoints()
+            Tooltip:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -2, -1)
+        end)
     end
 
     local Button = DBIcon:GetMinimapButton("BugSack")
