@@ -71,6 +71,17 @@ Private.ItemFilter = {
     [132514] = true -- Auto Hammer
 }
 
+Private.RaidBuffs = {
+    [6673] =  { spellIDs = { 6673 },  requiredClass = "WARRIOR" }, -- Battle Shout
+    [1459] =  { spellIDs = { 1459 },  requiredClass = "MAGE" },    -- Arcane Intellect
+    [21562] = { spellIDs = { 21562 }, requiredClass = "PRIEST" },  -- Power Word: Fortitude
+    [1126] =  { spellIDs = { 1126 },  requiredClass = "DRUID" },   -- Mark of the Wild
+    [381732] = { -- Blessing of the Bronze
+        spellIDs = { 381732, 381741, 381746, 381748, 381749, 381750, 381751, 381752, 381753, 381754, 381756, 381757, 381758 },
+        requiredClass = "EVOKER",
+    },
+}
+
 function Private:PromptReload()
     StaticPopupDialogs["RELOAD_UI"] = {
         text = "This change requires a reload to take effect, would you like to reload now?",
