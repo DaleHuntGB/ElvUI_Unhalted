@@ -51,7 +51,8 @@
         "ITEM_QUALITY4_DESC",
         "GridLayoutMixin",
         "class",
-        "RaidWarningFrame"
+        "RaidWarningFrame",
+        "INVSLOT_MAINHAND"
     ],
     "Lua.type.weakUnionCheck": true
 }

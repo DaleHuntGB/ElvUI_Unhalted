@@ -23,6 +23,7 @@ Modules/QualityOfLife/Alerts/TimeSpiralAlert.lua
 Modules/QualityOfLife/Toggles/AutoDelete.lua
 Modules/QualityOfLife/Toggles/AutoSellGreys.lua
 Modules/QualityOfLife/Toggles/AutoSignUp.lua
+Modules/QualityOfLife/Toggles/MissingPersonalBuffs.lua
 Modules/QualityOfLife/Toggles/MissingRaidBuffs.lua
 Modules/QualityOfLife/Toggles/PositionRaidWarningFrame.lua
 Modules/QualityOfLife/Toggles/RemoveBossBanner.lua
