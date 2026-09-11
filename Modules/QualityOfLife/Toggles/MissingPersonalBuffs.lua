@@ -49,7 +49,13 @@ local function CheckForMissingPersonalBuffs()
         local hasAura = false
 
         if auraType == "Oils" then
+            local specIndex = C_SpecializationInfo.GetSpecialization()
+            local specID = specIndex and C_SpecializationInfo.GetSpecializationInfo(specIndex)
+
             local enchantInfo = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_MAINHAND); hasAura = enchantInfo ~= nil
+            if auraInfo.dualWieldSpecIDs[specID] then
+                local offhandEnchantInfo = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_OFFHAND); hasAura = hasAura and (offhandEnchantInfo ~= nil)
+            end
         else
             for _, spellName in ipairs(auraInfo.spellNames) do
                 if C_UnitAuras.GetAuraDataBySpellName("player", spellName) then hasAura = true break end
@@ -77,8 +83,10 @@ end
 function Private:UpdateMissingPersonalBuffs()
     if Private.DB.global.QualityOfLife.Toggles.MissingPersonalBuffs then
         Private.MissingPersonalBuffFrame:RegisterUnitEvent("UNIT_AURA", "player")
-        Private.MissingPersonalBuffFrame:RegisterUnitEvent("PLAYER_DAMAGE_DONE_MODS", "player")
         Private.MissingPersonalBuffFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_ENCHANT_CHANGED")
+        Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_SLOT_CHANGED")
+        Private.MissingPersonalBuffFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
         Private.MissingPersonalBuffFrame:SetScript("OnEvent", function() CheckForMissingPersonalBuffs() end)
         CheckForMissingPersonalBuffs()
     else

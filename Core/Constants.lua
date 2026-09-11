@@ -86,7 +86,7 @@ Private.RaidBuffs = {
 Private.PersonalBuffs = {
     ["Food"] = { spellNames = { "Well Fed" }, iconID = 136000 },
     ["Flask"] = { spellNames = { "Flask of the Shattered Sun", "Flask of the Blood Knights", "Flask of the Magisters", "Flask of Thalassian Resistance" }, iconID = 7548903 },
-    ["Oils"] = { iconID = 7548987 }
+    ["Oils"] = { iconID = 7548987, dualWieldSpecIDs = { [259] = true, [260] = true, [261] = true, [263] = true, [72] = true } }
 }
 
 function Private:PromptReload()
