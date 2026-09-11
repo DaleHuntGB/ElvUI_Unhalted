@@ -177,3 +177,6 @@ LSM:Register("sound", "|cFF6080FFUnhalted|r: Torch", [[Interface\AddOns\ElvUI_Un
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Warning Siren", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\WarningSiren.ogg]])
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Water Drop", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\WaterDrop.ogg]])
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Xylophone", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\Xylophone.ogg]])
+LSM:Register("sound", "|cFF6080FFUnhalted|r: Apple Pay", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\ApplePay.mp3]])
+LSM:Register("sound", "|cFF6080FFUnhalted|r: Ding", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\Ding.mp3]])
+LSM:Register("sound", "|cFF6080FFUnhalted|r: Correct", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\Correct.mp3]])
