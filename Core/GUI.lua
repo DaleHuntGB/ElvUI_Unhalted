@@ -28,9 +28,9 @@ function Private:CreateGUI()
 
     GUI.args.AddOnSKins = ACH:Group("AddOn Skins", nil, 1)
     GUI.args.AddOnSKins.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\AddOnSkins.tga"
-    GUI.args.AddOnSKins.args.LSToasts = ACH:Toggle("LS: |cFF1CD3A2Toasts|r", "Add a custom skin for LS: |cFF1CD3A2Toasts|r.", 1, nil, nil, "full", function() return DB.AddOnSkins.LSToasts end, function(_, value) DB.AddOnSkins.LSToasts = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
+    GUI.args.AddOnSKins.args.LSToasts = ACH:Toggle("|TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|t LS: |cFF1CD3A2Toasts|r", "Add a custom skin for LS: |cFF1CD3A2Toasts|r.", 1, nil, nil, "full", function() return DB.AddOnSkins.LSToasts end, function(_, value) DB.AddOnSkins.LSToasts = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
     GUI.args.AddOnSKins.args.LSToasts.descStyle = "inline"
-    GUI.args.AddOnSKins.args.BugSack = ACH:Toggle("BugSack", "Skin the BugSack minimap icon with a square, 1px border.", 2, nil, nil, "full", function() return DB.AddOnSkins.BugSack end, function(_, value) DB.AddOnSkins.BugSack = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BugSack"))
+    GUI.args.AddOnSKins.args.BugSack = ACH:Toggle("|TInterface\\AddOns\\BugSack\\Media\\icon:16:16|t BugSack", "Skins the Bugsack Minimap icon to be more inline with the UI.", 2, nil, nil, "full", function() return DB.AddOnSkins.BugSack end, function(_, value) DB.AddOnSkins.BugSack = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BugSack"))
     GUI.args.AddOnSKins.args.BugSack.descStyle = "inline"
 
     --#endregion
