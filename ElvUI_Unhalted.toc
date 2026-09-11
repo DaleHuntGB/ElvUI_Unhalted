@@ -11,6 +11,7 @@ Core/GUI.lua
 Core/SharedMedia.lua
 
 Modules/AddOnSkins/LSToasts.lua
+Modules/AddOnSkins/BugSack.lua
 
 Modules/DamageMeter/Bars.lua
 Modules/DamageMeter/Core.lua

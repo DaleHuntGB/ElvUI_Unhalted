@@ -3,6 +3,7 @@ local Private = select(2, ...)
 local Defaults = {
     global = {
         AddOnSkins = {
+            BugSack = false,
             LSToasts = false,
         },
         CombatAlert = {

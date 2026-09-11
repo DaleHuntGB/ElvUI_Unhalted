@@ -30,6 +30,8 @@ function Private:CreateGUI()
     GUI.args.AddOnSKins.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\AddOnSkins.tga"
     GUI.args.AddOnSKins.args.LSToasts = ACH:Toggle("LS: |cFF1CD3A2Toasts|r", "Add a custom skin for LS: |cFF1CD3A2Toasts|r.", 1, nil, nil, "full", function() return DB.AddOnSkins.LSToasts end, function(_, value) DB.AddOnSkins.LSToasts = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
     GUI.args.AddOnSKins.args.LSToasts.descStyle = "inline"
+    GUI.args.AddOnSKins.args.BugSack = ACH:Toggle("BugSack", "Skin the BugSack minimap icon with a square, 1px border.", 2, nil, nil, "full", function() return DB.AddOnSkins.BugSack end, function(_, value) DB.AddOnSkins.BugSack = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BugSack"))
+    GUI.args.AddOnSKins.args.BugSack.descStyle = "inline"
 
     --#endregion
 
