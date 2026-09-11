@@ -56,7 +56,7 @@ local function CheckForMissingPersonalBuffs()
             end
         end
 
-        if not hasAura and IsInInstance() then
+        if not hasAura and Private.IsInRaidOrDungeon then
             MissingPersonalBuffs[auraType] = MissingPersonalBuffs[auraType] or CreateMissingPersonalBuff(auraType, auraInfo.iconID)
         elseif MissingPersonalBuffs[auraType] then
             HideMissingPersonalBuff(auraType)

@@ -7,6 +7,7 @@ Private.LSM = LibStub("LibSharedMedia-3.0")
 Private.AddOnName = C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Title")
 Private.E = unpack(ElvUI)
 Private.Distributor = Private.E:GetModule("Distributor")
+Private.IsInRaidOrDungeon = IsInInstance() and (select(2, IsInInstance()) == "raid" or select(2, IsInInstance()) == "party")
 Private.GUI = {}
 
 Private.AP = {
