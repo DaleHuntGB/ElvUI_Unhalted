@@ -134,7 +134,6 @@ LSM:Register("sound", "|cFF6080FFUnhalted|r: Face Towards", [[Interface\AddOns\E
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Axe", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\Axe.mp3]])
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Miasma", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\Miasma.mp3]])
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Time Spiral", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\TimeSpiral.mp3]])
-
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Acoustic Guitar", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\AcousticGuitar.ogg]])
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Air Horn", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\AirHorn.ogg]])
 LSM:Register("sound", "|cFF6080FFUnhalted|r: Applause", [[Interface\AddOns\ElvUI_Unhalted\Media\Sounds\Applause.ogg]])
