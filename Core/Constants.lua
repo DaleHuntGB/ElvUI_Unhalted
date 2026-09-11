@@ -152,3 +152,9 @@ end
 function Private:PrettyPrint(MSG)
     print(Private.AddOnName .. ": " .. MSG)
 end
+
+function Private:IsDeveloper()
+    local _, BTag = BNGetInfo()
+    local isDeveloper = BTag == "Unhalted#2639"
+    return isDeveloper
+end

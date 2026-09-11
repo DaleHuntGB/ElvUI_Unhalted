@@ -374,17 +374,16 @@ function Private:CreateGUI()
         Private.Distributor:ImportProfile(Private:ImportElvUI()["PRIVATE"])
         Private.Distributor:ImportProfile(Private:ImportElvUI()["GLOBAL"])
     end, nil, nil, "relative")
-    GUI.args.ProfileManager.args.ImportElvUI.relWidth = 0.5
+    GUI.args.ProfileManager.args.ImportElvUI.relWidth = 1
 
     GUI.args.ProfileManager.args.ImportSkironCooldownManager = ACH:Execute("Import |TInterface\\AddOns\\SkironCooldownManager\\Media\\Logo.png:16:16|t|cFF4080FFSkiron|r|cFFFFFFFFCooldownManager|r", nil, 2, function() SCMAPI.ImportProfile("UnhaltedUI", Private:ImportSkironCooldownManager()) end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("SkironCooldownManager"))
-    GUI.args.ProfileManager.args.ImportSkironCooldownManager.relWidth = 0.5
+    GUI.args.ProfileManager.args.ImportSkironCooldownManager.relWidth = 1
 
     GUI.args.ProfileManager.args.ImportLSToasts = ACH:Execute("Import |TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|tLS: |cFF1CD3A2Toasts|r", "|cFFCC4040overwrites the default profile|r.", 3, function() Private:ImportLSToasts() if not DB.AddOnSkins.LSToasts == true then DB.AddOnSkins.LSToasts = true end Private:PromptReload() end, nil, true, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
     GUI.args.ProfileManager.args.ImportLSToasts.relWidth = 0.5
     GUI.args.ProfileManager.args.ImportLSToasts.descStyle = "inline"
 
-
-    GUI.args.ProfileManager.args.ExportLSToasts = ACH:Execute("Export |TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|tLS: |cFF1CD3A2Toasts|r", nil, 4, function() Private:ExportLSToasts() end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
+    GUI.args.ProfileManager.args.ExportLSToasts = ACH:Execute("Export |TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|tLS: |cFF1CD3A2Toasts|r", nil, 4, function() Private:ExportLSToasts() end, nil, nil, "relative", nil, nil, (not C_AddOns.IsAddOnLoaded("ls_Toasts") or not Private:IsDeveloper()))
     GUI.args.ProfileManager.args.ExportLSToasts.relWidth = 0.5
     GUI.args.ProfileManager.args.ExportLSToasts.descStyle = "inline"
 
