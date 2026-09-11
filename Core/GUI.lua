@@ -435,6 +435,7 @@ function Private:CreateGUI()
     --#endregion
 
     --#region - Mouse Cursor
+
     GUI.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 5)
     GUI.args.MouseCursor.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\MouseCursor.tga"
 
