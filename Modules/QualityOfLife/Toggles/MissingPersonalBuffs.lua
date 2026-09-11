@@ -45,6 +45,13 @@ local function LayoutMissingPersonalBuffs()
 end
 
 local function CheckForMissingPersonalBuffs()
+    local _, _, DifficultyID = GetInstanceInfo()
+    if not Private.InstanceIDs[DifficultyID] then
+        for auraType in pairs(MissingPersonalBuffs) do HideMissingPersonalBuff(auraType) end
+        Private.MissingPersonalBuffFrame:Hide()
+        return
+    end
+
     for auraType, auraInfo in pairs(Private.PersonalBuffs) do
         local hasAura = false
 
@@ -62,7 +69,7 @@ local function CheckForMissingPersonalBuffs()
             end
         end
 
-        if not hasAura and Private.IsInRaidOrDungeon then
+        if not hasAura then
             MissingPersonalBuffs[auraType] = MissingPersonalBuffs[auraType] or CreateMissingPersonalBuff(auraType, auraInfo.iconID)
         elseif MissingPersonalBuffs[auraType] then
             HideMissingPersonalBuff(auraType)

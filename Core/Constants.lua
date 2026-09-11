@@ -7,8 +7,19 @@ Private.LSM = LibStub("LibSharedMedia-3.0")
 Private.AddOnName = C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Title")
 Private.E = unpack(ElvUI)
 Private.Distributor = Private.E:GetModule("Distributor")
-Private.IsInRaidOrDungeon = IsInInstance() and (select(2, IsInInstance()) == "raid" or select(2, IsInInstance()) == "party")
+
 Private.GUI = {}
+
+-- Difficulty IDs returned by GetInstanceInfo.
+Private.InstanceIDs = {
+    [1] = true, -- Normal Dungeon
+    [2] = true, -- Heroic Dungeon
+    [8] = true, -- Mythic+ Dungeon
+    [23] = true, -- Mythic Dungeon
+    [14] = true, -- Normal Raid
+    [15] = true, -- Heroic Raid
+    [16] = true, -- Mythic Raid
+}
 
 Private.AP = {
     ["TOPLEFT"] = "TOPLEFT",
