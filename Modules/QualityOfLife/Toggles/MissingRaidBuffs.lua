@@ -67,7 +67,7 @@ local function FetchGroupMemberClasses()
     wipe(ClassesInGroup)
 
     local _, playerClass = UnitClass("player")
-    ClassesInGroup[playerClass] = true
+    if not issecretvalue(playerClass) and playerClass then ClassesInGroup[playerClass] = true end
 
     local inRaid = IsInRaid()
     local numGroupMembers = inRaid and GetNumGroupMembers() or GetNumSubgroupMembers()
@@ -75,7 +75,7 @@ local function FetchGroupMemberClasses()
         local unit = (inRaid and "raid" or "party") .. i
         if UnitExists(unit) then
             local _, unitClass = UnitClass(unit)
-            ClassesInGroup[unitClass] = true
+            if not issecretvalue(unitClass) and unitClass then ClassesInGroup[unitClass] = true end
         end
     end
 end
@@ -94,7 +94,14 @@ function Private:UpdateMissingRaidBuffs()
         Private.MissingRaidBuffFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Private.MissingRaidBuffFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
         Private.MissingRaidBuffFrame:RegisterEvent("GROUP_JOINED")
-        Private.MissingRaidBuffFrame:SetScript("OnEvent", function(_, event) if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" or event == "GROUP_JOINED" then FetchGroupMemberClasses() end CheckForMissingRaidBuffs() end)
+        Private.MissingRaidBuffFrame:RegisterEvent("UNIT_NAME_UPDATE")
+        Private.MissingRaidBuffFrame:SetScript("OnEvent", function(_, event, unit)
+            if event == "UNIT_NAME_UPDATE" then
+                if issecretvalue(unit) or not (unit == "player" or unit:match("^party%d+$") or unit:match("^raid%d+$")) then return end
+            end
+            if event ~= "UNIT_AURA" then FetchGroupMemberClasses() end
+            CheckForMissingRaidBuffs()
+        end)
         FetchGroupMemberClasses()
         CheckForMissingRaidBuffs()
     else
