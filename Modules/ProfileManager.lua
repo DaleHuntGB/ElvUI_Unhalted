@@ -62,3 +62,38 @@ function Private:ImportLSToasts()
     Private:PrettyPrint("Imported |TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|tLS: |cFF1CD3A2Toasts|r successfully.")
     Private:PromptReload()
 end
+
+function Private:ExportWarpDeplete()
+    local Profile = WarpDepleteDB["profiles"]["Default"]
+
+    local serializedData = C_EncodingUtil.SerializeCBOR(Profile)
+	local compressedData = C_EncodingUtil.CompressString(serializedData, Enum.CompressionMethod.Deflate, Enum.CompressionLevel.OptimizeForSize)
+	local encodedData = C_EncodingUtil.EncodeBase64(compressedData)
+
+    StaticPopupDialogs["PROFILE_EXPORT"] = {
+        text = "Export Profile:",
+        button1 = CLOSE,
+        hasEditBox = true,
+        hasWideEditBox = true,
+        OnShow = function(Self, Data)
+            Self.EditBox:SetMaxLetters(0)
+            Self.EditBox:SetText(encodedData)
+            Self.EditBox:HighlightText()
+            Self.EditBox:SetFocus()
+        end,
+        EditBoxOnEscapePressed = function(Self) Self:GetParent():Hide() end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+    StaticPopup_Show("PROFILE_EXPORT")
+end
+
+function Private:ImportWarpDeplete()
+    local compressedData = C_EncodingUtil.DecodeBase64("jVXLbttGFIXrdmMEKRB00aAbLbpIkAINZaEIDBSBbYnWgw+JpGEFXY3IoTj1aEaZGdqWF+13NNv0I7prgX5Ev6OAukk2nQcpkRJdlAIEzNyZ+zjn3Du//RDEORd0YVMWQy7/F0AMTpZQrog48WaA2ZQIP005FG8Ow2u46kIBEOZq28Zgzl3/MnIGXu+bVuhcXozkCWUK0T38vC+vt9VqbDN035rkIGFAgFYUudJy/IALPy1yabROBFpAFuaxPMLPKaasb8uve3z8yinD6eCuPlgun4yl0YrgncgZNNfS9DvrlZWmrolX2CZnGN3fA5a0AoCS1hlg0QzE1wmjy53b1kz9xjyjtxGlWKDlOc2JWA9lpDFIEkTmH1///Yv63jkFLA0FOWkz9MqvYeUC09u1CzCaE5WOzIL3GJpnwi0LbnDr3UAmUAyw4e5g+qUhupqqiRm9OInV6qT1bWsT3k4ZWMDph99//udQXqWLJYYCJv7sRxgLdAN5iULHipOONYlzxuS9cY6x8eo8e7Fx9jyo68aIQ+6VTszXL0WxJ5dRhbx9gsJ0A1OUofiaSGV8Upfu9HD6FSJcQjKCKwkDgae5BANohPBq7SVwQStoK7UcN6pF8x0uMRIBjClL+ECDl9Bb4tENOo1VVPK0GXybQxKvPr7+4/1fR98vfx1s5Lp378owd/6fEBvC3nz486f0TsHVfhCu6deqBBdhjLgsgST8KoOkm5M5pOS8ZHrt1Tnby8qnO1qwi2+kMzklcSY3I38cDC76UVDHRivAM5Kmso8xBKzHBWDCTSAQmUPnoVhh2NPgDvVecxojA2o9BZcrgniPgBmWpfgaW1l6IYbPJgqBrnZa9MPa38Z4cOr07paIwWQbq33a7jm63KLhvxjqVShVBQ8ulQQrxjMqJI1Hl6mUnJopWkVnMAM3iLIukaL0twopg3Sttm11gh1XEV1+GpnDvmx0DFYF3b2QYpRUlOYgAnWzPxmZCutIBeL/zQM1W60Nc+OKf0jmIjtyyt7V9oFc9aEaUY8mvNIrZSvFifpF2mQDLiCLJL71kRJtho5dYThNX75M03bnohioe3rol4nuWaZPmwCrd/eo0vf7nePvvAT7J7ytihQQj0yJocSpXqIqsGMFtZdnZ85UerhuMVoMckKkEOpsDrdP51753tZmONx2pGmLQ28zgho6wC1xbbANdSNXHiZ/OzvqIz6sj4EGX4q/K5SI7OnB438B")
+    local serializedData = C_EncodingUtil.DecompressString(compressedData, Enum.CompressionMethod.Deflate)
+    local importedData = C_EncodingUtil.DeserializeCBOR(serializedData)
+    WarpDepleteDB["profiles"]["Default"] = importedData
+    Private:PrettyPrint("Imported |TInterface\\AddOns\\WarpDeplete\\logo:16:16|tWarpDeplete successfully.")
+    Private:PromptReload()
+end

@@ -370,6 +370,14 @@ function Private:CreateGUI()
     GUI.args.ProfileManager.args.ImportBaganator = ACH:Execute("Import |TInterface\\AddOns\\Baganator\\Assets\\logo.tga:16:16|tBaganator", nil, 6, function() Baganator.API.ImportString(Private:ImportBaganator(), "Default") end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("Baganator"))
     GUI.args.ProfileManager.args.ImportBaganator.relWidth = 1
 
+    GUI.args.ProfileManager.args.ImportWarpDeplete = ACH:Execute("Import |TInterface\\AddOns\\WarpDeplete\\logo:16:16|tWarpDeplete", "|cFFCC4040overwrites the default profile|r.", 7, function() Private:ImportWarpDeplete() if not DB.AddOnSkins.WarpDeplete == true then DB.AddOnSkins.WarpDeplete = true end Private:PromptReload() end, nil, true, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
+    GUI.args.ProfileManager.args.ImportWarpDeplete.relWidth = 0.5
+    GUI.args.ProfileManager.args.ImportWarpDeplete.descStyle = "inline"
+
+    GUI.args.ProfileManager.args.ExportWarpDeplete = ACH:Execute("Export |TInterface\\AddOns\\WarpDeplete\\logo:16:16|tWarpDeplete", nil, 8, function() Private:ExportWarpDeplete() end, nil, nil, "relative", nil, nil, (not C_AddOns.IsAddOnLoaded("WarpDeplete") or not Private:IsDeveloper()))
+    GUI.args.ProfileManager.args.ExportWarpDeplete.relWidth = 0.5
+    GUI.args.ProfileManager.args.ExportWarpDeplete.descStyle = "inline"
+
     --#endregion
 
     --#region - Quality Of Life
