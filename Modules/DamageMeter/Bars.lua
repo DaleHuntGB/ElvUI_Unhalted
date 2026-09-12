@@ -2,10 +2,17 @@ local Private = select(2, ...)
 
 local function Bar_OnEnter(DMBar)
     DMBar.Highlight:Show()
+
+    GameTooltip:SetOwner(DMBar:GetParent().TitleBar, "ANCHOR_NONE")
+    GameTooltip:SetPoint("BOTTOMRIGHT", DMBar:GetParent().TitleBar, "TOPRIGHT", 0, 1)
+    GameTooltip:ClearLines()
+    GameTooltip:AddDoubleLine("Left-Click: ", "Show Breakdown", 0.6, 0.6, 0.6, 1, 1, 1)
+    GameTooltip:Show()
 end
 
 local function Bar_OnLeave(DMBar)
     DMBar.Highlight:Hide()
+    GameTooltip:Hide()
 end
 
 local function Bar_OnClick(DMBar, Button)
@@ -30,7 +37,6 @@ function Private:Drilldown(DMBar)
     end
 
     if issecretvalue(DataSource.sourceGUID) or issecretvalue(DataSource.sourceCreatureID) then return end
-
     local SessionSource;
 
     if DMFrame.EncounterSegment then
