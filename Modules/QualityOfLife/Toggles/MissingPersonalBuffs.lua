@@ -60,6 +60,7 @@ local function CheckForMissingPersonalBuffs()
 
     for auraType, auraInfo in pairs(Private.PersonalBuffs) do
         local hasAura = false
+        local canCheck = true
 
         if auraType == "Oils" then
             local specIndex = C_SpecializationInfo.GetSpecialization()
@@ -68,6 +69,28 @@ local function CheckForMissingPersonalBuffs()
             local enchantInfo = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_MAINHAND); hasAura = enchantInfo ~= nil
             if auraInfo.dualWieldSpecIDs[specID] then
                 local offhandEnchantInfo = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_OFFHAND); hasAura = hasAura and (offhandEnchantInfo ~= nil)
+            end
+        elseif auraType == "Source of Magic" then
+            canCheck = C_Spell.IsSpellKnown(369459) and not C_Secrets.ShouldSpellAuraBeSecret(369459)
+            local healerIsPresent = false
+            if canCheck then
+                local inRaid = IsInRaid()
+                local groupMembers = GetNumGroupMembers()
+                for i = 1, groupMembers do
+                    local unit = inRaid and ("raid" .. i) or (i == 1 and "player" or ("party" .. (i - 1)))
+                    if UnitExists(unit) then
+                        local unitRole = UnitGroupRolesAssigned(unit)
+                        if not issecretvalue(unitRole) and unitRole == "HEALER" then healerIsPresent = true break end
+                    end
+                end
+            end
+            canCheck = canCheck and healerIsPresent
+            if canCheck then
+                local auraData = C_UnitAuras.GetPlayerAuraBySpellID(369459)
+                if issecretvalue(auraData) then canCheck = false
+                else
+                    hasAura = auraData ~= nil
+                end
             end
         else
             for _, spellName in ipairs(auraInfo.spellNames) do
@@ -84,7 +107,7 @@ local function CheckForMissingPersonalBuffs()
             end
         end
 
-        if hasAura == false then
+        if canCheck and not hasAura then
             MissingPersonalBuffs[auraType] = MissingPersonalBuffs[auraType] or CreateMissingPersonalBuff(auraType, auraInfo.iconID)
         elseif MissingPersonalBuffs[auraType] then
             HideMissingPersonalBuff(auraType)
@@ -105,6 +128,9 @@ end
 function Private:UpdateMissingPersonalBuffs()
     if Private.DB.global.QualityOfLife.Toggles.MissingPersonalBuffs then
         Private.MissingPersonalBuffFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        Private.MissingPersonalBuffFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+        Private.MissingPersonalBuffFrame:RegisterEvent("PLAYER_ROLES_ASSIGNED")
+        Private.MissingPersonalBuffFrame:RegisterEvent("SPELLS_CHANGED")
         Private.MissingPersonalBuffFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_ENCHANT_CHANGED")
         Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_SLOT_CHANGED")
