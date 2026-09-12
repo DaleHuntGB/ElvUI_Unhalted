@@ -54,7 +54,9 @@
         "RaidWarningFrame",
         "INVSLOT_MAINHAND",
         "INVSLOT_OFFHAND",
-        "RunNextFrame"
+        "RunNextFrame",
+        "LFGDungeonReadyDialog",
+        "DEFAULT_CHAT_FRAME"
     ],
     "Lua.type.weakUnionCheck": true
 }
