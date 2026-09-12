@@ -20,7 +20,7 @@ local function CreateMissingPersonalBuff(auraName, auraIcon)
     Frame.Text:SetPoint("CENTER", Frame, "CENTER", 0, 0)
     Frame.Text:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE, SLUG")
     Frame.Text:SetTextColor(1, 1, 1, 1)
-    Frame.Text:SetText(auraName)
+    Frame.Text:SetText((auraName == "Source of Magic" and "Source\nOf\nMagic") or (auraName == "Oils" and "Weapon\nOil") or auraName)
 
     Frame:Show()
 
