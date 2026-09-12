@@ -229,6 +229,7 @@ local PerSecondMeterTypes = {
 -- The same sample names and classes used by Blizzard's Damage Meter in Edit Mode
 -- https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_DamageMeter/DamageMeterSessionWindow.lua#L76-L89
 local TestSources = {
+    { name = UnitName("player"), classFilename = select(2, UnitClass("player")) },
     { name = DAMAGE_METER_EDIT_MODE_SOURCE_1, classFilename = "DEATHKNIGHT" },
     { name = DAMAGE_METER_EDIT_MODE_SOURCE_2, classFilename = "MAGE" },
     { name = DAMAGE_METER_EDIT_MODE_SOURCE_3, classFilename = "WARLOCK" },
