@@ -21,7 +21,13 @@ function Private:Drilldown(DMBar)
     local Popup = Private.DamageMeterDrilldown
 
     if Popup then Popup:Hide() end
-    if Private.DamageMeterTestMode or not DataSource or not C_DamageMeter.IsDamageMeterAvailable() or DB.MeterType == Enum.DamageMeterType.Deaths then return end
+    if Private.DamageMeterTestMode or not DataSource or not C_DamageMeter.IsDamageMeterAvailable() then return end
+
+    if DB.MeterType == Enum.DamageMeterType.Deaths then
+        local RecapID = DataSource.deathRecapID
+        if not issecretvalue(RecapID) and RecapID and RecapID ~= 0 then OpenDeathRecapUI(RecapID) end
+        return
+    end
 
     if issecretvalue(DataSource.sourceGUID) or issecretvalue(DataSource.sourceCreatureID) then return end
 
