@@ -1,36 +1,5 @@
 local Private = select(2, ...)
 
---[[
-	-- Gameplay > Interface > Nameplates > Names
-	SetCVar('UnitNameOwn', 1)
-	SetCVar('UnitNameFriendlySpecialNPCName', 1)
-	SetCVar('ShowQuestUnitCircles', 0)
-	SetCVar('UnitNameNPC', 1)
-	SetCVar('UnitNameNonCombatCreatureName', 0)
-	SetCVar('UnitNameFriendlyPlayerName', 1)
-	SetCVar('UnitNameFriendlyPetName', 0)
-	SetCVar('UnitNameFriendlyGuardianName', 0)
-	SetCVar('UnitNameFriendlyTotemName', 0)
-	SetCVar('UnitNameFriendlyMinionName', 0)
-
-	-- Gameplay > Interface > Nameplates > Nameplates
-	SetCVar('nameplateShowAll', 1)
-	SetCVar('NamePlateClassificationScale', 1)
-	SetCVar('nameplateShowEnemies', 1)
-	SetCVar('nameplateShowEnemyPets', 1)
-	SetCVar('nameplateShowEnemyGuardians', 1)
-	SetCVar('nameplateShowEnemyTotems', 1)
-	SetCVar('nameplateShowEnemyMinions', 1)
-	SetCVar('nameplateShowEnemyMinus', 1)
-	SetCVar('nameplateShowFriends', 0)
-	SetCVar('nameplateShowFriendlyPets', 0)
-	SetCVar('nameplateShowFriendlyGuardians', 0)
-	SetCVar('nameplateShowFriendlyTotems', 0)
-	SetCVar('nameplateShowFriendlyMinions', 0)
-	SetCVar('nameplateShowOffscreen', 0)
-	SetCVar('ShowNamePlateLoseAggroFlash', 0)
-]]
-
 function Private:SetupCVars()
     if not Private.DB.global.CVars.SyncCVars then return end
     -- Toggles
