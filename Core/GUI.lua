@@ -163,7 +163,8 @@ function Private:CreateGUI()
     GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3.5, "tab")
     GUI.args.DamageMeter.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\DamageMeter.tga"
 
-    GUI.args.DamageMeter.args.AutoResetOnMythicPlus = ACH:Toggle("Auto Reset on Mythic+ Start", nil, 1, nil, nil, "relative", function() return DB.DamageMeter.AutoResetOnMythicPlus end, function(_, value) DB.DamageMeter.AutoResetOnMythicPlus = value Private:UpdateDamageMeter() end)
+    GUI.args.DamageMeter.args.AutoResetOnMythicPlus = ACH:Toggle("Auto Reset: Start of Mythic+", nil, 1, nil, nil, "relative", function() return DB.DamageMeter.AutoResetOnMythicPlus end, function(_, value) DB.DamageMeter.AutoResetOnMythicPlus = value Private:UpdateDamageMeter() end)
+    GUI.args.DamageMeter.args.AutoResetOnMythicPlus.descStyle = "inline"
     GUI.args.DamageMeter.args.AutoResetOnMythicPlus.relWidth = 0.5
     GUI.args.DamageMeter.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DamageMeterTestMode end, function(_, value) Private:SetDamageMeterTestMode(value) end)
     GUI.args.DamageMeter.args.TestMode.relWidth = 0.5
