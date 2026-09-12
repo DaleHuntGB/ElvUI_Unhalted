@@ -103,6 +103,43 @@ local Defaults = {
                     ColourByClass = false,
                 }
             },
+            [3] = {
+                Enabled = false,
+                ShowBackdrop = true,
+                Size = {454, 60},
+                Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -1, 177},
+                BackgroundColour = {20/255, 20/255, 20/255, 1 },
+                MeterType = Enum.DamageMeterType.Deaths,
+                SessionType = Enum.DamageMeterSessionType.Current,
+                TitleBar = {
+                    Enabled = true,
+                    Height = 24,
+                    Layout = {"LEFT", "LEFT", 3, 0},
+                    Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
+                    Colour = { 1, 1, 1, 1 },
+                    Icons = {
+                        ResetButton = true,
+                        EncountersButton = true,
+                    }
+                },
+                Rows = {
+                    Num = 2,
+                    Spacing = 1,
+                    Texture = "Blizzard Raid Bar",
+                },
+                Name = {
+                    Layout = {"LEFT", "LEFT", 3, 0},
+                    Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
+                    Colour = { 1, 1, 1, 1 },
+                    ColourByClass = false,
+                },
+                Amount = {
+                    Layout = {"RIGHT", "RIGHT", -3, 0},
+                    Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
+                    Colour = { 1, 1, 1, 1 },
+                    ColourByClass = false,
+                }
+            },
         },
         ElvUIEnhancements = {
             ForceAlphaOnLootRoll = false,
