@@ -1,5 +1,16 @@
 local Private = select(2, ...)
 
+local function UpdateTitleBarButtons(DMTitleBar)
+    local DB = DMTitleBar:GetParent().DB.TitleBar
+    local ShowButtons = not DB.MouseoverIcons or DMTitleBar:IsMouseOver()
+    if DMTitleBar.ResetButton then DMTitleBar.ResetButton:SetShown(DB.Icons.ResetButton and ShowButtons) end
+    if DMTitleBar.EncountersButton then DMTitleBar.EncountersButton:SetShown(DB.Icons.EncountersButton and ShowButtons) end
+end
+
+local function TitleBarButton_OnHover(Button)
+    UpdateTitleBarButtons(Button:GetParent())
+end
+
 local function TitleBar_OnEnter(DMTitleBar)
     DMTitleBar:SetBackdropColor(0.3, 0.3, 0.3, 1)
     GameTooltip:SetOwner(DMTitleBar, "ANCHOR_NONE")
@@ -9,11 +20,15 @@ local function TitleBar_OnEnter(DMTitleBar)
     GameTooltip:AddDoubleLine("Right-Click: ", "Open Menu", 0.6, 0.6, 0.6, 1, 1, 1)
     GameTooltip:AddDoubleLine("Middle-Click: ", "Reset", 0.6, 0.6, 0.6, 1, 1, 1)
     GameTooltip:Show()
+
+    UpdateTitleBarButtons(DMTitleBar)
 end
 
 local function TitleBar_OnLeave(DMTitleBar)
-    DMTitleBar:SetBackdropColor(unpack(Private.DB.global.DamageMeter[1].BackgroundColour))
+    DMTitleBar:SetBackdropColor(unpack(DMTitleBar:GetParent().DB.BackgroundColour))
     GameTooltip:Hide()
+
+    UpdateTitleBarButtons(DMTitleBar)
 end
 
 local function DamageMeterMenu(DMFrame, rootDescription)
@@ -80,6 +95,7 @@ function Private:CreateDamageMeter(DMFrameName, DB)
     DM.TitleBar:EnableMouse(true)
     DM.TitleBar:SetScript("OnEnter", TitleBar_OnEnter)
     DM.TitleBar:SetScript("OnLeave", TitleBar_OnLeave)
+    DM.TitleBar:SetScript("OnShow", UpdateTitleBarButtons)
     DM.TitleBar:SetScript("OnMouseDown", TitleBar_OnClick)
 
     DM.Title = DM.TitleBar:CreateFontString(nil, "OVERLAY")
@@ -92,7 +108,8 @@ function Private:CreateDamageMeter(DMFrameName, DB)
     DM.TitleBar.ResetButton:SetNormalTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset.png")
     DM.TitleBar.ResetButton:SetHighlightTexture("Interface\\AddOns\\ElvUI_Unhalted\\Media\\DamageMeter\\Reset_Highlight.png", "BLEND")
     DM.TitleBar.ResetButton:SetScript("OnClick", function() C_DamageMeter.ResetAllCombatSessions() end)
-    DM.TitleBar.ResetButton:SetShown(DB.TitleBar.Icons.ResetButton)
+    DM.TitleBar.ResetButton:SetScript("OnEnter", TitleBarButton_OnHover)
+    DM.TitleBar.ResetButton:SetScript("OnLeave", TitleBarButton_OnHover)
 
     DM.TitleBar.EncountersButton = CreateFrame("Button", nil, DM.TitleBar)
     DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
@@ -105,7 +122,8 @@ function Private:CreateDamageMeter(DMFrameName, DB)
         Menu.PopulateDescription(EncounterMenu, DM, RootDescription)
         Menu.GetManager():OpenMenu(Button, RootDescription, AnchorUtil.CreateAnchor("BOTTOMRIGHT", DM.TitleBar, "TOPRIGHT", 1, -4))
     end)
-    DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.Icons.EncountersButton)
+    DM.TitleBar.EncountersButton:SetScript("OnEnter", TitleBarButton_OnHover)
+    DM.TitleBar.EncountersButton:SetScript("OnLeave", TitleBarButton_OnHover)
 
     Private:LayoutDamageMeter(DM, DB)
 
@@ -168,16 +186,15 @@ function Private:LayoutDamageMeter(DM, DB)
         DM.TitleBar.ResetButton:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
         DM.TitleBar.ResetButton:ClearAllPoints()
         DM.TitleBar.ResetButton:SetPoint("RIGHT", DM.TitleBar, "RIGHT", -3, 0)
-        DM.TitleBar.ResetButton:SetShown(DB.TitleBar.Icons.ResetButton)
     end
 
     if DM.TitleBar.EncountersButton then
         DM.TitleBar.EncountersButton:SetSize(DB.TitleBar.Height * 0.5, DB.TitleBar.Height * 0.7)
         DM.TitleBar.EncountersButton:ClearAllPoints()
         DM.TitleBar.EncountersButton:SetPoint("RIGHT", DM.TitleBar.ResetButton, "LEFT", -3, 0)
-        DM.TitleBar.EncountersButton:SetShown(DB.TitleBar.Icons.EncountersButton)
     end
 
+    UpdateTitleBarButtons(DM.TitleBar)
     Private:LayoutDamageMeterBars(DM, DB)
 end
 

@@ -209,10 +209,12 @@ function Private:CreateGUI()
         Window.args.TitleBar.args.Icons = ACH:Group("Icons", nil, 1)
         Window.args.TitleBar.args.Icons.inline = true
         Window.args.TitleBar.args.Icons.disabled = function() return not DMDB.Enabled or not DMDB.TitleBar.Enabled end
+        Window.args.TitleBar.args.Icons.args.MouseoverIcons = ACH:Toggle("Mouseover Icons", nil, 0, nil, nil, "relative", function() return DMDB.TitleBar.MouseoverIcons end, function(_, value) DMDB.TitleBar.MouseoverIcons = value Private:UpdateDamageMeter() end)
+        Window.args.TitleBar.args.Icons.args.MouseoverIcons.relWidth = 0.33
         Window.args.TitleBar.args.Icons.args.ResetButton = ACH:Toggle("Reset Button", nil, 1, nil, nil, "relative", function() return DMDB.TitleBar.Icons.ResetButton end, function(_, value) DMDB.TitleBar.Icons.ResetButton = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Icons.args.ResetButton.relWidth = 0.5
+        Window.args.TitleBar.args.Icons.args.ResetButton.relWidth = 0.33
         Window.args.TitleBar.args.Icons.args.EncountersButton = ACH:Toggle("Encounters Button", nil, 2, nil, nil, "relative", function() return DMDB.TitleBar.Icons.EncountersButton end, function(_, value) DMDB.TitleBar.Icons.EncountersButton = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Icons.args.EncountersButton.relWidth = 0.5
+        Window.args.TitleBar.args.Icons.args.EncountersButton.relWidth = 0.33
 
         Window.args.TitleBar.args.Layout = ACH:Group("Layout", nil, 2)
         Window.args.TitleBar.args.Layout.inline = true
