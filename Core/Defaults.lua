@@ -4,7 +4,6 @@ local Defaults = {
     global = {
         AddOnSkins = {
             BigWigs = false,
-            BigWigsHideAutomationMessages = false,
             BugSack = false,
             LSToasts = false,
         },

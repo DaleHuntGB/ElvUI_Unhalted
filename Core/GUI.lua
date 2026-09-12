@@ -36,9 +36,6 @@ function Private:CreateGUI()
     GUI.args.AddOnSKins.args.BigWigs = ACH:Toggle("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|t BigWigs", "Skins Queue Timer & Keys Panel.", 3, nil, nil, "full", function() return DB.AddOnSkins.BigWigs end, function(_, value) DB.AddOnSkins.BigWigs = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
     GUI.args.AddOnSKins.args.BigWigs.descStyle = "inline"
 
-    GUI.args.AddOnSKins.args.BigWigsHideAutomationMessages = ACH:Toggle("Hide BigWigs Automation Messages", "Hides keystone insertion and NPC interaction notices without disabling the automation.", 4, nil, nil, "full", function() return DB.AddOnSkins.BigWigsHideAutomationMessages end, function(_, value) DB.AddOnSkins.BigWigsHideAutomationMessages = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
-    GUI.args.AddOnSKins.args.BigWigsHideAutomationMessages.descStyle = "inline"
-
     --#endregion
 
     --#region - Combat Alert
