@@ -29,6 +29,18 @@ function Private:SetupBugSack()
         Highlight:ClearAllPoints()
         Highlight:SetAllPoints(Button.icon)
 
+        DBIcon:Lock("BugSack")
+        Button:ClearAllPoints()
+        Button:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -1, -1)
+        Button:SetMovable(false)
+        Button:SetSize(18, 18)
+
+        hooksecurefunc(Button, "SetPoint", function(_, Point, RelativeTo, RelativePoint, X, Y)
+            if Point == "TOPRIGHT" and RelativeTo == Minimap and RelativePoint == "TOPRIGHT" and X == -1 and Y == -1 then return end
+            Button:ClearAllPoints()
+            Button:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -1, -1)
+        end)
+
         Button:HookScript("OnEnter", function()
             local Tooltip = DBIcon.tooltip
             if not Tooltip:IsOwned(Button) then return end
@@ -41,10 +53,6 @@ function Private:SetupBugSack()
 
     if Button then
         SkinButton(Button)
-        Button:ClearAllPoints()
-        Button:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -1, -1)
-        Button:SetMovable(false)
-        Button:SetSize(18, 18)
     else
         DBIcon.RegisterCallback(Private, "LibDBIcon_IconCreated", function(_, CreatedButton, Name)
             if Name ~= "BugSack" then return end
