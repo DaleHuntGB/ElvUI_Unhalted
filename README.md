@@ -1,5 +1,8 @@
 # ElvUI: Unhalted
 
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://kofi.com/unhalted)
+[![Patreon](https://img.shields.io/badge/Patreon-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/c/Unhalted)
+
 Plugin for ElvUI, built specifically for my UI. It adds quality of life features, custom displays, and enhancements to the ElvUI suite.
 
 Requires ElvUI. Configure the plugin under **UnhaltedUI** in ElvUI's options. Supported addons must be installed separately to use their skins and profile imports.
