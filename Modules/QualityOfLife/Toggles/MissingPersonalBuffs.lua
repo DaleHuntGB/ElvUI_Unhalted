@@ -16,6 +16,12 @@ local function CreateMissingPersonalBuff(auraName, auraIcon)
     Frame.Icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
     Frame.Icon:SetDesaturated(true)
 
+    Frame.Text = Frame:CreateFontString(nil, "OVERLAY")
+    Frame.Text:SetPoint("CENTER", Frame, "CENTER", 0, 0)
+    Frame.Text:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE, SLUG")
+    Frame.Text:SetTextColor(1, 1, 1, 1)
+    Frame.Text:SetText(auraName)
+
     Frame:Show()
 
     return Frame

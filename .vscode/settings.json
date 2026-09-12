@@ -57,7 +57,8 @@
         "RunNextFrame",
         "LFGDungeonReadyDialog",
         "DEFAULT_CHAT_FRAME",
-        "OpenDeathRecapUI"
+        "OpenDeathRecapUI",
+        "MAINHANDSLOT"
     ],
     "Lua.type.weakUnionCheck": true
 }
