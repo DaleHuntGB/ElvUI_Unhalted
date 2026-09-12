@@ -29,6 +29,10 @@ local function HideMissingRaidBuff(auraID)
     end
 end
 
+local function ShouldGlow(auraID)
+    return C_SpellActivationOverlay.IsSpellOverlayed(auraID)
+end
+
 local function LayoutMissingRaidBuffs()
     local Frames = {}
     for _, BuffFrame in pairs(MissingRaidBuffs) do
@@ -53,7 +57,7 @@ local function CheckForMissingRaidBuffs()
             if C_UnitAuras.GetPlayerAuraBySpellID(spellID) then hasAura = true break end
         end
 
-        if not hasAura and ClassesInGroup[auraInfo.requiredClass] then
+        if (not hasAura and ClassesInGroup[auraInfo.requiredClass]) or ShouldGlow(auraID) then
             MissingRaidBuffs[auraID] = MissingRaidBuffs[auraID] or CreateMissingRaidBuff(auraID)
         elseif MissingRaidBuffs[auraID] then
             HideMissingRaidBuff(auraID)
@@ -95,6 +99,8 @@ function Private:UpdateMissingRaidBuffs()
         Private.MissingRaidBuffFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
         Private.MissingRaidBuffFrame:RegisterEvent("GROUP_JOINED")
         Private.MissingRaidBuffFrame:RegisterEvent("UNIT_NAME_UPDATE")
+        Private.MissingRaidBuffFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+        Private.MissingRaidBuffFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
         Private.MissingRaidBuffFrame:SetScript("OnEvent", function(_, event, unit)
             if event == "UNIT_NAME_UPDATE" then
                 if issecretvalue(unit) or not (unit == "player" or unit:match("^party%d+$") or unit:match("^raid%d+$")) then return end
