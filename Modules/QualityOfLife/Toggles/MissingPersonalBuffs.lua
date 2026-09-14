@@ -52,17 +52,11 @@ end
 
 local function CheckForMissingPersonalBuffs()
     local _, _, DifficultyID = GetInstanceInfo()
-    if not Private.InstanceIDs[DifficultyID] then
-        for auraType in pairs(MissingPersonalBuffs) do HideMissingPersonalBuff(auraType) end
-        Private.MissingPersonalBuffFrame:Hide()
-        return
-    end
-
     for auraType, auraInfo in pairs(Private.PersonalBuffs) do
         local hasAura = false
-        local canCheck = true
+        local canCheck = Private.InstanceIDs[DifficultyID] or auraInfo.alwaysShow
 
-        if auraType == "Oils" then
+        if canCheck and auraType == "Oils" then
             local specIndex = C_SpecializationInfo.GetSpecialization()
             local specID = specIndex and C_SpecializationInfo.GetSpecializationInfo(specIndex)
 
@@ -70,7 +64,7 @@ local function CheckForMissingPersonalBuffs()
             if auraInfo.dualWieldSpecIDs[specID] then
                 hasAura = hasAura and C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_OFFHAND) ~= nil
             end
-        elseif auraType == "Source of Magic" then
+        elseif canCheck and auraType == "Source of Magic" then
             canCheck = false
             if C_SpellBook.IsSpellKnown(369459) and not C_Secrets.ShouldSpellAuraBeSecret(369459) then
                 local inRaid = IsInRaid()
@@ -92,7 +86,7 @@ local function CheckForMissingPersonalBuffs()
                     end
                 end
             end
-        else
+        elseif canCheck then
             for _, spellName in ipairs(auraInfo.spellNames) do
                 if C_Secrets.ShouldSpellAuraBeSecret(spellName) then return end
                 local auraData = C_UnitAuras.GetAuraDataBySpellName("player", spellName)
@@ -108,7 +102,11 @@ local function CheckForMissingPersonalBuffs()
         end
     end
 
-    LayoutMissingPersonalBuffs()
+    if next(MissingPersonalBuffs) then
+        LayoutMissingPersonalBuffs()
+    else
+        Private.MissingPersonalBuffFrame:Hide()
+    end
 end
 
 function Private:SetupMissingPersonalBuffs()
