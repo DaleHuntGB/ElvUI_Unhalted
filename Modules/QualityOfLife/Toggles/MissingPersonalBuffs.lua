@@ -20,7 +20,7 @@ local function CreateMissingPersonalBuff(auraName, auraIcon)
     Frame.Text:SetPoint("CENTER", Frame, "CENTER", 0, 0)
     Frame.Text:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE, SLUG")
     Frame.Text:SetTextColor(1, 1, 1, 1)
-    Frame.Text:SetText((auraName == "Source of Magic" and "Source\nOf\nMagic") or (auraName == "Oils" and "Weapon\nOil") or auraName)
+    Frame.Text:SetText((auraName == "Source of Magic" and "Source\nOf\nMagic") or (auraName == "Oils" and "Weapon\nOil") or (auraName == "Auras" and "Aura") or auraName)
 
     Frame:Show()
 
@@ -66,44 +66,38 @@ local function CheckForMissingPersonalBuffs()
             local specIndex = C_SpecializationInfo.GetSpecialization()
             local specID = specIndex and C_SpecializationInfo.GetSpecializationInfo(specIndex)
 
-            local enchantInfo = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_MAINHAND); hasAura = enchantInfo ~= nil
+            hasAura = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_MAINHAND) ~= nil
             if auraInfo.dualWieldSpecIDs[specID] then
-                local offhandEnchantInfo = C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_OFFHAND); hasAura = hasAura and (offhandEnchantInfo ~= nil)
+                hasAura = hasAura and C_PaperDollInfo.GetTemporaryEnchantmentInfo(INVSLOT_OFFHAND) ~= nil
             end
         elseif auraType == "Source of Magic" then
-            canCheck = C_Spell.IsSpellKnown(369459) and not C_Secrets.ShouldSpellAuraBeSecret(369459)
-            local healerIsPresent = false
-            if canCheck then
+            canCheck = false
+            if C_SpellBook.IsSpellKnown(369459) and not C_Secrets.ShouldSpellAuraBeSecret(369459) then
                 local inRaid = IsInRaid()
                 local groupMembers = GetNumGroupMembers()
+                local spellName = C_Spell.GetSpellName(369459)
                 for i = 1, groupMembers do
                     local unit = inRaid and ("raid" .. i) or (i == 1 and "player" or ("party" .. (i - 1)))
-                    if UnitExists(unit) then
+                    if UnitExists(unit) and not UnitIsUnit(unit, "player") then
                         local unitRole = UnitGroupRolesAssigned(unit)
-                        if not issecretvalue(unitRole) and unitRole == "HEALER" then healerIsPresent = true break end
+                        if not issecretvalue(unitRole) and unitRole == "HEALER" then
+                            canCheck = true
+                            local auraData = C_UnitAuras.GetAuraDataBySpellName(unit, spellName, "HELPFUL|PLAYER")
+                            if issecretvalue(auraData) then canCheck = false
+                                break
+                            elseif auraData then hasAura = true
+                                break
+                            end
+                        end
                     end
-                end
-            end
-            canCheck = canCheck and healerIsPresent
-            if canCheck then
-                local auraData = C_UnitAuras.GetPlayerAuraBySpellID(369459)
-                if issecretvalue(auraData) then canCheck = false
-                else
-                    hasAura = auraData ~= nil
                 end
             end
         else
             for _, spellName in ipairs(auraInfo.spellNames) do
-                if C_Secrets.ShouldSpellAuraBeSecret(spellName) then
-                    return
-                else
-                    if issecretvalue(C_UnitAuras.GetAuraDataBySpellName("player", spellName)) then
-                        return
-                    elseif C_UnitAuras.GetAuraDataBySpellName("player", spellName) then
-                        hasAura = true
-                        break
-                    end
-                end
+                if C_Secrets.ShouldSpellAuraBeSecret(spellName) then return end
+                local auraData = C_UnitAuras.GetAuraDataBySpellName("player", spellName)
+                if issecretvalue(auraData) then return end
+                if auraData then hasAura = true break end
             end
         end
 
@@ -127,7 +121,7 @@ end
 
 function Private:UpdateMissingPersonalBuffs()
     if Private.DB.global.QualityOfLife.Toggles.MissingPersonalBuffs then
-        Private.MissingPersonalBuffFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        Private.MissingPersonalBuffFrame:RegisterEvent("UNIT_AURA")
         Private.MissingPersonalBuffFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
         Private.MissingPersonalBuffFrame:RegisterEvent("PLAYER_ROLES_ASSIGNED")
         Private.MissingPersonalBuffFrame:RegisterEvent("SPELLS_CHANGED")
@@ -136,7 +130,11 @@ function Private:UpdateMissingPersonalBuffs()
         Private.MissingPersonalBuffFrame:RegisterEvent("WEAPON_SLOT_CHANGED")
         Private.MissingPersonalBuffFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
         Private.MissingPersonalBuffFrame:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
-        Private.MissingPersonalBuffFrame:SetScript("OnEvent", function(_, event)
+        Private.MissingPersonalBuffFrame:SetScript("OnEvent", function(_, event, unit)
+            if event == "UNIT_AURA" then
+                if issecretvalue(unit) then return end
+                if unit ~= "player" and not (C_SpellBook.IsSpellKnown(369459) and (unit:match("^party%d+$") or unit:match("^raid%d+$"))) then return end
+            end
             if event == "ADDON_RESTRICTION_STATE_CHANGED" then
                 RunNextFrame(function() if Private.DB.global.QualityOfLife.Toggles.MissingPersonalBuffs then CheckForMissingPersonalBuffs() end end)
             else
