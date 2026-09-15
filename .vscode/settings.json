@@ -58,7 +58,21 @@
         "LFGDungeonReadyDialog",
         "DEFAULT_CHAT_FRAME",
         "OpenDeathRecapUI",
-        "MAINHANDSLOT"
+        "MAINHANDSLOT",
+        "SlashCmdList",
+        "hash_SlashCmdList",
+        "NORMAL_FONT_COLOR_CODE",
+        "FONT_COLOR_CODE_CLOSE",
+        "ColorPickerFrame",
+        "NOT_BOUND",
+        "ChatEdit_InsertLink",
+        "OKAY",
+        "ChatFrameUtil",
+        "SELECTED_CHAT_FRAME",
+        "ACCEPT",
+        "Settings",
+        "CANCEL",
+        "AddonCompartmentFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }

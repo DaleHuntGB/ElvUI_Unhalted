@@ -5,6 +5,16 @@
 ## SavedVariables: UnhaltedUIDB
 ## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo_64.png
 
+Libraries/Ace3/AceAddon-3.0/AceAddon-3.0.xml
+Libraries/Ace3/AceDB-3.0/AceDB-3.0.xml
+Libraries/Ace3/AceDBOptions-3.0/AceDBOptions-3.0.xml
+Libraries/AceConfig-3.0/AceConfig-3.0.xml
+Libraries/CallbackHandler-1.0/CallbackHandler-1.0.xml
+Libraries/LibAceConfigHelper/LibAceConfigHelper.lua
+Libraries/LibDBIcon-1.0/lib.xml
+Libraries/LibSharedMedia-3.0/lib.xml
+Libraries/LibStub/LibStub.lua
+
 Core/Constants.lua
 Core/Defaults.lua
 Core/GUI.lua

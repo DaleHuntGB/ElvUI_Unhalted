@@ -10,7 +10,6 @@ Private.Distributor = Private.E:GetModule("Distributor")
 
 Private.GUI = {}
 
--- Difficulty IDs returned by GetInstanceInfo.
 Private.InstanceIDs = {
     [1] = true, -- Normal Dungeon
     [2] = true, -- Heroic Dungeon
