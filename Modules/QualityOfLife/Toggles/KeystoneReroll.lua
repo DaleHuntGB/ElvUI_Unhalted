@@ -5,8 +5,7 @@ local function FetchKeystone()
     local keystoneMapID = C_MythicPlus.GetOwnedKeystoneMapID()
     if ownedKeystoneLevel and ownedKeystoneLevel > 0 then
         return string.format("+%s %s", ownedKeystoneLevel, Private.MapIDsToInstanceNames[keystoneMapID])
-    else
-        return "None", nil
+    else return
     end
 end
 
