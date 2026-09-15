@@ -14,7 +14,7 @@ local function KeystoneAlertFrame_OnEvent(KAFrame, event, ...)
     if event == "CHALLENGE_MODE_COMPLETED" then
         local completionInfo = C_ChallengeMode.GetChallengeCompletionInfo()
         local ownedKeystoneLevel = C_MythicPlus.GetOwnedKeystoneLevel()
-        if completionInfo and completionInfo.onTime and ownedKeystoneLevel and ownedKeystoneLevel <= completionInfo.level then KAFrame:Show() end
+        if completionInfo and completionInfo.onTime and ownedKeystoneLevel and ownedKeystoneLevel <= completionInfo.level then KAFrame:Show() RunNextFrame(function() KAFrame.Keystone:SetText(FetchKeystone()) end) end
     elseif event == "PLAYER_ENTERING_WORLD" and KAFrame:IsShown() and not IsInInstance() then
         KAFrame:Hide()
     elseif event == "BAG_UPDATE_DELAYED" or event == "ITEM_CHANGED" then
