@@ -1,6 +1,6 @@
 # ElvUI: Unhalted
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://kofi.com/unhalted)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/unhalted)
 [![Patreon](https://img.shields.io/badge/Patreon-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/c/Unhalted)
 
 Plugin for ElvUI, built specifically for my UI. It adds quality of life features, custom displays, and enhancements to the ElvUI suite.
