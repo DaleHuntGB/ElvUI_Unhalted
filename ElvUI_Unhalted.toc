@@ -4,6 +4,7 @@
 ## Group: ElvUI
 ## SavedVariables: UnhaltedUIDB
 ## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo_64.png
+## Version: @project-version@
 ## X-Curse-Project-ID: 1692219
 
 Libraries/Ace3/AceAddon-3.0/AceAddon-3.0.xml
