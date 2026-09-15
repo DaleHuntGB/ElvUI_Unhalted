@@ -176,6 +176,7 @@ local Defaults = {
                 PositionRaidWarningFrame = false,
                 MissingPersonalBuffs = false,
                 MissingRaidBuffs = false,
+                KeystoneRerollAlert = false,
             },
             Alerts = {
                 BloodlustAlert = false,
@@ -184,7 +185,6 @@ local Defaults = {
                 TimeSpiralAlertSound = "|cFF6080FFUnhalted|r: Time Spiral",
                 PowerInfusionAlert = false,
                 PowerInfusionAlertSound = "|cFF6080FFUnhalted|r: PI",
-                KeystoneRerollAlert = false,
             }
         },
         VendorHelper = {

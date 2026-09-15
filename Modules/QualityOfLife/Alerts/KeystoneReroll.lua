@@ -49,7 +49,7 @@ function Private:SetupKeystoneRerollAlert()
     KeystoneAlertFrame.Keystone:SetTextColor(1, 1, 1, 1)
     KeystoneAlertFrame.Keystone:SetText(FetchKeystone())
 
-    if Private.DB.global.QualityOfLife.Alerts.KeystoneRerollAlert then
+    if Private.DB.global.QualityOfLife.Toggles.KeystoneRerollAlert then
         KeystoneAlertFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         KeystoneAlertFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
         KeystoneAlertFrame:RegisterEvent("BAG_UPDATE_DELAYED")
@@ -63,7 +63,7 @@ function Private:SetupKeystoneRerollAlert()
 end
 
 function Private:UpdateKeystoneRerollAlert()
-    if Private.DB.global.QualityOfLife.Alerts.KeystoneRerollAlert then
+    if Private.DB.global.QualityOfLife.Toggles.KeystoneRerollAlert then
         Private.KeystoneAlertFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Private.KeystoneAlertFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
         Private.KeystoneAlertFrame:RegisterEvent("BAG_UPDATE_DELAYED")
