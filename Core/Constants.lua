@@ -5,6 +5,7 @@ Private.ACH = LibStub("LibAceConfigHelper")
 Private.ACR = LibStub("AceConfigRegistry-3.0")
 Private.LSM = LibStub("LibSharedMedia-3.0")
 Private.AddOnName = C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Title")
+Private.AddOnVersion = C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Version")
 Private.E = unpack(ElvUI)
 Private.Distributor = Private.E:GetModule("Distributor")
 

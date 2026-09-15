@@ -22,7 +22,7 @@ function Private:CreateGUI()
     local GUI = Private.GUI
     local DB = Private.DB.global
 
-    GUI = ACH:Group(format("%s", Private.AddOnName), nil, 20, "tree")
+    GUI = ACH:Group(format("%s (V%s)", Private.AddOnName, Private.AddOnVersion), nil, 20, "tree")
 
     --#region - AddOn Skins
 
