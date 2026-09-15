@@ -381,6 +381,12 @@ function Private:CreateGUI()
     GUI.args.ProfileManager.args.ExportWarpDeplete.relWidth = 0.5
     GUI.args.ProfileManager.args.ExportWarpDeplete.descStyle = "inline"
 
+    GUI.args.ProfileManager.args.ImportBigWigs = ACH:Execute("Import |TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|tBigWigs", nil, 9, function() Private:ImportBigWigs() end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("BigWigs"))
+    GUI.args.ProfileManager.args.ImportBigWigs.relWidth = 1
+
+    GUI.args.ProfileManager.args.ImportMinimapStats = ACH:Execute("Import |TInterface\\AddOns\\MinimapStats\\Media\\MinimapStats.png:16:16|t|cFF8080FFMinimap|rStats", nil, 10, function() Private:ImportMinimapStats() end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("MinimapStats"))
+    GUI.args.ProfileManager.args.ImportMinimapStats.relWidth = 1
+
     --#endregion
 
     --#region - Quality Of Life
