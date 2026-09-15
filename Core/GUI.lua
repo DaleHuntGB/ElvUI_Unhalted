@@ -415,7 +415,7 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.MissingPersonalBuffs.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs = ACH:Toggle("Show Missing Raid Buffs", "Shows missing raid buffs when in a dungeon/raid. |cFFFFCC00Personal raid buffs are always shown|r.", 9, nil, nil, "full", function() return DB.QualityOfLife.Toggles.MissingRaidBuffs end, function(_, value) DB.QualityOfLife.Toggles.MissingRaidBuffs = value Private:UpdateMissingRaidBuffs() end)
     GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert = ACH:Toggle("Show |T525134:18:18|t Keystone Reroll Reminder", "Shows a reminder to reroll your keystone. |cFFFFCC00This will also show what your current keystone is|r.", 7, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.KeystoneRerollAlert end, function(_, value) DB.QualityOfLife.Alerts.KeystoneRerollAlert = value Private:UpdateKeystoneRerollAlert() end)
+    GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert = ACH:Toggle("Show |T525134:18:18|t Keystone Reroll Reminder", "Shows a reminder to reroll your keystone. |cFFFFCC00This will also show what your current keystone is|r.", 7, nil, nil, "relative", function() return DB.QualityOfLife.Toggles.KeystoneReroll end, function(_, value) DB.QualityOfLife.Toggles.KeystoneReroll = value Private:UpdateKeystoneRerollReminder() end)
     GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert.descStyle = "inline"
 
     GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)

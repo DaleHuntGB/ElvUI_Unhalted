@@ -30,13 +30,13 @@ Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Windows.lua
 
 Modules/QualityOfLife/Alerts/BloodlustAlert.lua
-Modules/QualityOfLife/Alerts/KeystoneReroll.lua
 Modules/QualityOfLife/Alerts/PowerInfusionAlert.lua
 Modules/QualityOfLife/Alerts/TimeSpiralAlert.lua
 
 Modules/QualityOfLife/Toggles/AutoDelete.lua
 Modules/QualityOfLife/Toggles/AutoSellGreys.lua
 Modules/QualityOfLife/Toggles/AutoSignUp.lua
+Modules/QualityOfLife/Toggles/KeystoneReroll.lua
 Modules/QualityOfLife/Toggles/MissingPersonalBuffs.lua
 Modules/QualityOfLife/Toggles/MissingRaidBuffs.lua
 Modules/QualityOfLife/Toggles/PositionRaidWarningFrame.lua

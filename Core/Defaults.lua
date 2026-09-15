@@ -176,7 +176,7 @@ local Defaults = {
                 PositionRaidWarningFrame = false,
                 MissingPersonalBuffs = false,
                 MissingRaidBuffs = false,
-                KeystoneRerollAlert = false,
+                KeystoneReroll = false,
             },
             Alerts = {
                 BloodlustAlert = false,
