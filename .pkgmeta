@@ -1,0 +1,27 @@
+package-as: ElvUI_Unhalted
+enable-nolib-creation: no
+
+curse-id: 1692219
+
+externals:
+    Libraries/Ace3/AceAddon-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceAddon-3.0
+    Libraries/Ace3/AceDB-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceDB-3.0
+    Libraries/Ace3/AceDBOptions-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceDBOptions-3.0
+    Libraries/AceConfig-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceConfig-3.0
+    Libraries/CallbackHandler-1.0: https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0
+    Libraries/LibDBIcon-1.0: https://repos.curseforge.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
+    Libraries/LibSharedMedia-3.0: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
+    Libraries/LibStub: https://repos.curseforge.com/wow/libstub/trunk
+
+# Libraries/LibAceConfigHelper is bundled directly in this repository.
+
+manual-changelog:
+    filename: CHANGELOG.md
+
+ignore:
+    - README.md
+    - .git/
+    - .github/
+    - .vscode/
+    - .pkgmeta
+    - release.sh
