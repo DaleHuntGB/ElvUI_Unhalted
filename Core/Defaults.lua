@@ -184,6 +184,7 @@ local Defaults = {
                 TimeSpiralAlertSound = "|cFF6080FFUnhalted|r: Time Spiral",
                 PowerInfusionAlert = false,
                 PowerInfusionAlertSound = "|cFF6080FFUnhalted|r: PI",
+                KeystoneRerollAlert = false,
             }
         },
         VendorHelper = {

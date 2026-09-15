@@ -440,6 +440,8 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound = ACH:SharedMediaSound("Sound", "Bloodlust Alert Sound", 6, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlertSound end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlertSound = value Private:SetupBloodlustAlert() end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert end)
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound.relWidth = 0.5
 
+    GUI.args.QualityOfLife.args.Alerts.args.KeystoneRerollAlert = ACH:Toggle("|T525134:18:18|t Keystone Reroll Alert", nil, 7, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.KeystoneRerollAlert end, function(_, value) DB.QualityOfLife.Alerts.KeystoneRerollAlert = value Private:UpdateKeystoneRerollAlert() end)
+
     --#endregion
 
     --#region - Mouse Cursor

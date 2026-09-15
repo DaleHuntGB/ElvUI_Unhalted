@@ -20,6 +20,17 @@ Private.InstanceIDs = {
     [16] = true, -- Mythic Raid
 }
 
+Private.MapIDsToInstanceNames = {
+    [2825] = "Den of Nalorakk",
+    [2521] = "Ruby Life Pools",
+    [2993] = "Altar of Fangs",
+    [1762] = "Kings' Rest",
+    [2923] = "Voidscar Arena",
+    [2859] = "The Blinding Vale",
+    [1877] = "Temple of Sethraliss",
+    [2813] = "Murder Row",
+}
+
 Private.AP = {
     ["TOPLEFT"] = "TOPLEFT",
     ["TOP"] = "TOP",
