@@ -6,6 +6,7 @@
 - Add `Format` Dropdown for Amounts for the Damage Meter.
 - `Drilldown` from Damage Meter now shows the Specialization Icon.
 - Fix low value abbreviations.
+- Added `Targeted Spells`.
 
 # V1.1
 - Add `Keystone Reroll Reminder` to Quality of Life → Toggles.
