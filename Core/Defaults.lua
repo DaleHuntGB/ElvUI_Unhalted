@@ -65,6 +65,7 @@ local Defaults = {
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
                     ColourByClass = false,
+                    Format = "%s • %s"
                 }
             },
             [2] = {
@@ -103,6 +104,7 @@ local Defaults = {
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
                     ColourByClass = false,
+                    Format = "%s • %s"
                 }
             },
             [3] = {
@@ -141,6 +143,7 @@ local Defaults = {
                     Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
                     Colour = { 1, 1, 1, 1 },
                     ColourByClass = false,
+                    Format = "%s • %s"
                 }
             },
         },

@@ -70,6 +70,14 @@ Private.MeterTypes = {
 	[Enum.DamageMeterType.EnemyDamageTaken] = DAMAGE_METER_TYPE_ENEMY_DAMAGE_TAKEN,
 }
 
+Private.MeterAmountFormats = {
+    ["%s • %s"] = "%s • %s",
+    ["%s - %s"] = "%s - %s",
+    ["%s [%s]"] = "%s [%s]",
+    ["%s (%s)"] = "%s (%s)",
+    ["%s » %s"] = "%s » %s"
+}
+
 Private.ItemQualities = {
     [Enum.ItemQuality.Poor] = ITEM_QUALITY0_DESC,
     [Enum.ItemQuality.Common] = ITEM_QUALITY1_DESC,

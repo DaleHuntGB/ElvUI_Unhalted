@@ -271,6 +271,10 @@ function Private:CreateGUI()
             Text.args.Layout.args.XOffset.relWidth = 0.5
             Text.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[4] end, function(_, value) TextDB.Layout[4] = value Private:UpdateDamageMeter() end)
             Text.args.Layout.args.YOffset.relWidth = 0.5
+            if TextType == "Amount" then
+                Text.args.Layout.args.AmountFormat = ACH:Select("Amount Format", nil, 5, Private.MeterAmountFormats, nil, "relative", function() return TextDB.Format end, function(_, value) TextDB.Format = value Private:UpdateDamageMeter() end)
+                Text.args.Layout.args.AmountFormat.relWidth = 1
+            end
 
             Text.args.Font = ACH:Group("Font", nil, 2)
             Text.args.Font.inline = true

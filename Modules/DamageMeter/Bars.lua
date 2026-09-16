@@ -332,7 +332,7 @@ function Private:PopulateDamageMeterBars(DMFrame, DB)
                 elseif PerSecondMeterTypes[DB.MeterType] then
                     DMBar.Number:SetText(AbbreviateNumbers(DataSource.amountPerSecond))
                 else
-                    DMBar.Number:SetFormattedText("%s • %s", AbbreviateNumbers(DataSource.totalAmount), AbbreviateNumbers(DataSource.amountPerSecond))
+                    DMBar.Number:SetFormattedText(Private.MeterAmountFormats[DB.Amount.Format], AbbreviateNumbers(DataSource.totalAmount), AbbreviateNumbers(DataSource.amountPerSecond))
                 end
             end
 
