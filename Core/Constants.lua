@@ -71,11 +71,12 @@ Private.MeterTypes = {
 }
 
 Private.MeterAmountFormats = {
-    ["%s • %s"] = "%s • %s",
-    ["%s - %s"] = "%s - %s",
-    ["%s [%s]"] = "%s [%s]",
-    ["%s (%s)"] = "%s (%s)",
-    ["%s » %s"] = "%s » %s"
+    ["%s • %s"] = "999K • 99.9K",
+    ["%s - %s"] = "999K - 99.9K",
+    ["%s » %s"] = "999K » 99.9K",
+    ["%s [%s]"] = "999K [99.9K]",
+    ["%s (%s)"] = "999K (99.9K)",
+    ["%s <%s>"] = "999K <99.9K>",
 }
 
 Private.ItemQualities = {
