@@ -218,9 +218,10 @@ function Private:IsDeveloper()
     return isDeveloper
 end
 
+-- Thanks Lucky - https://github.com/Luckyone961/LuckyoneUI/blob/development/LuckyoneUI/Modules/DamageMeter/Core.lua#L35-L40
 function Private:StripRealm(name, classFilename)
 	if not name then return name end
-	if not classFilename or classFilename == '' then return name end
+	if not classFilename or classFilename == "" then return name end
 
-	return Ambiguate(name, 'short')
+	return Ambiguate(name, "short")
 end
