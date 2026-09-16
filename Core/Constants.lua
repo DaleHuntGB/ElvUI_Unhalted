@@ -217,3 +217,10 @@ function Private:IsDeveloper()
     local isDeveloper = BTag == "Unhalted#2639"
     return isDeveloper
 end
+
+function Private:StripRealm(name, classFilename)
+	if not name then return name end
+	if not classFilename or classFilename == '' then return name end
+
+	return Ambiguate(name, 'short')
+end

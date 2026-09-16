@@ -305,7 +305,7 @@ function Private:PopulateDamageMeterBars(DMFrame, DB)
             else
                 DMBar:SetStatusBarColor(0.6, 0.6, 0.6)
             end
-            DMBar.Name:SetText(DataSource.name)
+            DMBar.Name:SetText(Private:StripRealm(DataSource.name, DataSource.classFilename))
 
             if DataSource.specIconID and DataSource.specIconID ~= 0 then
                 DMBar.Icon:SetTexture(DataSource.specIconID)
