@@ -146,6 +146,13 @@ function Private:CreateDrilldownPopup(DMFrameName, DB)
     DM.TitleBar:SetScript("OnLeave", TitleBar_OnLeave)
     DM.TitleBar:SetScript("OnMouseDown", TitleBar_OnClick)
 
+    DM.TitleBar.Icon = DM.TitleBar:CreateTexture(nil, "OVERLAY")
+    DM.TitleBar.Icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
+    DM.TitleBar.Icon:SetSize(DB.TitleBar.Height - 2, DB.TitleBar.Height - 2)
+    DM.TitleBar.Icon:ClearAllPoints()
+    DM.TitleBar.Icon:SetPoint("LEFT", DM.TitleBar, "LEFT", 1, 0)
+    DM.TitleBar.Icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
+
     DM.Title = DM.TitleBar:CreateFontString(nil, "OVERLAY")
     DM.Title:SetJustifyH("LEFT")
     DM.Title:SetJustifyV("MIDDLE")

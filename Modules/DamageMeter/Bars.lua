@@ -77,9 +77,10 @@ function Private:Drilldown(DMBar)
     Popup:SetPoint("BOTTOMRIGHT", DMFrame.TitleBar, "TOPRIGHT", 0, 1)
 
     Popup.TitleBar:Show()
+    Popup.TitleBar.Icon:SetTexture(DataSource.specIconID)
     Popup.Title:SetText(DataSource.name)
     Popup.Title:SetWordWrap(false)
-    Popup.Title:SetPoint("RIGHT", Popup.Close, "LEFT", -3, 0)
+    Popup.Title:SetPoint("LEFT", Popup.TitleBar.Icon, "RIGHT", 3, 0)
     Popup.Close:SetSize(DB.TitleBar.Height * 0.7, DB.TitleBar.Height * 0.7)
 
     local Spells = SessionSource.combatSpells
