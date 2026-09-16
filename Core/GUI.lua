@@ -417,6 +417,8 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert = ACH:Toggle("Show Keystone Reroll Reminder", "Shows a reminder to reroll your keystone.", 11, nil, nil, "full", function() return DB.QualityOfLife.Toggles.KeystoneReroll end, function(_, value) DB.QualityOfLife.Toggles.KeystoneReroll = value Private:UpdateKeystoneRerollReminder() end)
     GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Toggles.args.GatewayUsable = ACH:Toggle("Gateway Usable Reminder", "Shows you when you can use a gateway or reminds you to buy the gateway shard.", 12, nil, nil, "full", function() return DB.QualityOfLife.Toggles.GatewayUsable end, function(_, value) DB.QualityOfLife.Toggles.GatewayUsable = value Private:UpdateGatewayUsableReminder() end)
+    GUI.args.QualityOfLife.args.Toggles.args.GatewayUsable.descStyle = "inline"
 
     GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)
     GUI.args.QualityOfLife.args.Alerts.inline = true

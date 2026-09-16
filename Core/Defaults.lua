@@ -177,6 +177,7 @@ local Defaults = {
                 MissingPersonalBuffs = false,
                 MissingRaidBuffs = false,
                 KeystoneReroll = false,
+                GatewayUsable = false,
             },
             Alerts = {
                 BloodlustAlert = false,

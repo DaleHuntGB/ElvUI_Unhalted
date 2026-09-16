@@ -72,7 +72,8 @@
         "ACCEPT",
         "Settings",
         "CANCEL",
-        "AddonCompartmentFrame"
+        "AddonCompartmentFrame",
+        "UIWidgetPowerBarContainerFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }
