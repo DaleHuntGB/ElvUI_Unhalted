@@ -235,3 +235,15 @@ function Private:StripRealm(name, classFilename)
 
 	return Ambiguate(name, "short")
 end
+
+local AbbreviationData = {
+    breakpoint = 1e9,
+    abbreviation = "B",
+    significandDivisor = 1e7,
+    fractionDivisor = 100,
+    abbreviationIsGlobal = false,
+}
+
+function Private:AbbreviateValue(value)
+    return AbbreviateNumbers(value, AbbreviationData)
+end

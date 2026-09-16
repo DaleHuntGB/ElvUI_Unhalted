@@ -122,7 +122,7 @@ function Private:Drilldown(DMBar)
                     Bar.Icon:SetTexture(135274)
                 end
                 Bar.Icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
-                Bar.Number:SetText(AbbreviateNumbers(Spell.totalAmount))
+                Bar.Number:SetText(Private:AbbreviateValue(Spell.totalAmount))
             end
             Bar:SetShown(Spell ~= nil)
             Bar.Icon:SetShown(Spell ~= nil)
@@ -329,11 +329,11 @@ function Private:PopulateDamageMeterBars(DMFrame, DB)
                 DMBar:SetMinMaxValues(0, DMSession.maxAmount)
                 DMBar:SetValue(DataSource.totalAmount)
                 if SingleMeterTypes[DB.MeterType] then
-                    DMBar.Number:SetText(AbbreviateNumbers(DataSource.totalAmount))
+                    DMBar.Number:SetText(Private:AbbreviateValue(DataSource.totalAmount))
                 elseif PerSecondMeterTypes[DB.MeterType] then
-                    DMBar.Number:SetText(AbbreviateNumbers(DataSource.amountPerSecond))
+                    DMBar.Number:SetText(Private:AbbreviateValue(DataSource.amountPerSecond))
                 else
-                    DMBar.Number:SetFormattedText(DB.Amount.Format, AbbreviateNumbers(DataSource.totalAmount), AbbreviateNumbers(DataSource.amountPerSecond))
+                    DMBar.Number:SetFormattedText(DB.Amount.Format, Private:AbbreviateValue(DataSource.totalAmount), Private:AbbreviateValue(DataSource.amountPerSecond))
                 end
             end
 
