@@ -195,6 +195,26 @@ local Defaults = {
             AutoVendor = false,
             MinimumQuality = 3,
             MinimumItemLevel = 266,
+        },
+        TargetedSpells = {
+            Enabled = false,
+            Size = { 250, 24 },
+            Texture = "Blizzard Raid Bar",
+            GrowthDirection = "DOWN",
+            Layout = {"CENTER", "CENTER", 0, 175.1, 1},
+            BackgroundColour = { 20/255, 20/255, 20/255, 1 },
+            ForegroundColour = { 96/255, 128/255, 255/255, 1 },
+            Text = {
+                Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" },
+                CastName = {
+                    Layout = { "LEFT", "LEFT", 3, 0 },
+                    Colour = { 1, 1, 1, 1 },
+                },
+                CastTime = {
+                    Layout = { "RIGHT", "RIGHT", -3, 0 },
+                    Colour = { 1, 1, 1, 1 },
+                },
+            }
         }
     }
 }

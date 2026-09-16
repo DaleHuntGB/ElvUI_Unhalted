@@ -73,7 +73,8 @@
         "Settings",
         "CANCEL",
         "AddonCompartmentFrame",
-        "UIWidgetPowerBarContainerFrame"
+        "UIWidgetPowerBarContainerFrame",
+        "MAX_BOSS_FRAMES"
     ],
     "Lua.type.weakUnionCheck": true
 }

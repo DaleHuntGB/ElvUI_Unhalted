@@ -31,6 +31,7 @@ function AddOn:OnEnable()
     Private:SetupRemoveLossOfControlFrame()
     Private:SetupRemoveTalkingHead()
     Private:SetupSkipCinematics()
+    Private:SetupTargetedSpells()
     Private:SetupTimeSpiralAlert()
     Private:SetupVendorHelper()
 end

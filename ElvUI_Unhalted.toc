@@ -53,6 +53,7 @@ Modules/CombatTimer.lua
 Modules/ElvUIEnhancements.lua
 Modules/MouseCursor.lua
 Modules/ProfileManager.lua
+Modules/TargetedSpells.lua
 Modules/VendorHelper.lua
 
 Core/Main.lua

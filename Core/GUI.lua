@@ -504,6 +504,77 @@ function Private:CreateGUI()
 
     --#endregion
 
+    --#region - Targeted Spells
+
+    GUI.args.TargetedSpells = ACH:Group("Targeted Spells", nil, 5.75, "tab")
+    GUI.args.TargetedSpells.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\TargetedSpells.tga"
+    local TargetedSpells = GUI.args.TargetedSpells
+    local TSDB = DB.TargetedSpells
+
+    TargetedSpells.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return TSDB.Enabled end, function(_, value) TSDB.Enabled = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Enabled.relWidth = 0.5
+    TargetedSpells.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.TargetedSpellsTestMode end, function(_, value) Private:SetTargetedSpellsTestMode(value) end, function() return not TSDB.Enabled or InCombatLockdown() end)
+    TargetedSpells.args.TestMode.relWidth = 0.5
+
+    TargetedSpells.args.General = ACH:Group("General", nil, 3)
+    TargetedSpells.args.General.args.Appearance = ACH:Group("Appearance", nil, 2)
+    TargetedSpells.args.General.args.Appearance.inline = true
+    TargetedSpells.args.General.args.Appearance.disabled = function() return not TSDB.Enabled end
+    TargetedSpells.args.General.args.Appearance.args.BackgroundColour = ACH:Color("Background Colour", nil, 1, true, "relative", function() return unpack(TSDB.BackgroundColour) end, function(_, r, g, b, a) TSDB.BackgroundColour = { r, g, b, a } Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.General.args.Appearance.args.BackgroundColour.relWidth = 0.5
+    TargetedSpells.args.General.args.Appearance.args.ForegroundColour = ACH:Color("Foreground Colour", nil, 2, true, "relative", function() return unpack(TSDB.ForegroundColour) end, function(_, r, g, b, a) TSDB.ForegroundColour = { r, g, b, a } Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.General.args.Appearance.args.ForegroundColour.relWidth = 0.5
+    TargetedSpells.args.General.args.Appearance.args.Texture = ACH:SharedMediaStatusbar("Texture", nil, 3, "full", function() return TSDB.Texture end, function(_, value) TSDB.Texture = value Private:UpdateTargetedSpells() end)
+
+
+    TargetedSpells.args.Layout = ACH:Group("Layout", nil, 4)
+    TargetedSpells.args.Layout.disabled = function() return not TSDB.Enabled end
+    TargetedSpells.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return TSDB.Layout[1] end, function(_, value) TSDB.Layout[1] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.AnchorFrom.relWidth = 0.5
+    TargetedSpells.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return TSDB.Layout[2] end, function(_, value) TSDB.Layout[2] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.AnchorTo.relWidth = 0.5
+    TargetedSpells.args.Layout.args.Width = ACH:Range("Width", nil, 3, { min = 150, max = 1000, step = 1 }, "relative", function() return TSDB.Size[1] end, function(_, value) TSDB.Size[1] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.Width.relWidth = 0.5
+    TargetedSpells.args.Layout.args.Height = ACH:Range("Height", nil, 4, { min = 12, max = 64, step = 1 }, "relative", function() return TSDB.Size[2] end, function(_, value) TSDB.Size[2] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.Height.relWidth = 0.5
+    TargetedSpells.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 5, { min = -1000, max = 1000, step = 1 }, "relative", function() return TSDB.Layout[3] end, function(_, value) TSDB.Layout[3] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.XOffset.relWidth = 0.5
+    TargetedSpells.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 0.1 }, "relative", function() return TSDB.Layout[4] end, function(_, value) TSDB.Layout[4] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.YOffset.relWidth = 0.5
+    TargetedSpells.args.Layout.args.Spacing = ACH:Range("Spacing", "Spacing between bars.", 7, { min = 0, max = 32, step = 1 }, "relative", function() return TSDB.Layout[5] end, function(_, value) TSDB.Layout[5] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.Spacing.relWidth = 0.5
+    TargetedSpells.args.Layout.args.GrowthDirection = ACH:Select("Growth Direction", nil, 8, { UP = "Up", DOWN = "Down" }, nil, "relative", function() return TSDB.GrowthDirection end, function(_, value) TSDB.GrowthDirection = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Layout.args.GrowthDirection.relWidth = 0.5
+
+    TargetedSpells.args.Text = ACH:Group("Text", nil, 5)
+    TargetedSpells.args.Text.disabled = function() return not TSDB.Enabled end
+    TargetedSpells.args.Text.args.Font = ACH:Group("Font", nil, 1)
+    TargetedSpells.args.Text.args.Font.inline = true
+    TargetedSpells.args.Text.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return TSDB.Text.Font[1] end, function(_, value) TSDB.Text.Font[1] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Text.args.Font.args.Font.relWidth = 0.33
+    TargetedSpells.args.Text.args.Font.args.Size = ACH:Range("Font Size", nil, 2, { min = 8, max = 32, step = 1 }, "relative", function() return TSDB.Text.Font[2] end, function(_, value) TSDB.Text.Font[2] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Text.args.Font.args.Size.relWidth = 0.33
+    TargetedSpells.args.Text.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return TSDB.Text.Font[3] end, function(_, value) TSDB.Text.Font[3] = value Private:UpdateTargetedSpells() end)
+    TargetedSpells.args.Text.args.Font.args.FontFlag.relWidth = 0.33
+
+    for Index, TextType in ipairs({ "CastName", "CastTime" }) do
+        local TextDB = TSDB.Text[TextType]
+        local Text = ACH:Group(TextType == "CastName" and "Cast Name" or "Cast Time", nil, Index + 1)
+        Text.inline = true
+        TargetedSpells.args.Text.args[TextType] = Text
+        Text.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return TextDB.Layout[1] end, function(_, value) TextDB.Layout[1] = value Private:UpdateTargetedSpells() end)
+        Text.args.AnchorFrom.relWidth = 0.5
+        Text.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return TextDB.Layout[2] end, function(_, value) TextDB.Layout[2] = value Private:UpdateTargetedSpells() end)
+        Text.args.AnchorTo.relWidth = 0.5
+        Text.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[3] end, function(_, value) TextDB.Layout[3] = value Private:UpdateTargetedSpells() end)
+        Text.args.XOffset.relWidth = 0.5
+        Text.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[4] end, function(_, value) TextDB.Layout[4] = value Private:UpdateTargetedSpells() end)
+        Text.args.YOffset.relWidth = 0.5
+        Text.args.Colour = ACH:Color("Colour", nil, 5, true, "full", function() return unpack(TextDB.Colour) end, function(_, r, g, b, a) TextDB.Colour = { r, g, b, a } Private:UpdateTargetedSpells() end)
+    end
+
+    --#endregion
+
     --#region - Vendor Helper
 
     GUI.args.VendorHelper = ACH:Group("Vendor Helper", nil, 6)
