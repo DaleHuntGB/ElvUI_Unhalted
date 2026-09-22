@@ -198,6 +198,7 @@ local Defaults = {
         },
         TargetedSpells = {
             Enabled = false,
+            LoadConditions = {},
             MaxIcons = 5,
             Size = { 32, 32 },
             GrowthDirection = "RIGHT",

@@ -512,11 +512,34 @@ function Private:CreateGUI()
     local TSDB = DB.TargetedSpells
 
     TargetedSpells.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return TSDB.Enabled end, function(_, value) TSDB.Enabled = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Enabled.relWidth = 0.5
+    TargetedSpells.args.Enabled.relWidth = 0.33
     TargetedSpells.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.TargetedSpellsTestMode end, function(_, value) Private:SetTargetedSpellsTestMode(value) end, function() return not TSDB.Enabled or InCombatLockdown() end)
-    TargetedSpells.args.TestMode.relWidth = 0.5
+    TargetedSpells.args.TestMode.relWidth = 0.33
 
-    TargetedSpells.args.Layout = ACH:Group("Layout", nil, 3)
+    TargetedSpells.args.LoadConditions = ACH:MultiSelect("Load Conditions", "Load in any selected instance type or difficulty. Leave empty to load everywhere. Test Mode ignores these conditions.", 3, {
+        none = "Open World",
+        party = "Dungeon: All Difficulties",
+        raid = "Raid: All Difficulties",
+        scenario = "Scenario: All Difficulties",
+        pvp = "Battleground",
+        arena = "Arena",
+        [1] = "Dungeon: Normal",
+        [2] = "Dungeon: Heroic",
+        [8] = "Dungeon: Mythic+",
+        [23] = "Dungeon: Mythic",
+        [24] = "Dungeon: Timewalking",
+        [205] = "Dungeon: Follower",
+        [14] = "Raid: Normal",
+        [15] = "Raid: Heroic",
+        [16] = "Raid: Mythic",
+        [17] = "Raid: Looking For Raid",
+        [33] = "Raid: Timewalking",
+        [208] = "Delve",
+    }, nil, "relative", function(_, key) return TSDB.LoadConditions[key] end, function(_, key, value) TSDB.LoadConditions[key] = value or nil Private:UpdateTargetedSpells() end, function() return not TSDB.Enabled end, nil, true)
+    TargetedSpells.args.LoadConditions.relWidth = 0.33
+    TargetedSpells.args.LoadConditions.dialogControl = "Dropdown"
+
+    TargetedSpells.args.Layout = ACH:Group("Layout", nil, 4)
     TargetedSpells.args.Layout.disabled = function() return not TSDB.Enabled end
     TargetedSpells.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return TSDB.Layout[1] end, function(_, value) TSDB.Layout[1] = value Private:UpdateTargetedSpells() end)
     TargetedSpells.args.Layout.args.AnchorFrom.relWidth = 0.5

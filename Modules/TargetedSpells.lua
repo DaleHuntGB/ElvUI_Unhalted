@@ -17,12 +17,19 @@ local CastEvents = {
 }
 
 local UnitEvents = {
-    "PLAYER_ENTERING_WORLD",
     "PLAYER_TARGET_CHANGED",
     "PLAYER_FOCUS_CHANGED",
     "UPDATE_MOUSEOVER_UNIT",
     "INSTANCE_ENCOUNTER_ENGAGE_UNIT",
     "ARENA_OPPONENT_UPDATE",
+}
+
+local LoadEvents = {
+    PLAYER_ENTERING_WORLD = true,
+    ZONE_CHANGED_NEW_AREA = true,
+    PLAYER_DIFFICULTY_CHANGED = true,
+    CHALLENGE_MODE_START = true,
+    CHALLENGE_MODE_RESET = true,
 }
 
 local function HideIcon(Icon)
@@ -112,7 +119,7 @@ local function RefreshCasts()
     local Frame = Private.TargetedSpellsFrame
     local DB = Private.DB.global.TargetedSpells
     Frame.RefreshPending = nil
-    if not DB.Enabled or Private.TargetedSpellsTestMode then return end
+    if not Frame.Active or Private.TargetedSpellsTestMode then return end
 
     local Count = 0
     for _, Unit in ipairs(Frame.Units) do
@@ -175,6 +182,7 @@ local function ScanUnits(Frame)
 end
 
 local function OnEvent(Frame, Event, Unit)
+    if LoadEvents[Event] then Private:UpdateTargetedSpells() return end
     if Event == "PLAYER_REGEN_DISABLED" then if Private.TargetedSpellsTestMode then Private:SetTargetedSpellsTestMode(false) end return end
 
     if Private.TargetedSpellsTestMode then return end
@@ -247,6 +255,7 @@ function Private:UpdateTargetedSpells()
     if not Frame then Private:SetupTargetedSpells() return end
 
     Frame:UnregisterAllEvents()
+    Frame.Active = false
     if Frame.TestTimer then Frame.TestTimer:Cancel() Frame.TestTimer = nil end
     Frame:ClearAllPoints()
     Frame:SetPoint(DB.Layout[1], UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
@@ -265,11 +274,21 @@ function Private:UpdateTargetedSpells()
         return
     end
 
-    Frame:Show()
+    for Event in pairs(LoadEvents) do Frame:RegisterEvent(Event) end
     Frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    if Private.TargetedSpellsTestMode and not InCombatLockdown() then ShowTestCasts() Frame.TestTimer = C_Timer.NewTicker(8, ShowTestCasts) return end
+    if Private.TargetedSpellsTestMode and not InCombatLockdown() then Frame:Show() ShowTestCasts() Frame.TestTimer = C_Timer.NewTicker(8, ShowTestCasts) return end
 
     Private.TargetedSpellsTestMode = false
+    local _, InstanceType, DifficultyID = GetInstanceInfo()
+    if next(DB.LoadConditions) and not DB.LoadConditions[InstanceType] and not DB.LoadConditions[DifficultyID] then
+        wipe(Frame.Units)
+        wipe(Frame.KnownUnits)
+        Frame:Hide()
+        return
+    end
+
+    Frame.Active = true
+    Frame:Show()
     for _, Event in ipairs(CastEvents) do Frame:RegisterEvent(Event) end
     for _, Event in ipairs(UnitEvents) do Frame:RegisterEvent(Event) end
     Frame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
