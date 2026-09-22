@@ -32,17 +32,6 @@ local LoadEvents = {
     CHALLENGE_MODE_RESET = true,
 }
 
-local function HideIcon(Icon)
-    Icon.Unit = nil
-    Icon:Hide()
-    Icon.Cooldown:Clear()
-end
-
-local function LayoutIcon(Icon)
-    local DB = Private.DB.global.TargetedSpells
-    Icon:SetSize(DB.Size[1], DB.Size[2])
-end
-
 local function LayoutIcons(Frame)
     local DB = Private.DB.global.TargetedSpells
     local GrowLeft = DB.GrowthDirection == "LEFT"
@@ -54,6 +43,7 @@ local function LayoutIcons(Frame)
 end
 
 local function CreateIcon(Frame)
+    local DB = Private.DB.global.TargetedSpells
     local Icon = CreateFrame("Frame", nil, Frame)
     Icon:EnableMouse(false)
     Icon.Masks = {}
@@ -78,7 +68,7 @@ local function CreateIcon(Frame)
     Icon.Cooldown:SetHideCountdownNumbers(false)
     Private.E:RegisterCooldown(Icon.Cooldown)
 
-    LayoutIcon(Icon)
+    Icon:SetSize(DB.Size[1], DB.Size[2])
     return Icon
 end
 
@@ -155,7 +145,12 @@ local function RefreshCasts()
             end
         end
     end
-    for Index = Count + 1, #Frame.Icons do HideIcon(Frame.Icons[Index]) end
+    for Index = Count + 1, #Frame.Icons do
+        local Icon = Frame.Icons[Index]
+        Icon.Unit = nil
+        Icon:Hide()
+        Icon.Cooldown:Clear()
+    end
     LayoutIcons(Frame)
 end
 
@@ -221,7 +216,12 @@ local function ShowTestCasts()
         Duration:SetTimeFromStart(GetTime(), Sample[2])
         ShowIcon(Frame, Index, nil, Sample[1], Duration, true)
     end
-    for Index = Count + 1, #Frame.Icons do HideIcon(Frame.Icons[Index]) end
+    for Index = Count + 1, #Frame.Icons do
+        local Icon = Frame.Icons[Index]
+        Icon.Unit = nil
+        Icon:Hide()
+        Icon.Cooldown:Clear()
+    end
     LayoutIcons(Frame)
 end
 
@@ -262,8 +262,10 @@ function Private:UpdateTargetedSpells()
     Frame:SetSize(DB.Size[1], DB.Size[2])
 
     for _, Icon in ipairs(Frame.Icons) do
-        HideIcon(Icon)
-        LayoutIcon(Icon)
+        Icon.Unit = nil
+        Icon:Hide()
+        Icon.Cooldown:Clear()
+        Icon:SetSize(DB.Size[1], DB.Size[2])
     end
 
     if not DB.Enabled then
