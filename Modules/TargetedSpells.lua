@@ -25,147 +25,115 @@ local UnitEvents = {
     "ARENA_OPPONENT_UPDATE",
 }
 
-local function HideBar(Bar)
-    Bar.Unit = nil
-    Bar:Hide()
-    Bar.TimeBinding:SetEnabled(false)
-    Bar.StatusBar:SetMinMaxValues(0, 1)
-    Bar.StatusBar:SetValue(0)
-    Bar.CastName:SetText("")
-    Bar.CastTime:SetText("")
+local function HideIcon(Icon)
+    Icon.Unit = nil
+    Icon:Hide()
+    Icon.Cooldown:Clear()
 end
 
-local function LayoutBar(Bar)
+local function LayoutIcon(Icon)
     local DB = Private.DB.global.TargetedSpells
-    local Width, Height = DB.Size[1], DB.Size[2]
-    Bar:SetSize(Width, Height)
-    Bar.Display:SetBackdropColor(unpack(DB.BackgroundColour))
-
-    Bar.Icon:SetSize(Height - 2, Height - 2)
-    Bar.StatusBar:SetStatusBarTexture(Private.LSM:Fetch("statusbar", DB.Texture))
-    Bar.StatusBar:SetStatusBarColor(unpack(DB.ForegroundColour))
-
-    for _, TextType in ipairs({ "CastName", "CastTime" }) do
-        local Text = Bar[TextType]
-        local TextDB = DB.Text[TextType]
-        Text:ClearAllPoints()
-        Text:SetPoint(TextDB.Layout[1], Bar.StatusBar, TextDB.Layout[2], TextDB.Layout[3], TextDB.Layout[4])
-        Text:SetFont(Private.LSM:Fetch("font", DB.Text.Font[1]), DB.Text.Font[2], DB.Text.Font[3])
-        Text:SetTextColor(unpack(TextDB.Colour))
-    end
-
-    -- Reserve a fixed time column; measuring live cast text can return a secret width.
-    local TimeWidth = math.min(Width - Height - 8, DB.Text.Font[2] * 4)
-    Bar.CastTime:SetWidth(TimeWidth)
-    Bar.CastName:SetWidth(math.max(1, Width - Height - TimeWidth - 12))
+    Icon:SetSize(DB.Size[1], DB.Size[2])
 end
 
-local function LayoutBars(Frame)
+local function LayoutIcons(Frame)
     local DB = Private.DB.global.TargetedSpells
-    local GrowUp = DB.GrowthDirection == "UP"
-    local Direction = GrowUp and GridLayoutMixin.Direction.BottomLeftToTopRightVertical or GridLayoutMixin.Direction.TopLeftToBottomRightVertical
-    local Point = GrowUp and "BOTTOMLEFT" or "TOPLEFT"
+    local GrowLeft = DB.GrowthDirection == "LEFT"
+    local Direction = GrowLeft and GridLayoutMixin.Direction.RightToLeft or GridLayoutMixin.Direction.LeftToRight
+    local Point = GrowLeft and "TOPRIGHT" or "TOPLEFT"
     local Anchor = AnchorUtil.CreateAnchor(Point, Frame, Point, 0, 0)
-    local Layout = AnchorUtil.CreateGridLayout(Direction, math.max(#Frame.Bars, 1), 0, DB.Layout[5])
-    AnchorUtil.GridLayout(Frame.Bars, Anchor, Layout)
+    local Layout = AnchorUtil.CreateGridLayout(Direction, math.max(#Frame.Icons, 1), DB.Layout[5], 0)
+    AnchorUtil.GridLayout(Frame.Icons, Anchor, Layout)
 end
 
-local function CreateBar(Frame)
-    local Bar = CreateFrame("Frame", nil, Frame)
-    Bar:EnableMouse(false)
-    Bar.Masks = {}
-    Bar.Display = CreateFrame("Frame", nil, Bar, "BackdropTemplate")
-    Bar.Display:EnableMouse(false)
-    Bar.Display:SetAllPoints(Bar)
-    Bar.Display:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
-    Bar.Display:SetBackdropBorderColor(0, 0, 0, 1)
+local function CreateIcon(Frame)
+    local Icon = CreateFrame("Frame", nil, Frame)
+    Icon:EnableMouse(false)
+    Icon.Masks = {}
+    Icon.Display = CreateFrame("Frame", nil, Icon, "BackdropTemplate")
+    Icon.Display:EnableMouse(false)
+    Icon.Display:SetAllPoints(Icon)
+    Icon.Display:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
+    Icon.Display:SetBackdropBorderColor(0, 0, 0, 1)
+    Icon.Display:SetBackdropColor(20/255, 20/255, 20/255, 1)
 
-    Bar.Icon = Bar.Display:CreateTexture(nil, "ARTWORK")
-    Bar.Icon:SetPoint("TOPLEFT", Bar, "TOPLEFT", 1, -1)
-    Bar.Icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
+    Icon.Texture = Icon.Display:CreateTexture(nil, "ARTWORK")
+    Icon.Texture:SetPoint("TOPLEFT", Icon, "TOPLEFT", 1, -1)
+    Icon.Texture:SetPoint("BOTTOMRIGHT", Icon, "BOTTOMRIGHT", -1, 1)
+    Icon.Texture:SetTexCoord(0.03, 0.97, 0.03, 0.97)
 
-    Bar.StatusBar = CreateFrame("StatusBar", nil, Bar.Display)
-    Bar.StatusBar:EnableMouse(false)
-    Bar.StatusBar:SetPoint("TOPLEFT", Bar.Icon, "TOPRIGHT", 1, 0)
-    Bar.StatusBar:SetPoint("BOTTOMRIGHT", Bar, "BOTTOMRIGHT", -1, 1)
+    Icon.Cooldown = CreateFrame("Cooldown", nil, Icon.Display, "CooldownFrameTemplate")
+    Icon.Cooldown:EnableMouse(false)
+    Icon.Cooldown:SetAllPoints(Icon.Texture)
+    Icon.Cooldown:SetDrawSwipe(true)
+    Icon.Cooldown:SetDrawEdge(false)
+    Icon.Cooldown:SetDrawBling(false)
+    Icon.Cooldown:SetHideCountdownNumbers(false)
+    Private.E:RegisterCooldown(Icon.Cooldown)
 
-    Bar.CastName = Bar.StatusBar:CreateFontString(nil, "OVERLAY")
-    Bar.CastName:SetJustifyH("LEFT")
-    Bar.CastName:SetWordWrap(false)
-    Bar.CastTime = Bar.StatusBar:CreateFontString(nil, "OVERLAY")
-    Bar.CastTime:SetJustifyH("RIGHT")
-    Bar.CastTime:SetWordWrap(false)
-
-    Bar.TimeBinding = C_DurationUtil.CreateDurationTextBinding()
-    Bar.TimeBinding:SetFontString(Bar.CastTime)
-    Bar.TimeBinding:SetFormatter(Frame.TimeFormatter)
-    Bar.TimeBinding:SetEnabled(false)
-    LayoutBar(Bar)
-    return Bar
+    LayoutIcon(Icon)
+    return Icon
 end
 
-local function ShowBar(Frame, Index, Unit, Name, Icon, Duration, Direction, TargetsPlayer)
-    local Bar = Frame.Bars[Index]
-    if not Bar then
-        Bar = CreateBar(Frame)
-        Frame.Bars[Index] = Bar
+local function ShowIcon(Frame, Index, Unit, Texture, Duration, TargetsPlayer)
+    local Icon = Frame.Icons[Index]
+    if not Icon then
+        Icon = CreateIcon(Frame)
+        Frame.Icons[Index] = Icon
     end
 
-    Bar.Unit = Unit
-    local Parent, MaskCount = Bar, 0
+    Icon.Unit = Unit
+    local Parent, MaskCount = Icon, 0
     if Unit then
         for Previous = 1, Index - 1 do
             local SameUnit = Frame.UnitComparisons[Previous]
             if issecretvalue(SameUnit) then
                 MaskCount = MaskCount + 1
-                local Mask = Bar.Masks[MaskCount]
+                local Mask = Icon.Masks[MaskCount]
                 if not Mask then
                     Mask = CreateFrame("Frame", nil, Parent)
                     Mask:EnableMouse(false)
-                    Mask:SetAllPoints(Bar)
-                    Bar.Masks[MaskCount] = Mask
+                    Mask:SetAllPoints(Icon)
+                    Icon.Masks[MaskCount] = Mask
                 end
                 Mask:SetAlphaFromBoolean(SameUnit, 0, 1)
                 Parent = Mask
             end
         end
     end
-    Bar.Display:SetParent(Parent)
-    Bar.CastName:SetText(Name)
-    Bar.Icon:SetTexture(Icon)
-    Bar.StatusBar:SetTimerDuration(Duration, Enum.StatusBarInterpolation.Immediate, Direction)
-    Bar.TimeBinding:SetDuration(Duration)
-    Bar.TimeBinding:SetEnabled(true)
-    Bar:SetAlphaFromBoolean(TargetsPlayer, 1, 0)
-    Bar:Show()
+    Icon.Display:SetParent(Parent)
+    Icon.Texture:SetTexture(Texture)
+    Icon.Cooldown:SetCooldownFromDurationObject(Duration)
+    Icon:SetAlphaFromBoolean(TargetsPlayer, 1, 0)
+    Icon:Show()
 end
 
 local function RefreshCasts()
     local Frame = Private.TargetedSpellsFrame
+    local DB = Private.DB.global.TargetedSpells
     Frame.RefreshPending = nil
-    if not Private.DB.global.TargetedSpells.Enabled or Private.TargetedSpellsTestMode then return end
+    if not DB.Enabled or Private.TargetedSpellsTestMode then return end
 
     local Count = 0
     for _, Unit in ipairs(Frame.Units) do
+        if Count >= DB.MaxIcons then break end
         if UnitExists(Unit) and UnitCanAttack("player", Unit) then
-            local Name, _, Icon = UnitCastingInfo(Unit)
-            local Duration, Direction
+            local Name, _, Texture = UnitCastingInfo(Unit)
+            local Duration
             if Name then
                 Duration = UnitCastingDuration(Unit)
-                Direction = Enum.StatusBarTimerDirection.ElapsedTime
             else
                 local IsEmpowered
-                Name, _, Icon, _, _, _, _, _, IsEmpowered = UnitChannelInfo(Unit)
+                Name, _, Texture, _, _, _, _, _, IsEmpowered = UnitChannelInfo(Unit)
                 if Name then
                     Duration = IsEmpowered and UnitEmpoweredChannelDuration(Unit) or UnitChannelDuration(Unit)
-                    Direction = IsEmpowered and Enum.StatusBarTimerDirection.ElapsedTime or Enum.StatusBarTimerDirection.RemainingTime
                 end
             end
 
             if Duration then
                 local Duplicate = false
                 for Index = 1, Count do
-                    local SameUnit = UnitIsUnit(Unit, Frame.Bars[Index].Unit)
+                    local SameUnit = UnitIsUnit(Unit, Frame.Icons[Index].Unit)
                     Frame.UnitComparisons[Index] = SameUnit
                     if not issecretvalue(SameUnit) and SameUnit then
                         Duplicate = true
@@ -175,13 +143,13 @@ local function RefreshCasts()
 
                 if not Duplicate then
                     Count = Count + 1
-                    ShowBar(Frame, Count, Unit, Name, Icon, Duration, Direction, PlayerIsSpellTarget(Unit))
+                    ShowIcon(Frame, Count, Unit, Texture, Duration, PlayerIsSpellTarget(Unit))
                 end
             end
         end
     end
-    for Index = Count + 1, #Frame.Bars do HideBar(Frame.Bars[Index]) end
-    LayoutBars(Frame)
+    for Index = Count + 1, #Frame.Icons do HideIcon(Frame.Icons[Index]) end
+    LayoutIcons(Frame)
 end
 
 local function QueueRefresh(Frame)
@@ -234,17 +202,19 @@ end
 local function ShowTestCasts()
     local Frame = Private.TargetedSpellsFrame
     local Samples = {
-        { "Fireball", 135812, 8, Enum.StatusBarTimerDirection.ElapsedTime },
-        { "Shadow Bolt", 136197, 4, Enum.StatusBarTimerDirection.ElapsedTime },
-        { "Penance", 237545, 6, Enum.StatusBarTimerDirection.RemainingTime },
+        { 135812, 8 },
+        { 136197, 4 },
+        { 237545, 6 },
     }
-    for Index, Sample in ipairs(Samples) do
+    local Count = math.min(#Samples, Private.DB.global.TargetedSpells.MaxIcons)
+    for Index = 1, Count do
+        local Sample = Samples[Index]
         local Duration = C_DurationUtil.CreateDuration()
-        Duration:SetTimeFromStart(GetTime(), Sample[3])
-        ShowBar(Frame, Index, nil, Sample[1], Sample[2], Duration, Sample[4], true)
+        Duration:SetTimeFromStart(GetTime(), Sample[2])
+        ShowIcon(Frame, Index, nil, Sample[1], Duration, true)
     end
-    for Index = #Samples + 1, #Frame.Bars do HideBar(Frame.Bars[Index]) end
-    LayoutBars(Frame)
+    for Index = Count + 1, #Frame.Icons do HideIcon(Frame.Icons[Index]) end
+    LayoutIcons(Frame)
 end
 
 function Private:SetTargetedSpellsTestMode(Enabled)
@@ -259,15 +229,10 @@ function Private:SetupTargetedSpells()
         local Frame = CreateFrame("Frame", nil, UIParent)
         Frame:EnableMouse(false)
         Frame:SetFrameStrata("HIGH")
-        Frame.Bars = {}
+        Frame.Icons = {}
         Frame.Units = {}
         Frame.KnownUnits = {}
         Frame.UnitComparisons = {}
-        Frame.TimeFormatter = C_StringUtil.CreateNumericRuleFormatter()
-        Frame.TimeFormatter:SetBreakpoints({
-            { threshold = 0, format = "%.1f", step = 0.1, rounding = Enum.NumericRuleFormatRounding.Up },
-            { threshold = 5, format = "%.0f", step = 1, rounding = Enum.NumericRuleFormatRounding.Up },
-        })
         Frame:SetScript("OnEvent", OnEvent)
         Private.TargetedSpellsFrame = Frame
     end
@@ -277,6 +242,7 @@ end
 
 function Private:UpdateTargetedSpells()
     local DB = Private.DB.global.TargetedSpells
+    if DB.GrowthDirection == "UP" then DB.GrowthDirection = "LEFT" elseif DB.GrowthDirection == "DOWN" then DB.GrowthDirection = "RIGHT" end
     local Frame = Private.TargetedSpellsFrame
     if not Frame then Private:SetupTargetedSpells() return end
 
@@ -286,9 +252,9 @@ function Private:UpdateTargetedSpells()
     Frame:SetPoint(DB.Layout[1], UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     Frame:SetSize(DB.Size[1], DB.Size[2])
 
-    for _, Bar in ipairs(Frame.Bars) do
-        HideBar(Bar)
-        LayoutBar(Bar)
+    for _, Icon in ipairs(Frame.Icons) do
+        HideIcon(Icon)
+        LayoutIcon(Icon)
     end
 
     if not DB.Enabled then
