@@ -300,7 +300,10 @@ function Private:CreateGUI()
     GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll = ACH:Toggle("Loot Roll: Fix Backdrop", "Force the opacity of the backdrop to be consistent with the rest of the UI.", 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ForceAlphaOnLootRoll end, function(_, value) DB.ElvUIEnhancements.ForceAlphaOnLootRoll = value Private:PromptReload() end)
     GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll.descStyle = "inline"
 
-    GUI.args.ElvUIEnhancements.args.ActionStatus = ACH:Group("Action Status", nil, 2)
+    GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown = ACH:Toggle("Castbar: Interrupt On Cooldown", nil, 2, nil, nil, "full", function() return DB.ElvUIEnhancements.CastbarInterruptCooldown end, function(_, value) DB.ElvUIEnhancements.CastbarInterruptCooldown = value Private:UpdateCastbarInterruptCooldown() end)
+    GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown.descStyle = "inline"
+
+    GUI.args.ElvUIEnhancements.args.ActionStatus = ACH:Group("Action Status", nil, 3)
     GUI.args.ElvUIEnhancements.args.ActionStatus.inline = true
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ActionStatus.Enabled end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Enabled = value Private:UpdateElvUIEnhancements() end)
 
@@ -326,7 +329,7 @@ function Private:CreateGUI()
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size = ACH:Range("Size", nil, 2, { min = 6, max = 32, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[2] = value Private:UpdateElvUIEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size.relWidth = 0.33
 
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame = ACH:Group("UI Errors", nil, 3)
+    GUI.args.ElvUIEnhancements.args.UIErrorsFrame = ACH:Group("UI Errors", nil, 4)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.inline = true
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Enabled end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Enabled = value Private:UpdateElvUIEnhancements() end)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled.relWidth = 1
