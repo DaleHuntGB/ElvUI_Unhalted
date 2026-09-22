@@ -7,6 +7,7 @@
 - `Drilldown` from Damage Meter now shows the Specialization Icon.
 - Fix low value abbreviations.
 - Added `Targeted Spells`.
+- Added the ability to colour cast bars when your interrupt is on cooldown, but the cast is interruptible.
 
 # V1.1
 - Add `Keystone Reroll Reminder` to Quality of Life → Toggles.
