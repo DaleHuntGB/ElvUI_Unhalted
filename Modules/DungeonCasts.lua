@@ -162,7 +162,7 @@ local function ShowBar(Frame, Index, Unit, Name, Texture, Duration, Direction, N
         local TargetClass = Private.E.myclass
         if Unit then TargetClass = UnitSpellTargetClass(Unit) end
         local Colour = UF:GetCasterColor(TargetClass)
-        Bar.Text:SetFormattedText("%s → |c%s%s|r", Name, Colour or "FFFFFFFF", Target)
+        Bar.Text:SetFormattedText("%s: |c%s%s|r", Name, Colour or "FFFFFFFF", Target)
     else
         Bar.Text:SetText(Name)
     end
