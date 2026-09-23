@@ -206,6 +206,17 @@ local Defaults = {
                 PowerInfusionAlertSound = "|cFF6080FFUnhalted|r: PI",
             }
         },
+        QuickAction = {
+            Enabled = false,
+            Size = { 42, 42 },
+            Layout = {"CENTER", "CENTER", 0, 0 },
+            Groups = {
+                [1] = {
+                    Keybind = "",
+                    Items = {},
+                },
+            },
+        },
         VendorHelper = {
             AutoVendor = false,
             MinimumQuality = 3,

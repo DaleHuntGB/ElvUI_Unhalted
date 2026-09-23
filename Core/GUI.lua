@@ -605,6 +605,80 @@ function Private:CreateGUI()
 
     --#endregion
 
+    --#region - Quick Actions
+
+    GUI.args.QuickActions = ACH:Group("Quick Actions", nil, 5.5, "tab")
+    GUI.args.QuickActions.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\QuickActions.tga"
+    local QuickActions = GUI.args.QuickActions
+    local QADB = DB.QuickAction
+    local QuickActionGroup = QADB.Groups[1]
+    local function QuickActionsDisabled() return not QADB.Enabled or InCombatLockdown() end
+    local function ValidateQuickActionKeybind(_, Key)
+        local BaseKey = Key:gsub("ALT%-", ""):gsub("CTRL%-", ""):gsub("SHIFT%-", "")
+        if BaseKey == "MOUSEWHEELUP" or BaseKey == "MOUSEWHEELDOWN" or BaseKey == "BUTTON1" or BaseKey == "BUTTON2" or BaseKey == "ESCAPE" then
+            return "Use a keyboard key or an extra mouse button that can be held down."
+        end
+        return true
+    end
+
+    QuickActions.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, nil, function() return QADB.Enabled end, function(_, Value)
+        if InCombatLockdown() then return end
+        QADB.Enabled = Value
+        Private:SetupQuickActions()
+        Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
+    end, InCombatLockdown)
+    QuickActions.args.Refresh = ACH:Execute("Refresh Catalogue", "Refresh the collections and bags next time each category is viewed.", 2, function()
+        if QuickActionsDisabled() then return end
+        wipe(Private.QuickActionCatalog)
+        wipe(Private.QuickActionPages)
+        Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
+    end, nil, nil, nil, nil, nil, QuickActionsDisabled)
+
+    local Actions = ACH:Group("Actions", nil, 3, "tree")
+    -- Keep navigation selectable so AceConfig still displays the disabled controls.
+    QuickActions.args.Group1 = Actions
+    Actions.args.Keybind = {
+        type = "keybinding", name = "Keybind", order = 1, width = "full",
+        desc = "Hold to open the ring, point towards an action, then release to activate. Release in the centre or press Escape to cancel. While enabled, this takes priority over an existing binding. Press Escape while assigning to clear the keybind.",
+        get = function() return QuickActionGroup.Keybind end,
+        validate = ValidateQuickActionKeybind,
+        disabled = QuickActionsDisabled,
+        set = function(_, Key)
+            if QuickActionsDisabled() or ValidateQuickActionKeybind(nil, Key) ~= true then return end
+            QuickActionGroup.Keybind = Key
+            Private:UpdateQuickActions()
+        end,
+    }
+    Actions.args.ItemsHeader = ACH:Header("Items", 2)
+    Actions.args.Items = ACH:Execute("Items", nil, 3, function() end, nil, nil, "full")
+    Actions.args.Items.dialogControl = "UnhaltedUIQuickActionList"
+    Actions.args.Items.arg = "Items"
+    Actions.args.Items.disabled = QuickActionsDisabled
+    Actions.args.Search = ACH:Input("Search", nil, 5, nil, "full", function() return Private.QuickActionSearch or "" end, function(_, Value)
+        if QuickActionsDisabled() then return end
+        Private.QuickActionSearch = strtrim(Value):lower()
+        wipe(Private.QuickActionPages)
+        Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
+    end, QuickActionsDisabled)
+    for Index, Category in ipairs({
+        { Type = "Mount", Name = "Mounts" },
+        { Type = "Spell", Name = "Spells" },
+        { Type = "Toy", Name = "Toys" },
+        { Type = "Item", Name = "Consumables" },
+    }) do
+        local Tree = ACH:Group(Category.Name, nil, Index + 10, "tree")
+        Actions.args[Category.Type] = Tree
+        if Category.Type == "Toy" then
+            Tree.args.Help = ACH:Description("Collected toys matching your Toy Box filters.", 0)
+        end
+        Tree.args.List = ACH:Execute(Category.Name, nil, 1, function() end, nil, nil, "full")
+        Tree.args.List.dialogControl = "UnhaltedUIQuickActionList"
+        Tree.args.List.arg = Category.Type
+        Tree.args.List.disabled = QuickActionsDisabled
+    end
+
+    --#endregion
+
     --#region - Targeted Spells
 
     GUI.args.TargetedSpells = ACH:Group("Targeted Spells", nil, 5.75, "tab")

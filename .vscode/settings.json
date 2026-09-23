@@ -76,7 +76,13 @@
         "UIWidgetPowerBarContainerFrame",
         "MAX_BOSS_FRAMES",
         "SetRaidTargetIconTexture",
-        "INTERRUPTED"
+        "INTERRUPTED",
+        "SecureHandlerWrapScript",
+        "STANDARD_TEXT_FONT",
+        "NUM_TOTAL_EQUIPPED_BAG_SLOTS"
     ],
-    "Lua.type.weakUnionCheck": true
+    "Lua.type.weakUnionCheck": true,
+    "Lua.diagnostics.disable": [
+        "assign-type-mismatch"
+    ]
 }

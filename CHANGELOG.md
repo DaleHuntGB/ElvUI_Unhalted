@@ -1,4 +1,5 @@
 # V1.4
+- Added `Quick Actions`, a oPie-esque replacement.
 - Added `Auto Quest` to Quality of Life → Toggles. Automatically accepts and turns in quests, pausing while Shift is held and leaving item rewards for manual turn-in.
 
 # V1.3

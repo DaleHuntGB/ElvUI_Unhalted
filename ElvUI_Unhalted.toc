@@ -55,6 +55,10 @@ Modules/QualityOfLife/Toggles/RemoveLossOfControlFrame.lua
 Modules/QualityOfLife/Toggles/RemoveTalkingHead.lua
 Modules/QualityOfLife/Toggles/SkipCinematics.lua
 
+Modules/QuickActions/Collections.lua
+Modules/QuickActions/Core.lua
+Modules/QuickActions/Widget.lua
+
 Modules/CVars.lua
 Modules/CombatAlert.lua
 Modules/CombatTimer.lua
