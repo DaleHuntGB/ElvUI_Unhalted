@@ -1,31 +1,31 @@
 local Private = select(2, ...)
 
-function Private:SetupPowerInfusionAlert()
+function Private:SetupInnervateAlert()
     local DB = Private.DB.global.QualityOfLife.Alerts
 
-    if Private.PowerInfusionAlertSound then
-        C_UnitAuras.RemoveAuraSound(Private.PowerInfusionAlertSound)
-        Private.PowerInfusionAlertSound = nil
+    if Private.InnervateAlertSound then
+        C_UnitAuras.RemoveAuraSound(Private.InnervateAlertSound)
+        Private.InnervateAlertSound = nil
     end
 
-    if not DB.PowerInfusionAlert then
-        if Private.PowerInfusionAlertTestMode then Private:SetAlertTestMode("PowerInfusionAlert", false) end
-        if Private.PowerInfusionAlertContainer then Private.PowerInfusionAlertContainer:Hide() end
-        Private:UpdateAlertGlows("PowerInfusionAlert")
+    if not DB.InnervateAlert then
+        if Private.InnervateAlertTestMode then Private:SetAlertTestMode("InnervateAlert", false) end
+        if Private.InnervateAlertContainer then Private.InnervateAlertContainer:Hide() end
+        Private:UpdateAlertGlows("InnervateAlert")
         return
     end
 
-    if not Private.PowerInfusionAlertContainer then
+    if not Private.InnervateAlertContainer then
         local Anchor = CreateFrame("Frame", nil, UIParent)
         Anchor:SetSize(42, 42)
-        Anchor:SetPoint("CENTER", UIParent, "CENTER", 125, 75)
-        Private.PowerInfusionAlertAnchor = Anchor
+        Anchor:SetPoint("CENTER", UIParent, "CENTER", 0, 75)
+        Private.InnervateAlertAnchor = Anchor
 
-        local AC = CreateFrame("AuraContainer", "PowerInfusionAlertContainer", Anchor, "CustomAuraContainerTemplate")
+        local AC = CreateFrame("AuraContainer", "InnervateAlertContainer", Anchor, "CustomAuraContainerTemplate")
         AC:SetSize(42, 42)
         AC:SetPoint("CENTER", Anchor, "CENTER", 0, 0)
-        AC:AddAuraSlot("PowerInfusionAlert", "HELPFUL", {
-            candidateFilters = { includeSpellIDs = { [10060] = true } },
+        AC:AddAuraSlot("InnervateAlert", "HELPFUL", {
+            candidateFilters = { includeSpellIDs = { [29166] = true } },
             initializeFrame = function(Aura)
                 Aura:SetSize(42, 42)
                 Aura:EnableMouseMotion(false)
@@ -50,27 +50,27 @@ function Private:SetupPowerInfusionAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
-                Private:CreateAlertGlow("PowerInfusionAlert", Anchor, 42, Aura)
+                Private:CreateAlertGlow("InnervateAlert", Anchor, 42, Aura)
             end,
         })
         AC:SetUnit("player")
-        Private.PowerInfusionAlertContainer = AC
+        Private.InnervateAlertContainer = AC
     end
 
-    if DB.PowerInfusionAlertSound ~= "None" then
-        local Sound = Private.LSM:Fetch("sound", DB.PowerInfusionAlertSound)
-        Private.PowerInfusionAlertSound = C_UnitAuras.AddAuraSound(
+    if DB.InnervateAlertSound ~= "None" then
+        local Sound = Private.LSM:Fetch("sound", DB.InnervateAlertSound)
+        Private.InnervateAlertSound = C_UnitAuras.AddAuraSound(
             Enum.UnitAuraSoundTrigger.Added, {
                 unitToken = "player",
-                spellID = 10060,
+                spellID = 29166,
                 soundFileName = Sound,
                 outputChannel = "Master",
             }
         )
     end
 
-    Private.PowerInfusionAlertContainer:Show()
-    Private.PowerInfusionAlertContainer:UpdateAllAuras()
-    Private:UpdateAlertGlows("PowerInfusionAlert")
-    if Private.PowerInfusionAlertTestMode then Private:SetAlertTestMode("PowerInfusionAlert", true) end
+    Private.InnervateAlertContainer:Show()
+    Private.InnervateAlertContainer:UpdateAllAuras()
+    Private:UpdateAlertGlows("InnervateAlert")
+    if Private.InnervateAlertTestMode then Private:SetAlertTestMode("InnervateAlert", true) end
 end

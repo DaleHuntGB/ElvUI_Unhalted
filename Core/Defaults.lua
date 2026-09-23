@@ -196,10 +196,16 @@ local Defaults = {
             },
             Alerts = {
                 BloodlustAlert = false,
+                BloodlustAlertGlow = false,
                 BloodlustAlertSound = "|cFF6080FFUnhalted|r: Buff",
+                InnervateAlert = false,
+                InnervateAlertGlow = false,
+                InnervateAlertSound = "|cFF6080FFUnhalted|r: Buff",
                 TimeSpiralAlert = false,
+                TimeSpiralAlertGlow = false,
                 TimeSpiralAlertSound = "|cFF6080FFUnhalted|r: Time Spiral",
                 PowerInfusionAlert = false,
+                PowerInfusionAlertGlow = false,
                 PowerInfusionAlertSound = "|cFF6080FFUnhalted|r: PI",
             }
         },

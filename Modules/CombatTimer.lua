@@ -4,10 +4,23 @@ local function CombatTimer_OnUpdate(combatTimerFrame, timeElapsed)
     combatTimerFrame.TimeElapsed = combatTimerFrame.TimeElapsed + timeElapsed
     if combatTimerFrame.TimeElapsed < 1 then return end
 
-    combatTimerFrame.LastDuration = GetTime() - combatTimerFrame.CombatStartTime
-    combatTimerFrame.Text:SetText(string.format("%02d:%02d", math.floor(combatTimerFrame.LastDuration / 60), math.floor(combatTimerFrame.LastDuration % 60)))
+    local Duration = GetTime() - (combatTimerFrame.TestStartTime or combatTimerFrame.CombatStartTime)
+    if not combatTimerFrame.TestStartTime then combatTimerFrame.LastDuration = Duration end
+    combatTimerFrame.Text:SetText(string.format("%02d:%02d", math.floor(Duration / 60), math.floor(Duration % 60)))
     combatTimerFrame:SetSize(math.max(1, combatTimerFrame.Text:GetStringWidth()), math.max(1, combatTimerFrame.Text:GetStringHeight()))
     combatTimerFrame.TimeElapsed = 0
+end
+
+function Private:SetCombatTimerTestMode(Enabled)
+    local Frame = Private.CombatTimerFrame
+    if Enabled and (not Private.DB.global.CombatTimer.Enabled or InCombatLockdown() or (Frame and Frame.InEncounter)) then return end
+    Private.CombatTimerTestMode = Enabled
+    if Frame then
+        Frame.TestStartTime = Enabled and GetTime() or nil
+        Frame.TimeElapsed = 0
+    end
+    Private:UpdateCombatTimer()
+    Private.ACR:NotifyChange("ElvUI")
 end
 
 function Private:SetupCombatTimer()
@@ -61,6 +74,7 @@ function Private:SetupCombatTimer()
         end
 
         CombatTimerFrame:SetScript("OnEvent", function(combatTimerFrame, event)
+            if Private.CombatTimerTestMode and (event == "PLAYER_REGEN_DISABLED" or event == "ENCOUNTER_START") then Private:SetCombatTimerTestMode(false) end
             if event == "PLAYER_REGEN_DISABLED" then
                 combatTimerFrame.InCombat = true
                 combatTimerFrame:StartTimer()
@@ -105,12 +119,24 @@ function Private:UpdateCombatTimer()
         CombatTimerFrame.Text:SetJustifyH("CENTER")
         CombatTimerFrame.Text:SetFont(Private.LSM:Fetch("font", DB.Font[1]), DB.Font[2], DB.Font[3])
         CombatTimerFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
-        CombatTimerFrame.Text:SetText(string.format("%02d:%02d", 0, 0))
+        if Private.CombatTimerTestMode and not InCombatLockdown() and not CombatTimerFrame.InEncounter then
+            CombatTimerFrame.TestStartTime = CombatTimerFrame.TestStartTime or GetTime()
+            CombatTimerFrame:SetScript("OnUpdate", CombatTimer_OnUpdate)
+        else
+            Private.CombatTimerTestMode = false
+            CombatTimerFrame.TestStartTime = nil
+            if InCombatLockdown() and not CombatTimerFrame.CombatStartTime then CombatTimerFrame.InCombat = true CombatTimerFrame:StartTimer() end
+            CombatTimerFrame:SetScript("OnUpdate", CombatTimerFrame.CombatStartTime and CombatTimer_OnUpdate or nil)
+        end
 
-        if InCombatLockdown() and not CombatTimerFrame.CombatStartTime then CombatTimerFrame.InCombat = true CombatTimerFrame:StartTimer() end
-        CombatTimerFrame:SetAlpha(CombatTimerFrame.CombatStartTime and 1 or DB.OutOfCombatAlpha)
+        local StartTime = CombatTimerFrame.TestStartTime or CombatTimerFrame.CombatStartTime
+        local Duration = StartTime and (GetTime() - StartTime) or CombatTimerFrame.LastDuration
+        CombatTimerFrame.Text:SetText(string.format("%02d:%02d", math.floor(Duration / 60), math.floor(Duration % 60)))
+        CombatTimerFrame:SetAlpha(StartTime and 1 or DB.OutOfCombatAlpha)
         CombatTimerFrame:Show()
     else
+        Private.CombatTimerTestMode = false
+        CombatTimerFrame.TestStartTime = nil
         if CombatTimerFrame.CombatStartTime then CombatTimerFrame.LastDuration = GetTime() - CombatTimerFrame.CombatStartTime end
         CombatTimerFrame:SetScript("OnUpdate", nil)
         CombatTimerFrame.CombatStartTime = nil

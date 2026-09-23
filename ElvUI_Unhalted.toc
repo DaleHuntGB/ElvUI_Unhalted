@@ -36,7 +36,10 @@ Modules/ElvUIEnhancements/LootRollFix.lua
 Modules/ElvUIEnhancements/OverAbsorbs.lua
 
 Modules/QualityOfLife/Alerts/BloodlustAlert.lua
+Modules/QualityOfLife/Alerts/Glow.lua
+Modules/QualityOfLife/Alerts/InnervateAlert.lua
 Modules/QualityOfLife/Alerts/PowerInfusionAlert.lua
+Modules/QualityOfLife/Alerts/TestMode.lua
 Modules/QualityOfLife/Alerts/TimeSpiralAlert.lua
 
 Modules/QualityOfLife/Toggles/AutoDelete.lua

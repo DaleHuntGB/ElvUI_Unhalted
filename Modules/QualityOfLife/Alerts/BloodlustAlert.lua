@@ -17,12 +17,22 @@ function Private:SetupBloodlustAlert()
     for _, SoundID in pairs(BloodlustSounds) do C_UnitAuras.RemoveAuraSound(SoundID) end
     wipe(BloodlustSounds)
 
-    if not DB.BloodlustAlert then if Private.BloodlustAlertContainer then Private.BloodlustAlertContainer:Hide() end return end
+    if not DB.BloodlustAlert then
+        if Private.BloodlustAlertTestMode then Private:SetAlertTestMode("BloodlustAlert", false) end
+        if Private.BloodlustAlertContainer then Private.BloodlustAlertContainer:Hide() end
+        Private:UpdateAlertGlows("BloodlustAlert")
+        return
+    end
 
     if not Private.BloodlustAlertContainer then
-        local AC = CreateFrame("AuraContainer", "BloodlustAlertContainer", UIParent, "CustomAuraContainerTemplate")
+        local Anchor = CreateFrame("Frame", nil, UIParent)
+        Anchor:SetSize(42, 42)
+        Anchor:SetPoint("CENTER", UIParent, "CENTER", -125, 75)
+        Private.BloodlustAlertAnchor = Anchor
+
+        local AC = CreateFrame("AuraContainer", "BloodlustAlertContainer", Anchor, "CustomAuraContainerTemplate")
         AC:SetSize(42, 42)
-        AC:SetPoint("CENTER", UIParent, "CENTER", -125, 75)
+        AC:SetPoint("CENTER", Anchor, "CENTER", 0, 0)
         AC:AddAuraSlot("BloodlustAlert", "HELPFUL", {
             candidateFilters = { includeSpellIDs = { [2825] = true, [32182] = true, [80353] = true, [264667] = true, [390386] = true, [466904] = true } },
             initializeFrame = function(Aura)
@@ -49,6 +59,7 @@ function Private:SetupBloodlustAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
+                Private:CreateAlertGlow("BloodlustAlert", Anchor, 42, Aura)
             end,
         })
         AC:SetUnit("player")
@@ -71,5 +82,6 @@ function Private:SetupBloodlustAlert()
 
     Private.BloodlustAlertContainer:Show()
     Private.BloodlustAlertContainer:UpdateAllAuras()
+    Private:UpdateAlertGlows("BloodlustAlert")
+    if Private.BloodlustAlertTestMode then Private:SetAlertTestMode("BloodlustAlert", true) end
 end
-

@@ -8,12 +8,22 @@ function Private:SetupTimeSpiralAlert()
         Private.TimeSpiralAlertSound = nil
     end
 
-    if not DB.TimeSpiralAlert then if Private.TimeSpiralAlertContainer then Private.TimeSpiralAlertContainer:Hide() end return end
+    if not DB.TimeSpiralAlert then
+        if Private.TimeSpiralAlertTestMode then Private:SetAlertTestMode("TimeSpiralAlert", false) end
+        if Private.TimeSpiralAlertContainer then Private.TimeSpiralAlertContainer:Hide() end
+        Private:UpdateAlertGlows("TimeSpiralAlert")
+        return
+    end
 
     if not Private.TimeSpiralAlertContainer then
-        local AC = CreateFrame("AuraContainer", "TimeSpiralAlertContainer", UIParent, "CustomAuraContainerTemplate")
+        local Anchor = CreateFrame("Frame", nil, UIParent)
+        Anchor:SetSize(48, 48)
+        Anchor:SetPoint("CENTER", UIParent, "CENTER", 0, 125)
+        Private.TimeSpiralAlertAnchor = Anchor
+
+        local AC = CreateFrame("AuraContainer", "TimeSpiralAlertContainer", Anchor, "CustomAuraContainerTemplate")
         AC:SetSize(48, 48)
-        AC:SetPoint("CENTER", UIParent, "CENTER", 0, 125)
+        AC:SetPoint("CENTER", Anchor, "CENTER", 0, 0)
         AC:AddAuraSlot("TimeSpiralAlert", "HELPFUL", {
             candidateFilters = { includeSpellIDs = { [375234] = true } },
             initializeFrame = function(Aura)
@@ -40,6 +50,7 @@ function Private:SetupTimeSpiralAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
+                Private:CreateAlertGlow("TimeSpiralAlert", Anchor, 48, Aura)
             end,
         })
         AC:SetUnit("player")
@@ -60,4 +71,6 @@ function Private:SetupTimeSpiralAlert()
 
     Private.TimeSpiralAlertContainer:Show()
     Private.TimeSpiralAlertContainer:UpdateAllAuras()
+    Private:UpdateAlertGlows("TimeSpiralAlert")
+    if Private.TimeSpiralAlertTestMode then Private:SetAlertTestMode("TimeSpiralAlert", true) end
 end
