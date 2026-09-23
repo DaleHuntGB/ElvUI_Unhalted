@@ -1,4 +1,5 @@
 # V1.3
+- Added `Health: Over Absorbs` to ElvUI Enhancements, using ElvUI's absorb colour and texture.
 - Tweak `KeystoneReroll` a bit.
 - Add `Dungeon casts` Module. This will track all nearby casts from enemies.
     - The colouring of the bar is based on the ElvUI settings for `Interruptible` & `Not Interruptible`.

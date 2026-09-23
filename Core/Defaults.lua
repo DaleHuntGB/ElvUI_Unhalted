@@ -160,6 +160,7 @@ local Defaults = {
         ElvUIEnhancements = {
             ForceAlphaOnLootRoll = false,
             CastbarInterruptCooldown = false,
+            OverAbsorbs = false,
             ActionStatus = {
                 Enabled = false,
                 Layout = {"CENTER", "CENTER", 0, 75},
