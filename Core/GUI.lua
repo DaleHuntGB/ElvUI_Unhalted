@@ -471,10 +471,9 @@ function Private:CreateGUI()
 
     --#region - Quality Of Life
 
-    GUI.args.QualityOfLife = ACH:Group("Quality Of Life", nil, 5)
+    GUI.args.QualityOfLife = ACH:Group("Quality Of Life", nil, 5, "tab")
     GUI.args.QualityOfLife.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\QualityOfLife.tga"
     GUI.args.QualityOfLife.args.Toggles = ACH:Group("Toggles", nil, 1)
-    GUI.args.QualityOfLife.args.Toggles.inline = true
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete = ACH:Toggle("Auto Delete", "Automatically fills the |cFFFFCC00DELETE|r prompt.", 1, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoDelete end, function(_, value) DB.QualityOfLife.Toggles.AutoDelete = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys = ACH:Toggle("Auto Sell Greys", "Automatically sells all grey items when going to a merchant.", 2, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSellGreys end, function(_, value) DB.QualityOfLife.Toggles.AutoSellGreys = value Private:SetupAutoSellGreys() end)
@@ -501,7 +500,6 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles.args.GatewayUsable.descStyle = "inline"
 
     GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)
-    GUI.args.QualityOfLife.args.Alerts.inline = true
 
     GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert = ACH:Toggle("|T135939:18:18|t Power Infusion Alert", nil, 1, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
     GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.descStyle = "inline"
