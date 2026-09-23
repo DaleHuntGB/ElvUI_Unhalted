@@ -42,6 +42,7 @@ Modules/QualityOfLife/Alerts/TestMode.lua
 Modules/QualityOfLife/Alerts/TimeSpiralAlert.lua
 
 Modules/QualityOfLife/Toggles/AutoDelete.lua
+Modules/QualityOfLife/Toggles/AutoQuest.lua
 Modules/QualityOfLife/Toggles/AutoSellGreys.lua
 Modules/QualityOfLife/Toggles/AutoSignUp.lua
 Modules/QualityOfLife/Toggles/GateawayUsable.lua

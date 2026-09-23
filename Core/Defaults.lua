@@ -185,6 +185,7 @@ local Defaults = {
                 AutoRepair = false,
                 AutoSellGreys = false,
                 AutoDelete = false,
+                AutoQuest = false,
                 RemoveBossBanner = false,
                 RemoveLossOfControlFrame = false,
                 AutoSignUp = false,

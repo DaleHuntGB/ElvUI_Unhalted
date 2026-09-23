@@ -1,3 +1,6 @@
+# V1.4
+- Added `Auto Quest` to Quality of Life → Toggles. Automatically accepts and turns in quests, pausing while Shift is held and leaving item rewards for manual turn-in.
+
 # V1.3
 - Elements that require Preview Mode, have them.
 - Added `Innervate Alert` to Quality of Life → Alerts.

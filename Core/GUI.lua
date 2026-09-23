@@ -482,6 +482,8 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Toggles = ACH:Group("Toggles", nil, 1)
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete = ACH:Toggle("Auto Delete", "Automatically fills the |cFFFFCC00DELETE|r prompt.", 1, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoDelete end, function(_, value) DB.QualityOfLife.Toggles.AutoDelete = value end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoDelete.descStyle = "inline"
+    GUI.args.QualityOfLife.args.Toggles.args.AutoQuest = ACH:Toggle("Auto Quest", "Automatically accepts and turns in quests, continuing through multiple quests. Hold |cFFFFCC00Shift|r to pause. Quests with item rewards require manual turn-in.", 1.5, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoQuest end, function(_, value) DB.QualityOfLife.Toggles.AutoQuest = value Private:SetupAutoQuest() end)
+    GUI.args.QualityOfLife.args.Toggles.args.AutoQuest.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys = ACH:Toggle("Auto Sell Greys", "Automatically sells all grey items when going to a merchant.", 2, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSellGreys end, function(_, value) DB.QualityOfLife.Toggles.AutoSellGreys = value Private:SetupAutoSellGreys() end)
     GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys.descStyle = "inline"
     GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp = ACH:Toggle("Auto Sign Up", "Automatically signs you up for dungeons and raids.", 3, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSignUp end, function(_, value) DB.QualityOfLife.Toggles.AutoSignUp = value end)
