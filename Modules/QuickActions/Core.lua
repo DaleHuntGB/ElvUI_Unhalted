@@ -8,7 +8,7 @@ local function UpdateSelection(Frame)
     local CenterX, CenterY = Frame:GetParent():GetCenter()
     X, Y = X / Frame:GetEffectiveScale() - CenterX, Y / Frame:GetEffectiveScale() - CenterY
     local Index
-    if X * X + Y * Y > Frame.DeadZone * Frame.DeadZone then
+    if Frame.Count > 0 and X * X + Y * Y > Frame.DeadZone * Frame.DeadZone then
         Index = math.floor(((math.pi / 2 - math.atan2(Y, X)) % (2 * math.pi)) * Frame.Count / (2 * math.pi) + 0.5) % Frame.Count + 1
     end
     if Frame.Selected == Index then return end
@@ -68,8 +68,39 @@ local ClickFinished = [=[
     self:SetAttribute("type", nil)
 ]=]
 
+function Private:UpdateQuickActionIcon(Icon, Action)
+    if Action then
+        Icon.Action = Action
+        Icon.SpellID = Action.Type == "Spell" and Action.ID or nil
+        if Action.Type == "Mount" then Icon.SpellID = select(2, C_MountJournal.GetMountInfoByID(Action.ID)) end
+    end
+    Action = Icon.Action
+    if not Action or not Icon:IsVisible() then return end
+
+    if Icon.SpellID then
+        if Action.Type == "Spell" then Icon.Count:SetText(C_Spell.GetSpellDisplayCount(Icon.SpellID)) else Icon.Count:SetText("") end
+        local Charges = C_Spell.GetSpellCharges(Icon.SpellID)
+        local Duration
+        -- isActive is public; charge counts and cooldown times can be secret in combat.
+        if Charges and Charges.isActive then
+            Duration = C_Spell.GetSpellChargeDuration(Icon.SpellID)
+        else
+            Duration = C_Spell.GetSpellCooldownDuration(Icon.SpellID)
+        end
+        if Duration then Icon.Cooldown:SetCooldownFromDurationObject(Duration) else Icon.Cooldown:Clear() end
+    elseif Action.Type == "Item" or Action.Type == "Toy" then
+        Icon.Count:SetText(Action.Type == "Item" and C_Item.GetItemCount(Action.ID, false, true) or "")
+        local Start, Duration, Enabled = C_Item.GetItemCooldown(Action.ID)
+        if Enabled then Icon.Cooldown:SetCooldown(Start, Duration) else Icon.Cooldown:Clear() end
+    else
+        Icon.Count:SetText("")
+        Icon.Cooldown:Clear()
+    end
+end
+
 function Private:CreateQuickActionIcon(Parent)
     local Icon = CreateFrame("Frame", nil, Parent, "BackdropTemplate")
+    Icon:Hide()
     Icon:EnableMouse(false)
     Icon:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
     Icon:SetBackdropColor(20/255, 20/255, 20/255, 1)
@@ -78,10 +109,39 @@ function Private:CreateQuickActionIcon(Parent)
     Icon.Texture:SetPoint("TOPLEFT", 1, -1)
     Icon.Texture:SetPoint("BOTTOMRIGHT", -1, 1)
     Icon.Texture:SetTexCoord(0.03, 0.97, 0.03, 0.97)
-    Icon.Highlight = Icon:CreateTexture(nil, "OVERLAY")
+    Icon.Cooldown = CreateFrame("Cooldown", nil, Icon, "CooldownFrameTemplate")
+    Icon.Cooldown:EnableMouse(false)
+    Icon.Cooldown:SetAllPoints(Icon.Texture)
+    Icon.Cooldown:SetDrawSwipe(true)
+    Icon.Cooldown:SetDrawEdge(false)
+    Icon.Cooldown:SetDrawBling(false)
+    Icon.Cooldown:SetHideCountdownNumbers(false)
+    Private.E:RegisterCooldown(Icon.Cooldown)
+    local Overlay = CreateFrame("Frame", nil, Icon)
+    Overlay:EnableMouse(false)
+    Overlay:SetAllPoints(Icon)
+    Overlay:SetFrameLevel(Icon.Cooldown:GetFrameLevel() + 1)
+    Icon.Count = Overlay:CreateFontString(nil, "OVERLAY")
+    Icon.Count:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+    Icon.Count:SetPoint("BOTTOMRIGHT", Icon, "BOTTOMRIGHT", -2, 2)
+    Icon.Count:SetJustifyH("RIGHT")
+    Icon.Highlight = Overlay:CreateTexture(nil, "ARTWORK")
     Icon.Highlight:SetAllPoints(Icon.Texture)
     Icon.Highlight:SetColorTexture(1, 1, 1, 0.3)
     Icon.Highlight:Hide()
+    Icon:SetScript("OnEvent", function(Frame) Private:UpdateQuickActionIcon(Frame) end)
+    Icon:SetScript("OnShow", function(Frame)
+        Frame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+        Frame:RegisterEvent("SPELL_UPDATE_CHARGES")
+        Frame:RegisterEvent("BAG_UPDATE_COOLDOWN")
+        Frame:RegisterEvent("BAG_UPDATE_DELAYED")
+        Private:UpdateQuickActionIcon(Frame)
+    end)
+    Icon:SetScript("OnHide", function(Frame)
+        Frame:UnregisterAllEvents()
+        Frame.Count:SetText("")
+        Frame.Cooldown:Clear()
+    end)
     return Icon
 end
 
@@ -146,7 +206,9 @@ function Private:UpdateQuickActions()
     Group:SetAttribute("count", Group.Count)
     Group:SetAttribute("deadZone", Group.DeadZone)
     Group:SetAttribute("key", Data.Keybind:gsub("ALT%-", ""):gsub("CTRL%-", ""):gsub("SHIFT%-", ""))
-    local Radius = math.max(80, (math.sqrt(DB.Size[1]^2 + DB.Size[2]^2) + 8) * Group.Count / (2 * math.pi))
+    local AngleStep = 2 * math.pi / math.max(2, Group.Count)
+    local IconDiagonal = math.sqrt(DB.Size[1]^2 + DB.Size[2]^2)
+    local Radius = math.max(80, Group.DeadZone + IconDiagonal / 2 + 8, (IconDiagonal + 8) / (2 * math.sin(AngleStep / 2)))
     Group.Label:ClearAllPoints()
     Group.Label:SetPoint("BOTTOM", Handler, "CENTER", 0, Radius + DB.Size[2] / 2 + 8)
     Group.Label:SetWidth(Radius * 2 + DB.Size[1])
@@ -161,9 +223,10 @@ function Private:UpdateQuickActions()
         local Name, Texture, ActionType, Value = Private:GetQuickActionInfo(Action)
         Icon.Name = Name
         Icon.Texture:SetTexture(Texture)
+        Private:UpdateQuickActionIcon(Icon, Action)
         Icon:SetSize(DB.Size[1], DB.Size[2])
         Icon:ClearAllPoints()
-        local Angle = math.pi / 2 - (Index - 1) * 2 * math.pi / Group.Count
+        local Angle = math.pi / 2 - (Index - 1) * AngleStep
         Icon:SetPoint("CENTER", Handler, "CENTER", math.cos(Angle) * Radius, math.sin(Angle) * Radius)
         Icon:Show()
         Group:SetAttribute("type" .. Index, ActionType)

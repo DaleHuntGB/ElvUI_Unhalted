@@ -30,6 +30,7 @@ local Methods = {
         for _, Button in ipairs(self.Buttons) do
             Button:Hide()
             Button.Action = nil
+            Button.Icon.Action, Button.Icon.SpellID = nil, nil
         end
         self.Entries, self.Category = nil, nil
     end,
@@ -93,7 +94,7 @@ local Methods = {
                     if Frame:IsEnabled() then Frame.Icon.Highlight:Show() end
                     GameTooltip:SetOwner(Frame, "ANCHOR_RIGHT")
                     GameTooltip:SetText(Frame.Name)
-                    GameTooltip:AddLine(Frame.Widget.Category == "Items" and "Right-click to remove." or "Click to add to the ring.", 1, 1, 1)
+                    GameTooltip:AddLine(Frame.Widget.Category == "Items" and "Right-click to remove." or "Click to add to the menu.", 1, 1, 1)
                     GameTooltip:Show()
                 end)
                 Button:SetScript("OnLeave", function(Frame)
@@ -111,6 +112,7 @@ local Methods = {
             if not Name then Name, Icon = Private:GetQuickActionInfo(Action) end
             Button.Name = Name
             Button.Icon.Texture:SetTexture(Icon or 134400)
+            Private:UpdateQuickActionIcon(Button.Icon, Action)
             Button.Icon.Highlight:Hide()
             Button:SetEnabled(not self.Disabled)
             Button:SetAlpha(self.Disabled and 0.4 or 1)
@@ -128,6 +130,7 @@ local Methods = {
                 Button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", ((Index - 1) % Columns) * 48, -math.floor((Index - 1) / Columns) * 48)
             end
             Button:Show()
+            Button.Icon:Show()
         end
         for Index = Count + 1, #self.Buttons do self.Buttons[Index]:Hide() end
         self.Previous:SetShown(Pages > 1)
@@ -173,4 +176,4 @@ local function Constructor()
     return AceGUI:RegisterAsWidget(Widget)
 end
 
-AceGUI:RegisterWidgetType(WidgetType, Constructor, 4)
+AceGUI:RegisterWidgetType(WidgetType, Constructor, 5)

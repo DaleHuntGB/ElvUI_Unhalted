@@ -639,7 +639,7 @@ function Private:CreateGUI()
     QuickActions.args.Group1 = Actions
     Actions.args.Keybind = {
         type = "keybinding", name = "Keybind", order = 1, width = "full",
-        desc = "Hold to open the ring, point towards an action, then release to activate. Release in the centre or press Escape to cancel. While enabled, this takes priority over an existing binding. Press Escape while assigning to clear the keybind.",
+        desc = "Hold to open the menu, point towards an action, then release to activate. Release in the centre or press Escape to cancel. While enabled, this takes priority over an existing binding. Press Escape while assigning to clear the keybind.",
         get = function() return QuickActionGroup.Keybind end,
         validate = ValidateQuickActionKeybind,
         disabled = QuickActionsDisabled,
