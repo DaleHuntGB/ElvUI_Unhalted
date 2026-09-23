@@ -370,50 +370,53 @@ function Private:CreateGUI()
     GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll = ACH:Toggle("Loot Roll: Fix Backdrop", "Force the opacity of the backdrop to be consistent with the rest of the UI.", 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ForceAlphaOnLootRoll end, function(_, value) DB.ElvUIEnhancements.ForceAlphaOnLootRoll = value Private:PromptReload() end)
     GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll.descStyle = "inline"
 
-    GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown = ACH:Toggle("Castbar: Interrupt On Cooldown", nil, 2, nil, nil, "full", function() return DB.ElvUIEnhancements.CastbarInterruptCooldown end, function(_, value) DB.ElvUIEnhancements.CastbarInterruptCooldown = value Private:UpdateCastbarInterruptCooldown() end)
+    GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown = ACH:Toggle("Castbar: Interrupt On Cooldown", "Colours the castbar when your interrupt is on cooldown but there is an interruptible cast.", 2, nil, nil, "full", function() return DB.ElvUIEnhancements.CastbarInterruptCooldown end, function(_, value) DB.ElvUIEnhancements.CastbarInterruptCooldown = value Private:UpdateCastbarInterruptCooldown() end)
     GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown.descStyle = "inline"
+
+    GUI.args.ElvUIEnhancements.args.OverAbsorbs = ACH:Toggle("Health: Over Absorbs", "Shows a reverse fill absorb bar when at full health.", 2.5, nil, nil, "full", function() return DB.ElvUIEnhancements.OverAbsorbs end, function(_, value) DB.ElvUIEnhancements.OverAbsorbs = value Private:UpdateOverAbsorbs() end)
+    GUI.args.ElvUIEnhancements.args.OverAbsorbs.descStyle = "inline"
 
     GUI.args.ElvUIEnhancements.args.ActionStatus = ACH:Group("Action Status", nil, 3)
     GUI.args.ElvUIEnhancements.args.ActionStatus.inline = true
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ActionStatus.Enabled end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Enabled = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ActionStatus.Enabled end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Enabled = value Private:UpdateBlizzardEnhancements() end)
 
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout = ACH:Group("Layout", nil, 2)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.inline = true
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.disabled = function() return not DB.ElvUIEnhancements.ActionStatus.Enabled end
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[1] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[1] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[1] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[1] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorFrom.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[2] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[2] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorTo.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[3] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[3] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[3] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[3] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.XOffset.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[4] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[4] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[4] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[4] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.YOffset.relWidth = 0.5
 
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font = ACH:Group("Font", nil, 3)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.inline = true
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.disabled = function() return not DB.ElvUIEnhancements.ActionStatus.Enabled end
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[1] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[1] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[1] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[1] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Font.relWidth = 0.33
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.FontFlags = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[3] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[3] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.FontFlags = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[3] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[3] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.FontFlags.relWidth = 0.33
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size = ACH:Range("Size", nil, 2, { min = 6, max = 32, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[2] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size = ACH:Range("Size", nil, 2, { min = 6, max = 32, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[2] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size.relWidth = 0.33
 
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame = ACH:Group("UI Errors", nil, 4)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.inline = true
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Enabled end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Enabled = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Enabled end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Enabled = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled.relWidth = 1
 
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout = ACH:Group("Layout", nil, 2)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.inline = true
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.disabled = function() return not DB.ElvUIEnhancements.UIErrorsFrame.Enabled end
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[1] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[1] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[1] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[1] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorFrom.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[2] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[2] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[2] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[2] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorTo.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[3] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[3] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[3] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[3] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.XOffset.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[4] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[4] = value Private:UpdateElvUIEnhancements() end)
+    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[4] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[4] = value Private:UpdateBlizzardEnhancements() end)
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.YOffset.relWidth = 0.5
 
     GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.FontDesc = ACH:Description("|cFFCC4040PLEASE NOTE|r: Font, Font Flag & Font Size for this UI Element is controlled by |cFF1784D1ElvUI|r via their options.", 3, nil, nil, nil, nil, nil, "relative", nil)
