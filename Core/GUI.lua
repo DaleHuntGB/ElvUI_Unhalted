@@ -293,6 +293,76 @@ function Private:CreateGUI()
 
     --#endregion
 
+    --#region - Dungeon Casts
+
+    GUI.args.DungeonCasts = ACH:Group("Dungeon Casts", nil, 3.75)
+    GUI.args.DungeonCasts.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\TargetedSpells.tga"
+    local DungeonCasts = GUI.args.DungeonCasts
+    local DCDB = DB.DungeonCasts
+
+    DungeonCasts.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DCDB.Enabled end, function(_, value) DCDB.Enabled = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Enabled.relWidth = 0.33
+    DungeonCasts.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DungeonCastsTestMode end, function(_, value) Private:SetDungeonCastsTestMode(value) end, function() return not DCDB.Enabled or InCombatLockdown() end)
+    DungeonCasts.args.TestMode.relWidth = 0.33
+
+    DungeonCasts.args.LoadConditions = ACH:MultiSelect("Load Conditions", "Load in any selected instance type or difficulty. Leave empty to load everywhere. Test Mode ignores these conditions.", 3, {
+        none = "Open World",
+        party = "Dungeon: All Difficulties",
+        raid = "Raid: All Difficulties",
+        scenario = "Scenario: All Difficulties",
+        pvp = "Battleground",
+        arena = "Arena",
+        [1] = "Dungeon: Normal",
+        [2] = "Dungeon: Heroic",
+        [8] = "Dungeon: Mythic+",
+        [23] = "Dungeon: Mythic",
+        [24] = "Dungeon: Timewalking",
+        [205] = "Dungeon: Follower",
+        [14] = "Raid: Normal",
+        [15] = "Raid: Heroic",
+        [16] = "Raid: Mythic",
+        [17] = "Raid: Looking For Raid",
+        [33] = "Raid: Timewalking",
+        [208] = "Delve",
+    }, nil, "relative", function(_, key) return DCDB.LoadConditions[key] end, function(_, key, value) DCDB.LoadConditions[key] = value or nil Private:UpdateDungeonCasts() end, function() return not DCDB.Enabled end, nil, true)
+    DungeonCasts.args.LoadConditions.relWidth = 0.33
+    DungeonCasts.args.LoadConditions.dialogControl = "Dropdown"
+
+    DungeonCasts.args.Layout = ACH:Group("Layout", nil, 4)
+    DungeonCasts.args.Layout.inline = true
+    DungeonCasts.args.Layout.disabled = function() return not DCDB.Enabled end
+    DungeonCasts.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DCDB.Layout[1] end, function(_, value) DCDB.Layout[1] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.AnchorFrom.relWidth = 0.5
+    DungeonCasts.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DCDB.Layout[2] end, function(_, value) DCDB.Layout[2] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.AnchorTo.relWidth = 0.5
+    DungeonCasts.args.Layout.args.Width = ACH:Range("Width", nil, 3, { min = 100, softMax = 500, max = 1000, step = 1 }, "relative", function() return DCDB.Size[1] end, function(_, value) DCDB.Size[1] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.Width.relWidth = 0.5
+    DungeonCasts.args.Layout.args.Height = ACH:Range("Height", nil, 4, { min = 12, softMax = 64, max = 100, step = 1 }, "relative", function() return DCDB.Size[2] end, function(_, value) DCDB.Size[2] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.Height.relWidth = 0.5
+    DungeonCasts.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 5, { min = -1000, max = 1000, step = 1 }, "relative", function() return DCDB.Layout[3] end, function(_, value) DCDB.Layout[3] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.XOffset.relWidth = 0.5
+    DungeonCasts.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 0.1 }, "relative", function() return DCDB.Layout[4] end, function(_, value) DCDB.Layout[4] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.YOffset.relWidth = 0.5
+    DungeonCasts.args.Layout.args.Spacing = ACH:Range("Spacing", "Spacing between bars.", 7, { min = 0, max = 32, step = 1 }, "relative", function() return DCDB.Layout[5] end, function(_, value) DCDB.Layout[5] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.Spacing.relWidth = 0.5
+    DungeonCasts.args.Layout.args.GrowthDirection = ACH:Select("Growth Direction", nil, 8, { UP = "Up", DOWN = "Down" }, nil, "relative", function() return DCDB.GrowthDirection end, function(_, value) DCDB.GrowthDirection = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.GrowthDirection.relWidth = 0.5
+    DungeonCasts.args.Layout.args.MaxIcons = ACH:Range("Maximum Bars", "Maximum number of bar slots. Hidden duplicate casts can still occupy a slot.", 9, { min = 1, max = 20, step = 1 }, "relative", function() return DCDB.MaxIcons end, function(_, value) DCDB.MaxIcons = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.MaxIcons.relWidth = 0.5
+    DungeonCasts.args.Layout.args.IconPosition = ACH:Select("Icon Placement", nil, 10, { LEFT = "Left", RIGHT = "Right" }, nil, "relative", function() return DCDB.IconPosition end, function(_, value) DCDB.IconPosition = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.IconPosition.relWidth = 0.5
+
+    DungeonCasts.args.Layout.args.Font = ACH:Group("Font", nil, 11)
+    DungeonCasts.args.Layout.args.Font.inline = true
+    DungeonCasts.args.Layout.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DCDB.Font[1] end, function(_, value) DCDB.Font[1] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.Font.args.Font.relWidth = 0.33
+    DungeonCasts.args.Layout.args.Font.args.Size = ACH:Range("Font Size", nil, 2, { min = 8, max = 32, step = 1 }, "relative", function() return DCDB.Font[2] end, function(_, value) DCDB.Font[2] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.Font.args.Size.relWidth = 0.33
+    DungeonCasts.args.Layout.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DCDB.Font[3] end, function(_, value) DCDB.Font[3] = value Private:UpdateDungeonCasts() end)
+    DungeonCasts.args.Layout.args.Font.args.FontFlag.relWidth = 0.33
+
+    --#endregion
+
     --#region - ElvUI Enhancements
 
     GUI.args.ElvUIEnhancements = ACH:Group("|cFF1784D1ElvUI|r Enhancements", nil, 4)

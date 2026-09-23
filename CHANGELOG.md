@@ -1,3 +1,8 @@
+# V1.3
+- Tweak `KeystoneReroll` a bit.
+- Add `Dungeon casts` Module. This will track all nearby casts from enemies.
+    - The colouring of the bar is based on the ElvUI settings for `Interruptible` & `Not Interruptible`.
+
 # V1.2
 - Add `Gateway Usable` to Quality of Life → Toggles.
     - This will show you when you can use a gateway.

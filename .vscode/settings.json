@@ -74,7 +74,8 @@
         "CANCEL",
         "AddonCompartmentFrame",
         "UIWidgetPowerBarContainerFrame",
-        "MAX_BOSS_FRAMES"
+        "MAX_BOSS_FRAMES",
+        "SetRaidTargetIconTexture"
     ],
     "Lua.type.weakUnionCheck": true
 }

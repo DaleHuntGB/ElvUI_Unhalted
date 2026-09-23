@@ -48,7 +48,7 @@ end
 local function UpdateInterruptCooldown(_, Event, Unit)
 	if Event == "UNIT_PET" and Unit ~= "player" then return end
 	InterruptReady = true
-	if Private.DB.global.ElvUIEnhancements.CastbarInterruptCooldown then
+	if Private.DB.global.ElvUIEnhancements.CastbarInterruptCooldown or (Private.DungeonCastsFrame and (Private.DungeonCastsFrame.Active or Private.DungeonCastsTestMode)) then
 		if Event ~= "SPELL_UPDATE_COOLDOWN" then
 			InterruptSpellID = nil
 			local SpellIDs = InterruptSpells[Private.E.myclass]
@@ -71,10 +71,16 @@ local function UpdateInterruptCooldown(_, Event, Unit)
 			Castbar:PostCastInterruptible(Castbar.__owner.__unit)
 		end
 	end
+	if Private.DungeonCastsFrame then Private:UpdateDungeonCastColours() end
+end
+
+function Private:IsInterruptReady()
+	if not InterruptSpellID then return false end
+	return InterruptReady
 end
 
 function Private:UpdateCastbarInterruptCooldown()
-	if not Private.DB.global.ElvUIEnhancements.CastbarInterruptCooldown then
+	if not Private.DB.global.ElvUIEnhancements.CastbarInterruptCooldown and not (Private.DungeonCastsFrame and (Private.DungeonCastsFrame.Active or Private.DungeonCastsTestMode)) then
 		if Private.InterruptCooldownFrame then Private.InterruptCooldownFrame:UnregisterAllEvents() end
 		UpdateInterruptCooldown()
 		return

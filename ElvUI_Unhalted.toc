@@ -50,6 +50,7 @@ Modules/QualityOfLife/Toggles/SkipCinematics.lua
 Modules/CVars.lua
 Modules/CombatAlert.lua
 Modules/CombatTimer.lua
+Modules/DungeonCasts.lua
 Modules/ElvUIEnhancements.lua
 Modules/MouseCursor.lua
 Modules/ProfileManager.lua

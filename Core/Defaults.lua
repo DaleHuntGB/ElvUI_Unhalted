@@ -147,6 +147,16 @@ local Defaults = {
                 }
             },
         },
+        DungeonCasts = {
+            Enabled = false,
+            LoadConditions = {},
+            MaxIcons = 5,
+            Size = { 270, 28 },
+            GrowthDirection = "UP",
+            Layout = {"CENTER", "CENTER", 0, -175.1, 1},
+            IconPosition = "LEFT",
+            Font = { "Friz Quadrata TT", 12, "OUTLINE, SLUG" }
+        },
         ElvUIEnhancements = {
             ForceAlphaOnLootRoll = false,
             CastbarInterruptCooldown = false,
