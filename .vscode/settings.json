@@ -75,7 +75,8 @@
         "AddonCompartmentFrame",
         "UIWidgetPowerBarContainerFrame",
         "MAX_BOSS_FRAMES",
-        "SetRaidTargetIconTexture"
+        "SetRaidTargetIconTexture",
+        "INTERRUPTED"
     ],
     "Lua.type.weakUnionCheck": true
 }

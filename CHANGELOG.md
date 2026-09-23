@@ -1,5 +1,4 @@
 # V1.3
-- Alerts can now have a glow set.
 - Elements that require Preview Mode, have them.
 - Added `Innervate Alert` to Quality of Life → Alerts.
 - Added `Health: Over Absorbs` to ElvUI Enhancements, using ElvUI's absorb colour and texture.

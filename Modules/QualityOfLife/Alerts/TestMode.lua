@@ -44,7 +44,6 @@ function Private:SetAlertTestMode(Alert, Enabled)
             if Private[Alert .. "TestMode"] then Cooldown:SetCooldown(GetTime(), Data.Duration) end
         end)
         Private.E:RegisterCooldown(Frame.Cooldown)
-        Private:CreateAlertGlow(Alert, Frame, Size)
 
         Frame:SetScript("OnEvent", function() Private:SetAlertTestMode(Alert, false) end)
         TestFrames[Alert] = Frame
@@ -65,6 +64,5 @@ function Private:SetAlertTestMode(Alert, Enabled)
         Container:SetShown(DB[Alert] and not Enabled)
         if DB[Alert] and not Enabled then Container:UpdateAllAuras() end
     end
-    Private:UpdateAlertGlows(Alert)
     Private.ACR:NotifyChange("ElvUI")
 end

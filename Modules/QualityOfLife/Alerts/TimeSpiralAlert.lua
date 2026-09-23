@@ -11,7 +11,6 @@ function Private:SetupTimeSpiralAlert()
     if not DB.TimeSpiralAlert then
         if Private.TimeSpiralAlertTestMode then Private:SetAlertTestMode("TimeSpiralAlert", false) end
         if Private.TimeSpiralAlertContainer then Private.TimeSpiralAlertContainer:Hide() end
-        Private:UpdateAlertGlows("TimeSpiralAlert")
         return
     end
 
@@ -50,7 +49,6 @@ function Private:SetupTimeSpiralAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
-                Private:CreateAlertGlow("TimeSpiralAlert", Anchor, 48, Aura)
             end,
         })
         AC:SetUnit("player")
@@ -71,6 +69,5 @@ function Private:SetupTimeSpiralAlert()
 
     Private.TimeSpiralAlertContainer:Show()
     Private.TimeSpiralAlertContainer:UpdateAllAuras()
-    Private:UpdateAlertGlows("TimeSpiralAlert")
     if Private.TimeSpiralAlertTestMode then Private:SetAlertTestMode("TimeSpiralAlert", true) end
 end

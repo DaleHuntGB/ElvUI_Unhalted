@@ -108,6 +108,11 @@ end
 
 local function ColourBar(Bar)
     local Colours = Private.E.db.unitframe.colors
+    if Bar.InterruptTimer then
+        local Interrupted = Colours.castInterruptedColor
+        Bar.Status:SetStatusBarColor(Interrupted.r, Interrupted.g, Interrupted.b, Interrupted.a)
+        return
+    end
     local Cast, NoInterrupt = Colours.castColor, Colours.castNoInterrupt
     local Ready = Private:IsInterruptReady()
     Bar.Status:SetStatusBarColor(
@@ -124,7 +129,7 @@ function Private:UpdateDungeonCastColours()
     end
 end
 
-local function ShowBar(Frame, Index, Unit, Name, Texture, Duration, Direction, NotInterruptible, Target, Marker)
+local function ShowBar(Frame, Index, Unit, Name, Texture, Duration, Direction, NotInterruptible, Target, Marker, CastBarID)
     local Bar = Frame.Bars[Index]
     if not Bar then
         Bar = CreateBar(Frame)
@@ -132,6 +137,7 @@ local function ShowBar(Frame, Index, Unit, Name, Texture, Duration, Direction, N
     end
 
     Bar.Unit = Unit
+    Bar.CastBarID = CastBarID
     if not issecretvalue(NotInterruptible) and NotInterruptible == nil then NotInterruptible = false end
     Bar.NotInterruptible = NotInterruptible
     local Parent, MaskCount = Bar, 0
@@ -181,12 +187,17 @@ local function ShowBar(Frame, Index, Unit, Name, Texture, Duration, Direction, N
     Bar:Show()
 end
 
+local function HideBar(Bar)
+    if Bar.InterruptTimer then Bar.InterruptTimer:Cancel() Bar.InterruptTimer = nil end
+    Bar.Unit = nil
+    Bar.CastBarID = nil
+    Bar:Hide()
+    Bar.TimeBinding:SetEnabled(false)
+end
+
 local function HideBars(Frame, First)
     for Index = First, #Frame.Bars do
-        local Bar = Frame.Bars[Index]
-        Bar.Unit = nil
-        Bar:Hide()
-        Bar.TimeBinding:SetEnabled(false)
+        HideBar(Frame.Bars[Index])
     end
 end
 
@@ -197,17 +208,26 @@ local function RefreshCasts()
     if not Frame.Active or Private.DungeonCastsTestMode then return end
 
     local Count = 0
+    -- Reserve held bars before reusing the remaining slots for active casts.
+    for Index = 1, #Frame.Bars do
+        local Bar = Frame.Bars[Index]
+        if Bar.InterruptTimer then
+            Count = Count + 1
+            table.remove(Frame.Bars, Index)
+            table.insert(Frame.Bars, Count, Bar)
+        end
+    end
     for _, Unit in ipairs(Frame.Units) do
         if Count >= DB.MaxIcons then break end
         if UnitExists(Unit) and UnitCanAttack("player", Unit) then
-            local Name, _, Texture, _, _, _, _, NotInterruptible = UnitCastingInfo(Unit)
+            local Name, _, Texture, _, _, _, _, NotInterruptible, _, CastBarID = UnitCastingInfo(Unit)
             local Duration
             local Direction = Enum.StatusBarTimerDirection.ElapsedTime
             if Name then
                 Duration = UnitCastingDuration(Unit)
             else
                 local IsEmpowered
-                Name, _, Texture, _, _, _, NotInterruptible, _, IsEmpowered = UnitChannelInfo(Unit)
+                Name, _, Texture, _, _, _, NotInterruptible, _, IsEmpowered, _, CastBarID = UnitChannelInfo(Unit)
                 if Name then
                     Duration = IsEmpowered and UnitEmpoweredChannelDuration(Unit) or UnitChannelDuration(Unit)
                     if not IsEmpowered then Direction = Enum.StatusBarTimerDirection.RemainingTime end
@@ -223,7 +243,7 @@ local function RefreshCasts()
                 end
                 if not Duplicate then
                     Count = Count + 1
-                    ShowBar(Frame, Count, Unit, Name, Texture, Duration, Direction, NotInterruptible, UnitSpellTargetName(Unit), GetRaidTargetIndex(Unit))
+                    ShowBar(Frame, Count, Unit, Name, Texture, Duration, Direction, NotInterruptible, UnitSpellTargetName(Unit), GetRaidTargetIndex(Unit), CastBarID)
                 end
             end
         end
@@ -236,6 +256,41 @@ local function QueueRefresh(Frame)
     if Frame.RefreshPending then return end
     Frame.RefreshPending = true
     RunNextFrame(RefreshCasts)
+end
+
+local function UpdateInterruptedCast(Frame, Event, Unit, InterruptedBy, CastBarID)
+    local Starting = Event == "UNIT_SPELLCAST_START" or Event == "UNIT_SPELLCAST_CHANNEL_START" or Event == "UNIT_SPELLCAST_EMPOWER_START"
+    if not Starting and not issecretvalue(InterruptedBy) and not InterruptedBy then return end
+
+    for _, Bar in ipairs(Frame.Bars) do
+        if Bar.Unit then
+            local SameUnit = Bar.Unit == Unit or UnitIsUnit(Bar.Unit, Unit)
+            if not issecretvalue(SameUnit) and SameUnit then
+                if Starting then
+                    if Bar.InterruptTimer then HideBar(Bar) end
+                elseif not Bar.InterruptTimer and (not CastBarID or not Bar.CastBarID or CastBarID == Bar.CastBarID) then
+                    local Name = UnitNameFromGUID(InterruptedBy)
+                    if issecretvalue(Name) or Name then
+                        local _, Class = UnitClassFromGUID(InterruptedBy)
+                        local Colour = UF:GetCasterColor(Class)
+                        if not issecretvalue(Colour) and not Colour then Colour = "FFFFFFFF" end
+                        Bar.Text:SetFormattedText("Interrupted by |c%s%s|r", Colour, Name)
+                    else
+                        Bar.Text:SetText(INTERRUPTED)
+                    end
+                    Bar.TimeBinding:SetEnabled(false)
+                    Bar.Time:SetText("")
+                    Bar.Status:SetMinMaxValues(0, 1)
+                    Bar.Status:SetValue(1)
+                    Bar.InterruptTimer = C_Timer.NewTimer(0.5, function()
+                        HideBar(Bar)
+                        QueueRefresh(Frame)
+                    end)
+                    ColourBar(Bar)
+                end
+            end
+        end
+    end
 end
 
 local function AddUnit(Frame, Unit)
@@ -254,7 +309,7 @@ local function ScanUnits(Frame)
     for _, Unit in ipairs({ "target", "focus", "mouseover" }) do AddUnit(Frame, Unit) end
 end
 
-local function OnEvent(Frame, Event, Unit)
+local function OnEvent(Frame, Event, Unit, ...)
     if LoadEvents[Event] then Private:UpdateDungeonCasts() return end
     if Event == "PLAYER_REGEN_DISABLED" then if Private.DungeonCastsTestMode then Private:SetDungeonCastsTestMode(false) end return end
     if Private.DungeonCastsTestMode then return end
@@ -270,6 +325,13 @@ local function OnEvent(Frame, Event, Unit)
         AddUnit(Frame, Unit)
     elseif Event == "UNIT_TARGET" or Event == "UNIT_FACTION" or Event:find("^UNIT_SPELLCAST_") then
         if issecretvalue(Unit) or not Unit then return end
+        if Event == "UNIT_SPELLCAST_INTERRUPTED" or Event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+            UpdateInterruptedCast(Frame, Event, Unit, select(3, ...))
+        elseif Event == "UNIT_SPELLCAST_EMPOWER_STOP" then
+            UpdateInterruptedCast(Frame, Event, Unit, select(4, ...))
+        elseif Event == "UNIT_SPELLCAST_START" or Event == "UNIT_SPELLCAST_CHANNEL_START" or Event == "UNIT_SPELLCAST_EMPOWER_START" then
+            UpdateInterruptedCast(Frame, Event, Unit)
+        end
         AddUnit(Frame, Unit)
         if not Frame.KnownUnits[Unit] then return end
     else

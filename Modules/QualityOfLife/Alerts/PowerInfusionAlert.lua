@@ -11,7 +11,6 @@ function Private:SetupPowerInfusionAlert()
     if not DB.PowerInfusionAlert then
         if Private.PowerInfusionAlertTestMode then Private:SetAlertTestMode("PowerInfusionAlert", false) end
         if Private.PowerInfusionAlertContainer then Private.PowerInfusionAlertContainer:Hide() end
-        Private:UpdateAlertGlows("PowerInfusionAlert")
         return
     end
 
@@ -50,7 +49,6 @@ function Private:SetupPowerInfusionAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
-                Private:CreateAlertGlow("PowerInfusionAlert", Anchor, 42, Aura)
             end,
         })
         AC:SetUnit("player")
@@ -71,6 +69,5 @@ function Private:SetupPowerInfusionAlert()
 
     Private.PowerInfusionAlertContainer:Show()
     Private.PowerInfusionAlertContainer:UpdateAllAuras()
-    Private:UpdateAlertGlows("PowerInfusionAlert")
     if Private.PowerInfusionAlertTestMode then Private:SetAlertTestMode("PowerInfusionAlert", true) end
 end

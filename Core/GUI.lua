@@ -512,52 +512,40 @@ function Private:CreateGUI()
     GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound = ACH:SharedMediaSound("Sound", "Power Infusion Alert Sound", 2, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlertSound end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlertSound = value Private:SetupPowerInfusionAlert() end, function() return not DB.QualityOfLife.Alerts.PowerInfusionAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound.relWidth = 0.3
-
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertGlow = ACH:Toggle("Glow", "Use ElvUI's General > Custom Glow settings for this icon.", 2.5, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlertGlow end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlertGlow = value Private:UpdateAlertGlows("PowerInfusionAlert") end, function() return not DB.QualityOfLife.Alerts.PowerInfusionAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertGlow.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 10-second countdown. Ends when combat starts.", 3, nil, nil, "relative", function() return Private.PowerInfusionAlertTestMode end, function(_, value) Private:SetAlertTestMode("PowerInfusionAlert", value) end, function() return not DB.QualityOfLife.Alerts.PowerInfusionAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertTestMode.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertTestMode.relWidth = 0.2
 
     GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert = ACH:Toggle("|T4622479:18:18|t Time Spiral Alert", nil, 4, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlert end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlert = value Private:SetupTimeSpiralAlert() end)
     GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.descStyle = "inline"
     GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound = ACH:SharedMediaSound("Sound", "Time Spiral Alert Sound", 5, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlertSound end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlertSound = value Private:SetupTimeSpiralAlert() end, function() return not DB.QualityOfLife.Alerts.TimeSpiralAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound.relWidth = 0.3
-
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertGlow = ACH:Toggle("Glow", "Use ElvUI's General > Custom Glow settings for this icon.", 5.5, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlertGlow end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlertGlow = value Private:UpdateAlertGlows("TimeSpiralAlert") end, function() return not DB.QualityOfLife.Alerts.TimeSpiralAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertGlow.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 15-second countdown. Ends when combat starts.", 6, nil, nil, "relative", function() return Private.TimeSpiralAlertTestMode end, function(_, value) Private:SetAlertTestMode("TimeSpiralAlert", value) end, function() return not DB.QualityOfLife.Alerts.TimeSpiralAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertTestMode.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertTestMode.relWidth = 0.2
 
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert = ACH:Toggle("|T136012:18:18|t Bloodlust Alert", nil, 7, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlert end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlert = value Private:SetupBloodlustAlert() end)
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert.descStyle = "inline"
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound = ACH:SharedMediaSound("Sound", "Bloodlust Alert Sound", 8, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlertSound end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlertSound = value Private:SetupBloodlustAlert() end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound.relWidth = 0.3
-
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertGlow = ACH:Toggle("Glow", "Use ElvUI's General > Custom Glow settings for this icon.", 8.5, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlertGlow end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlertGlow = value Private:UpdateAlertGlows("BloodlustAlert") end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertGlow.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 40-second countdown. Ends when combat starts.", 9, nil, nil, "relative", function() return Private.BloodlustAlertTestMode end, function(_, value) Private:SetAlertTestMode("BloodlustAlert", value) end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertTestMode.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertTestMode.relWidth = 0.2
 
     GUI.args.QualityOfLife.args.Alerts.args.InnervateAlert = ACH:Toggle("|T136048:18:18|t Innervate Alert", nil, 10, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.InnervateAlert end, function(_, value) DB.QualityOfLife.Alerts.InnervateAlert = value Private:SetupInnervateAlert() end)
     GUI.args.QualityOfLife.args.Alerts.args.InnervateAlert.descStyle = "inline"
     GUI.args.QualityOfLife.args.Alerts.args.InnervateAlert.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertSound = ACH:SharedMediaSound("Sound", "Innervate Alert Sound", 11, "relative", function() return DB.QualityOfLife.Alerts.InnervateAlertSound end, function(_, value) DB.QualityOfLife.Alerts.InnervateAlertSound = value Private:SetupInnervateAlert() end, function() return not DB.QualityOfLife.Alerts.InnervateAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertSound.relWidth = 0.3
-
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertGlow = ACH:Toggle("Glow", "Use ElvUI's General > Custom Glow settings for this icon.", 11.5, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.InnervateAlertGlow end, function(_, value) DB.QualityOfLife.Alerts.InnervateAlertGlow = value Private:UpdateAlertGlows("InnervateAlert") end, function() return not DB.QualityOfLife.Alerts.InnervateAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertGlow.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertSound.relWidth = 0.4
 
     GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 8-second countdown. Ends when combat starts.", 12, nil, nil, "relative", function() return Private.InnervateAlertTestMode end, function(_, value) Private:SetAlertTestMode("InnervateAlert", value) end, function() return not DB.QualityOfLife.Alerts.InnervateAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertTestMode.relWidth = 0.15
+    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertTestMode.relWidth = 0.2
 
     --#endregion
 

@@ -11,7 +11,6 @@ function Private:SetupInnervateAlert()
     if not DB.InnervateAlert then
         if Private.InnervateAlertTestMode then Private:SetAlertTestMode("InnervateAlert", false) end
         if Private.InnervateAlertContainer then Private.InnervateAlertContainer:Hide() end
-        Private:UpdateAlertGlows("InnervateAlert")
         return
     end
 
@@ -50,7 +49,6 @@ function Private:SetupInnervateAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
-                Private:CreateAlertGlow("InnervateAlert", Anchor, 42, Aura)
             end,
         })
         AC:SetUnit("player")
@@ -71,6 +69,5 @@ function Private:SetupInnervateAlert()
 
     Private.InnervateAlertContainer:Show()
     Private.InnervateAlertContainer:UpdateAllAuras()
-    Private:UpdateAlertGlows("InnervateAlert")
     if Private.InnervateAlertTestMode then Private:SetAlertTestMode("InnervateAlert", true) end
 end

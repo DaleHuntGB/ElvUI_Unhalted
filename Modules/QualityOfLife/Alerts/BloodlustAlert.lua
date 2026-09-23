@@ -20,7 +20,6 @@ function Private:SetupBloodlustAlert()
     if not DB.BloodlustAlert then
         if Private.BloodlustAlertTestMode then Private:SetAlertTestMode("BloodlustAlert", false) end
         if Private.BloodlustAlertContainer then Private.BloodlustAlertContainer:Hide() end
-        Private:UpdateAlertGlows("BloodlustAlert")
         return
     end
 
@@ -59,7 +58,6 @@ function Private:SetupBloodlustAlert()
                 Aura:SetDurationCooldown(Cooldown)
 
                 Private.E:RegisterCooldown(Cooldown)
-                Private:CreateAlertGlow("BloodlustAlert", Anchor, 42, Aura)
             end,
         })
         AC:SetUnit("player")
@@ -82,6 +80,5 @@ function Private:SetupBloodlustAlert()
 
     Private.BloodlustAlertContainer:Show()
     Private.BloodlustAlertContainer:UpdateAllAuras()
-    Private:UpdateAlertGlows("BloodlustAlert")
     if Private.BloodlustAlertTestMode then Private:SetAlertTestMode("BloodlustAlert", true) end
 end
