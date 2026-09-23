@@ -4,7 +4,7 @@ local function FetchKeystone()
     local ownedKeystoneLevel = C_MythicPlus.GetOwnedKeystoneLevel()
     local keystoneMapID = C_MythicPlus.GetOwnedKeystoneMapID()
     if ownedKeystoneLevel and ownedKeystoneLevel > 0 then
-        return string.format("+%s %s", ownedKeystoneLevel, Private.MapIDsToInstanceNames[keystoneMapID])
+        return string.format("+%s |cFF6080FF%s|r", ownedKeystoneLevel, Private.MapIDsToInstanceNames[keystoneMapID])
     else return
     end
 end
