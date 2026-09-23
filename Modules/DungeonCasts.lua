@@ -1,4 +1,5 @@
 local Private = select(2, ...)
+local UF = Private.E:GetModule("UnitFrames")
 
 local CastEvents = {
     "UNIT_SPELLCAST_START",
@@ -157,7 +158,14 @@ local function ShowBar(Frame, Index, Unit, Name, Texture, Duration, Direction, N
     Bar.Status:SetTimerDuration(Duration, Enum.StatusBarInterpolation.Immediate, Direction)
     Bar.TimeBinding:SetDuration(Duration)
     Bar.TimeBinding:SetEnabled(true)
-    if Target then Bar.Text:SetFormattedText("%s → %s", Name, Target) else Bar.Text:SetText(Name) end
+    if Target then
+        local TargetClass = Private.E.myclass
+        if Unit then TargetClass = UnitSpellTargetClass(Unit) end
+        local Colour = UF:GetCasterColor(TargetClass)
+        Bar.Text:SetFormattedText("%s → |c%s%s|r", Name, Colour or "FFFFFFFF", Target)
+    else
+        Bar.Text:SetText(Name)
+    end
 
     Bar.Text:ClearAllPoints()
     Bar.Text:SetPoint("RIGHT", Bar.Time, "LEFT", -4, 0)
