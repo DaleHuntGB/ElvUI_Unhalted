@@ -198,6 +198,19 @@ local function SkinAuctionator()
         if Tab then Private:SkinAuctionatorTab(Tab) end
     end
 
+    local InfoTab = _G.AuctionatorTabs_Auctionator
+    if InfoTab then
+        InfoTab:Hide()
+        local _, PreviousTab = InfoTab:GetPoint()
+        for _, Tab in ipairs(_G.AuctionatorAHTabsContainer.Tabs) do
+            local _, RelativeTo = Tab:GetPoint()
+            if RelativeTo == InfoTab then
+                Tab:ClearAllPoints()
+                Tab:Point("TOPLEFT", PreviousTab, "TOPRIGHT", Tab.backdrop and -5 or 3, 0)
+            end
+        end
+    end
+
     for _, Name in ipairs({
         "AuctionatorShoppingFrame",
         "AuctionatorSellingFrame",
