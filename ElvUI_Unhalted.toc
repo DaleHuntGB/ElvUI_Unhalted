@@ -27,6 +27,7 @@ Modules/AddOnSkins/BigWigs.lua
 Modules/AddOnSkins/BugSack.lua
 Modules/AddOnSkins/Collectionator.lua
 Modules/AddOnSkins/LSToasts.lua
+Modules/AddOnSkins/SimulationCraft.lua
 
 Modules/DamageMeter/Bars.lua
 Modules/DamageMeter/Core.lua

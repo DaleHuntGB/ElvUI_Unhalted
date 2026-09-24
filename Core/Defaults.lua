@@ -8,6 +8,7 @@ local Defaults = {
             BugSack = false,
             Collectionator = false,
             LSToasts = false,
+            SimulationCraft = false,
         },
         CombatAlert = {
             Enabled = false,

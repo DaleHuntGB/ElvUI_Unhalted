@@ -42,6 +42,9 @@ function Private:CreateGUI()
     GUI.args.AddOnSKins.args.Collectionator = ACH:Toggle("|TInterface\\AddOns\\Collectionator\\Images\\logo:16:16|t Collectionator", "Skins Collectionator's Auction House tabs and controls to match ElvUI.", 5, nil, nil, "full", function() return DB.AddOnSkins.Collectionator end, function(_, value) DB.AddOnSkins.Collectionator = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Collectionator"))
     GUI.args.AddOnSKins.args.Collectionator.descStyle = "inline"
 
+    GUI.args.AddOnSKins.args.SimulationCraft = ACH:Toggle("|TInterface\\AddOns\\Simulationcraft\\logo:16:16|t SimulationCraft", "Skins SimulationCraft Minimap Icon & Export Window.", 6, nil, nil, "full", function() return DB.AddOnSkins.SimulationCraft end, function(_, value) DB.AddOnSkins.SimulationCraft = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Simulationcraft"))
+    GUI.args.AddOnSKins.args.SimulationCraft.descStyle = "inline"
+
     --#endregion
 
     --#region - Combat Alert
