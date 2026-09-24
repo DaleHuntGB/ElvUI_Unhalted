@@ -5,6 +5,105 @@ local PageSize = 40
 
 Private.QuickActionPages = {}
 
+local function CancelDrag(Widget)
+    local Button = Widget.DragButton
+    if not Button then return end
+    Widget.DragButton, Widget.DragAction, Widget.DropIndex = nil, nil, nil
+    Widget.frame:SetScript("OnUpdate", nil)
+    Widget.frame:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    Widget.DropMarker:Hide()
+    Button.Icon:StopMovingOrSizing()
+    Button.Icon:ClearAllPoints()
+    Button.Icon:SetPoint("TOPLEFT", Button, "TOPLEFT")
+    Button.Icon:SetFrameStrata(Button:GetFrameStrata())
+    Button.Icon:SetAlpha(1)
+    Button.Icon.Highlight:Hide()
+end
+
+local function UpdateDrag(Frame)
+    local Widget = Frame.obj
+    if Widget.Disabled or InCombatLockdown() or not Private.DB.global.QuickAction.Enabled then
+        CancelDrag(Widget)
+        return
+    end
+    Widget.DropIndex = nil
+    Widget.DropMarker:Hide()
+    if not Frame:IsMouseOver() then return end
+    local Parent = Frame:GetParent()
+    while Parent do
+        if Parent:IsObjectType("ScrollFrame") and not Parent:IsMouseOver() then return end
+        Parent = Parent:GetParent()
+    end
+
+    local Target, After, ToIndex
+    local Page = Private.QuickActionPages.Items or 1
+    if Widget.Previous:IsVisible() and Widget.Previous:IsEnabled() and Widget.Previous:IsMouseOver() then
+        Target, After, ToIndex = Widget.Previous, false, (Page - 1) * PageSize
+    elseif Widget.Next:IsVisible() and Widget.Next:IsEnabled() and Widget.Next:IsMouseOver() then
+        Target, After, ToIndex = Widget.Next, true, Page * PageSize + 1
+    else
+        local CursorX, CursorY = GetCursorPosition()
+        local Scale = Frame:GetEffectiveScale()
+        CursorX, CursorY = CursorX / Scale, CursorY / Scale
+        local NearestX, NearestY, TargetX
+        for _, Button in ipairs(Widget.Buttons) do
+            if Button:IsVisible() and Button:IsEnabled() then
+                local X, Y = Button:GetCenter()
+                local DistanceX, DistanceY = math.abs(CursorX - X), math.abs(CursorY - Y)
+                -- Select the row first so empty space at the end of a short row appends to that row.
+                if not NearestY or DistanceY < NearestY or (DistanceY == NearestY and DistanceX < NearestX) then
+                    Target, TargetX, NearestX, NearestY = Button, X, DistanceX, DistanceY
+                end
+            end
+        end
+        if not Target or CursorY < Target:GetBottom() - 3 or CursorY > Target:GetTop() + 3 then return end
+        After = CursorX >= TargetX
+        ToIndex = Target.Index + (After and 1 or 0)
+        if Widget.DragButton.Index < ToIndex then ToIndex = ToIndex - 1 end
+    end
+    if ToIndex == Widget.DragButton.Index then return end
+    Widget.DropIndex = ToIndex
+    Widget.DropMarker:ClearAllPoints()
+    Widget.DropMarker:SetHeight(Target:GetHeight())
+    Widget.DropMarker:SetPoint("CENTER", Target, After and "RIGHT" or "LEFT", After and 3 or -3, 0)
+    Widget.DropMarker:Show()
+end
+
+local function ActionDragStarted(Button)
+    local Widget = Button.Widget
+    if Widget.Disabled or Widget.Category ~= "Items" or InCombatLockdown() or not Private.DB.global.QuickAction.Enabled then return end
+    CancelDrag(Widget)
+    Widget.DragButton = Button
+    Widget.DragAction = Private.DB.global.QuickAction.Groups[1].Items[Button.Index]
+    Widget.frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    GameTooltip:Hide()
+    Button.Icon:SetFrameStrata("TOOLTIP")
+    Button.Icon:SetAlpha(0.8)
+    Button.Icon.Highlight:Hide()
+    Button.Icon:StartMoving()
+    -- Track midpoint crossings and gaps, which do not fire mouse enter/leave events.
+    Widget.frame:SetScript("OnUpdate", UpdateDrag)
+    UpdateDrag(Widget.frame)
+end
+
+local function ActionDragStopped(Button)
+    local Widget = Button.Widget
+    if Widget.DragButton ~= Button then return end
+    UpdateDrag(Widget.frame)
+    local Action, FromIndex, ToIndex = Widget.DragAction, Button.Index, Widget.DropIndex
+    CancelDrag(Widget)
+    if Widget.Disabled or Widget.Category ~= "Items" or InCombatLockdown() or not Private.DB.global.QuickAction.Enabled then return end
+
+    local Items = Private.DB.global.QuickAction.Groups[1].Items
+    if not Action or Items[FromIndex] ~= Action then return end
+    if not ToIndex or ToIndex == FromIndex or not Items[ToIndex] then return end
+
+    table.insert(Items, ToIndex, table.remove(Items, FromIndex))
+    Private.QuickActionPages.Items = math.floor((ToIndex - 1) / PageSize) + 1
+    Private:UpdateQuickActions()
+    Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
+end
+
 local function ActionClicked(Button, MouseButton)
     local Widget = Button.Widget
     if Widget.Disabled or InCombatLockdown() then return end
@@ -27,6 +126,7 @@ local Methods = {
         self.Disabled = false
     end,
     OnRelease = function(self)
+        CancelDrag(self)
         for _, Button in ipairs(self.Buttons) do
             Button:Hide()
             Button.Action = nil
@@ -66,6 +166,7 @@ local Methods = {
         self:Layout()
     end,
     Layout = function(self)
+        CancelDrag(self)
         local Pages = math.max(1, math.ceil(#self.Entries / PageSize))
         local Page = math.min(Private.QuickActionPages[self.Category] or 1, Pages)
         Private.QuickActionPages[self.Category] = Page
@@ -80,8 +181,10 @@ local Methods = {
             if not Button then
                 Button = CreateFrame("Button", nil, self.frame)
                 Button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+                Button:RegisterForDrag("LeftButton")
                 Button.Widget = self
                 Button.Icon = Private:CreateQuickActionIcon(Button)
+                Button.Icon:SetMovable(true)
                 Button.Icon:SetSize(42, 42)
                 Button.Icon:SetPoint("TOPLEFT")
                 Button.Title = Button:CreateFontString(nil, "OVERLAY")
@@ -90,11 +193,17 @@ local Methods = {
                 Button.Title:SetWordWrap(true)
                 Button.Title:SetPoint("LEFT", Button, "LEFT", 50, 0)
                 Button:SetScript("OnClick", ActionClicked)
+                Button:SetScript("OnDragStart", ActionDragStarted)
+                Button:SetScript("OnDragStop", ActionDragStopped)
                 Button:SetScript("OnEnter", function(Frame)
+                    if Frame.Widget.DragButton then return end
                     if Frame:IsEnabled() then Frame.Icon.Highlight:Show() end
                     GameTooltip:SetOwner(Frame, "ANCHOR_RIGHT")
                     GameTooltip:SetText(Frame.Name)
-                    GameTooltip:AddLine(Frame.Widget.Category == "Items" and "Right-click to remove." or "Click to add to the menu.", 1, 1, 1)
+                    GameTooltip:AddLine(Frame.Widget.Category == "Items" and "Drag to reorder. Right-click to remove." or "Click to add to the menu.", 1, 1, 1)
+                    if Frame.Widget.Category == "Items" and #Frame.Widget.Entries > PageSize then
+                        GameTooltip:AddLine("Drop on a page arrow to move to that page.", 1, 1, 1)
+                    end
                     GameTooltip:Show()
                 end)
                 Button:SetScript("OnLeave", function(Frame)
@@ -147,7 +256,17 @@ local function Constructor()
     local Frame = CreateFrame("Frame", nil, UIParent)
     Frame:Hide()
     local Widget = { type = WidgetType, frame = Frame, Buttons = {} }
+    Frame:SetScript("OnHide", function() CancelDrag(Widget) end)
+    Frame:SetScript("OnEvent", function() CancelDrag(Widget) end)
     for Name, Method in pairs(Methods) do Widget[Name] = Method end
+    Widget.DropMarker = CreateFrame("Frame", nil, Frame)
+    Widget.DropMarker:EnableMouse(false)
+    Widget.DropMarker:SetFrameLevel(Frame:GetFrameLevel() + 5)
+    Widget.DropMarker:SetWidth(2)
+    local MarkerTexture = Widget.DropMarker:CreateTexture(nil, "OVERLAY")
+    MarkerTexture:SetAllPoints()
+    MarkerTexture:SetColorTexture(1, 1, 1, 0.8)
+    Widget.DropMarker:Hide()
     for _, Direction in ipairs({ "Previous", "Next" }) do
         local Button = CreateFrame("Button", nil, Frame, "BackdropTemplate")
         Button:SetSize(32, 20)
@@ -176,4 +295,4 @@ local function Constructor()
     return AceGUI:RegisterAsWidget(Widget)
 end
 
-AceGUI:RegisterWidgetType(WidgetType, Constructor, 5)
+AceGUI:RegisterWidgetType(WidgetType, Constructor, 7)
