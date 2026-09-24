@@ -303,8 +303,8 @@ end
 local function ScanUnits(Frame)
     wipe(Frame.Units)
     wipe(Frame.KnownUnits)
+    -- Boss/nameplate comparisons are blocked; track bosses through nameplates and selected units.
     for _, NamePlate in ipairs(C_NamePlate.GetNamePlates()) do AddUnit(Frame, NamePlate.namePlateUnitToken) end
-    for Index = 1, MAX_BOSS_FRAMES do AddUnit(Frame, "boss" .. Index) end
     for Index = 1, 5 do AddUnit(Frame, "arena" .. Index) end
     for _, Unit in ipairs({ "target", "focus", "mouseover" }) do AddUnit(Frame, Unit) end
 end
@@ -324,7 +324,7 @@ local function OnEvent(Frame, Event, Unit, ...)
     elseif Event == "NAME_PLATE_UNIT_ADDED" then
         AddUnit(Frame, Unit)
     elseif Event == "UNIT_TARGET" or Event == "UNIT_FACTION" or Event:find("^UNIT_SPELLCAST_") then
-        if issecretvalue(Unit) or not Unit then return end
+        if issecretvalue(Unit) or not Unit or Unit:match("^boss%d+$") then return end
         if Event == "UNIT_SPELLCAST_INTERRUPTED" or Event == "UNIT_SPELLCAST_CHANNEL_STOP" then
             UpdateInterruptedCast(Frame, Event, Unit, select(3, ...))
         elseif Event == "UNIT_SPELLCAST_EMPOWER_STOP" then
