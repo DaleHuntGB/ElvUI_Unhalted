@@ -36,6 +36,12 @@ function Private:CreateGUI()
     GUI.args.AddOnSKins.args.BigWigs = ACH:Toggle("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|t BigWigs", "Skins Queue Timer & Keys Panel.", 3, nil, nil, "full", function() return DB.AddOnSkins.BigWigs end, function(_, value) DB.AddOnSkins.BigWigs = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
     GUI.args.AddOnSKins.args.BigWigs.descStyle = "inline"
 
+    GUI.args.AddOnSKins.args.Auctionator = ACH:Toggle("|TInterface\\AddOns\\Auctionator\\Images\\Logo:16:16|t Auctionator", "Skins Auctionator's Auction House tabs and controls to match ElvUI.", 4, nil, nil, "full", function() return DB.AddOnSkins.Auctionator end, function(_, value) DB.AddOnSkins.Auctionator = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Auctionator"))
+    GUI.args.AddOnSKins.args.Auctionator.descStyle = "inline"
+
+    GUI.args.AddOnSKins.args.Collectionator = ACH:Toggle("|TInterface\\AddOns\\Collectionator\\Images\\logo:16:16|t Collectionator", "Skins Collectionator's Auction House tabs and controls to match ElvUI.", 5, nil, nil, "full", function() return DB.AddOnSkins.Collectionator end, function(_, value) DB.AddOnSkins.Collectionator = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Collectionator"))
+    GUI.args.AddOnSKins.args.Collectionator.descStyle = "inline"
+
     --#endregion
 
     --#region - Combat Alert

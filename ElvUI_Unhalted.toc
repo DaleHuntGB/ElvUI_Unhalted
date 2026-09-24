@@ -22,8 +22,10 @@ Core/Defaults.lua
 Core/GUI.lua
 Core/SharedMedia.lua
 
+Modules/AddOnSkins/Auctionator.lua
 Modules/AddOnSkins/BigWigs.lua
 Modules/AddOnSkins/BugSack.lua
+Modules/AddOnSkins/Collectionator.lua
 Modules/AddOnSkins/LSToasts.lua
 
 Modules/DamageMeter/Bars.lua
