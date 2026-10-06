@@ -82,14 +82,23 @@ local function TitleBar_OnClick(DMTitleBar, Button)
 end
 
 function Private:CreateDamageMeter(DMFrameName, DB)
-    if not DB.Enabled then return end
+    if not DB.Enable then return end
 
     local DM = CreateFrame("Frame", DMFrameName, UIParent, "BackdropTemplate")
     DM.SessionType = DB.SessionType
     DM.Bars = {}
     DM.ScrollOffset = 0
+    DM:EnableMouse(true)
     DM:EnableMouseWheel(true)
-    DM:SetScript("OnMouseWheel", function(DMFrame, Delta) DMFrame.ScrollOffset = DMFrame.ScrollOffset - Delta; Private:PopulateDamageMeterBars(DMFrame, DMFrame.DB) end)
+    DM:SetScript("OnMouseDown", function(DMFrame, Button) if Button == "RightButton" then Private:ToggleDamageMeterTypes(DMFrame) end end)
+    DM:SetScript("OnMouseWheel", function(DMFrame, Delta)
+        if DMFrame.MeterTypeMenuOffset then
+            DMFrame.MeterTypeMenuOffset = DMFrame.MeterTypeMenuOffset - Delta
+        else
+            DMFrame.ScrollOffset = DMFrame.ScrollOffset - Delta
+        end
+        Private:PopulateDamageMeterBars(DMFrame, DMFrame.DB)
+    end)
 
     DM.TitleBar = CreateFrame("Frame", nil, DM, "BackdropTemplate")
     DM.TitleBar:EnableMouse(true)
@@ -131,45 +140,31 @@ function Private:CreateDamageMeter(DMFrameName, DB)
 end
 
 function Private:CreateDrilldownPopup(DMFrameName, DB)
-    if not DB.Enabled then return end
+    if not DB.Enable then return end
 
     local DM = CreateFrame("Frame", DMFrameName, UIParent, "BackdropTemplate")
-    DM.SessionType = DB.SessionType
+    DM:Hide()
     DM.Bars = {}
-    DM.ScrollOffset = 0
     DM:EnableMouseWheel(true)
-    DM:SetScript("OnMouseWheel", function(DMFrame, Delta) DMFrame.ScrollOffset = DMFrame.ScrollOffset - Delta; Private:PopulateDamageMeterBars(DMFrame, DMFrame.DB) end)
 
-    DM.TitleBar = CreateFrame("Frame", nil, DM, "BackdropTemplate")
-    DM.TitleBar:EnableMouse(true)
-    DM.TitleBar:SetScript("OnEnter", TitleBar_OnEnter)
-    DM.TitleBar:SetScript("OnLeave", TitleBar_OnLeave)
-    DM.TitleBar:SetScript("OnMouseDown", TitleBar_OnClick)
+    DM.Unavailable = DM:CreateFontString(nil, "OVERLAY")
+    DM.Unavailable:SetPoint("CENTER")
+    DM.Unavailable:Hide()
 
-    DM.TitleBar.Icon = DM.TitleBar:CreateTexture(nil, "OVERLAY")
-    DM.TitleBar.Icon:SetTexCoord(0.03, 0.97, 0.03, 0.97)
-    DM.TitleBar.Icon:SetSize(DB.TitleBar.Height - 2, DB.TitleBar.Height - 2)
-    DM.TitleBar.Icon:ClearAllPoints()
-    DM.TitleBar.Icon:SetPoint("LEFT", DM.TitleBar, "LEFT", 1, 0)
-    DM.TitleBar.Icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
-
-    DM.Title = DM.TitleBar:CreateFontString(nil, "OVERLAY")
-    DM.Title:SetJustifyH("LEFT")
-    DM.Title:SetJustifyV("MIDDLE")
-
-    Private:LayoutDamageMeter(DM, DB)
+    Private:LayoutDrilldownPopup(DM, DB)
 
     return DM
 end
 
 function Private:LayoutDamageMeter(DM, DB)
+    Private:ClampDamageMeterSize(DB)
     DM.DB = DB
     DM:SetSize(DB.Size[1], DB.Size[2])
     DM:ClearAllPoints()
     DM:SetPoint(DB.Layout[1], UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     if DB.ShowBackdrop then
         DM:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
-        DM:SetBackdropColor(unpack(DB.BackgroundColour))
+        DM:SetBackdropColor(DB.BackgroundColour[1], DB.BackgroundColour[2], DB.BackgroundColour[3], DB.BackgroundColour[4])
         DM:SetBackdropBorderColor(0, 0, 0, 1)
     else
         DM:SetBackdrop(nil)
@@ -177,16 +172,16 @@ function Private:LayoutDamageMeter(DM, DB)
 
     DM.TitleBar:SetSize(DB.Size[1], DB.TitleBar.Height)
     DM.TitleBar:ClearAllPoints()
-    DM.TitleBar:SetPoint("BOTTOMLEFT", DM, "TOPLEFT", 0, 1)
-    DM.TitleBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
-    DM.TitleBar:SetBackdropColor(unpack(DB.BackgroundColour))
+    DM.TitleBar:SetPoint(DB.TitleBar.Layout[1], DM, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
+    if DB.TitleBar.ShowBackdrop then DM.TitleBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1}) else DM.TitleBar:SetBackdrop(nil) end
+    DM.TitleBar:SetBackdropColor(DB.BackgroundColour[1], DB.BackgroundColour[2], DB.BackgroundColour[3], DB.BackgroundColour[4])
     DM.TitleBar:SetBackdropBorderColor(0, 0, 0, 1)
-    DM.TitleBar:SetShown(DB.TitleBar.Enabled)
+    DM.TitleBar:SetShown(DB.TitleBar.Enable)
 
-    DM.Title:SetFont(Private.LSM:Fetch("font", DB.TitleBar.Font[1]), DB.TitleBar.Font[2], DB.TitleBar.Font[3])
-    DM.Title:SetTextColor(unpack(DB.TitleBar.Colour))
+    DM.Title:SetFont(Private.LSM:Fetch("font", DB.TitleBar.Text.Font), DB.TitleBar.Text.FontSize, DB.TitleBar.Text.FontFlag)
+    DM.Title:SetTextColor(DB.TitleBar.Text.Colour[1], DB.TitleBar.Text.Colour[2], DB.TitleBar.Text.Colour[3], DB.TitleBar.Text.Colour[4])
     DM.Title:ClearAllPoints()
-    DM.Title:SetPoint(DB.TitleBar.Layout[1], DM.TitleBar, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
+    DM.Title:SetPoint(DB.TitleBar.Text.Layout[1], DM.TitleBar, DB.TitleBar.Text.Layout[2], DB.TitleBar.Text.Layout[3], DB.TitleBar.Text.Layout[4])
     DM.Title:SetText(Private.MeterTypes[DB.MeterType])
 
     if DM.TitleBar.ResetButton then
@@ -206,6 +201,7 @@ function Private:LayoutDamageMeter(DM, DB)
 end
 
 function Private:LayoutDrilldownPopup(DM, DB)
+    Private:ClampDamageMeterSize(DB)
     DM.DB = DB
     DM:SetSize(DB.Size[1], DB.Size[2])
     DM:ClearAllPoints()
@@ -218,19 +214,10 @@ function Private:LayoutDrilldownPopup(DM, DB)
         DM:SetBackdrop(nil)
     end
 
-    DM.TitleBar:SetSize(DB.Size[1], DB.TitleBar.Height)
-    DM.TitleBar:ClearAllPoints()
-    DM.TitleBar:SetPoint("BOTTOMLEFT", DM, "TOPLEFT", 0, 1)
-    DM.TitleBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
-    DM.TitleBar:SetBackdropColor(unpack(DB.BackgroundColour))
-    DM.TitleBar:SetBackdropBorderColor(0, 0, 0, 1)
-    DM.TitleBar:SetShown(DB.TitleBar.Enabled)
-
-    DM.Title:SetFont(Private.LSM:Fetch("font", DB.TitleBar.Font[1]), DB.TitleBar.Font[2], DB.TitleBar.Font[3])
-    DM.Title:SetTextColor(unpack(DB.TitleBar.Colour))
-    DM.Title:ClearAllPoints()
-    DM.Title:SetPoint(DB.TitleBar.Layout[1], DM.TitleBar, DB.TitleBar.Layout[2], DB.TitleBar.Layout[3], DB.TitleBar.Layout[4])
-    DM.Title:SetText(Private.MeterTypes[DB.MeterType])
+    DM.Unavailable:SetFont(Private.LSM:Fetch("font", DB.Rows.Name.Font), DB.Rows.Name.FontSize, DB.Rows.Name.FontFlag)
+    DM.Unavailable:SetText(DEATH_RECAP_UNAVAILABLE)
+    DM.Unavailable:SetTextColor(unpack(DB.Rows.Name.Colour))
+    DM.Unavailable:SetWidth(math.max(1, DB.Size[1] - 6))
 
     Private:LayoutDamageMeterBars(DM, DB)
 end

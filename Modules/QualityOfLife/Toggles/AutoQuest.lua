@@ -1,9 +1,8 @@
 local Private = select(2, ...)
 
 local function AutoQuestFrame_OnEvent(_, event)
-    if not Private.DB.global.QualityOfLife.Toggles.AutoQuest or IsShiftKeyDown() or InCombatLockdown() then return end
+    if not Private.DB.global.QualityOfLife.Toggles.AutoQuest or IsShiftKeyDown() then return end
 
-    -- Select one quest at a time, then continue when the NPC's quest list returns.
     if event == "GOSSIP_SHOW" then
         for _, Quest in ipairs(C_GossipInfo.GetActiveQuests()) do
             if Quest.isComplete then
@@ -41,11 +40,10 @@ local function AutoQuestFrame_OnEvent(_, event)
     elseif event == "QUEST_PROGRESS" then
         if IsQuestCompletable() then CompleteQuest() end
     elseif event == "QUEST_COMPLETE" then
-        -- Fixed item rewards and item choices both require a manual turn-in.
         if GetNumQuestRewards() > 0 then return end
         local Choices = GetNumQuestChoices()
         for Index = 1, Choices do
-            if GetQuestItemInfoLootType("choice", Index) == 0 then return end -- LOOT_LIST_ITEM
+            if GetQuestItemInfoLootType("choice", Index) == 0 then return end
         end
         GetQuestReward(Choices > 0 and 1 or 0)
     end

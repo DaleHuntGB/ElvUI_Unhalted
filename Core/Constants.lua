@@ -1,24 +1,57 @@
 local Private = select(2, ...)
 
 Private.AddOn = LibStub("AceAddon-3.0"):NewAddon("ElvUI_Unhalted")
-Private.ACH = LibStub("LibAceConfigHelper")
-Private.ACR = LibStub("AceConfigRegistry-3.0")
+Private.ElvUI = unpack(ElvUI)
+Private.Distributor = Private.ElvUI:GetModule("Distributor")
+Private.AG = LibStub("AceGUI-3.0")
+Private.AC = LibStub("AceConsole-3.0")
 Private.LSM = LibStub("LibSharedMedia-3.0")
+
 Private.AddOnName = C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Title")
 Private.AddOnVersion = C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Version")
-Private.E = unpack(ElvUI)
-Private.Distributor = Private.E:GetModule("Distributor")
 
-Private.GUI = {}
+Private.InterruptIDs = {
+    DEATHKNIGHT = {47528},
+    DEMONHUNTER = {183752},
+    DRUID = {106839, 78675},
+    EVOKER = {351338},
+    HUNTER = {147362, 187707},
+    MAGE = {2139},
+    MONK = {116705},
+    PALADIN = {96231, 31935},
+    PRIEST = {15487},
+    ROGUE = {1766},
+    SHAMAN = {57994},
+    WARLOCK = {19647, 132409, 89766, 119910, 1276467},
+    WARRIOR = {6552},
+}
 
-Private.InstanceIDs = {
-    [1] = true, -- Normal Dungeon
-    [2] = true, -- Heroic Dungeon
-    [8] = true, -- Mythic+ Dungeon
-    [23] = true, -- Mythic Dungeon
-    [14] = true, -- Normal Raid
-    [15] = true, -- Heroic Raid
-    [16] = true, -- Mythic Raid
+Private.AnchorPoints = {
+    ["TOPLEFT"] = "TOPLEFT",
+    ["TOP"] = "TOP",
+    ["TOPRIGHT"] = "TOPRIGHT",
+    ["LEFT"] = "LEFT",
+    ["CENTER"] = "CENTER",
+    ["RIGHT"] = "RIGHT",
+    ["BOTTOMLEFT"] = "BOTTOMLEFT",
+    ["BOTTOM"] = "BOTTOM",
+    ["BOTTOMRIGHT"] = "BOTTOMRIGHT"
+}
+
+Private.FontFlags = {
+    [""] = "None",
+    ["OUTLINE"] = "Outline",
+    ["THICKOUTLINE"] = "Thick Outline",
+    ["MONOCHROME"] = "Monochrome",
+    ["MONOCHROME, OUTLINE"] = "Monochrome - Outline",
+    ["OUTLINE, SLUG"] = "Outline - Slug Render",
+}
+
+Private.GrowthDirections = {
+    ["LEFT"] = "Left",
+    ["RIGHT"] = "Right",
+    ["UP"] = "Up",
+    ["DOWN"] = "Down",
 }
 
 Private.MapIDsToInstanceNames = {
@@ -32,126 +65,38 @@ Private.MapIDsToInstanceNames = {
     [2813] = "Murder Row",
 }
 
--- Hero's Path teleport destinations, keyed by spell ID.
-Private.QuickActionSpellNames = {
-    -- Wrath of the Lich King / Cataclysm
-    [1254555] = "Pit of Saron",
-    [410080] = "The Vortex Pinnacle",
-    [424142] = "Throne of the Tides",
-    [445424] = "Grim Batol",
-    -- Mists of Pandaria
-    [131204] = "Temple of the Jade Serpent",
-    [131205] = "Stormstout Brewery",
-    [131206] = "Shado-Pan Monastery",
-    [131222] = "Mogu'shan Palace",
-    [131225] = "Gate of the Setting Sun",
-    [131228] = "Siege of Niuzao Temple",
-    [131229] = "Scarlet Monastery",
-    [131231] = "Scarlet Halls",
-    [131232] = "Scholomance",
-    -- Warlords of Draenor
-    [159895] = "Bloodmaul Slag Mines",
-    [159896] = "Iron Docks",
-    [159897] = "Auchindoun",
-    [159898] = "Skyreach",
-    [159899] = "Shadowmoon Burial Grounds",
-    [159900] = "Grimrail Depot",
-    [159901] = "The Everbloom",
-    [159902] = "Upper Blackrock Spire",
-    [1254557] = "Skyreach",
-    -- Legion
-    [373262] = "Return to Karazhan",
-    [393764] = "Halls of Valor",
-    [393766] = "Court of Stars",
-    [410078] = "Neltharion's Lair",
-    [424153] = "Black Rook Hold",
-    [424163] = "Darkheart Thicket",
-    [1254551] = "Seat of the Triumvirate",
-    -- Battle for Azeroth
-    [373274] = "Operation: Mechagon",
-    [410071] = "Freehold",
-    [410074] = "The Underrot",
-    [424167] = "Waycrest Manor",
-    [424187] = "Atal'Dazar",
-    [445418] = "Siege of Boralus",
-    [464256] = "Siege of Boralus",
-    [467553] = "The MOTHERLODE!!",
-    [467555] = "The MOTHERLODE!!",
-    [1286828] = "Temple of Sethraliss",
-    [1286831] = "Kings' Rest",
-    -- Shadowlands
-    [354462] = "The Necrotic Wake",
-    [354463] = "Plaguefall",
-    [354464] = "Mists of Tirna Scithe",
-    [354465] = "Halls of Atonement",
-    [354466] = "Spires of Ascension",
-    [354467] = "Theater of Pain",
-    [354468] = "De Other Side",
-    [354469] = "Sanguine Depths",
-    [367416] = "Tazavesh, the Veiled Market",
-    [373190] = "Castle Nathria",
-    [373191] = "Sanctum of Domination",
-    [373192] = "Sepulcher of the First Ones",
-    -- Dragonflight
-    [393222] = "Uldaman: Legacy of Tyr",
-    [393256] = "Ruby Life Pools",
-    [393262] = "The Nokhud Offensive",
-    [393267] = "Brackenhide Hollow",
-    [393273] = "Algeth'ar Academy",
-    [393276] = "Neltharus",
-    [393279] = "The Azure Vault",
-    [393283] = "Halls of Infusion",
-    [424197] = "Dawn of the Infinite",
-    [432254] = "Vault of the Incarnates",
-    [432257] = "Aberrus, the Shadowed Crucible",
-    [432258] = "Amirdrassil, the Dream's Hope",
-    -- The War Within
-    [445269] = "The Stonevault",
-    [445414] = "The Dawnbreaker",
-    [445416] = "City of Threads",
-    [445417] = "Ara-Kara, City of Echoes",
-    [445440] = "Cinderbrew Meadery",
-    [445441] = "Darkflame Cleft",
-    [445443] = "The Rookery",
-    [445444] = "Priory of the Sacred Flame",
-    [1216786] = "Operation: Floodgate",
-    [1237215] = "Eco-Dome Al'dani",
-    [1226482] = "Liberation of Undermine",
-    [1239155] = "Manaforge Omega",
-    -- Midnight
-    [1254400] = "Windrunner Spire",
-    [1254559] = "Maisara Caverns",
-    [1254563] = "Nexus-Point Xenas",
-    [1254572] = "Magisters' Terrace",
-    [1286801] = "The Blinding Vale",
-    [1286804] = "Voidscar Arena",
-    [1286807] = "Den of Nalorakk",
-    [1286809] = "Murder Row",
-    [1286812] = "Altar of Fangs",
-}
-
-Private.AP = {
-    ["TOPLEFT"] = "TOPLEFT",
-    ["TOP"] = "TOP",
-    ["TOPRIGHT"] = "TOPRIGHT",
-    ["BOTTOMLEFT"] = "BOTTOMLEFT",
-    ["BOTTOM"] = "BOTTOM",
-    ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+Private.JustificationH = {
+    ["TOPLEFT"] = "LEFT",
+    ["TOP"] = "CENTER",
+    ["TOPRIGHT"] = "RIGHT",
     ["LEFT"] = "LEFT",
+    ["CENTER"] = "CENTER",
     ["RIGHT"] = "RIGHT",
-    ["CENTER"] = "CENTER"
+    ["BOTTOMLEFT"] = "LEFT",
+    ["BOTTOM"] = "CENTER",
+    ["BOTTOMRIGHT"] = "RIGHT",
 }
 
-Private.ACH.FontValues["OUTLINE, SLUG"] = "Outline (Slug Rendering)"
+Private.MouseCursorTextures = {
+    ["CURSOR_01"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_01.png",
+    ["CURSOR_02"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_02.png",
+    ["CURSOR_03"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_03.png",
+    ["CURSOR_04"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_04.png",
+    ["CURSOR_05"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_05.png",
+    ["CURSOR_06"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_06.png",
+    ["CURSOR_07"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_07.png",
+    ["CURSOR_08"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_08.png",
+}
 
-Private.FilteredMessages = {
-    ["There is nothing to attack."] = true,
-    ["A more powerful spell is already active"] = true,
-    ["Item is not ready yet."] = true,
-    ["You can't do that right now."] = true,
-    ["Invalid target"] = true,
-    ["Your level is now restricted to 60."] = true,
-    ["Can't do that while moving"] = true,
+Private.MouseCursorTexturePreviews = {
+    ["CURSOR_01"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_01.png:21:21|t",
+    ["CURSOR_02"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_02.png:21:21|t",
+    ["CURSOR_03"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_03.png:21:21|t",
+    ["CURSOR_04"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_04.png:21:21|t",
+    ["CURSOR_05"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_05.png:21:21|t",
+    ["CURSOR_06"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_06.png:21:21|t",
+    ["CURSOR_07"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_07.png:21:21|t",
+    ["CURSOR_08"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_08.png:21:21|t",
 }
 
 Private.MeterTypes = {
@@ -178,6 +123,13 @@ Private.MeterAmountFormats = {
     ["%s <%s>"] = "999K <99.9K>",
 }
 
+Private.Separators = {
+    ["•"] = "•",
+    ["-"] = "-",
+    ["»"] = "»",
+    ["|"] = "|",
+}
+
 Private.ItemQualities = {
     [Enum.ItemQuality.Poor] = ITEM_QUALITY0_DESC,
     [Enum.ItemQuality.Common] = ITEM_QUALITY1_DESC,
@@ -186,7 +138,7 @@ Private.ItemQualities = {
     [Enum.ItemQuality.Epic] = ITEM_QUALITY4_DESC,
 }
 
-Private.ClassIDFilter = {
+Private.ItemFilter = {
     [Enum.ItemClass.Consumable] = true,
     [Enum.ItemClass.Tradegoods] = true,
     [Enum.ItemClass.Recipe] = true,
@@ -196,71 +148,21 @@ Private.ClassIDFilter = {
     [Enum.ItemClass.Housing] = true,
 }
 
-Private.ItemFilter = {
-    [65360] = true, -- Cloak of Coordination
-    [63206] = true, -- Wrap of Unity
-    [63352] = true, -- Shroud of Cooperation
-    [132514] = true -- Auto Hammer
-}
+function Private:PrettyPrint(MSG)
+    print(Private.AddOnName .. ": " .. MSG)
+end
 
-Private.RaidBuffs = {
-    [6673] =  { spellIDs = { 6673 },  requiredClass = "WARRIOR" }, -- Battle Shout
-    [1459] =  { spellIDs = { 1459 },  requiredClass = "MAGE" },    -- Arcane Intellect
-    [21562] = { spellIDs = { 21562 }, requiredClass = "PRIEST" },  -- Power Word: Fortitude
-    [1126] =  { spellIDs = { 1126 },  requiredClass = "DRUID" },   -- Mark of the Wild
-    [381732] = { -- Blessing of the Bronze
-        spellIDs = { 381732, 381741, 381746, 381748, 381749, 381750, 381751, 381752, 381753, 381754, 381756, 381757, 381758 },
-        requiredClass = "EVOKER",
-    },
-}
+function Private:FetchFont(Font)
+    return Private.LSM:Fetch("font", Font)
+end
 
-Private.PersonalBuffs = {
-    ["Food"] = { spellNames = { "Well Fed", "Hearty Well Fed" }, iconID = 136000, alwaysShow = false },
-    ["Flask"] = { spellNames = { "Flask of the Shattered Sun", "Flask of the Blood Knights", "Flask of the Magisters", "Flask of Thalassian Resistance" }, iconID = 7548903, alwaysShow = false },
-    ["Oils"] = { iconID = 135641, dualWieldSpecIDs = { [259] = true, [260] = true, [261] = true, [263] = true, [72] = true }, alwaysShow = false },
-    ["Source of Magic"] = { spellNames = { "Source of Magic" }, iconID = 4630412, alwaysShow = false },
-    ["Auras"] = { spellNames = { "Crusader Aura", "Devotion Aura", "Concentration Aura" }, iconID = 135893, alwaysShow = true },
-}
+function Private:FetchSound(Sound)
+    return Private.LSM:Fetch("sound", Sound)
+end
 
-Private.MouseCursors = {
-    Path = {
-        ["CURSOR_01"] = "talents-search-notonactionbar",
-        ["CURSOR_02"] = "talents-search-notonactionbarhidden",
-        ["CURSOR_03"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_01.png",
-        ["CURSOR_04"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_02.png",
-        ["CURSOR_05"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_03.png",
-        ["CURSOR_06"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_04.png",
-        ["CURSOR_07"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_05.png",
-        ["CURSOR_08"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_06.png",
-        ["CURSOR_09"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_07.png",
-        ["CURSOR_10"] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_08.png",
-    },
-    Preview = {
-        ["CURSOR_01"] = "|A:talents-search-notonactionbar:18:18|a",
-        ["CURSOR_02"] = "|A:talents-search-notonactionbarhidden:18:18|a",
-        ["CURSOR_03"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_01.png:18:18|t",
-        ["CURSOR_04"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_02.png:18:18|t",
-        ["CURSOR_05"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_03.png:18:18|t",
-        ["CURSOR_06"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_04.png:18:18|t",
-        ["CURSOR_07"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_05.png:18:18|t",
-        ["CURSOR_08"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_06.png:18:18|t",
-        ["CURSOR_09"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_07.png:18:18|t",
-        ["CURSOR_10"] = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Cursors\\Cursor_08.png:18:18|t",
-    },
-}
-
-function Private:PromptReload()
-    StaticPopupDialogs["RELOAD_UI"] = {
-        text = "This change requires a reload to take effect, would you like to reload now?",
-        button1 = "Yes",
-        button2 = "No",
-        OnAccept = function() ReloadUI() end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3
-    }
-    StaticPopup_Show("RELOAD_UI")
+function Private:FetchSpellTexture(SpellID)
+    local spellData = C_Spell.GetSpellInfo(SpellID)
+    if spellData then return spellData.iconID end
 end
 
 function Private:StopVendoring()
@@ -293,7 +195,7 @@ function Private:SellGreys()
 end
 
 function Private:SellItems(minimumQuality, minimumItemLevel)
-    if not Private.DB.global.VendorHelper.AutoVendor then return end
+    if not Private.DB.global.VendorSupport.Enable then return end
     for Bag = 0, NUM_BAG_SLOTS do
         for Slot = 1, C_Container.GetContainerNumSlots(Bag) do
             local containerInfo = C_Container.GetContainerItemInfo(Bag, Slot)
@@ -302,7 +204,7 @@ function Private:SellItems(minimumQuality, minimumItemLevel)
                 local itemQuality = C_Item.GetItemQuality(itemLocation)
                 local itemLevel = C_Item.GetCurrentItemLevel(itemLocation)
                 local _, _, _, _, _, _, _, _, _, _, itemPrice, itemClassID = C_Item.GetItemInfo(containerInfo.hyperlink)
-                if itemQuality and itemLevel and itemPrice and itemClassID and not Private.ClassIDFilter[itemClassID]
+                if itemQuality and itemLevel and itemPrice and itemClassID and not Private.ItemFilter[itemClassID]
                     and itemQuality <= minimumQuality
                     and itemLevel <= minimumItemLevel
                     and itemPrice > 0
@@ -316,8 +218,18 @@ function Private:SellItems(minimumQuality, minimumItemLevel)
     end
 end
 
-function Private:PrettyPrint(MSG)
-    print(Private.AddOnName .. ": " .. MSG)
+function Private:PromptReload()
+    StaticPopupDialogs["RELOAD_UI"] = {
+        text = "This change requires a reload to take effect, would you like to reload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function() ReloadUI() end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3
+    }
+    StaticPopup_Show("RELOAD_UI")
 end
 
 function Private:IsDeveloper()
@@ -326,7 +238,24 @@ function Private:IsDeveloper()
     return isDeveloper
 end
 
--- Thanks Lucky - https://github.com/Luckyone961/LuckyoneUI/blob/development/LuckyoneUI/Modules/DamageMeter/Core.lua#L35-L40
+function Private:ResetProfile()
+    StaticPopupDialogs["ELVUI_UNHALTED_RESET_PROFILE"] = {
+        text = "Reset settings back to default?",
+        button1 = "Yes",
+        button2 = "No",
+        OnButton1 = function()
+            Private.DB:ResetDB(true)
+            ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+    }
+
+    StaticPopup_Show("ELVUI_UNHALTED_RESET_PROFILE")
+end
+
 function Private:StripRealm(name, classFilename)
 	if not name then return name end
 	if not classFilename or classFilename == "" then return name end
@@ -334,14 +263,8 @@ function Private:StripRealm(name, classFilename)
 	return Ambiguate(name, "short")
 end
 
-local AbbreviationData = {
-    breakpoint = 1e9,
-    abbreviation = "B",
-    significandDivisor = 1e7,
-    fractionDivisor = 100,
-    abbreviationIsGlobal = false,
-}
-
 function Private:AbbreviateValue(value)
-    return AbbreviateNumbers(value, AbbreviationData)
+    local AbbreviationData = C_StringUtil.GetDefaultAbbreviationBreakpoints()
+    AbbreviationData[#AbbreviationData + 1] = {breakpoint = 1e-6, abbreviation = "", significandDivisor = 0.1, fractionDivisor = 10, abbreviationIsGlobal = false}
+    return AbbreviateNumbers(value, {config = CreateAbbreviateConfig(AbbreviationData)})
 end

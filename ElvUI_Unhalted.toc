@@ -1,74 +1,65 @@
-## Title: |cFF6080FFUnhalted|rUI
-## Interface: 120100
-## Dependencies: ElvUI
-## Group: ElvUI
-## SavedVariables: UnhaltedUIDB
-## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo_64.png
+## Title: |cFF1784D1ElvUI|r: |cFF6080FFUnhalted|r
+## Interface: 120100, 120105
 ## Version: @project-version@
-## X-Curse-Project-ID: 1692219
-
-Libraries/Ace3/AceAddon-3.0/AceAddon-3.0.xml
-Libraries/Ace3/AceDB-3.0/AceDB-3.0.xml
-Libraries/Ace3/AceDBOptions-3.0/AceDBOptions-3.0.xml
-Libraries/AceConfig-3.0/AceConfig-3.0.xml
-Libraries/CallbackHandler-1.0/CallbackHandler-1.0.xml
-Libraries/LibAceConfigHelper/LibAceConfigHelper.lua
-Libraries/LibDBIcon-1.0/lib.xml
-Libraries/LibSharedMedia-3.0/lib.xml
-Libraries/LibStub/LibStub.lua
+## SavedVariables: ElvUI_UnhaltedDB
+## Group: ElvUI
+## Dependencies: ElvUI
+## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo_64.png
 
 Core/Constants.lua
 Core/Defaults.lua
-Core/GUI.lua
-Core/SharedMedia.lua
 
-Modules/AddOnSkins/Auctionator.lua
-Modules/AddOnSkins/BigWigs.lua
-Modules/AddOnSkins/BugSack.lua
-Modules/AddOnSkins/Collectionator.lua
-Modules/AddOnSkins/LSToasts.lua
-Modules/AddOnSkins/SimulationCraft.lua
+Modules/AddOnSkins/Modules/AddOnProfiler.lua
+Modules/AddOnSkins/Modules/BigWigs.lua
+Modules/AddOnSkins/Modules/BugSack.lua
+Modules/AddOnSkins/Modules/LSToasts.lua
+Modules/AddOnSkins/Modules/SimulationCraft.lua
+Modules/AddOnSkins/Modules/SkironCooldownManager.lua
+Modules/AddOnSkins/AddOnSkins.lua
+
+Modules/Blizzard/Modules/ActionStatusFrame.lua
+Modules/Blizzard/Modules/MovableWindows.lua
+Modules/Blizzard/Modules/UIErrorsFrame.lua
+Modules/Blizzard/Modules/ZoneText.lua
+Modules/Blizzard/Blizzard.lua
 
 Modules/DamageMeter/Bars.lua
 Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Windows.lua
 
-Modules/ElvUIEnhancements/Blizzard.lua
 Modules/ElvUIEnhancements/InterruptOnCooldown.lua
+Modules/ElvUIEnhancements/LFGHelper.lua
 Modules/ElvUIEnhancements/LootRollFix.lua
 Modules/ElvUIEnhancements/OverAbsorbs.lua
+Modules/ElvUIEnhancements/ElvUIEnhancements.lua
 
-Modules/QualityOfLife/Alerts/BloodlustAlert.lua
-Modules/QualityOfLife/Alerts/InnervateAlert.lua
-Modules/QualityOfLife/Alerts/PowerInfusionAlert.lua
-Modules/QualityOfLife/Alerts/TestMode.lua
-Modules/QualityOfLife/Alerts/TimeSpiralAlert.lua
+Modules/QualityOfLife/Alerts/Bloodlust.lua
+Modules/QualityOfLife/Alerts/Externals.lua
+Modules/QualityOfLife/Alerts/Innervate.lua
+Modules/QualityOfLife/Alerts/PowerInfusion.lua
+Modules/QualityOfLife/Alerts/PreviewMode.lua
+Modules/QualityOfLife/Alerts/TimeSpiral.lua
 
 Modules/QualityOfLife/Toggles/AutoDelete.lua
 Modules/QualityOfLife/Toggles/AutoQuest.lua
+Modules/QualityOfLife/Toggles/AutoRepair.lua
 Modules/QualityOfLife/Toggles/AutoSellGreys.lua
 Modules/QualityOfLife/Toggles/AutoSignUp.lua
-Modules/QualityOfLife/Toggles/GateawayUsable.lua
 Modules/QualityOfLife/Toggles/KeystoneReroll.lua
-Modules/QualityOfLife/Toggles/MissingPersonalBuffs.lua
-Modules/QualityOfLife/Toggles/MissingRaidBuffs.lua
-Modules/QualityOfLife/Toggles/PositionRaidWarningFrame.lua
 Modules/QualityOfLife/Toggles/RemoveBossBanner.lua
-Modules/QualityOfLife/Toggles/RemoveLossOfControlFrame.lua
-Modules/QualityOfLife/Toggles/RemoveTalkingHead.lua
+Modules/QualityOfLife/Toggles/RemoveTalkingHeadFrame.lua
 Modules/QualityOfLife/Toggles/SkipCinematics.lua
+Modules/QualityOfLife/QualityOfLife.lua
 
-Modules/QuickActions/Collections.lua
-Modules/QuickActions/Core.lua
-Modules/QuickActions/Widget.lua
-
-Modules/CVars.lua
 Modules/CombatAlert.lua
 Modules/CombatTimer.lua
 Modules/DungeonCasts.lua
 Modules/MouseCursor.lua
 Modules/ProfileManager.lua
-Modules/TargetedSpells.lua
-Modules/VendorHelper.lua
+Modules/VendorSupport.lua
 
-Core/Main.lua
+Core/GUI.lua
+Core/GUIFunctions.lua
+Core/Share.lua
+Core/SharedMedia.lua
+Core/Core.lua

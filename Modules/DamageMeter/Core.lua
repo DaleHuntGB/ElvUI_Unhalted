@@ -12,6 +12,11 @@ function Private:SetDamageMeterTestMode(value)
 end
 
 function Private:SetDamageMeterType(DMFrame, MeterType, SessionType)
+    if Private.DamageMeterDrilldown and Private.DamageMeterDrilldown:GetParent() == DMFrame then Private.DamageMeterDrilldown:Hide() end
+    if DMFrame.MeterTypeMenuOffset then
+        DMFrame.MeterTypeMenuOffset = nil
+        Private:LayoutDamageMeterBars(DMFrame, DMFrame.DB)
+    end
     if DMFrame.DB.MeterType ~= MeterType or (SessionType and (DMFrame.SessionType ~= SessionType or DMFrame.EncounterSegment)) then DMFrame.ScrollOffset = 0 end
     if SessionType then DMFrame.EncounterSegment = nil end
     DMFrame.DB.MeterType = MeterType
@@ -39,7 +44,6 @@ function Private:SetupDamageMeter()
     Private.DamageMeterEventFrame:RegisterEvent("DAMAGE_METER_RESET")
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     Private.DamageMeterEventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    Private.DamageMeterEventFrame:RegisterEvent("PLAYER_LOGOUT")
     Private.DamageMeterEventFrame:RegisterEvent("CHALLENGE_MODE_START")
     Private.DamageMeterEventFrame:SetScript("OnEvent", function(_, event, meterType, sessionID)
         if event == "CHALLENGE_MODE_START" then if Private.DB.global.DamageMeter.AutoResetOnMythicPlus then C_DamageMeter.ResetAllCombatSessions() end return end
@@ -50,7 +54,7 @@ function Private:SetupDamageMeter()
                 DMFrame.EncounterSegment = nil
                 DMFrame.ScrollOffset = 0
                 Private:SetDamageMeterType(DMFrame, DB.MeterType)
-            elseif DB.Enabled and DMFrame and (event ~= "DAMAGE_METER_COMBAT_SESSION_UPDATED" or (DB.MeterType == meterType and sessionID == (DMFrame.EncounterSegment and DMFrame.EncounterSegment.sessionID or 0))) then
+            elseif DB.Enable and DMFrame and (event ~= "DAMAGE_METER_COMBAT_SESSION_UPDATED" or (DB.MeterType == meterType and sessionID == (DMFrame.EncounterSegment and DMFrame.EncounterSegment.sessionID or 0))) then
                 Private:PopulateDamageMeterBars(DMFrame, DB)
             end
         end
@@ -64,7 +68,7 @@ function Private:UpdateDamageMeter()
     if not Private.DamageMeterEventFrame then Private:SetupDamageMeter() return end
 
     for IDX, DB in ipairs(DamageMeterDB) do
-        if DB.Enabled then
+        if DB.Enable then
             if not Private.DamageMeterFrames[IDX] then
                 Private.DamageMeterFrames[IDX] = Private:CreateDamageMeter("DamageMeterFrame" .. IDX, DB)
             else

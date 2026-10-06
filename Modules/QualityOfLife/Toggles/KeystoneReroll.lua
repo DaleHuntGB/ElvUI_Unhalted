@@ -17,7 +17,7 @@ local function KeystoneRerollReminderFrame_OnEvent(KRRFrame, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" and KRRFrame:IsShown() and not IsInInstance() then
         KRRFrame:Hide()
     elseif event == "BAG_UPDATE_DELAYED" or event == "ITEM_CHANGED" then
-        RunNextFrame(function() KRRFrame.Keystone:SetText(FetchKeystone()) end) -- Wait until next frame before checking for the new keystone information.
+        C_Timer.After(1, function() KRRFrame.Keystone:SetText(FetchKeystone()) end)
     end
 end
 

@@ -1,769 +1,405 @@
 local Private = select(2, ...)
-local ACH = Private.ACH
-local ACR = Private.ACR
-
---[[
-    ACH:Color(name, desc, order, alpha, width, get, set, disabled, hidden)
-    ACH:Description(name, order, fontSize, image, imageCoords, imageWidth, imageHeight, width, hidden)
-    ACH:Execute(name, desc, order, func, image, confirm, width, get, set, disabled, hidden)
-    ACH:Group(name, desc, order, childGroups, get, set, disabled, hidden, func)
-    ACH:Header(name, order, get, set, hidden)
-    ACH:Input(name, desc, order, multiline, width, get, set, disabled, hidden, validate)
-    ACH:Select(name, desc, order, values, confirm, width, get, set, disabled, hidden, sortByValue)
-    ACH:MultiSelect(name, desc, order, values, confirm, width, get, set, disabled, hidden, sortByValue)
-    ACH:Toggle(name, desc, order, tristate, confirm, width, get, set, disabled, hidden)
-    ACH:Range(name, desc, order, values, width, get, set, disabled, hidden)
-    ACH:Spacer(order, width, hidden)
-    ACH:SharedMediaFont(name, desc, order, width, get, set, disabled, hidden)
-    ACH:FontFlags(name, desc, order, width, get, set, disabled, hidden)
-]]
+local AG = Private.AG
 
 function Private:CreateGUI()
-    local GUI = Private.GUI
-    local DB = Private.DB.global
+    local GUIFrame = AG:Create("Frame")
+    GUIFrame:SetTitle(Private.AddOnName)
+    GUIFrame:SetStatusText("V" .. Private.AddOnVersion)
+    GUIFrame:SetWidth(1040)
+    GUIFrame:SetHeight(780)
+    GUIFrame:SetLayout("Fill")
+    GUIFrame:SetCallback("OnClose",
+    function(GUIWidgets)
+        AG:Release(GUIFrame)
+        Private.PreviewAlertsActive = false
+        Private.PreviewCombatAlertActive = false
+        Private:SetupPreviewAlerts()
+        Private:PreviewCombatAlert()
+        Private:SetDamageMeterTestMode(false)
+        Private.PreviewDungeonCastsActive = false
+        Private:TestDungeonCasts()
+    end)
 
-    GUI = ACH:Group(format("%s", Private.AddOnName, Private.AddOnVersion), nil, 20, "tree")
+    local TabGroup = AG:Create("TabGroup")
+    TabGroup:SetLayout("Fill")
+    TabGroup:SetFullWidth(true)
+    TabGroup:SetTabs({
+        { text = "AddOn Skins", value = "AddOnSkins" },
+        { text = "Blizzard", value = "Blizzard" },
+        { text = "ElvUI Enhancements", value = "ElvUIEnhancements" },
+        { text = "Quality of Life", value = "QualityOfLife" },
+        { text = "Damage Meter", value = "DamageMeter" },
+        { text = "Dungeon Casts", value = "DungeonCasts" },
+        { text = "Combat Alert", value = "CombatAlert" },
+        { text = "Combat Timer", value = "CombatTimer" },
+        { text = "Mouse Cursor", value = "MouseCursor" },
+        { text = "Vendor Support", value = "VendorSupport" },
+        { text = "Profiles", value = "Profiles" },
+    })
+    TabGroup:SetCallback("OnGroupSelected", function(_GF, Event, Group)
+        _GF:ReleaseChildren()
+        if Group == "AddOnSkins" then
+            local Options = {
+                { text = "AddOn Profiler", value = "AddOnProfiler", disabled = not C_AddOns.IsAddOnLoaded("!!AddonProfiler") },
+                { text = "BigWigs", value = "BigWigs", disabled = not C_AddOns.IsAddOnLoaded("BigWigs") },
+                { text = "BugSack", value = "BugSack", disabled = not C_AddOns.IsAddOnLoaded("BugSack") },
+                { text = "SimulationCraft", value = "SimulationCraft", disabled = not C_AddOns.IsAddOnLoaded("SimulationCraft") },
+                { text = "Skiron Cooldown Manager", value = "SkironCooldownManager", disabled = not C_AddOns.IsAddOnLoaded("SkironCooldownManager") },
+                { text = "Miscellaneous", value = "Miscellaneous" }
+            }
 
-    --#region - AddOn Skins
+            local TreeGroup = AG:Create("TreeGroup")
+            TreeGroup:SetLayout("Fill")
+            TreeGroup:SetFullWidth(true)
+            TreeGroup:SetFullHeight(true)
+            TreeGroup:SetTree(Options)
+            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
+                __GF:ReleaseChildren()
+                if Value == "BugSack" then
+                    local DB = Private.DB.global.AddOnSkins.BugSack
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the BugSack Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateBugSackSkin() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+                elseif Value == "AddOnProfiler" then
+                    local DB = Private.DB.global.AddOnSkins.AddOnProfiler
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the AddOn Profiler Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateAddOnProfilerSkin() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+                elseif Value == "SkironCooldownManager" then
+                    local DB = Private.DB.global.AddOnSkins.SkironCooldownManager
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the Skiron Cooldown Manager Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateSkironCooldownManagerSkin() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+                elseif Value == "BigWigs" then
+                    local DB = Private.DB.global.AddOnSkins.BigWigs
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the BigWigs Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateBigWigsSkin() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+                elseif Value == "SimulationCraft" then
+                    local DB = Private.DB.global.AddOnSkins.SimulationCraft
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the SimulationCraft Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateSimulationCraftSkin() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+                elseif Value == "Miscellaneous" then
+                    local DB = Private.DB.global.AddOnSkins.Miscellaneous
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: |cFF1CD3A2Toasts|r", "Adds a skin to LS: Toasts to match the UI aesthetic.", nil, DB, "LSToasts", function() Private:PromptReload() end)
+                end
+            end)
+            TreeGroup:SelectByValue("BugSack")
+            _GF:AddChild(TreeGroup)
+        elseif Group == "Blizzard" then
+            local DB = Private.DB.global.Blizzard
 
-    GUI.args.AddOnSKins = ACH:Group("AddOn Skins", nil, 1)
-    GUI.args.AddOnSKins.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\AddOnSkins.tga"
-    GUI.args.AddOnSKins.args.LSToasts = ACH:Toggle("|TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|t LS: |cFF1CD3A2Toasts|r", "Add a custom skin for LS: |cFF1CD3A2Toasts|r.", 1, nil, nil, "full", function() return DB.AddOnSkins.LSToasts end, function(_, value) DB.AddOnSkins.LSToasts = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
-    GUI.args.AddOnSKins.args.LSToasts.descStyle = "inline"
-    GUI.args.AddOnSKins.args.BugSack = ACH:Toggle("|TInterface\\AddOns\\BugSack\\Media\\icon:16:16|t BugSack", "Skins the Bugsack Minimap icon to be more inline with the UI.", 2, nil, nil, "full", function() return DB.AddOnSkins.BugSack end, function(_, value) DB.AddOnSkins.BugSack = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BugSack"))
-    GUI.args.AddOnSKins.args.BugSack.descStyle = "inline"
+            local Options = {
+                { text = "Action Status", value = "ActionStatus" },
+                { text = "UI Errors", value = "UIErrorsFrame" },
+                { text = "Zone Text", value = "ZoneText" },
+                { text = "Sub Zone Text", value = "SubZoneText" }
+            }
 
-    GUI.args.AddOnSKins.args.BigWigs = ACH:Toggle("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|t BigWigs", "Skins Queue Timer & Keys Panel.", 3, nil, nil, "full", function() return DB.AddOnSkins.BigWigs end, function(_, value) DB.AddOnSkins.BigWigs = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
-    GUI.args.AddOnSKins.args.BigWigs.descStyle = "inline"
+            local TreeGroup = AG:Create("TreeGroup")
+            TreeGroup:SetLayout("Fill")
+            TreeGroup:SetFullWidth(true)
+            TreeGroup:SetFullHeight(true)
+            TreeGroup:SetTree(Options)
+            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
+                __GF:ReleaseChildren()
+                if Value == "ActionStatus" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB.ActionStatus, "Enable", function() Private:UpdateActionStatusFrame() Private.GUI:UpdateGUIState(ScrollFrame, DB.ActionStatus.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB.ActionStatus, function() Private:UpdateActionStatusFrame() end)
+                    Private.GUI:FontOptions(ScrollFrame, DB.ActionStatus, function() Private:UpdateActionStatusFrame() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.ActionStatus.Enable)
+                elseif Value == "UIErrorsFrame" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB.UIErrorsFrame, "Enable", function() Private:UpdateUIErrorsFrame() Private.GUI:UpdateGUIState(ScrollFrame, DB.UIErrorsFrame.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB.UIErrorsFrame, function() Private:UpdateUIErrorsFrame() end)
+                    Private.GUI:FontOptions(ScrollFrame, DB.UIErrorsFrame, function() Private:UpdateUIErrorsFrame() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.UIErrorsFrame.Enable)
+                elseif Value == "ZoneText" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, Private.DB.global.Blizzard.ZoneText, "Enable", function() Private:UpdateZoneText() Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.ZoneText.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, Private.DB.global.Blizzard.ZoneText, function() Private:UpdateZoneText() end)
+                    Private.GUI:FontOptions(ScrollFrame, Private.DB.global.Blizzard.ZoneText, function() Private:UpdateZoneText() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.ZoneText.Enable)
+                elseif Value == "SubZoneText" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, Private.DB.global.Blizzard.SubZoneText, "Enable", function() Private:UpdateZoneText() Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.SubZoneText.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, Private.DB.global.Blizzard.SubZoneText, function() Private:UpdateZoneText() end)
+                    Private.GUI:FontOptions(ScrollFrame, Private.DB.global.Blizzard.SubZoneText, function() Private:UpdateZoneText() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.SubZoneText.Enable)
+                end
+            end)
+            TreeGroup:SelectByValue("ActionStatus")
+            _GF:AddChild(TreeGroup)
+        elseif Group == "ElvUIEnhancements" then
+            local DB = Private.DB.global.ElvUIEnhancements
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
+            Private.GUI:CreateToggle(ScrollFrame, "Loot Roll: Fix Backdrop", "Force the loot roll backdrop to be fully opaque.", nil, DB, "ForceAlphaOnLootRoll", function() Private:PromptReload() end)
+            Private.GUI:CreateToggle(ScrollFrame, "Castbar: Interrupt On Cooldown", "Colours interruptible enemy unit frame and nameplate castbars grey while your interrupt is on cooldown.", nil, DB, "CastbarInterruptCooldown", function() Private:UpdateCastbarInterruptCooldown() end)
+            Private.GUI:CreateToggle(ScrollFrame, "Health: Over Absorbs", "Shows a reverse fill absorb bar when absorbs exceed missing health.", nil, DB, "OverAbsorbs", function() Private:UpdateOverAbsorbs() end)
+            Private.GUI:CreateToggle(ScrollFrame, "LFG: Keystone Helper", "Shows an additional window when searching for Mythic+ dungeons.", nil, DB, "LFGHelper", function() Private:UpdateLFGHelper() end)
+        elseif Group == "QualityOfLife" then
+            local DB = Private.DB.global.QualityOfLife
+            local ToggleDB = DB.Toggles
+            local AlertsDB = DB.Alerts
 
-    GUI.args.AddOnSKins.args.Auctionator = ACH:Toggle("|TInterface\\AddOns\\Auctionator\\Images\\Logo:16:16|t Auctionator", "Skins Auctionator's Auction House tabs and controls to match ElvUI.", 4, nil, nil, "full", function() return DB.AddOnSkins.Auctionator end, function(_, value) DB.AddOnSkins.Auctionator = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Auctionator"))
-    GUI.args.AddOnSKins.args.Auctionator.descStyle = "inline"
+            local Options = {
+                { text = "Toggles", value = "Toggles" },
+                {
+                    text = "Alerts",
+                    value = "Alerts",
+                    children = {
+                        { text = "Bloodlust", value = "Bloodlust", icon = Private:FetchSpellTexture(2825) },
+                        { text = "Externals", value = "Externals", icon = Private:FetchSpellTexture(33206) },
+                        { text = "Innervate", value = "Innervate", icon = Private:FetchSpellTexture(29166) },
+                        { text = "Power Infusion", value = "PowerInfusion", icon = Private:FetchSpellTexture(10060) },
+                        { text = "Time Spiral", value = "TimeSpiral", icon = Private:FetchSpellTexture(375234) },
+                    }
+                },
+            }
 
-    GUI.args.AddOnSKins.args.Collectionator = ACH:Toggle("|TInterface\\AddOns\\Collectionator\\Images\\logo:16:16|t Collectionator", "Skins Collectionator's Auction House tabs and controls to match ElvUI.", 5, nil, nil, "full", function() return DB.AddOnSkins.Collectionator end, function(_, value) DB.AddOnSkins.Collectionator = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Collectionator"))
-    GUI.args.AddOnSKins.args.Collectionator.descStyle = "inline"
+            local TreeGroup = AG:Create("TreeGroup")
+            TreeGroup:SetLayout("Fill")
+            TreeGroup:SetFullWidth(true)
+            TreeGroup:SetFullHeight(true)
+            TreeGroup:SetTree(Options)
+            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
+                __GF:ReleaseChildren()
+                if Value == "Toggles" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Auto Delete", "Automatically complete |cFFFFCC00DELETE|r when applicable.", nil, ToggleDB, "AutoDelete", nil)
+                    Private.GUI:CreateToggle(ScrollFrame, "Auto Quest", "Automatically accept and turn in quests when applicable. Hold |cFFFFCC00SHIFT|r to override.", nil, ToggleDB, "AutoQuest", function() Private:SetupAutoQuest() end)
+                    Private.GUI:CreateToggle(ScrollFrame, "Auto Repair", "Automatically repair items when visiting a merchant. |cFFFFCC00Guild|r then |cFFFFCC00Personal|r.", nil, ToggleDB, "AutoRepair", nil)
+                    Private.GUI:CreateToggle(ScrollFrame, "Auto Sell Greys", "Automatically sell grey/junk items when visiting a merchant.", nil, ToggleDB, "AutoSellGreys", function() Private:SetupAutoSellGreys() end)
+                    Private.GUI:CreateToggle(ScrollFrame, "Auto Sign Up", "Automatically select your role when signing up for a group. Hold |cFFFFCC00SHIFT|r to override.", nil, ToggleDB, "AutoSignUp", nil)
+                    Private.GUI:CreateToggle(ScrollFrame, "Keystone Reroll", "Shows a reminder to reroll your keystone at the end of a Mythic+.", nil, ToggleDB, "KeystoneReroll", function() Private:UpdateKeystoneRerollReminder() end)
+                    Private.GUI:CreateToggle(ScrollFrame, "Remove Boss Banner", "Prevents the Boss Banner frame from appearing.", nil, ToggleDB, "RemoveBossBanner", nil)
+                    Private.GUI:CreateToggle(ScrollFrame, "Remove Talking Head", "Prevents the Talking Head frame from appearing.", nil, ToggleDB, "RemoveTalkingHead", nil)
+                    Private.GUI:CreateToggle(ScrollFrame, "Skip Cinematics", "Automatically skip cinematics.", nil, ToggleDB, "SkipCinematics", nil)
+                elseif Value == "Alerts" then
+                    TreeGroup:SelectByValue("Alerts\001Bloodlust")
+                elseif Value == "Alerts\001PowerInfusion" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.PowerInfusion, "Enable", function() Private:UpdatePowerInfusionAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.PowerInfusion.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.PowerInfusion, function() Private:UpdatePowerInfusionAlert() end)
+                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.PowerInfusion, function() Private:UpdatePowerInfusionAlert() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.PowerInfusion.Enable)
+                elseif Value == "Alerts\001Innervate" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.Innervate, "Enable", function() Private:UpdateInnervateAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Innervate.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.Innervate, function() Private:UpdateInnervateAlert() end)
+                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.Innervate, function() Private:UpdateInnervateAlert() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Innervate.Enable)
+                elseif Value == "Alerts\001TimeSpiral" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.TimeSpiral, "Enable", function() Private:UpdateTimeSpiralAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.TimeSpiral.Enable)end)
+                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.TimeSpiral, function() Private:UpdateTimeSpiralAlert() end)
+                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.TimeSpiral, function() Private:UpdateTimeSpiralAlert() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.TimeSpiral.Enable)
+                elseif Value == "Alerts\001Bloodlust" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.Bloodlust, "Enable", function() Private:UpdateBloodlustAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Bloodlust.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.Bloodlust, function() Private:UpdateBloodlustAlert() end)
+                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.Bloodlust, function() Private:UpdateBloodlustAlert() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Bloodlust.Enable)
+                elseif Value == "Alerts\001Externals" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.Externals, "Enable", function() Private:UpdateExternalsAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Externals.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.Externals, function() Private:UpdateExternalsAlert() end)
+                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.Externals, function() Private:UpdateExternalsAlert() end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Externals.Enable)
+                end
+            end)
+            TreeGroup:SelectByValue("Toggles")
+            _GF:AddChild(TreeGroup)
+        elseif Group == "DamageMeter" then
+            local DB = Private.DB.global.DamageMeter
 
-    GUI.args.AddOnSKins.args.SimulationCraft = ACH:Toggle("|TInterface\\AddOns\\Simulationcraft\\logo:16:16|t SimulationCraft", "Skins SimulationCraft Minimap Icon & Export Window.", 6, nil, nil, "full", function() return DB.AddOnSkins.SimulationCraft end, function(_, value) DB.AddOnSkins.SimulationCraft = value Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("Simulationcraft"))
-    GUI.args.AddOnSKins.args.SimulationCraft.descStyle = "inline"
+            local Options = {
+                { text = "Window #1", value = "WindowOne" },
+                { text = "Window #2", value = "WindowTwo" },
+                { text = "Window #3", value = "WindowThree" },
+            }
 
-    --#endregion
+            local TreeGroup = AG:Create("TreeGroup")
+            TreeGroup:SetLayout("Fill")
+            TreeGroup:SetFullWidth(true)
+            TreeGroup:SetFullHeight(true)
+            TreeGroup:SetTree(Options)
+            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
+                __GF:ReleaseChildren()
+                if Value == "WindowOne" then
+                    Private.GUI:DamageMeterOptions(__GF, DB[1], function() Private:UpdateDamageMeter() end)
+                elseif Value == "WindowTwo" then
+                    Private.GUI:DamageMeterOptions(__GF, DB[2], function() Private:UpdateDamageMeter() end)
+                elseif Value == "WindowThree" then
+                    Private.GUI:DamageMeterOptions(__GF, DB[3], function() Private:UpdateDamageMeter() end)
+                end
+            end)
+            TreeGroup:SelectByValue("WindowOne")
+            _GF:AddChild(TreeGroup)
+        elseif Group == "CombatAlert" then
+            local DB = Private.DB.global.CombatAlert
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
 
-    --#region - Combat Alert
+            Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB, "Enable", function() Private:UpdateCombatAlert() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
 
-    GUI.args.CombatAlert = ACH:Group("Combat Alert", nil, 2)
-    GUI.args.CombatAlert.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\CombatAlert.tga"
-    GUI.args.CombatAlert.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DB.CombatAlert.Enabled end, function(_, value) DB.CombatAlert.Enabled = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Enabled.relWidth = 0.5
-    GUI.args.CombatAlert.args.TestMode = ACH:Toggle("Test Mode", "Alternate entering and exiting combat alerts. Ends when combat starts.", 1.5, nil, nil, "relative", function() return Private.CombatAlertTestMode end, function(_, value) Private:SetCombatAlertTestMode(value) end, function() return not DB.CombatAlert.Enabled or InCombatLockdown() end)
-    GUI.args.CombatAlert.args.TestMode.relWidth = 0.5
+            Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateCombatAlert() end)
+            Private.GUI:FontOptions(ScrollFrame, DB.Text, function() Private:UpdateCombatAlert() end)
 
-    GUI.args.CombatAlert.args.Layout = ACH:Group("Layout", nil, 2)
-    GUI.args.CombatAlert.args.Layout.inline = true
-    GUI.args.CombatAlert.args.Layout.disabled = function() return not DB.CombatAlert.Enabled end
-    GUI.args.CombatAlert.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.CombatAlert.Layout[1] end, function(_, value) DB.CombatAlert.Layout[1] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Layout.args.AnchorFrom.relWidth = 0.5
-    GUI.args.CombatAlert.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.CombatAlert.Layout[2] end, function(_, value) DB.CombatAlert.Layout[2] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Layout.args.AnchorTo.relWidth = 0.5
-    GUI.args.CombatAlert.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.CombatAlert.Layout[3] end, function(_, value) DB.CombatAlert.Layout[3] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Layout.args.XOffset.relWidth = 0.5
-    GUI.args.CombatAlert.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.CombatAlert.Layout[4] end, function(_, value) DB.CombatAlert.Layout[4] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Layout.args.YOffset.relWidth = 0.5
+            local TextOptionsGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Text Options", "CENTER")
 
-    GUI.args.CombatAlert.args.Font = ACH:Group("Font", nil, 3)
-    GUI.args.CombatAlert.args.Font.inline = true
-    GUI.args.CombatAlert.args.Font.disabled = function() return not DB.CombatAlert.Enabled end
+            Private.GUI:CreateHeading(TextOptionsGroup, "Entering Combat")
+            Private.GUI:CreateColourPicker(TextOptionsGroup, "Colour", 0.5, DB.Text.EnteringCombat, "Colour", function() Private:UpdateCombatAlert() end)
+            Private.GUI:CreateEditBox(TextOptionsGroup, nil, 0.5, DB.Text.EnteringCombat, "Text", function() Private:UpdateCombatAlert() end)
 
-    GUI.args.CombatAlert.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DB.CombatAlert.Font[1] end, function(_, value) DB.CombatAlert.Font[1] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.Font.relWidth = 0.33
-    GUI.args.CombatAlert.args.Font.args.Size = ACH:Range("Size", nil, 2, { min = 8, max = 32, step = 1 }, "relative", function() return DB.CombatAlert.Font[2] end, function(_, value) DB.CombatAlert.Font[2] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.Size.relWidth = 0.33
-    GUI.args.CombatAlert.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DB.CombatAlert.Font[3] end, function(_, value) DB.CombatAlert.Font[3] = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.FontFlag.relWidth = 0.33
-    GUI.args.CombatAlert.args.Font.args.HoldTime = ACH:Range("Hold Time", nil, 4, { min = 0, max = 10, step = 0.1 }, "full", function() return DB.CombatAlert.HoldTime end, function(_, value) DB.CombatAlert.HoldTime = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.EnterCombatHeader = ACH:Header("Entering Combat", 5)
-    GUI.args.CombatAlert.args.Font.args.EnterCombatColour = ACH:Color("Colour", nil, 6, true, "relative", function() return unpack(DB.CombatAlert.EnteringCombatColour) end, function(_, r, g, b, a) DB.CombatAlert.EnteringCombatColour = { r, g, b, a } Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.EnterCombatColour.relWidth = 0.5
-    GUI.args.CombatAlert.args.Font.args.EnteringCombatText = ACH:Input("Text", nil, 7, nil, "relative", function() return DB.CombatAlert.EnteringCombat end, function(_, value) DB.CombatAlert.EnteringCombat = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.EnteringCombatText.relWidth = 0.5
-    GUI.args.CombatAlert.args.Font.args.ExitingCombatHeader = ACH:Header("Exiting Combat", 8)
-    GUI.args.CombatAlert.args.Font.args.ExitingCombatColour = ACH:Color("Colour", nil, 9, true, "relative", function() return unpack(DB.CombatAlert.ExitingCombatColour) end, function(_, r, g, b, a) DB.CombatAlert.ExitingCombatColour = { r, g, b, a } Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.ExitingCombatColour.relWidth = 0.5
-    GUI.args.CombatAlert.args.Font.args.ExitingCombatText = ACH:Input("Text", nil, 10, nil, "relative", function() return DB.CombatAlert.ExitingCombat end, function(_, value) DB.CombatAlert.ExitingCombat = value Private:UpdateCombatAlert() end)
-    GUI.args.CombatAlert.args.Font.args.ExitingCombatText.relWidth = 0.5
+            Private.GUI:CreateHeading(TextOptionsGroup, "Exiting Combat")
+            Private.GUI:CreateColourPicker(TextOptionsGroup, "Colour", 0.5, DB.Text.ExitingCombat, "Colour", function() Private:UpdateCombatAlert() end)
+            Private.GUI:CreateEditBox(TextOptionsGroup, nil, 0.5, DB.Text.ExitingCombat, "Text", function() Private:UpdateCombatAlert() end)
 
-    --#endregion
-
-    --#region - Combat Timer
-
-    GUI.args.CombatTimer = ACH:Group("Combat Timer", nil, 2)
-    GUI.args.CombatTimer.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\CombatTimer.tga"
-    GUI.args.CombatTimer.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DB.CombatTimer.Enabled end, function(_, value) DB.CombatTimer.Enabled = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Enabled.relWidth = 0.5
-    GUI.args.CombatTimer.args.TestMode = ACH:Toggle("Test Mode", "Preview a running timer at full opacity. Ends when combat or an encounter starts.", 1.5, nil, nil, "relative", function() return Private.CombatTimerTestMode end, function(_, value) Private:SetCombatTimerTestMode(value) end, function() return not DB.CombatTimer.Enabled or InCombatLockdown() or (Private.CombatTimerFrame and Private.CombatTimerFrame.InEncounter) end)
-    GUI.args.CombatTimer.args.TestMode.relWidth = 0.5
-
-    GUI.args.CombatTimer.args.Layout = ACH:Group("Layout", nil, 2)
-    GUI.args.CombatTimer.args.Layout.inline = true
-    GUI.args.CombatTimer.args.Layout.disabled = function() return not DB.CombatTimer.Enabled end
-    GUI.args.CombatTimer.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.CombatTimer.Layout[1] end, function(_, value) DB.CombatTimer.Layout[1] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Layout.args.AnchorFrom.relWidth = 0.5
-    GUI.args.CombatTimer.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.CombatTimer.Layout[2] end, function(_, value) DB.CombatTimer.Layout[2] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Layout.args.AnchorTo.relWidth = 0.5
-    GUI.args.CombatTimer.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.CombatTimer.Layout[3] end, function(_, value) DB.CombatTimer.Layout[3] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Layout.args.XOffset.relWidth = 0.5
-    GUI.args.CombatTimer.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.CombatTimer.Layout[4] end, function(_, value) DB.CombatTimer.Layout[4] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Layout.args.YOffset.relWidth = 0.5
-
-    GUI.args.CombatTimer.args.Font = ACH:Group("Font", nil, 3)
-    GUI.args.CombatTimer.args.Font.inline = true
-    GUI.args.CombatTimer.args.Font.disabled = function() return not DB.CombatTimer.Enabled end
-
-    GUI.args.CombatTimer.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DB.CombatTimer.Font[1] end, function(_, value) DB.CombatTimer.Font[1] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Font.args.Font.relWidth = 0.33
-    GUI.args.CombatTimer.args.Font.args.Size = ACH:Range("Size", nil, 2, { min = 8, max = 32, step = 1 }, "relative", function() return DB.CombatTimer.Font[2] end, function(_, value) DB.CombatTimer.Font[2] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Font.args.Size.relWidth = 0.33
-    GUI.args.CombatTimer.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DB.CombatTimer.Font[3] end, function(_, value) DB.CombatTimer.Font[3] = value Private:UpdateCombatTimer() end)
-    GUI.args.CombatTimer.args.Font.args.FontFlag.relWidth = 0.33
-    GUI.args.CombatTimer.args.Font.args.OOCAlpha = ACH:Range("Out Of Combat Alpha", nil, 4, { min = 0, max = 1, step = 0.1 }, "full", function() return DB.CombatTimer.OutOfCombatAlpha end, function(_, value) DB.CombatTimer.OutOfCombatAlpha = value Private:UpdateCombatTimer() end)
-
-    --#endregion
-
-    --#region - CVars
-
-    GUI.args.CVars = ACH:Group("CVars", nil, 3)
-    GUI.args.CVars.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\CVars.tga"
-    GUI.args.CVars.args.SyncCVars = ACH:Toggle("Sync CVars", "Sync CVars across all characters on the account.", 1, nil, nil, "full", function() return DB.CVars.SyncCVars end, function(_, value) DB.CVars.SyncCVars = value Private:SyncCVars() Private:PromptReload() end)
-    GUI.args.CVars.args.SyncCVars.descStyle = "inline"
-
-    GUI.args.CVars.args.Toggles = ACH:Group("Toggles", nil, 1)
-    GUI.args.CVars.args.Toggles.inline = true
-
-    GUI.args.CVars.args.Toggles.args.autoLootDefault = ACH:Toggle("Auto Loot", nil, 1, nil, nil, "relative", function() return C_CVar.GetCVarBool("autoLootDefault") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.autoLootDefault = value end C_CVar.SetCVar("autoLootDefault", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.autoLootDefault.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.floatingCombatTextCombatDamage_v2 = ACH:Toggle("Floating Combat Text: Damage", nil, 2, nil, nil, "relative", function() return C_CVar.GetCVarBool("floatingCombatTextCombatDamage_v2") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.floatingCombatTextCombatDamage_v2 = value end C_CVar.SetCVar("floatingCombatTextCombatDamage_v2", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.floatingCombatTextCombatDamage_v2.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.floatingCombatTextCombatHealing_v2 = ACH:Toggle("Floating Combat Text: Healing", nil, 3, nil, nil, "relative", function() return C_CVar.GetCVarBool("floatingCombatTextCombatHealing_v2") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.floatingCombatTextCombatHealing_v2 = value end C_CVar.SetCVar("floatingCombatTextCombatHealing_v2", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.floatingCombatTextCombatHealing_v2.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.ffxDeath = ACH:Toggle("Death Effect", nil, 4, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxDeath") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.ffxDeath = value end C_CVar.SetCVar("ffxDeath", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.ffxDeath.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.ffxGlow = ACH:Toggle("Screen Glow", nil, 5, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxGlow") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.ffxGlow = value end C_CVar.SetCVar("ffxGlow", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.ffxGlow.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.ResampleAlwaysSharpen = ACH:Toggle("Always Sharpen", nil, 6, nil, nil, "relative", function() return C_CVar.GetCVarBool("ResampleAlwaysSharpen") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.ResampleAlwaysSharpen = value end C_CVar.SetCVar("ResampleAlwaysSharpen", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.ResampleAlwaysSharpen.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.AutoPushSpellToActionBar = ACH:Toggle("Auto Push Spells To Action Bar", nil, 7, nil, nil, "relative", function() return C_CVar.GetCVarBool("AutoPushSpellToActionBar") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.AutoPushSpellToActionBar = value end C_CVar.SetCVar("AutoPushSpellToActionBar", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.AutoPushSpellToActionBar.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.showTutorials = ACH:Toggle("Show Tutorials", nil, 8, nil, nil, "relative", function() return C_CVar.GetCVarBool("showTutorials") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.showTutorials = value end C_CVar.SetCVar("showTutorials", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.showTutorials.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.worldMapShowCursorCoords = ACH:Toggle("World Map: Show Cursor Coordinates", nil, 9, nil, nil, "relative", function() return C_CVar.GetCVarBool("worldMapShowCursorCoords") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.worldMapShowCursorCoords = value end C_CVar.SetCVar("worldMapShowCursorCoords", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.worldMapShowCursorCoords.relWidth = 0.33
-    GUI.args.CVars.args.Toggles.args.worldMapShowPlayerCoords = ACH:Toggle("World Map: Show Player Coordinates", nil, 10, nil, nil, "relative", function() return C_CVar.GetCVarBool("worldMapShowPlayerCoords") end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.worldMapShowPlayerCoords = value end C_CVar.SetCVar("worldMapShowPlayerCoords", value and "1" or "0") end)
-    GUI.args.CVars.args.Toggles.args.worldMapShowPlayerCoords.relWidth = 0.33
-
-    GUI.args.CVars.args.Sliders = ACH:Group("Sliders", nil, 2)
-    GUI.args.CVars.args.Sliders.inline = true
-
-
-    GUI.args.CVars.args.Sliders.args.SpellQueueWindow = ACH:Range("Spell Queue Window", nil, 1, { min = 0, max = 400, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("SpellQueueWindow")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.SpellQueueWindow = value end C_CVar.SetCVar("SpellQueueWindow", value) end)
-    GUI.args.CVars.args.Sliders.args.SpellQueueWindow.relWidth = 0.5
-    GUI.args.CVars.args.Sliders.args.RAIDWaterDetail = ACH:Range("Raid: Water Detail", nil, 2, { min = 0, max = 3, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("RAIDWaterDetail")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.RAIDWaterDetail = value end C_CVar.SetCVar("RAIDWaterDetail", value) end)
-    GUI.args.CVars.args.Sliders.args.RAIDWaterDetail.relWidth = 0.5
-    GUI.args.CVars.args.Sliders.args.RAIDweatherDensity = ACH:Range("Raid: Weather Density", nil, 3, { min = 0, max = 3, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("RAIDweatherDensity")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.RAIDweatherDensity = value end C_CVar.SetCVar("RAIDweatherDensity", value) end)
-    GUI.args.CVars.args.Sliders.args.RAIDweatherDensity.relWidth = 0.5
-    GUI.args.CVars.args.Sliders.args.autoLootRate = ACH:Range("Auto Loot: Rate", nil, 4, { min = 0, max = 250, step = 1 }, "relative", function() return tonumber(C_CVar.GetCVar("autoLootRate")) end, function(_, value) if DB.CVars.SyncCVars then DB.CVars.autoLootRate = value end C_CVar.SetCVar("autoLootRate", value) end)
-    GUI.args.CVars.args.Sliders.args.autoLootRate.relWidth = 0.5
-
-    --#endregion
-
-    --#region - Damage Meter
-
-    GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3.5, "tab")
-    GUI.args.DamageMeter.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\DamageMeter.tga"
-
-    GUI.args.DamageMeter.args.AutoResetOnMythicPlus = ACH:Toggle("Auto Reset: Start of Mythic+", nil, 1, nil, nil, "relative", function() return DB.DamageMeter.AutoResetOnMythicPlus end, function(_, value) DB.DamageMeter.AutoResetOnMythicPlus = value Private:UpdateDamageMeter() end)
-    GUI.args.DamageMeter.args.AutoResetOnMythicPlus.descStyle = "inline"
-    GUI.args.DamageMeter.args.AutoResetOnMythicPlus.relWidth = 0.5
-    GUI.args.DamageMeter.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DamageMeterTestMode end, function(_, value) Private:SetDamageMeterTestMode(value) end)
-    GUI.args.DamageMeter.args.TestMode.relWidth = 0.5
-
-    for IDX, DMDB in ipairs(DB.DamageMeter) do
-        local Window = ACH:Group("Window " .. IDX, nil, IDX, "tab")
-        GUI.args.DamageMeter.args["Window" .. IDX] = Window
-
-        Window.args.General = ACH:Group("General", nil, 1)
-        Window.args.General.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.Enabled end, function(_, value) DMDB.Enabled = value Private:UpdateDamageMeter() end)
-        Window.args.General.args.Enabled.relWidth = 0.5
-        -- Window.args.General.args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 2, nil, nil, "relative", function() return DMDB.ShowBackdrop end, function(_, value) DMDB.ShowBackdrop = value Private:UpdateDamageMeter() end, function() return not DMDB.Enabled end)
-        -- Window.args.General.args.ShowBackdrop.relWidth = 0.5
-
-        Window.args.General.args.MeterData = ACH:Group("Meter Data", nil, 4)
-        Window.args.General.args.MeterData.inline = true
-        Window.args.General.args.MeterData.disabled = function() return not DMDB.Enabled end
-        Window.args.General.args.MeterData.args.MeterType = ACH:Select("Type", nil, 1, Private.MeterTypes, nil, "relative", function() return DMDB.MeterType end, function(_, value) Private:SetDamageMeterType(Private.DamageMeterFrames[IDX], value, DMDB.SessionType) end)
-        Window.args.General.args.MeterData.args.MeterType.relWidth = 0.5
-        Window.args.General.args.MeterData.args.SessionType = ACH:Select("Session", nil, 2, { [Enum.DamageMeterSessionType.Current] = "Current", [Enum.DamageMeterSessionType.Overall] = "Overall" }, nil, "relative", function() return DMDB.SessionType end, function(_, value) Private:SetDamageMeterType(Private.DamageMeterFrames[IDX], DMDB.MeterType, value) end)
-        Window.args.General.args.MeterData.args.SessionType.relWidth = 0.5
-
-        Window.args.Layout = ACH:Group("Layout", nil, 2)
-        Window.args.Layout.disabled = function() return not DMDB.Enabled end
-        Window.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DMDB.Layout[1] end, function(_, value) DMDB.Layout[1] = value Private:UpdateDamageMeter() end)
-        Window.args.Layout.args.AnchorFrom.relWidth = 0.5
-        Window.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DMDB.Layout[2] end, function(_, value) DMDB.Layout[2] = value Private:UpdateDamageMeter() end)
-        Window.args.Layout.args.AnchorTo.relWidth = 0.5
-        Window.args.Layout.args.Width = ACH:Range("Width", nil, 3, { min = function() return math.max(100, math.ceil((DMDB.Size[2] - 2 - (DMDB.Rows.Num - 1) * DMDB.Rows.Spacing) / DMDB.Rows.Num) + 10) end, max = 1000, step = 1 }, "relative", function() return DMDB.Size[1] end, function(_, value) DMDB.Size[1] = value Private:UpdateDamageMeter() end)
-        Window.args.Layout.args.Width.relWidth = 0.5
-        Window.args.Layout.args.Height = ACH:Range("Height", nil, 4, { min = function() return 2 + DMDB.Rows.Num * 8 + (DMDB.Rows.Num - 1) * DMDB.Rows.Spacing end, max = function() return math.min(1000, 2 + DMDB.Rows.Num * (DMDB.Size[1] - 10) + (DMDB.Rows.Num - 1) * DMDB.Rows.Spacing) end, step = 1 }, "relative", function() return DMDB.Size[2] end, function(_, value) DMDB.Size[2] = value Private:UpdateDamageMeter() end)
-        Window.args.Layout.args.Height.relWidth = 0.5
-        Window.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 5, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Layout[3] end, function(_, value) DMDB.Layout[3] = value Private:UpdateDamageMeter() end)
-        Window.args.Layout.args.XOffset.relWidth = 0.5
-        Window.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.Layout[4] end, function(_, value) DMDB.Layout[4] = value Private:UpdateDamageMeter() end)
-        Window.args.Layout.args.YOffset.relWidth = 0.5
-
-        Window.args.TitleBar = ACH:Group("Title Bar", nil, 3)
-        Window.args.TitleBar.disabled = function() return not DMDB.Enabled end
-        -- Window.args.TitleBar.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DMDB.TitleBar.Enabled end, function(_, value) DMDB.TitleBar.Enabled = value Private:UpdateDamageMeter() end)
-        -- Window.args.TitleBar.args.Enabled.relWidth = 1
-
-        Window.args.TitleBar.args.Icons = ACH:Group("Icons", nil, 1)
-        Window.args.TitleBar.args.Icons.inline = true
-        Window.args.TitleBar.args.Icons.disabled = function() return not DMDB.Enabled or not DMDB.TitleBar.Enabled end
-        Window.args.TitleBar.args.Icons.args.MouseoverIcons = ACH:Toggle("Mouseover Icons", nil, 0, nil, nil, "relative", function() return DMDB.TitleBar.MouseoverIcons end, function(_, value) DMDB.TitleBar.MouseoverIcons = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Icons.args.MouseoverIcons.relWidth = 0.33
-        Window.args.TitleBar.args.Icons.args.ResetButton = ACH:Toggle("Reset Button", nil, 1, nil, nil, "relative", function() return DMDB.TitleBar.Icons.ResetButton end, function(_, value) DMDB.TitleBar.Icons.ResetButton = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Icons.args.ResetButton.relWidth = 0.33
-        Window.args.TitleBar.args.Icons.args.EncountersButton = ACH:Toggle("Encounters Button", nil, 2, nil, nil, "relative", function() return DMDB.TitleBar.Icons.EncountersButton end, function(_, value) DMDB.TitleBar.Icons.EncountersButton = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Icons.args.EncountersButton.relWidth = 0.33
-
-        Window.args.TitleBar.args.Layout = ACH:Group("Layout", nil, 2)
-        Window.args.TitleBar.args.Layout.inline = true
-        Window.args.TitleBar.args.Layout.disabled = function() return not DMDB.Enabled or not DMDB.TitleBar.Enabled end
-        Window.args.TitleBar.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DMDB.TitleBar.Layout[1] end, function(_, value) DMDB.TitleBar.Layout[1] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Layout.args.AnchorFrom.relWidth = 0.5
-        Window.args.TitleBar.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DMDB.TitleBar.Layout[2] end, function(_, value) DMDB.TitleBar.Layout[2] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Layout.args.AnchorTo.relWidth = 0.5
-        Window.args.TitleBar.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.TitleBar.Layout[3] end, function(_, value) DMDB.TitleBar.Layout[3] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Layout.args.XOffset.relWidth = 0.33
-        Window.args.TitleBar.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DMDB.TitleBar.Layout[4] end, function(_, value) DMDB.TitleBar.Layout[4] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Layout.args.YOffset.relWidth = 0.33
-        Window.args.TitleBar.args.Layout.args.Height = ACH:Range("Height", nil, 5, { min = 8, max = 100, step = 1 }, "relative", function() return DMDB.TitleBar.Height end, function(_, value) DMDB.TitleBar.Height = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Layout.args.Height.relWidth = 0.33
-
-        Window.args.TitleBar.args.Font = ACH:Group("Font", nil, 3)
-        Window.args.TitleBar.args.Font.inline = true
-        Window.args.TitleBar.args.Font.disabled = function() return not DMDB.Enabled or not DMDB.TitleBar.Enabled end
-        Window.args.TitleBar.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DMDB.TitleBar.Font[1] end, function(_, value) DMDB.TitleBar.Font[1] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Font.args.Font.relWidth = 0.5
-        Window.args.TitleBar.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 2, "relative", function() return DMDB.TitleBar.Font[3] end, function(_, value) DMDB.TitleBar.Font[3] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Font.args.FontFlag.relWidth = 0.5
-        Window.args.TitleBar.args.Font.args.Size = ACH:Range("Font Size", nil, 3, { min = 8, max = 32, step = 1 }, "relative", function() return DMDB.TitleBar.Font[2] end, function(_, value) DMDB.TitleBar.Font[2] = value Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Font.args.Size.relWidth = 0.5
-        Window.args.TitleBar.args.Font.args.Colour = ACH:Color("Colour", nil, 4, true, "relative", function() return unpack(DMDB.TitleBar.Colour) end, function(_, r, g, b, a) DMDB.TitleBar.Colour = { r, g, b, a } Private:UpdateDamageMeter() end)
-        Window.args.TitleBar.args.Font.args.Colour.relWidth = 0.5
-
-        Window.args.Rows = ACH:Group("Rows", nil, 4)
-        Window.args.Rows.disabled = function() return not DMDB.Enabled end
-        Window.args.Rows.args.Num = ACH:Range("Number of Rows", nil, 1, { min = function() return math.max(1, math.ceil((DMDB.Size[2] - 2 + DMDB.Rows.Spacing) / (DMDB.Size[1] - 10 + DMDB.Rows.Spacing))) end, max = function() return math.min(40, math.floor((DMDB.Size[2] - 2 + DMDB.Rows.Spacing) / (8 + DMDB.Rows.Spacing))) end, step = 1 }, "relative", function() return DMDB.Rows.Num end, function(_, value) DMDB.Rows.Num = value Private:UpdateDamageMeter() end)
-        Window.args.Rows.args.Num.relWidth = 0.5
-        Window.args.Rows.args.Spacing = ACH:Range("Spacing", nil, 2, { min = function() return DMDB.Rows.Num > 1 and math.max(0, math.ceil((DMDB.Size[2] - 2 - DMDB.Rows.Num * (DMDB.Size[1] - 10)) / (DMDB.Rows.Num - 1))) or 0 end, max = function() return DMDB.Rows.Num > 1 and math.min(20, math.floor((DMDB.Size[2] - 2 - DMDB.Rows.Num * 8) / (DMDB.Rows.Num - 1))) or 20 end, step = 1 }, "relative", function() return DMDB.Rows.Spacing end, function(_, value) DMDB.Rows.Spacing = value Private:UpdateDamageMeter() end)
-        Window.args.Rows.args.Spacing.relWidth = 0.5
-        Window.args.Rows.args.Texture = ACH:SharedMediaStatusbar("Texture", nil, 3, "relative", function() return DMDB.Rows.Texture end, function(_, value) DMDB.Rows.Texture = value Private:UpdateDamageMeter() end)
-        Window.args.Rows.args.Texture.relWidth = 1
-
-        Window.args.Text = ACH:Group("Text", nil, 5)
-        Window.args.Text.disabled = function() return not DMDB.Enabled end
-
-        for TextIDX, TextType in ipairs({ "Name", "Amount" }) do
-            local TextDB = DMDB[TextType]
-            local Text = ACH:Group(TextType, nil, TextIDX)
-            Text.inline = true
-            Window.args.Text.args[TextType] = Text
-
-            Text.args.Layout = ACH:Group("Layout", nil, 1)
-            Text.args.Layout.inline = true
-            Text.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return TextDB.Layout[1] end, function(_, value) TextDB.Layout[1] = value Private:UpdateDamageMeter() end)
-            Text.args.Layout.args.AnchorFrom.relWidth = 0.5
-            Text.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return TextDB.Layout[2] end, function(_, value) TextDB.Layout[2] = value Private:UpdateDamageMeter() end)
-            Text.args.Layout.args.AnchorTo.relWidth = 0.5
-            Text.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[3] end, function(_, value) TextDB.Layout[3] = value Private:UpdateDamageMeter() end)
-            Text.args.Layout.args.XOffset.relWidth = 0.5
-            Text.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return TextDB.Layout[4] end, function(_, value) TextDB.Layout[4] = value Private:UpdateDamageMeter() end)
-            Text.args.Layout.args.YOffset.relWidth = 0.5
-            if TextType == "Amount" then
-                Text.args.Layout.args.AmountFormat = ACH:Select("Amount Format", nil, 5, Private.MeterAmountFormats, nil, "relative", function() return TextDB.Format end, function(_, value) TextDB.Format = value Private:UpdateDamageMeter() end)
-                Text.args.Layout.args.AmountFormat.relWidth = 1
+            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+        elseif Group == "DungeonCasts" then
+            local DB = Private.DB.global.DungeonCasts
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
+            local Update = function()
+                Private:SetupDungeonCasts()
+                if Private.PreviewDungeonCastsActive and not Private.DungeonCastsFrame.Testing then Private:TestDungeonCasts() end
             end
+            Private.GUI:CreateToggle(ScrollFrame, "Enable", "Tracks enemy NPC casts on nearby nameplates.", nil, DB, "Enable", function() Update() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
+            Private.GUI:LayoutOptions(ScrollFrame, DB, Update)
 
-            Text.args.Font = ACH:Group("Font", nil, 2)
-            Text.args.Font.inline = true
-            Text.args.Font.args.ColourByClass = ACH:Toggle("Colour By Class", nil, 1, nil, nil, "relative", function() return TextDB.ColourByClass end, function(_, value) TextDB.ColourByClass = value Private:UpdateDamageMeter() end)
-            Text.args.Font.args.ColourByClass.relWidth = 1
-            Text.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 2, "relative", function() return TextDB.Font[1] end, function(_, value) TextDB.Font[1] = value Private:UpdateDamageMeter() end)
-            Text.args.Font.args.Font.relWidth = 0.5
-            Text.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return TextDB.Font[3] end, function(_, value) TextDB.Font[3] = value Private:UpdateDamageMeter() end)
-            Text.args.Font.args.FontFlag.relWidth = 0.5
-            Text.args.Font.args.Size = ACH:Range("Font Size", nil, 4, { min = 8, max = 32, step = 1 }, "relative", function() return TextDB.Font[2] end, function(_, value) TextDB.Font[2] = value Private:UpdateDamageMeter() end)
-            Text.args.Font.args.Size.relWidth = 0.5
-            Text.args.Font.args.Colour = ACH:Color("Colour", nil, 5, true, "relative", function() return unpack(TextDB.Colour) end, function(_, r, g, b, a) TextDB.Colour = { r, g, b, a } Private:UpdateDamageMeter() end, function() return not DMDB.Enabled or TextDB.ColourByClass end)
-            Text.args.Font.args.Colour.relWidth = 0.5
+            local Colours = Private.GUI:CreateInlineGroup(ScrollFrame, "Colours & Textures", "CENTER")
+            local Texture = AG:Create("LSM30_Statusbar")
+            Texture:SetLabel("Texture")
+            Texture:SetList(Private.LSM:HashTable("statusbar"))
+            Texture:SetValue(DB.Texture)
+            Texture:SetFullWidth(true)
+            Texture:SetCallback("OnValueChanged", function(_, _, Value) Texture:SetValue(Value) DB.Texture = Value Update() end)
+            Colours:AddChild(Texture)
+            Private.GUI:CreateColourPicker(Colours, "Background", 0.5, DB, "BackgroundColour", Update)
+            Private.GUI:CreateColourPicker(Colours, "Interrupt Ready", 0.5, DB, "InterruptibleColour", Update)
+            Private.GUI:CreateColourPicker(Colours, "Cannot Interrupt", 0.5, DB, "NonInterruptibleColour", Update)
+            Private.GUI:CreateColourPicker(Colours, "Interrupt On Cooldown", 0.5, DB, "InterruptOnCooldownColour", Update)
+            Private.GUI:FontOptions(ScrollFrame, DB, Update, true)
+            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+        elseif Group == "CombatTimer" then
+            local DB = Private.DB.global.CombatTimer
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
+
+            Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB, "Enable", function() Private:UpdateCombatTimer() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
+
+            Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateCombatTimer() end)
+            Private.GUI:FontOptions(ScrollFrame, DB.Text, function() Private:UpdateCombatTimer() end)
+
+            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+        elseif Group == "MouseCursor" then
+            local DB = Private.DB.global.MouseCursor
+
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
+            Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, 0.33, DB, "Enable", function() Private:UpdateMouseCursor() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
+
+            Private.GUI:CreateColourPicker(ScrollFrame, "Colour", 0.33, DB, "Colour", function() Private:UpdateMouseCursor() end)
+
+            local MouseCursorTextureDropdown = AG:Create("Dropdown")
+            MouseCursorTextureDropdown:SetLabel("Texture")
+            MouseCursorTextureDropdown:SetList(Private.MouseCursorTexturePreviews)
+            MouseCursorTextureDropdown:SetValue(DB.Texture)
+            MouseCursorTextureDropdown:SetRelativeWidth(0.33)
+            MouseCursorTextureDropdown:SetCallback("OnValueChanged", function(_, _, Value) DB.Texture = Value Private:UpdateMouseCursor() end)
+            MouseCursorTextureDropdown:SetDisabled(not DB.Enable)
+            ScrollFrame:AddChild(MouseCursorTextureDropdown)
+
+            Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateMouseCursor() end)
+            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+        elseif Group == "VendorSupport" then
+            local DB = Private.DB.global.VendorSupport
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
+            Private.GUI:CreateToggle(ScrollFrame, "Enable", "This will automatically vendor items that meet the criteria.", nil, DB, "Enable", function() Private:SetupVendorSupport() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
+
+            local MinimumQualityDropdown = AG:Create("Dropdown")
+            MinimumQualityDropdown:SetLabel("Minimum Quality")
+            MinimumQualityDropdown:SetList(Private.ItemQualities)
+            MinimumQualityDropdown:SetValue(DB.MinimumQuality)
+            MinimumQualityDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.MinimumQuality = value end)
+            MinimumQualityDropdown:SetRelativeWidth(0.5)
+            ScrollFrame:AddChild(MinimumQualityDropdown)
+
+            local MinimumItemLevelSlider = AG:Create("Slider")
+            MinimumItemLevelSlider:SetLabel("Minimum Item Level")
+            MinimumItemLevelSlider:SetSliderValues(0, 500, 1)
+            MinimumItemLevelSlider:SetValue(DB.MinimumItemLevel)
+            MinimumItemLevelSlider:SetCallback("OnValueChanged", function(_, _, value) DB.MinimumItemLevel = value end)
+            MinimumItemLevelSlider:SetRelativeWidth(0.5)
+            ScrollFrame:AddChild(MinimumItemLevelSlider)
+
+            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
+        elseif Group == "Profiles" then
+            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
+
+            local ProfileInlineGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Profiles", "CENTER")
+
+            local DescriptionLabel = AG:Create("Label")
+            DescriptionLabel:SetText(Private.AddOnName .. " uses a |cFFFFCC00global|r profile shared across all characters. Importing a profile will overwrite your existing settings.")
+            DescriptionLabel:SetJustifyH("CENTER")
+            DescriptionLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE, SLUG")
+            DescriptionLabel:SetFullWidth(true)
+            ProfileInlineGroup:AddChild(DescriptionLabel)
+
+            Private.GUI:CreateButton(ProfileInlineGroup, "Export Profile", 0.33, function() Private:ExportProfile() end)
+            Private.GUI:CreateButton(ProfileInlineGroup, "Import Profile", 0.33, function() Private:ImportProfile() end)
+            Private.GUI:CreateButton(ProfileInlineGroup, "Reset Profile", 0.33, function() Private:ResetProfile() end)
+
+            local ProfileImportsInlineGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Profile Imports", "CENTER")
+
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\ElvUI.tga:16:16|t ElvUI: Profile", 0.5, function() Private.Distributor:ImportProfile(Private:ImportElvUI()["PROFILE"]) end)
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\ElvUI.tga:16:16|t ElvUI: Private", 0.5, function() Private.Distributor:ImportProfile(Private:ImportElvUI()["PRIVATE"]) end)
+
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\Baganator.tga:16:16|t Baganator", nil, function() Baganator.API.ImportString(Private:ImportBaganator(), "Default") end, not C_AddOns.IsAddOnLoaded("Baganator"))
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\BigWigs.tga:16:16|t BigWigs", nil, function() Private:ImportBigWigs() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: Toasts", nil, function() Private:ImportLSToasts() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\Platynator.tga:16:16|t Platynator", nil, function() Platynator.API.ImportString(Private:ImportPlatynator(), "Default") end, not C_AddOns.IsAddOnLoaded("Platynator"))
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\SkironCooldownManager.png:16:16|t Skiron Cooldown Manager", nil, function() SCMAPI.ImportProfile("ElvUI_Unhalted", Private:ImportSkironCooldownManager()) end, not C_AddOns.IsAddOnLoaded("SkironCooldownManager"))
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo_64.png:16:16|t UnhaltedUI", nil, function() Private:ImportUnhaltedUI() end)
+            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\WarpDeplete.blp:16:16|t WarpDeplete", nil, function() Private:ImportWarpDeplete() Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
+
+            if Private:IsDeveloper() then
+                local ProfileExportsInlineGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Profile Exports", "CENTER")
+
+                Private.GUI:CreateButton(ProfileExportsInlineGroup, "Export |TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: Toasts", nil, function() Private:ExportLSToasts() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
+                Private.GUI:CreateButton(ProfileExportsInlineGroup, "Export |TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\WarpDeplete.blp:16:16|t WarpDeplete", nil, function() Private:ExportWarpDeplete() end, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
+            end
         end
-    end
-
-    --#endregion
-
-    --#region - Dungeon Casts
-
-    GUI.args.DungeonCasts = ACH:Group("Dungeon Casts", nil, 3.75)
-    GUI.args.DungeonCasts.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\TargetedSpells.tga"
-    local DungeonCasts = GUI.args.DungeonCasts
-    local DCDB = DB.DungeonCasts
-
-    DungeonCasts.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DCDB.Enabled end, function(_, value) DCDB.Enabled = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Enabled.relWidth = 0.33
-    DungeonCasts.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.DungeonCastsTestMode end, function(_, value) Private:SetDungeonCastsTestMode(value) end, function() return not DCDB.Enabled or InCombatLockdown() end)
-    DungeonCasts.args.TestMode.relWidth = 0.33
-
-    DungeonCasts.args.LoadConditions = ACH:MultiSelect("Load Conditions", "Load in any selected instance type or difficulty. Leave empty to load everywhere. Test Mode ignores these conditions.", 3, {
-        none = "Open World",
-        party = "Dungeon: All Difficulties",
-        raid = "Raid: All Difficulties",
-        scenario = "Scenario: All Difficulties",
-        pvp = "Battleground",
-        arena = "Arena",
-        [1] = "Dungeon: Normal",
-        [2] = "Dungeon: Heroic",
-        [8] = "Dungeon: Mythic+",
-        [23] = "Dungeon: Mythic",
-        [24] = "Dungeon: Timewalking",
-        [205] = "Dungeon: Follower",
-        [14] = "Raid: Normal",
-        [15] = "Raid: Heroic",
-        [16] = "Raid: Mythic",
-        [17] = "Raid: Looking For Raid",
-        [33] = "Raid: Timewalking",
-        [208] = "Delve",
-    }, nil, "relative", function(_, key) return DCDB.LoadConditions[key] end, function(_, key, value) DCDB.LoadConditions[key] = value or nil Private:UpdateDungeonCasts() end, function() return not DCDB.Enabled end, nil, true)
-    DungeonCasts.args.LoadConditions.relWidth = 0.33
-    DungeonCasts.args.LoadConditions.dialogControl = "Dropdown"
-
-    DungeonCasts.args.Layout = ACH:Group("Layout", nil, 4)
-    DungeonCasts.args.Layout.inline = true
-    DungeonCasts.args.Layout.disabled = function() return not DCDB.Enabled end
-    DungeonCasts.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DCDB.Layout[1] end, function(_, value) DCDB.Layout[1] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.AnchorFrom.relWidth = 0.5
-    DungeonCasts.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DCDB.Layout[2] end, function(_, value) DCDB.Layout[2] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.AnchorTo.relWidth = 0.5
-    DungeonCasts.args.Layout.args.Width = ACH:Range("Width", nil, 3, { min = 100, softMax = 500, max = 1000, step = 1 }, "relative", function() return DCDB.Size[1] end, function(_, value) DCDB.Size[1] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.Width.relWidth = 0.5
-    DungeonCasts.args.Layout.args.Height = ACH:Range("Height", nil, 4, { min = 12, softMax = 64, max = 100, step = 1 }, "relative", function() return DCDB.Size[2] end, function(_, value) DCDB.Size[2] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.Height.relWidth = 0.5
-    DungeonCasts.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 5, { min = -1000, max = 1000, step = 1 }, "relative", function() return DCDB.Layout[3] end, function(_, value) DCDB.Layout[3] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.XOffset.relWidth = 0.5
-    DungeonCasts.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 0.1 }, "relative", function() return DCDB.Layout[4] end, function(_, value) DCDB.Layout[4] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.YOffset.relWidth = 0.5
-    DungeonCasts.args.Layout.args.Spacing = ACH:Range("Spacing", "Spacing between bars.", 7, { min = 0, max = 32, step = 1 }, "relative", function() return DCDB.Layout[5] end, function(_, value) DCDB.Layout[5] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.Spacing.relWidth = 0.5
-    DungeonCasts.args.Layout.args.GrowthDirection = ACH:Select("Growth Direction", nil, 8, { UP = "Up", DOWN = "Down" }, nil, "relative", function() return DCDB.GrowthDirection end, function(_, value) DCDB.GrowthDirection = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.GrowthDirection.relWidth = 0.5
-    DungeonCasts.args.Layout.args.MaxIcons = ACH:Range("Maximum Bars", "Maximum number of bar slots. Hidden duplicate casts can still occupy a slot.", 9, { min = 1, max = 20, step = 1 }, "relative", function() return DCDB.MaxIcons end, function(_, value) DCDB.MaxIcons = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.MaxIcons.relWidth = 0.5
-    DungeonCasts.args.Layout.args.IconPosition = ACH:Select("Icon Placement", nil, 10, { LEFT = "Left", RIGHT = "Right" }, nil, "relative", function() return DCDB.IconPosition end, function(_, value) DCDB.IconPosition = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.IconPosition.relWidth = 0.5
-
-    DungeonCasts.args.Layout.args.Font = ACH:Group("Font", nil, 11)
-    DungeonCasts.args.Layout.args.Font.inline = true
-    DungeonCasts.args.Layout.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DCDB.Font[1] end, function(_, value) DCDB.Font[1] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.Font.args.Font.relWidth = 0.33
-    DungeonCasts.args.Layout.args.Font.args.Size = ACH:Range("Font Size", nil, 2, { min = 8, max = 32, step = 1 }, "relative", function() return DCDB.Font[2] end, function(_, value) DCDB.Font[2] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.Font.args.Size.relWidth = 0.33
-    DungeonCasts.args.Layout.args.Font.args.FontFlag = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DCDB.Font[3] end, function(_, value) DCDB.Font[3] = value Private:UpdateDungeonCasts() end)
-    DungeonCasts.args.Layout.args.Font.args.FontFlag.relWidth = 0.33
-
-    --#endregion
-
-    --#region - ElvUI Enhancements
-
-    GUI.args.ElvUIEnhancements = ACH:Group("|cFF1784D1ElvUI|r Enhancements", nil, 4)
-    GUI.args.ElvUIEnhancements.icon = "Interface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon.tga"
-    GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll = ACH:Toggle("Loot Roll: Fix Backdrop", "Force the opacity of the backdrop to be consistent with the rest of the UI.", 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ForceAlphaOnLootRoll end, function(_, value) DB.ElvUIEnhancements.ForceAlphaOnLootRoll = value Private:PromptReload() end)
-    GUI.args.ElvUIEnhancements.args.ForceAlphaOnLootRoll.descStyle = "inline"
-
-    GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown = ACH:Toggle("Castbar: Interrupt On Cooldown", "Colours the castbar when your interrupt is on cooldown but there is an interruptible cast.", 2, nil, nil, "full", function() return DB.ElvUIEnhancements.CastbarInterruptCooldown end, function(_, value) DB.ElvUIEnhancements.CastbarInterruptCooldown = value Private:UpdateCastbarInterruptCooldown() end)
-    GUI.args.ElvUIEnhancements.args.CastbarInterruptCooldown.descStyle = "inline"
-
-    GUI.args.ElvUIEnhancements.args.OverAbsorbs = ACH:Toggle("Health: Over Absorbs", "Shows a reverse fill absorb bar when at full health.", 2.5, nil, nil, "full", function() return DB.ElvUIEnhancements.OverAbsorbs end, function(_, value) DB.ElvUIEnhancements.OverAbsorbs = value Private:UpdateOverAbsorbs() end)
-    GUI.args.ElvUIEnhancements.args.OverAbsorbs.descStyle = "inline"
-
-    GUI.args.ElvUIEnhancements.args.ActionStatus = ACH:Group("Action Status", nil, 3)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.inline = true
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "full", function() return DB.ElvUIEnhancements.ActionStatus.Enabled end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Enabled = value Private:UpdateBlizzardEnhancements() end)
-
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout = ACH:Group("Layout", nil, 2)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.inline = true
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.disabled = function() return not DB.ElvUIEnhancements.ActionStatus.Enabled end
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[1] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[1] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorFrom.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[2] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.AnchorTo.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[3] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[3] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.XOffset.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Layout[4] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Layout[4] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Layout.args.YOffset.relWidth = 0.5
-
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font = ACH:Group("Font", nil, 3)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.inline = true
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.disabled = function() return not DB.ElvUIEnhancements.ActionStatus.Enabled end
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Font = ACH:SharedMediaFont("Font", nil, 1, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[1] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[1] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Font.relWidth = 0.33
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.FontFlags = ACH:FontFlags("Font Flags", nil, 3, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[3] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[3] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.FontFlags.relWidth = 0.33
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size = ACH:Range("Size", nil, 2, { min = 6, max = 32, step = 1 }, "relative", function() return DB.ElvUIEnhancements.ActionStatus.Font[2] end, function(_, value) DB.ElvUIEnhancements.ActionStatus.Font[2] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.ActionStatus.args.Font.args.Size.relWidth = 0.33
-
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame = ACH:Group("UI Errors", nil, 4)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.inline = true
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Enabled end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Enabled = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Enabled.relWidth = 1
-
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout = ACH:Group("Layout", nil, 2)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.inline = true
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.disabled = function() return not DB.ElvUIEnhancements.UIErrorsFrame.Enabled end
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[1] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[1] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorFrom.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[2] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[2] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.AnchorTo.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[3] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[3] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.XOffset.relWidth = 0.5
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -1000, max = 1000, step = 1 }, "relative", function() return DB.ElvUIEnhancements.UIErrorsFrame.Layout[4] end, function(_, value) DB.ElvUIEnhancements.UIErrorsFrame.Layout[4] = value Private:UpdateBlizzardEnhancements() end)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.Layout.args.YOffset.relWidth = 0.5
-
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.FontDesc = ACH:Description("|cFFCC4040PLEASE NOTE|r: Font, Font Flag & Font Size for this UI Element is controlled by |cFF1784D1ElvUI|r via their options.", 3, nil, nil, nil, nil, nil, "relative", nil)
-    GUI.args.ElvUIEnhancements.args.UIErrorsFrame.args.FontDesc.relWidth = 1
-
-    --#endregion
-
-    --#region - Profile Manager
-
-    GUI.args.ProfileManager = ACH:Group("Profile Manager", nil, 4)
-    GUI.args.ProfileManager.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\ProfileManager.tga"
-
-    GUI.args.ProfileManager.args.ImportElvUI = ACH:Execute("Import |TInterface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon:16:16|t|cFF1784D1ElvUI|r", nil, 1, function()
-        Private.Distributor:ImportProfile(Private:ImportElvUI()["PROFILE"])
-        Private.Distributor:ImportProfile(Private:ImportElvUI()["PRIVATE"])
-        Private.Distributor:ImportProfile(Private:ImportElvUI()["GLOBAL"])
-    end, nil, nil, "relative")
-    GUI.args.ProfileManager.args.ImportElvUI.relWidth = 1
-
-    GUI.args.ProfileManager.args.ImportSkironCooldownManager = ACH:Execute("Import |TInterface\\AddOns\\SkironCooldownManager\\Media\\Logo.png:16:16|t|cFF4080FFSkiron|r|cFFFFFFFFCooldownManager|r", nil, 2, function() SCMAPI.ImportProfile("UnhaltedUI", Private:ImportSkironCooldownManager()) end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("SkironCooldownManager"))
-    GUI.args.ProfileManager.args.ImportSkironCooldownManager.relWidth = 1
-
-    GUI.args.ProfileManager.args.ImportLSToasts = ACH:Execute("Import |TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|tLS: |cFF1CD3A2Toasts|r", "|cFFCC4040overwrites the default profile|r.", 3, function() Private:ImportLSToasts() if not DB.AddOnSkins.LSToasts == true then DB.AddOnSkins.LSToasts = true end Private:PromptReload() end, nil, true, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
-    GUI.args.ProfileManager.args.ImportLSToasts.relWidth = 0.5
-    GUI.args.ProfileManager.args.ImportLSToasts.descStyle = "inline"
-
-    GUI.args.ProfileManager.args.ExportLSToasts = ACH:Execute("Export |TInterface\\AddOns\\ls_Toasts\\assets\\logo-32.TGA:16:16|tLS: |cFF1CD3A2Toasts|r", nil, 4, function() Private:ExportLSToasts() end, nil, nil, "relative", nil, nil, (not C_AddOns.IsAddOnLoaded("ls_Toasts") or not Private:IsDeveloper()))
-    GUI.args.ProfileManager.args.ExportLSToasts.relWidth = 0.5
-    GUI.args.ProfileManager.args.ExportLSToasts.descStyle = "inline"
-
-    GUI.args.ProfileManager.args.ImportPlatynator = ACH:Execute("Import |TInterface\\AddOns\\Platynator\\Assets\\logo.tga:16:16|tPlatynator", nil, 5, function() Platynator.API.ImportString(Private:ImportPlatynator(), "Default") end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("Platynator"))
-    GUI.args.ProfileManager.args.ImportPlatynator.relWidth = 1
-
-    GUI.args.ProfileManager.args.ImportBaganator = ACH:Execute("Import |TInterface\\AddOns\\Baganator\\Assets\\logo.tga:16:16|tBaganator", nil, 6, function() Baganator.API.ImportString(Private:ImportBaganator(), "Default") end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("Baganator"))
-    GUI.args.ProfileManager.args.ImportBaganator.relWidth = 1
-
-    GUI.args.ProfileManager.args.ImportWarpDeplete = ACH:Execute("Import |TInterface\\AddOns\\WarpDeplete\\logo:16:16|tWarpDeplete", "|cFFCC4040overwrites the default profile|r.", 7, function() Private:ImportWarpDeplete() if not DB.AddOnSkins.WarpDeplete == true then DB.AddOnSkins.WarpDeplete = true end Private:PromptReload() end, nil, true, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
-    GUI.args.ProfileManager.args.ImportWarpDeplete.relWidth = 0.5
-    GUI.args.ProfileManager.args.ImportWarpDeplete.descStyle = "inline"
-
-    GUI.args.ProfileManager.args.ExportWarpDeplete = ACH:Execute("Export |TInterface\\AddOns\\WarpDeplete\\logo:16:16|tWarpDeplete", nil, 8, function() Private:ExportWarpDeplete() end, nil, nil, "relative", nil, nil, (not C_AddOns.IsAddOnLoaded("WarpDeplete") or not Private:IsDeveloper()))
-    GUI.args.ProfileManager.args.ExportWarpDeplete.relWidth = 0.5
-    GUI.args.ProfileManager.args.ExportWarpDeplete.descStyle = "inline"
-
-    GUI.args.ProfileManager.args.ImportBigWigs = ACH:Execute("Import |TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|tBigWigs", nil, 9, function() Private:ImportBigWigs() end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("BigWigs"))
-    GUI.args.ProfileManager.args.ImportBigWigs.relWidth = 1
-
-    GUI.args.ProfileManager.args.ImportMinimapStats = ACH:Execute("Import |TInterface\\AddOns\\MinimapStats\\Media\\MinimapStats.png:16:16|t|cFF8080FFMinimap|rStats", nil, 10, function() Private:ImportMinimapStats() end, nil, nil, "relative", nil, nil, not C_AddOns.IsAddOnLoaded("MinimapStats"))
-    GUI.args.ProfileManager.args.ImportMinimapStats.relWidth = 1
-
-    --#endregion
-
-    --#region - Quality Of Life
-
-    GUI.args.QualityOfLife = ACH:Group("Quality Of Life", nil, 5, "tab")
-    GUI.args.QualityOfLife.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\QualityOfLife.tga"
-    GUI.args.QualityOfLife.args.Toggles = ACH:Group("Toggles", nil, 1)
-    GUI.args.QualityOfLife.args.Toggles.args.AutoDelete = ACH:Toggle("Auto Delete", "Automatically fills the |cFFFFCC00DELETE|r prompt.", 1, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoDelete end, function(_, value) DB.QualityOfLife.Toggles.AutoDelete = value end)
-    GUI.args.QualityOfLife.args.Toggles.args.AutoDelete.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.AutoQuest = ACH:Toggle("Auto Quest", "Automatically accepts and turns in quests, continuing through multiple quests. Hold |cFFFFCC00Shift|r to pause. Quests with item rewards require manual turn-in.", 1.5, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoQuest end, function(_, value) DB.QualityOfLife.Toggles.AutoQuest = value Private:SetupAutoQuest() end)
-    GUI.args.QualityOfLife.args.Toggles.args.AutoQuest.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys = ACH:Toggle("Auto Sell Greys", "Automatically sells all grey items when going to a merchant.", 2, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSellGreys end, function(_, value) DB.QualityOfLife.Toggles.AutoSellGreys = value Private:SetupAutoSellGreys() end)
-    GUI.args.QualityOfLife.args.Toggles.args.AutoSellGreys.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp = ACH:Toggle("Auto Sign Up", "Automatically signs you up for dungeons and raids.", 3, nil, nil, "full", function() return DB.QualityOfLife.Toggles.AutoSignUp end, function(_, value) DB.QualityOfLife.Toggles.AutoSignUp = value end)
-    GUI.args.QualityOfLife.args.Toggles.args.AutoSignUp.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.PositionRaidWarningFrame = ACH:Toggle("Position Raid Warning Frame", "Positions the raid warning frame to a more convenient location.", 4, nil, nil, "full", function() return DB.QualityOfLife.Toggles.PositionRaidWarningFrame end, function(_, value) DB.QualityOfLife.Toggles.PositionRaidWarningFrame = value Private:PromptReload() end)
-    GUI.args.QualityOfLife.args.Toggles.args.PositionRaidWarningFrame.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner = ACH:Toggle("Remove Boss Banner", "Removes the frame that displays all end of dungeon loot for you.", 5, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveBossBanner end, function(_, value) DB.QualityOfLife.Toggles.RemoveBossBanner = value Private:PromptReload() end)
-    GUI.args.QualityOfLife.args.Toggles.args.RemoveBossBanner.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame = ACH:Toggle("Remove Loss Of Control Frame", "Removes the frame that displays loss of control effects for you.", 6, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveLossOfControlFrame end, function(_, value) DB.QualityOfLife.Toggles.RemoveLossOfControlFrame = value Private:PromptReload() end)
-    GUI.args.QualityOfLife.args.Toggles.args.RemoveLossOfControlFrame.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.HideTalkingHead = ACH:Toggle("Remove Talking Head", "Automatically removes the talking head for you.", 7, nil, nil, "full", function() return DB.QualityOfLife.Toggles.RemoveTalkingHead end, function(_, value) DB.QualityOfLife.Toggles.RemoveTalkingHead = value end)
-    GUI.args.QualityOfLife.args.Toggles.args.HideTalkingHead.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.SkipCinematics = ACH:Toggle("Skip Cinematics", "Automatically skips all cinematics.", 8, nil, nil, "full", function() return DB.QualityOfLife.Toggles.SkipCinematics end, function(_, value) DB.QualityOfLife.Toggles.SkipCinematics = value end)
-    GUI.args.QualityOfLife.args.Toggles.args.SkipCinematics.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.MissingPersonalBuffs = ACH:Toggle("Show Missing Personal Buffs", "Shows missing personal buffs when in a dungeon/raid. |cFFFFCC00Food, Flasks, Weapon Oils, etc|r.", 9, nil, nil, "full", function() return DB.QualityOfLife.Toggles.MissingPersonalBuffs end, function(_, value) DB.QualityOfLife.Toggles.MissingPersonalBuffs = value Private:UpdateMissingPersonalBuffs() end)
-    GUI.args.QualityOfLife.args.Toggles.args.MissingPersonalBuffs.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs = ACH:Toggle("Show Missing Raid Buffs", "Shows missing raid buffs when in a dungeon/raid. |cFFFFCC00Personal raid buffs are always shown|r.", 10, nil, nil, "full", function() return DB.QualityOfLife.Toggles.MissingRaidBuffs end, function(_, value) DB.QualityOfLife.Toggles.MissingRaidBuffs = value Private:UpdateMissingRaidBuffs() end)
-    GUI.args.QualityOfLife.args.Toggles.args.MissingRaidBuffs.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert = ACH:Toggle("Show Keystone Reroll Reminder", "Shows a reminder to reroll your keystone.", 11, nil, nil, "full", function() return DB.QualityOfLife.Toggles.KeystoneReroll end, function(_, value) DB.QualityOfLife.Toggles.KeystoneReroll = value Private:UpdateKeystoneRerollReminder() end)
-    GUI.args.QualityOfLife.args.Toggles.args.KeystoneRerollAlert.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Toggles.args.GatewayUsable = ACH:Toggle("Gateway Usable Reminder", "Shows you when you can use a gateway or reminds you to buy the gateway shard.", 12, nil, nil, "full", function() return DB.QualityOfLife.Toggles.GatewayUsable end, function(_, value) DB.QualityOfLife.Toggles.GatewayUsable = value Private:UpdateGatewayUsableReminder() end)
-    GUI.args.QualityOfLife.args.Toggles.args.GatewayUsable.descStyle = "inline"
-
-    GUI.args.QualityOfLife.args.Alerts = ACH:Group("Alerts", nil, 2)
-
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert = ACH:Toggle("|T135939:18:18|t Power Infusion Alert", nil, 1, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlert end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlert = value Private:SetupPowerInfusionAlert() end)
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlert.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound = ACH:SharedMediaSound("Sound", "Power Infusion Alert Sound", 2, "relative", function() return DB.QualityOfLife.Alerts.PowerInfusionAlertSound end, function(_, value) DB.QualityOfLife.Alerts.PowerInfusionAlertSound = value Private:SetupPowerInfusionAlert() end, function() return not DB.QualityOfLife.Alerts.PowerInfusionAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertSound.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 10-second countdown. Ends when combat starts.", 3, nil, nil, "relative", function() return Private.PowerInfusionAlertTestMode end, function(_, value) Private:SetAlertTestMode("PowerInfusionAlert", value) end, function() return not DB.QualityOfLife.Alerts.PowerInfusionAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.PowerInfusionAlertTestMode.relWidth = 0.2
-
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert = ACH:Toggle("|T4622479:18:18|t Time Spiral Alert", nil, 4, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlert end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlert = value Private:SetupTimeSpiralAlert() end)
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlert.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound = ACH:SharedMediaSound("Sound", "Time Spiral Alert Sound", 5, "relative", function() return DB.QualityOfLife.Alerts.TimeSpiralAlertSound end, function(_, value) DB.QualityOfLife.Alerts.TimeSpiralAlertSound = value Private:SetupTimeSpiralAlert() end, function() return not DB.QualityOfLife.Alerts.TimeSpiralAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertSound.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 15-second countdown. Ends when combat starts.", 6, nil, nil, "relative", function() return Private.TimeSpiralAlertTestMode end, function(_, value) Private:SetAlertTestMode("TimeSpiralAlert", value) end, function() return not DB.QualityOfLife.Alerts.TimeSpiralAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.TimeSpiralAlertTestMode.relWidth = 0.2
-
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert = ACH:Toggle("|T136012:18:18|t Bloodlust Alert", nil, 7, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlert end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlert = value Private:SetupBloodlustAlert() end)
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlert.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound = ACH:SharedMediaSound("Sound", "Bloodlust Alert Sound", 8, "relative", function() return DB.QualityOfLife.Alerts.BloodlustAlertSound end, function(_, value) DB.QualityOfLife.Alerts.BloodlustAlertSound = value Private:SetupBloodlustAlert() end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertSound.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 40-second countdown. Ends when combat starts.", 9, nil, nil, "relative", function() return Private.BloodlustAlertTestMode end, function(_, value) Private:SetAlertTestMode("BloodlustAlert", value) end, function() return not DB.QualityOfLife.Alerts.BloodlustAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.BloodlustAlertTestMode.relWidth = 0.2
-
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlert = ACH:Toggle("|T136048:18:18|t Innervate Alert", nil, 10, nil, nil, "relative", function() return DB.QualityOfLife.Alerts.InnervateAlert end, function(_, value) DB.QualityOfLife.Alerts.InnervateAlert = value Private:SetupInnervateAlert() end)
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlert.descStyle = "inline"
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlert.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertSound = ACH:SharedMediaSound("Sound", "Innervate Alert Sound", 11, "relative", function() return DB.QualityOfLife.Alerts.InnervateAlertSound end, function(_, value) DB.QualityOfLife.Alerts.InnervateAlertSound = value Private:SetupInnervateAlert() end, function() return not DB.QualityOfLife.Alerts.InnervateAlert end)
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertSound.relWidth = 0.4
-
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertTestMode = ACH:Toggle("Test Mode", "Show the spell icon with a repeating 8-second countdown. Ends when combat starts.", 12, nil, nil, "relative", function() return Private.InnervateAlertTestMode end, function(_, value) Private:SetAlertTestMode("InnervateAlert", value) end, function() return not DB.QualityOfLife.Alerts.InnervateAlert or InCombatLockdown() end)
-    GUI.args.QualityOfLife.args.Alerts.args.InnervateAlertTestMode.relWidth = 0.2
-
-    --#endregion
-
-    --#region - Mouse Cursor
-
-    GUI.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 5)
-    GUI.args.MouseCursor.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\MouseCursor.tga"
-
-    GUI.args.MouseCursor.args.Toggles = ACH:Group("Toggles", nil, 1)
-    GUI.args.MouseCursor.args.Toggles.inline = true
-
-    GUI.args.MouseCursor.args.Toggles.args.Enabled = ACH:Toggle("Enable Mouse Cursor", "Shows an additional texture for the mouse cursor.", 1, nil, nil, "full", function() return DB.MouseCursor.Enabled end, function(_, value) DB.MouseCursor.Enabled = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Toggles.args.Enabled.descStyle = "inline"
-
-    GUI.args.MouseCursor.args.Toggles.args.ShowInCombatOnly = ACH:Toggle("Show In Combat Only", "Shows the mouse cursor indicator in combat.", 2, nil, nil, "full", function() return DB.MouseCursor.ShowInCombatOnly end, function(_, value) DB.MouseCursor.ShowInCombatOnly = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Toggles.args.ShowInCombatOnly.descStyle = "inline"
-
-    GUI.args.MouseCursor.args.Layout = ACH:Group("Layout", nil, 3)
-    GUI.args.MouseCursor.args.Layout.inline = true
-    GUI.args.MouseCursor.args.Layout.disabled = function() return not DB.MouseCursor.Enabled or DB.MouseCursor.Texture == "CURSOR_01" or DB.MouseCursor.Texture == "CURSOR_02" end
-
-    GUI.args.MouseCursor.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return DB.MouseCursor.Layout[1] end, function(_, value) DB.MouseCursor.Layout[1] = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Layout.args.AnchorFrom.descStyle = "inline"
-    GUI.args.MouseCursor.args.Layout.args.AnchorFrom.relWidth = 0.5
-
-    GUI.args.MouseCursor.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return DB.MouseCursor.Layout[2] end, function(_, value) DB.MouseCursor.Layout[2] = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Layout.args.AnchorTo.descStyle = "inline"
-    GUI.args.MouseCursor.args.Layout.args.AnchorTo.relWidth = 0.5
-
-    GUI.args.MouseCursor.args.Layout.args.OffsetX = ACH:Range("X Offset", nil, 3, { min = -100, max = 100, step = 1 }, "relative", function() return DB.MouseCursor.Layout[3] end, function(_, value) DB.MouseCursor.Layout[3] = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Layout.args.OffsetX.descStyle = "inline"
-    GUI.args.MouseCursor.args.Layout.args.OffsetX.relWidth = 0.33
-
-    GUI.args.MouseCursor.args.Layout.args.OffsetY = ACH:Range("Y Offset", nil, 4, { min = -100, max = 100, step = 1 }, "relative", function() return DB.MouseCursor.Layout[4] end, function(_, value) DB.MouseCursor.Layout[4] = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Layout.args.OffsetY.descStyle = "inline"
-    GUI.args.MouseCursor.args.Layout.args.OffsetY.relWidth = 0.33
-
-    GUI.args.MouseCursor.args.Layout.args.CursorSize = ACH:Range("Cursor Size", nil, 5, { min = 1, max = 100, step = 1 }, "relative", function() return DB.MouseCursor.Layout[5] end, function(_, value) DB.MouseCursor.Layout[5] = value DB.MouseCursor.Layout[6] = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Layout.args.CursorSize.descStyle = "inline"
-    GUI.args.MouseCursor.args.Layout.args.CursorSize.relWidth = 0.33
-
-    GUI.args.MouseCursor.args.Appearance = ACH:Group("Appearance", nil, 4)
-    GUI.args.MouseCursor.args.Appearance.inline = true
-    GUI.args.MouseCursor.args.Appearance.disabled = function() return not DB.MouseCursor.Enabled end
-
-    GUI.args.MouseCursor.args.Appearance.args.Texture = ACH:Select("Texture", "Select the texture for the mouse cursor.", 1, Private.MouseCursors.Preview, nil, "relative", function() return DB.MouseCursor.Texture end, function(_, value) DB.MouseCursor.Texture = value Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Appearance.args.Texture.descStyle = "inline"
-    GUI.args.MouseCursor.args.Appearance.args.Texture.relWidth = 0.5
-    GUI.args.MouseCursor.args.Appearance.args.Texture.disabled = function() return not DB.MouseCursor.Enabled end
-
-    GUI.args.MouseCursor.args.Appearance.args.Colour = ACH:Color("Colour", "Select the colour for the mouse cursor.", 2, true, "relative", function() return unpack(DB.MouseCursor.Colour) end, function(_, r, g, b, a) DB.MouseCursor.Colour = { r, g, b, a } Private:UpdateMouseCursor() end)
-    GUI.args.MouseCursor.args.Appearance.args.Colour.descStyle = "inline"
-    GUI.args.MouseCursor.args.Appearance.args.Colour.relWidth = 0.5
-    GUI.args.MouseCursor.args.Appearance.args.Colour.disabled = function() return not DB.MouseCursor.Enabled or DB.MouseCursor.Texture == "CURSOR_01" or DB.MouseCursor.Texture == "CURSOR_02" end
-
-    --#endregion
-
-    --#region - Quick Actions
-
-    GUI.args.QuickActions = ACH:Group("Quick Actions", nil, 5.5, "tab")
-    GUI.args.QuickActions.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\QuickActions.tga"
-    local QuickActions = GUI.args.QuickActions
-    local QADB = DB.QuickAction
-    local QuickActionGroup = QADB.Groups[1]
-    local function QuickActionsDisabled() return not QADB.Enabled or InCombatLockdown() end
-    local function ValidateQuickActionKeybind(_, Key)
-        local BaseKey = Key:gsub("ALT%-", ""):gsub("CTRL%-", ""):gsub("SHIFT%-", "")
-        if BaseKey == "MOUSEWHEELUP" or BaseKey == "MOUSEWHEELDOWN" or BaseKey == "BUTTON1" or BaseKey == "BUTTON2" or BaseKey == "ESCAPE" then
-            return "Use a keyboard key or an extra mouse button that can be held down."
-        end
-        return true
-    end
-
-    QuickActions.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, nil, function() return QADB.Enabled end, function(_, Value)
-        if InCombatLockdown() then return end
-        QADB.Enabled = Value
-        Private:SetupQuickActions()
-        Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
-    end, InCombatLockdown)
-    QuickActions.args.Refresh = ACH:Execute("Refresh Catalogue", "Refresh the collections and bags next time each category is viewed.", 2, function()
-        if QuickActionsDisabled() then return end
-        wipe(Private.QuickActionCatalog)
-        wipe(Private.QuickActionPages)
-        Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
-    end, nil, nil, nil, nil, nil, QuickActionsDisabled)
-
-    local Actions = ACH:Group("Actions", nil, 3, "tree")
-    -- Keep navigation selectable so AceConfig still displays the disabled controls.
-    QuickActions.args.Group1 = Actions
-    Actions.args.Keybind = {
-        type = "keybinding", name = "Keybind", order = 1, width = "full",
-        desc = "Hold to open the menu, point towards an action, then release to activate. Release in the centre or press Escape to cancel. While enabled, this takes priority over an existing binding. Press Escape while assigning to clear the keybind.",
-        get = function() return QuickActionGroup.Keybind end,
-        validate = ValidateQuickActionKeybind,
-        disabled = QuickActionsDisabled,
-        set = function(_, Key)
-            if QuickActionsDisabled() or ValidateQuickActionKeybind(nil, Key) ~= true then return end
-            QuickActionGroup.Keybind = Key
-            Private:UpdateQuickActions()
-        end,
+        if Group == "CombatAlert" then Private.PreviewCombatAlertActive = true; Private:PreviewCombatAlert() else Private.PreviewCombatAlertActive = false; Private:PreviewCombatAlert() end
+        if Group ~= "DamageMeter" then Private:SetDamageMeterTestMode(false) end
+        Private.PreviewDungeonCastsActive = Group == "DungeonCasts"
+        Private:TestDungeonCasts()
+        if Group == "QualityOfLife" then Private.PreviewAlertsActive = true; Private:SetupPreviewAlerts() else Private.PreviewAlertsActive = false; Private:SetupPreviewAlerts() end
+    end)
+    TabGroup:SelectTab("AddOnSkins")
+    GUIFrame:AddChild(TabGroup)
+    return GUIFrame
+end
+
+function Private:SetupGUI()
+    Private.ElvUI.Options.args.ElvUI_Unhalted = {
+        type = "group",
+        name = Private.AddOnName,
+        order = 20,
+        args = {
+            OpenOptions = {
+                type = "execute",
+                name = "Open Options",
+                order = 1,
+                width = "full",
+                func = function() Private:CreateGUI() end,
+            },
+        },
     }
-    Actions.args.ItemsHeader = ACH:Header("Items", 2)
-    Actions.args.Items = ACH:Execute("Items", nil, 3, function() end, nil, nil, "full")
-    Actions.args.Items.dialogControl = "UnhaltedUIQuickActionList"
-    Actions.args.Items.arg = "Items"
-    Actions.args.Items.disabled = QuickActionsDisabled
-    Actions.args.Search = ACH:Input("Search", nil, 5, nil, "full", function() return Private.QuickActionSearch or "" end, function(_, Value)
-        if QuickActionsDisabled() then return end
-        Private.QuickActionSearch = strtrim(Value):lower()
-        wipe(Private.QuickActionPages)
-        Private.E.Libs.AceConfigRegistry:NotifyChange("ElvUI")
-    end, QuickActionsDisabled)
-    for Index, Category in ipairs({
-        { Type = "Mount", Name = "Mounts" },
-        { Type = "Spell", Name = "Spells" },
-        { Type = "Toy", Name = "Toys" },
-        { Type = "Item", Name = "Consumables" },
-    }) do
-        local Tree = ACH:Group(Category.Name, nil, Index + 10, "tree")
-        Actions.args[Category.Type] = Tree
-        if Category.Type == "Toy" then
-            Tree.args.Help = ACH:Description("Collected toys matching your Toy Box filters.", 0)
-        end
-        Tree.args.List = ACH:Execute(Category.Name, nil, 1, function() end, nil, nil, "full")
-        Tree.args.List.dialogControl = "UnhaltedUIQuickActionList"
-        Tree.args.List.arg = Category.Type
-        Tree.args.List.disabled = QuickActionsDisabled
-    end
-
-    --#endregion
-
-    --#region - Targeted Spells
-
-    GUI.args.TargetedSpells = ACH:Group("Targeted Spells", nil, 5.75, "tab")
-    GUI.args.TargetedSpells.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\TargetedSpells.tga"
-    local TargetedSpells = GUI.args.TargetedSpells
-    local TSDB = DB.TargetedSpells
-
-    TargetedSpells.args.Enabled = ACH:Toggle("Enabled", nil, 1, nil, nil, "relative", function() return TSDB.Enabled end, function(_, value) TSDB.Enabled = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Enabled.relWidth = 0.33
-    TargetedSpells.args.TestMode = ACH:Toggle("Test Mode", nil, 2, nil, nil, "relative", function() return Private.TargetedSpellsTestMode end, function(_, value) Private:SetTargetedSpellsTestMode(value) end, function() return not TSDB.Enabled or InCombatLockdown() end)
-    TargetedSpells.args.TestMode.relWidth = 0.33
-
-    TargetedSpells.args.LoadConditions = ACH:MultiSelect("Load Conditions", "Load in any selected instance type or difficulty. Leave empty to load everywhere. Test Mode ignores these conditions.", 3, {
-        none = "Open World",
-        party = "Dungeon: All Difficulties",
-        raid = "Raid: All Difficulties",
-        scenario = "Scenario: All Difficulties",
-        pvp = "Battleground",
-        arena = "Arena",
-        [1] = "Dungeon: Normal",
-        [2] = "Dungeon: Heroic",
-        [8] = "Dungeon: Mythic+",
-        [23] = "Dungeon: Mythic",
-        [24] = "Dungeon: Timewalking",
-        [205] = "Dungeon: Follower",
-        [14] = "Raid: Normal",
-        [15] = "Raid: Heroic",
-        [16] = "Raid: Mythic",
-        [17] = "Raid: Looking For Raid",
-        [33] = "Raid: Timewalking",
-        [208] = "Delve",
-    }, nil, "relative", function(_, key) return TSDB.LoadConditions[key] end, function(_, key, value) TSDB.LoadConditions[key] = value or nil Private:UpdateTargetedSpells() end, function() return not TSDB.Enabled end, nil, true)
-    TargetedSpells.args.LoadConditions.relWidth = 0.33
-    TargetedSpells.args.LoadConditions.dialogControl = "Dropdown"
-
-    TargetedSpells.args.Layout = ACH:Group("Layout", nil, 4)
-    TargetedSpells.args.Layout.disabled = function() return not TSDB.Enabled end
-    TargetedSpells.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AP, nil, "relative", function() return TSDB.Layout[1] end, function(_, value) TSDB.Layout[1] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.AnchorFrom.relWidth = 0.5
-    TargetedSpells.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AP, nil, "relative", function() return TSDB.Layout[2] end, function(_, value) TSDB.Layout[2] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.AnchorTo.relWidth = 0.5
-    TargetedSpells.args.Layout.args.Width = ACH:Range("Width", nil, 3, { min = 12, softMax = 128, max = 1000, step = 1 }, "relative", function() return TSDB.Size[1] end, function(_, value) TSDB.Size[1] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.Width.relWidth = 0.5
-    TargetedSpells.args.Layout.args.Height = ACH:Range("Height", nil, 4, { min = 12, softMax = 128, max = 1000, step = 1 }, "relative", function() return TSDB.Size[2] end, function(_, value) TSDB.Size[2] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.Height.relWidth = 0.5
-    TargetedSpells.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 5, { min = -1000, max = 1000, step = 1 }, "relative", function() return TSDB.Layout[3] end, function(_, value) TSDB.Layout[3] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.XOffset.relWidth = 0.5
-    TargetedSpells.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 6, { min = -1000, max = 1000, step = 0.1 }, "relative", function() return TSDB.Layout[4] end, function(_, value) TSDB.Layout[4] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.YOffset.relWidth = 0.5
-    TargetedSpells.args.Layout.args.Spacing = ACH:Range("Spacing", "Spacing between icons.", 7, { min = 0, max = 32, step = 1 }, "relative", function() return TSDB.Layout[5] end, function(_, value) TSDB.Layout[5] = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.Spacing.relWidth = 0.5
-    TargetedSpells.args.Layout.args.GrowthDirection = ACH:Select("Growth Direction", nil, 8, { LEFT = "Left", RIGHT = "Right" }, nil, "relative", function() return TSDB.GrowthDirection end, function(_, value) TSDB.GrowthDirection = value Private:UpdateTargetedSpells() end)
-    TargetedSpells.args.Layout.args.GrowthDirection.relWidth = 0.5
-    TargetedSpells.args.Layout.args.MaxIcons = ACH:Range("Maximum Icons", "Maximum number of icon slots. Hidden casts can still occupy a slot.", 9, { min = 1, max = 20, step = 1 }, "full", function() return TSDB.MaxIcons end, function(_, value) TSDB.MaxIcons = value Private:UpdateTargetedSpells() end)
-
-    --#endregion
-
-    --#region - Vendor Helper
-
-    GUI.args.VendorHelper = ACH:Group("Vendor Helper", nil, 6)
-    GUI.args.VendorHelper.icon = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Icons\\VendorHelper.tga"
-
-    GUI.args.VendorHelper.args.Enabled = ACH:Toggle("Enable Vendor Helper", "Automatically sells unwanted items when visiting a vendor.", 1, nil, nil, "full", function() return DB.VendorHelper.AutoVendor end, function(_, value) DB.VendorHelper.AutoVendor = value Private:SetupVendorHelper() end)
-    GUI.args.VendorHelper.args.Enabled.descStyle = "inline"
-
-    GUI.args.VendorHelper.args.MinimumQuality = ACH:Select("Minimum Quality", "Sets the minimum quality of items to sell automatically.", 2, Private.ItemQualities, nil, "relative", function() return DB.VendorHelper.MinimumQuality end, function(_, value) DB.VendorHelper.MinimumQuality = value end)
-    GUI.args.VendorHelper.args.MinimumQuality.descStyle = "inline"
-    GUI.args.VendorHelper.args.MinimumQuality.relWidth = 0.5
-    GUI.args.VendorHelper.args.MinimumQuality.disabled = function() return not DB.VendorHelper.AutoVendor end
-
-    GUI.args.VendorHelper.args.MinimumItemLevel = ACH:Range("Minimum Item Level", "Sets the minimum item level of items to sell automatically.", 3, { min = 0, max = 500, step = 1 }, "relative", function() return DB.VendorHelper.MinimumItemLevel end, function(_, value) DB.VendorHelper.MinimumItemLevel = value end)
-    GUI.args.VendorHelper.args.MinimumItemLevel.descStyle = "inline"
-    GUI.args.VendorHelper.args.MinimumItemLevel.relWidth = 0.5
-    GUI.args.VendorHelper.args.MinimumItemLevel.disabled = function() return not DB.VendorHelper.AutoVendor end
-
-    --#endregion
-
-    if Private.E then Private.E.Options.args[Private.AddOnName] = GUI end
 end

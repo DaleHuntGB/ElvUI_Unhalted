@@ -1,11 +1,11 @@
 local Private = select(2, ...)
 
-local function EasyDelete_OnShow(frame)
+local function AutoDelete_OnShow(PopupFrame)
     if not Private.DB.global.QualityOfLife.Toggles.AutoDelete then return end
-	frame.EditBox:SetText(DELETE_ITEM_CONFIRM_STRING)
+	PopupFrame.EditBox:SetText(DELETE_ITEM_CONFIRM_STRING)
 end
 
 function Private:SetupAutoDelete()
-    hooksecurefunc(StaticPopupDialogs.DELETE_GOOD_ITEM, 'OnShow', EasyDelete_OnShow)
-	hooksecurefunc(StaticPopupDialogs.DELETE_GOOD_QUEST_ITEM, 'OnShow', EasyDelete_OnShow)
+    hooksecurefunc(StaticPopupDialogs.DELETE_GOOD_ITEM, "OnShow", AutoDelete_OnShow)
+	hooksecurefunc(StaticPopupDialogs.DELETE_GOOD_QUEST_ITEM, "OnShow", AutoDelete_OnShow)
 end
