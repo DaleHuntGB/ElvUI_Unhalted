@@ -98,6 +98,7 @@ function Private:CreateGUI()
 
             local Options = {
                 { text = "Action Status", value = "ActionStatus" },
+                { text = "Better Prey", value = "BetterPrey" },
                 { text = "UI Errors", value = "UIErrorsFrame" },
                 { text = "Zone Text", value = "ZoneText" },
                 { text = "Sub Zone Text", value = "SubZoneText" }
@@ -116,6 +117,15 @@ function Private:CreateGUI()
                     Private.GUI:LayoutOptions(ScrollFrame, DB.ActionStatus, function() Private:UpdateActionStatusFrame() end)
                     Private.GUI:FontOptions(ScrollFrame, DB.ActionStatus, function() Private:UpdateActionStatusFrame() end)
                     Private.GUI:UpdateGUIState(ScrollFrame, DB.ActionStatus.Enable)
+                elseif Value == "BetterPrey" then
+                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Displays Prey progression in a more convenient way.", 0.5, DB.BetterPrey, "Enable", function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
+                    Private.GUI:CreateToggle(ScrollFrame, "Colour by Stage", nil, 0.5, DB.BetterPrey, "ColourByStage", function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
+                    Private.GUI:LayoutOptions(ScrollFrame, DB.BetterPrey, function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end, function() return 12, 12 end)
+                    local TextOptions = Private.GUI:CreateInlineGroup(ScrollFrame, "Text Options", "CENTER")
+                    Private.GUI:CreateToggle(TextOptions, "Enable", nil, nil, DB.BetterPrey.Text, "Enable", function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
+                    Private.GUI:FontOptions(TextOptions, DB.BetterPrey.Text, function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
+                    Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable)
                 elseif Value == "UIErrorsFrame" then
                     local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
                     Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB.UIErrorsFrame, "Enable", function() Private:UpdateUIErrorsFrame() Private.GUI:UpdateGUIState(ScrollFrame, DB.UIErrorsFrame.Enable) end)

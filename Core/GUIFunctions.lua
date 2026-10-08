@@ -474,6 +474,15 @@ function Private.GUI:CreateButton(ParentContainer, Label, Width, Callback, IsDis
 end
 
 function Private.GUI:UpdateGUIState(ParentContainer, IsEnabled, ParentEnabled)
+    if IsEnabled == nil then
+        IsEnabled = true
+        for _, Child in ipairs(ParentContainer.children) do
+            if Child:GetUserData("IsEnableToggle") then
+                IsEnabled = Child:GetValue()
+                break
+            end
+        end
+    end
     local IsDisabled = not IsEnabled or ParentEnabled == false
     for _, Child in ipairs(ParentContainer.children) do
         if Child.SetDisabled then
@@ -483,6 +492,6 @@ function Private.GUI:UpdateGUIState(ParentContainer, IsEnabled, ParentEnabled)
                 Child:SetDisabled(IsDisabled)
             end
         end
-        if Child.children then Private.GUI:UpdateGUIState(Child, IsEnabled, not IsDisabled) end
+        if Child.children then Private.GUI:UpdateGUIState(Child, nil, not IsDisabled) end
     end
 end

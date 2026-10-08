@@ -61,6 +61,19 @@ local Defaults = {
                 Font = "Friz Quadrata TT",
                 FontSize = 12,
                 FontFlag = "OUTLINE, SLUG",
+            },
+            BetterPrey = {
+                Enable = true,
+                Layout = {"TOP", "TOP", 0, -125.1},
+                Size = {270, 32},
+                ColourByStage = false,
+                Text = {
+                    Enable = true,
+                    Font = "Friz Quadrata TT",
+                    FontSize = 12,
+                    FontFlag = "OUTLINE, SLUG",
+                    Layout = {"CENTER", "CENTER", 0, 0}
+                }
             }
         },
         ElvUIEnhancements = {

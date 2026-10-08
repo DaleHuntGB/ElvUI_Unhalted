@@ -18,6 +18,7 @@ Modules/AddOnSkins/Modules/SkironCooldownManager.lua
 Modules/AddOnSkins/AddOnSkins.lua
 
 Modules/Blizzard/Modules/ActionStatusFrame.lua
+Modules/Blizzard/Modules/BetterPrey.lua
 Modules/Blizzard/Modules/MovableWindows.lua
 Modules/Blizzard/Modules/UIErrorsFrame.lua
 Modules/Blizzard/Modules/ZoneText.lua

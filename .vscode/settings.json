@@ -78,7 +78,8 @@
         "INLINE_DAMAGER_ICON",
         "LFGListSearchPanel_UpdateResults",
         "LE_PARTY_CATEGORY_HOME",
-        "LFGListSearchPanel_UpdateResultList"
+        "LFGListSearchPanel_UpdateResultList",
+        "UIWidgetManager"
     ],
     "Lua.type.weakUnionCheck": true
 }
