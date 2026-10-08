@@ -260,6 +260,12 @@ function Private:UpdateLFGHelper()
 
     local SearchPanel = LFGListFrame and LFGListFrame.SearchPanel
     if Enabled and not SearchPanel then EventFrame:RegisterEvent("ADDON_LOADED") return end
+    -- Activity data loads asynchronously; wait before building the dungeon buttons.
+    if Enabled and not LFGHelperFrame and not C_LFGList.HasActivityList() then
+        EventFrame:RegisterEvent("LFG_LIST_AVAILABILITY_UPDATE")
+        C_LFGList.RequestAvailableActivities()
+        return
+    end
     local Show = Enabled and SearchPanel:IsVisible() and SearchPanel.categoryID == GROUP_FINDER_CATEGORY_ID_DUNGEONS
     if Enabled and not LFGHelperFrame then CreateLFGHelper() end
     if not LFGHelperFrame then return end
