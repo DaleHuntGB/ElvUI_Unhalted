@@ -83,8 +83,9 @@ local Defaults = {
             LFGHelper = false,
             NameplateTextureOverlay = {
                 Enable = false,
-                Texture = "|cFF6080FFUnhalted|rUI: Half Bar",
+                Texture = "|cFF6080FFUnhalted|rUI: Stripes",
                 Colour = {1, 1, 1},
+                Opacity = 0.5,
             },
         },
         CombatAlert = {

@@ -158,7 +158,7 @@ function Private:CreateGUI()
 
             local OverlayDB = DB.NameplateTextureOverlay
             local OverlayGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Nameplate: Focus Texture Overlay", "CENTER")
-            Private.GUI:CreateToggle(OverlayGroup, "Enable", "Applies a custom texture over the focus nameplate.", 0.33, OverlayDB, "Enable", function() Private:UpdateNameplateTextureOverlay() Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable) end)
+            Private.GUI:CreateToggle(OverlayGroup, "Enable", "Applies a custom texture over the focus nameplate.", 1, OverlayDB, "Enable", function() Private:UpdateNameplateTextureOverlay() Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable) end)
 
             local Texture = AG:Create("LSM30_Statusbar")
             Texture:SetLabel("Texture")
@@ -169,6 +169,16 @@ function Private:CreateGUI()
             OverlayGroup:AddChild(Texture)
 
             Private.GUI:CreateColourPicker(OverlayGroup, "Colour", 0.33, OverlayDB, "Colour", function() Private:UpdateNameplateTextureOverlay() end)
+
+            local Opacity = AG:Create("Slider")
+            Opacity:SetLabel("Opacity")
+            Opacity:SetValue(OverlayDB.Opacity)
+            Opacity:SetSliderValues(0, 1, 0.01)
+            Opacity:SetRelativeWidth(0.33)
+            Opacity:SetIsPercent(true)
+            Opacity:SetCallback("OnValueChanged", function(_, _, Value) OverlayDB.Opacity = Value Private:UpdateNameplateTextureOverlay() end)
+            OverlayGroup:AddChild(Opacity)
+
             Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable)
         elseif Group == "QualityOfLife" then
             local DB = Private.DB.global.QualityOfLife

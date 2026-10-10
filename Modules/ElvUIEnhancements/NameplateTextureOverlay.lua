@@ -20,6 +20,7 @@ local function ConfigureNameplateTextureOverlay(_, Nameplate)
 
     Texture:SetTexture(Private.LSM:Fetch("statusbar", DB.Texture))
     Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
+    Texture:SetAlpha(DB.Opacity)
     Texture:Show()
 end
 
