@@ -31,6 +31,7 @@ Modules/DamageMeter/Windows.lua
 Modules/ElvUIEnhancements/InterruptOnCooldown.lua
 Modules/ElvUIEnhancements/LFGHelper.lua
 Modules/ElvUIEnhancements/LootRollFix.lua
+Modules/ElvUIEnhancements/NameplateTextureOverlay.lua
 Modules/ElvUIEnhancements/OverAbsorbs.lua
 Modules/ElvUIEnhancements/ElvUIEnhancements.lua
 

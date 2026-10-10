@@ -3,6 +3,18 @@ local LSM = Private.LSM
 
 function Private:RegisterSharedMedia()
     LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Half Bar", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\Half_Bar.tga")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Stripes", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\Stripes.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Thin Stripes (Angled)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\ThinStripes.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Thick Stripes (Angled)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\ThickStripes.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Thin Stripes (Vertical)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\ThinVerticalStripes.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient (Bottom)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientBottom.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient (Top)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientTop.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient (Left)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientLeft.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient (Right)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientRight.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient - Dark (Bottom)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientBottomDark.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient - Dark (Top)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientTopDark.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient - Dark (Left)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientLeftDark.png")
+    LSM:Register("statusbar", "|cFF6080FFUnhalted|rUI: Gradient - Dark (Right)", "Interface\\AddOns\\ElvUI_Unhalted\\Media\\StatusBars\\GradientRightDark.png")
 
     LSM:Register("font", "Adwaita Sans: Black", [[Interface\AddOns\ElvUI_Unhalted\Media\Fonts\AdwaitaSans\Black.ttf]])
     LSM:Register("font", "Adwaita Sans: Bold", [[Interface\AddOns\ElvUI_Unhalted\Media\Fonts\AdwaitaSans\Bold.ttf]])

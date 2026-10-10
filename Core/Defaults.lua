@@ -81,6 +81,11 @@ local Defaults = {
             CastbarInterruptCooldown = false,
             OverAbsorbs = false,
             LFGHelper = false,
+            NameplateTextureOverlay = {
+                Enable = false,
+                Texture = "|cFF6080FFUnhalted|rUI: Half Bar",
+                Colour = {1, 1, 1},
+            },
         },
         CombatAlert = {
             Enable = false,

@@ -155,6 +155,21 @@ function Private:CreateGUI()
             Private.GUI:CreateToggle(ScrollFrame, "Castbar: Interrupt On Cooldown", "Colours interruptible enemy unit frame and nameplate castbars grey while your interrupt is on cooldown.", nil, DB, "CastbarInterruptCooldown", function() Private:UpdateCastbarInterruptCooldown() end)
             Private.GUI:CreateToggle(ScrollFrame, "Health: Over Absorbs", "Shows a reverse fill absorb bar when absorbs exceed missing health.", nil, DB, "OverAbsorbs", function() Private:UpdateOverAbsorbs() end)
             Private.GUI:CreateToggle(ScrollFrame, "LFG: Keystone Helper", "Shows an additional window when searching for Mythic+ dungeons.", nil, DB, "LFGHelper", function() Private:UpdateLFGHelper() end)
+
+            local OverlayDB = DB.NameplateTextureOverlay
+            local OverlayGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Nameplate: Focus Texture Overlay", "CENTER")
+            Private.GUI:CreateToggle(OverlayGroup, "Enable", "Applies a custom texture over the focus nameplate.", 0.33, OverlayDB, "Enable", function() Private:UpdateNameplateTextureOverlay() Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable) end)
+
+            local Texture = AG:Create("LSM30_Statusbar")
+            Texture:SetLabel("Texture")
+            Texture:SetList(Private.LSM:HashTable("statusbar"))
+            Texture:SetValue(OverlayDB.Texture)
+            Texture:SetRelativeWidth(0.33)
+            Texture:SetCallback("OnValueChanged", function(_, _, Value) Texture:SetValue(Value) OverlayDB.Texture = Value Private:UpdateNameplateTextureOverlay() end)
+            OverlayGroup:AddChild(Texture)
+
+            Private.GUI:CreateColourPicker(OverlayGroup, "Colour", 0.33, OverlayDB, "Colour", function() Private:UpdateNameplateTextureOverlay() end)
+            Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable)
         elseif Group == "QualityOfLife" then
             local DB = Private.DB.global.QualityOfLife
             local ToggleDB = DB.Toggles

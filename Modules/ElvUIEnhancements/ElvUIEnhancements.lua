@@ -5,4 +5,5 @@ function Private:SetupElvUIEnhancements()
     Private:UpdateCastbarInterruptCooldown()
     Private:UpdateOverAbsorbs()
     Private:UpdateLFGHelper()
+    Private:UpdateNameplateTextureOverlay()
 end
