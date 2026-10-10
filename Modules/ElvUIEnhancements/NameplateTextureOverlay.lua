@@ -1,16 +1,13 @@
 local Private = select(2, ...)
 local NP = Private.ElvUI:GetModule("NamePlates")
-local NameplateTextureOverlayFrame
+local NameplateTextureOverlayFrame;
 
 local function ConfigureNameplateTextureOverlay(_, Nameplate)
     local Health = Nameplate.Health
     if not Health then return end
     local DB = Private.DB.global.ElvUIEnhancements.NameplateTextureOverlay
     local Texture = Health.UnhaltedTextureOverlay
-    if not DB.Enable or not Nameplate.__unit or not Private.ElvUI:UnitIsUnit(Nameplate.__unit, "focus") then
-        if Texture then Texture:Hide() end
-        return
-    end
+    if not DB.Enable or not Nameplate.__unit or not Private.ElvUI:UnitIsUnit(Nameplate.__unit, "focus") then if Texture then Texture:Hide() end return end
 
     if not Texture then
         Texture = Health:CreateTexture(nil, "OVERLAY")
