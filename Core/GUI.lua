@@ -206,7 +206,7 @@ function Private:SetupGUI()
     Args.VendorSupport = VendorSupport
 
     local CVars = ACH:Group("CVars", nil, 11)
-    CVars.args.Sync = GUI:Toggle("Sync", "Capture your current CVars and sync changes across characters. Turning this off keeps the saved values without applying or updating them.", 1, 1, DB.CVars, "Sync", function() Private:UpdateCVarSync() end)
+    CVars.args.Sync = GUI:Toggle("Sync", "Syncs your CVars across your characters on this account.", 1, 1, DB.CVars, "Sync", function() Private:UpdateCVarSync() end)
     local CVarToggles = GUI:InlineGroup("Toggles", 2)
     local CVarSliders = GUI:InlineGroup("Sliders", 3)
     for Order, Setting in ipairs(Private.CVarOptions) do
