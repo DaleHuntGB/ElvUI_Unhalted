@@ -348,6 +348,10 @@ local Defaults = {
             MinimumQuality = 3,
             MinimumItemLevel = 266,
         },
+        CVars = {
+            Sync = false,
+            Values = {},
+        },
     },
 }
 

@@ -20,4 +20,5 @@ function AddOn:OnEnable()
     Private:SetupMouseCursor()
     Private:SetupQualityOfLife()
     Private:SetupVendorSupport()
+    Private:SetupCVars()
 end

@@ -205,7 +205,35 @@ function Private:SetupGUI()
     GUI:DisableOptions(VendorSupport, VendorDB)
     Args.VendorSupport = VendorSupport
 
-    local Profiles = ACH:Group("Profiles", nil, 11)
+    local CVars = ACH:Group("CVars", nil, 11)
+    CVars.args.Sync = GUI:Toggle("Sync", "Capture your current CVars and sync changes across characters. Turning this off keeps the saved values without applying or updating them.", 1, 1, DB.CVars, "Sync", function() Private:UpdateCVarSync() end)
+    local CVarToggles = GUI:InlineGroup("Toggles", 2)
+    local CVarSliders = GUI:InlineGroup("Sliders", 3)
+    for Order, Setting in ipairs(Private.CVarOptions) do
+        local Option
+        if Setting.Type == "Toggle" then
+            Option = ACH:Toggle(Setting.Label, Setting.Desc, Order)
+            Option.descStyle = "inline"
+            Option.get = function() return C_CVar.GetCVarBool(Setting.CVar) end
+            CVarToggles.args[Setting.CVar] = Option
+        else
+            Option = ACH:Range(Setting.Label, nil, Order, {min = Setting.Min, max = Setting.Max, step = Setting.Step})
+            Option.get = function() return tonumber(C_CVar.GetCVar(Setting.CVar)) or Setting.Min end
+            CVarSliders.args[Setting.CVar] = Option
+        end
+        Option.width = "relative"
+        Option.relWidth = Setting.Type == "Toggle" and 1 or 0.5
+        Option.disabled = function() return C_CVar.GetCVar(Setting.CVar) == nil or (Setting.LinkedCVar ~= nil and C_CVar.GetCVar(Setting.LinkedCVar) == nil) end
+        Option.set = function(_, Value)
+            Private:SetCVar(Setting.CVar, Value)
+            if Setting.LinkedCVar then Private:SetCVar(Setting.LinkedCVar, Value) end
+        end
+    end
+    CVars.args.Toggles = CVarToggles
+    CVars.args.Sliders = CVarSliders
+    Args.CVars = CVars
+
+    local Profiles = ACH:Group("Profiles", nil, 12)
     local Profile = GUI:InlineGroup("Profiles", 1)
     Profile.args.Description = ACH:Description(Private.AddOnName .. " uses a |cFFFFCC00global|r profile shared across all characters. Importing a profile will overwrite your existing settings.", 1)
     Profile.args.Export = GUI:Button("Export Profile", 2, 0.33, function() Private:ExportProfile() end)

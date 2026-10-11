@@ -56,6 +56,7 @@ Modules/QualityOfLife/QualityOfLife.lua
 
 Modules/CombatAlert.lua
 Modules/CombatTimer.lua
+Modules/CVars.lua
 Modules/DungeonCasts.lua
 Modules/MouseCursor.lua
 Modules/ProfileManager.lua
