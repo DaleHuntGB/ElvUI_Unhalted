@@ -112,7 +112,7 @@ function Private:SetupGUI()
     Toggles.args.RemoveBossBanner = GUI:Toggle("Remove Boss Banner", "Prevents the Boss Banner frame from appearing.", 7, 1, ToggleDB, "RemoveBossBanner")
     Toggles.args.RemoveTalkingHead = GUI:Toggle("Remove Talking Head", "Prevents the Talking Head frame from appearing.", 8, 1, ToggleDB, "RemoveTalkingHead")
     Toggles.args.SkipCinematics = GUI:Toggle("Skip Cinematics", "Automatically skip cinematics.", 9, 1, ToggleDB, "SkipCinematics")
-    Toggles.args.SocketHelper = GUI:Toggle("Socket Helper", "Shows equipped gems below your character stats. Hover over a socket to choose a gem from your bags. Clicking a gem immediately sockets it and confirms replacement and binding prompts.", 10, 1, ToggleDB, "SocketHelper", function() Private:UpdateSocketHelper() end)
+    Toggles.args.SocketHelper = GUI:Toggle("Socket Helper", "Helps you manage socketed items in the Character Pane.", 10, 1, ToggleDB, "SocketHelper", function() Private:UpdateSocketHelper() end)
     QualityOfLife.args.Toggles = Toggles
     local Alerts = ACH:Group("Alerts", nil, 2, "tree")
     for Order, Alert in ipairs({
