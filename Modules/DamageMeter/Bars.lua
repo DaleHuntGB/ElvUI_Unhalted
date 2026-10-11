@@ -395,7 +395,7 @@ local function PopulateMeterTypeOptions(DMFrame, DB)
             Bar:SetMinMaxValues(0, 1)
             Bar:SetValue(1)
             if not DMFrame.EncounterSegment and DB.MeterType == Option.MeterType and DMFrame.SessionType == Option.SessionType then
-                Bar:SetStatusBarColor(0.2, 0.4, 0.2)
+                Bar:SetStatusBarColor(96/255, 128/255, 255/255)
             else
                 Bar:SetStatusBarColor(0.2, 0.2, 0.2)
             end
