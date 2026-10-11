@@ -3,7 +3,6 @@ local Private = select(2, ...)
 Private.AddOn = LibStub("AceAddon-3.0"):NewAddon("ElvUI_Unhalted")
 Private.ElvUI = unpack(ElvUI)
 Private.Distributor = Private.ElvUI:GetModule("Distributor")
-Private.AG = LibStub("AceGUI-3.0")
 Private.AC = LibStub("AceConsole-3.0")
 Private.LSM = LibStub("LibSharedMedia-3.0")
 

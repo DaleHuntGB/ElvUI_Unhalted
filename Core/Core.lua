@@ -5,6 +5,7 @@ function AddOn:OnInitialize()
     Private.DB = LibStub("AceDB-3.0"):New("ElvUI_UnhaltedDB", Private:GetDefaults(), true)
     Private.AC:RegisterChatCommand("uhui", function() Private:CreateGUI() end)
     Private.AC:RegisterChatCommand("uh", function() Private:CreateGUI() end)
+    Private.ElvUI.Libs.EP:RegisterPlugin("ElvUI_Unhalted", function() Private:SetupGUI() end)
 end
 
 function AddOn:OnEnable()

@@ -1,440 +1,252 @@
 local Private = select(2, ...)
-local AG = Private.AG
+local ACH = Private.ElvUI.Libs.ACH
 
 function Private:CreateGUI()
-    local GUIFrame = AG:Create("Frame")
-    GUIFrame:SetTitle(Private.AddOnName)
-    GUIFrame:SetStatusText("V" .. Private.AddOnVersion)
-    GUIFrame:SetWidth(1040)
-    GUIFrame:SetHeight(780)
-    GUIFrame:SetLayout("Fill")
-    GUIFrame:SetCallback("OnClose",
-    function(GUIWidgets)
-        AG:Release(GUIFrame)
-        Private.PreviewAlertsActive = false
-        Private.PreviewCombatAlertActive = false
-        Private:SetupPreviewAlerts()
+    Private.ElvUI:ToggleOptions("ElvUI_Unhalted")
+end
+
+function Private:UpdateGUIPreviews(Group)
+    if Private.GUIGroup == Group then return end
+    Private.GUIGroup = Group
+
+    if Private.PreviewCombatAlertActive or Group == "CombatAlert" then
+        Private.PreviewCombatAlertActive = Group == "CombatAlert"
         Private:PreviewCombatAlert()
-        Private:SetDamageMeterTestMode(false)
-        Private.PreviewDungeonCastsActive = false
-        Private:TestDungeonCasts()
-    end)
-
-    local TabGroup = AG:Create("TabGroup")
-    TabGroup:SetLayout("Fill")
-    TabGroup:SetFullWidth(true)
-    TabGroup:SetTabs({
-        { text = "AddOn Skins", value = "AddOnSkins" },
-        { text = "Blizzard", value = "Blizzard" },
-        { text = "ElvUI Enhancements", value = "ElvUIEnhancements" },
-        { text = "Quality of Life", value = "QualityOfLife" },
-        { text = "Damage Meter", value = "DamageMeter" },
-        { text = "Dungeon Casts", value = "DungeonCasts" },
-        { text = "Combat Alert", value = "CombatAlert" },
-        { text = "Combat Timer", value = "CombatTimer" },
-        { text = "Mouse Cursor", value = "MouseCursor" },
-        { text = "Vendor Support", value = "VendorSupport" },
-        { text = "Profiles", value = "Profiles" },
-    })
-    TabGroup:SetCallback("OnGroupSelected", function(_GF, Event, Group)
-        _GF:ReleaseChildren()
-        if Group == "AddOnSkins" then
-            local Options = {
-                { text = "AddOn Profiler", value = "AddOnProfiler", disabled = not C_AddOns.IsAddOnLoaded("!!AddonProfiler") },
-                { text = "BigWigs", value = "BigWigs", disabled = not C_AddOns.IsAddOnLoaded("BigWigs") },
-                { text = "BugSack", value = "BugSack", disabled = not C_AddOns.IsAddOnLoaded("BugSack") },
-                { text = "SimulationCraft", value = "SimulationCraft", disabled = not C_AddOns.IsAddOnLoaded("SimulationCraft") },
-                { text = "Skiron Cooldown Manager", value = "SkironCooldownManager", disabled = not C_AddOns.IsAddOnLoaded("SkironCooldownManager") },
-                { text = "Miscellaneous", value = "Miscellaneous" }
-            }
-
-            local TreeGroup = AG:Create("TreeGroup")
-            TreeGroup:SetLayout("Fill")
-            TreeGroup:SetFullWidth(true)
-            TreeGroup:SetFullHeight(true)
-            TreeGroup:SetTree(Options)
-            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
-                __GF:ReleaseChildren()
-                if Value == "BugSack" then
-                    local DB = Private.DB.global.AddOnSkins.BugSack
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the BugSack Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateBugSackSkin() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-                elseif Value == "AddOnProfiler" then
-                    local DB = Private.DB.global.AddOnSkins.AddOnProfiler
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the AddOn Profiler Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateAddOnProfilerSkin() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-                elseif Value == "SkironCooldownManager" then
-                    local DB = Private.DB.global.AddOnSkins.SkironCooldownManager
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the Skiron Cooldown Manager Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateSkironCooldownManagerSkin() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-                elseif Value == "BigWigs" then
-                    local DB = Private.DB.global.AddOnSkins.BigWigs
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positions the BigWigs Minimap Button, along with providing consistent skinning for bars/windows.", nil, DB, "Enable", function() Private:PromptReload() end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateBigWigsSkin() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-                elseif Value == "SimulationCraft" then
-                    local DB = Private.DB.global.AddOnSkins.SimulationCraft
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the SimulationCraft Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateSimulationCraftSkin() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-                elseif Value == "Miscellaneous" then
-                    local DB = Private.DB.global.AddOnSkins.Miscellaneous
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: |cFF1CD3A2Toasts|r", "Adds a skin to LS: Toasts to match the UI aesthetic.", nil, DB, "LSToasts", function() Private:PromptReload() end)
-                end
-            end)
-            TreeGroup:SelectByValue("BugSack")
-            _GF:AddChild(TreeGroup)
-        elseif Group == "Blizzard" then
-            local DB = Private.DB.global.Blizzard
-
-            local Options = {
-                { text = "Action Status", value = "ActionStatus" },
-                { text = "Better Prey", value = "BetterPrey" },
-                { text = "UI Errors", value = "UIErrorsFrame" },
-                { text = "Zone Text", value = "ZoneText" },
-                { text = "Sub Zone Text", value = "SubZoneText" }
-            }
-
-            local TreeGroup = AG:Create("TreeGroup")
-            TreeGroup:SetLayout("Fill")
-            TreeGroup:SetFullWidth(true)
-            TreeGroup:SetFullHeight(true)
-            TreeGroup:SetTree(Options)
-            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
-                __GF:ReleaseChildren()
-                if Value == "ActionStatus" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB.ActionStatus, "Enable", function() Private:UpdateActionStatusFrame() Private.GUI:UpdateGUIState(ScrollFrame, DB.ActionStatus.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB.ActionStatus, function() Private:UpdateActionStatusFrame() end)
-                    Private.GUI:FontOptions(ScrollFrame, DB.ActionStatus, function() Private:UpdateActionStatusFrame() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.ActionStatus.Enable)
-                elseif Value == "BetterPrey" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Displays Prey progression in a more convenient way.", 0.5, DB.BetterPrey, "Enable", function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
-                    Private.GUI:CreateToggle(ScrollFrame, "Colour by Stage", nil, 0.5, DB.BetterPrey, "ColourByStage", function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB.BetterPrey, function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end, function() return 12, 12 end)
-                    local TextOptions = Private.GUI:CreateInlineGroup(ScrollFrame, "Text Options", "CENTER")
-                    Private.GUI:CreateToggle(TextOptions, "Enable", nil, nil, DB.BetterPrey.Text, "Enable", function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
-                    Private.GUI:FontOptions(TextOptions, DB.BetterPrey.Text, function() Private:UpdateBetterPrey() Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable) end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.BetterPrey.Enable)
-                elseif Value == "UIErrorsFrame" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB.UIErrorsFrame, "Enable", function() Private:UpdateUIErrorsFrame() Private.GUI:UpdateGUIState(ScrollFrame, DB.UIErrorsFrame.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, DB.UIErrorsFrame, function() Private:UpdateUIErrorsFrame() end)
-                    Private.GUI:FontOptions(ScrollFrame, DB.UIErrorsFrame, function() Private:UpdateUIErrorsFrame() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, DB.UIErrorsFrame.Enable)
-                elseif Value == "ZoneText" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, Private.DB.global.Blizzard.ZoneText, "Enable", function() Private:UpdateZoneText() Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.ZoneText.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, Private.DB.global.Blizzard.ZoneText, function() Private:UpdateZoneText() end)
-                    Private.GUI:FontOptions(ScrollFrame, Private.DB.global.Blizzard.ZoneText, function() Private:UpdateZoneText() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.ZoneText.Enable)
-                elseif Value == "SubZoneText" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, Private.DB.global.Blizzard.SubZoneText, "Enable", function() Private:UpdateZoneText() Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.SubZoneText.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, Private.DB.global.Blizzard.SubZoneText, function() Private:UpdateZoneText() end)
-                    Private.GUI:FontOptions(ScrollFrame, Private.DB.global.Blizzard.SubZoneText, function() Private:UpdateZoneText() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, Private.DB.global.Blizzard.SubZoneText.Enable)
-                end
-            end)
-            TreeGroup:SelectByValue("ActionStatus")
-            _GF:AddChild(TreeGroup)
-        elseif Group == "ElvUIEnhancements" then
-            local DB = Private.DB.global.ElvUIEnhancements
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-            Private.GUI:CreateToggle(ScrollFrame, "Loot Roll: Fix Backdrop", "Force the loot roll backdrop to be fully opaque.", nil, DB, "ForceAlphaOnLootRoll", function() Private:PromptReload() end)
-            Private.GUI:CreateToggle(ScrollFrame, "Castbar: Interrupt On Cooldown", "Colours interruptible enemy unit frame and nameplate castbars grey while your interrupt is on cooldown.", nil, DB, "CastbarInterruptCooldown", function() Private:UpdateCastbarInterruptCooldown() end)
-            Private.GUI:CreateToggle(ScrollFrame, "Health: Over Absorbs", "Shows a reverse fill absorb bar when absorbs exceed missing health.", nil, DB, "OverAbsorbs", function() Private:UpdateOverAbsorbs() end)
-            Private.GUI:CreateToggle(ScrollFrame, "LFG: Keystone Helper", "Shows an additional window when searching for Mythic+ dungeons.", nil, DB, "LFGHelper", function() Private:UpdateLFGHelper() end)
-
-            local OverlayDB = DB.NameplateTextureOverlay
-            local OverlayGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Nameplate: Focus Texture Overlay", "CENTER")
-            Private.GUI:CreateToggle(OverlayGroup, "Enable", "Applies a custom texture over the focus nameplate.", 1, OverlayDB, "Enable", function() Private:UpdateNameplateTextureOverlay() Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable) end)
-
-            local Texture = AG:Create("LSM30_Statusbar")
-            Texture:SetLabel("Texture")
-            Texture:SetList(Private.LSM:HashTable("statusbar"))
-            Texture:SetValue(OverlayDB.Texture)
-            Texture:SetRelativeWidth(0.33)
-            Texture:SetCallback("OnValueChanged", function(_, _, Value) Texture:SetValue(Value) OverlayDB.Texture = Value Private:UpdateNameplateTextureOverlay() end)
-            OverlayGroup:AddChild(Texture)
-
-            Private.GUI:CreateColourPicker(OverlayGroup, "Colour", 0.33, OverlayDB, "Colour", function() Private:UpdateNameplateTextureOverlay() end)
-
-            local Opacity = AG:Create("Slider")
-            Opacity:SetLabel("Opacity")
-            Opacity:SetValue(OverlayDB.Opacity)
-            Opacity:SetSliderValues(0, 1, 0.01)
-            Opacity:SetRelativeWidth(0.33)
-            Opacity:SetIsPercent(true)
-            Opacity:SetCallback("OnValueChanged", function(_, _, Value) OverlayDB.Opacity = Value Private:UpdateNameplateTextureOverlay() end)
-            OverlayGroup:AddChild(Opacity)
-
-            Private.GUI:UpdateGUIState(OverlayGroup, OverlayDB.Enable)
-        elseif Group == "QualityOfLife" then
-            local DB = Private.DB.global.QualityOfLife
-            local ToggleDB = DB.Toggles
-            local AlertsDB = DB.Alerts
-
-            local Options = {
-                { text = "Toggles", value = "Toggles" },
-                {
-                    text = "Alerts",
-                    value = "Alerts",
-                    children = {
-                        { text = "Bloodlust", value = "Bloodlust", icon = Private:FetchSpellTexture(2825) },
-                        { text = "Externals", value = "Externals", icon = Private:FetchSpellTexture(33206) },
-                        { text = "Innervate", value = "Innervate", icon = Private:FetchSpellTexture(29166) },
-                        { text = "Power Infusion", value = "PowerInfusion", icon = Private:FetchSpellTexture(10060) },
-                        { text = "Time Spiral", value = "TimeSpiral", icon = Private:FetchSpellTexture(375234) },
-                    }
-                },
-            }
-
-            local TreeGroup = AG:Create("TreeGroup")
-            TreeGroup:SetLayout("Fill")
-            TreeGroup:SetFullWidth(true)
-            TreeGroup:SetFullHeight(true)
-            TreeGroup:SetTree(Options)
-            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
-                __GF:ReleaseChildren()
-                if Value == "Toggles" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Auto Delete", "Automatically complete |cFFFFCC00DELETE|r when applicable.", nil, ToggleDB, "AutoDelete", nil)
-                    Private.GUI:CreateToggle(ScrollFrame, "Auto Quest", "Automatically accept and turn in quests when applicable. Hold |cFFFFCC00SHIFT|r to override.", nil, ToggleDB, "AutoQuest", function() Private:SetupAutoQuest() end)
-                    Private.GUI:CreateToggle(ScrollFrame, "Auto Repair", "Automatically repair items when visiting a merchant. |cFFFFCC00Guild|r then |cFFFFCC00Personal|r.", nil, ToggleDB, "AutoRepair", nil)
-                    Private.GUI:CreateToggle(ScrollFrame, "Auto Sell Greys", "Automatically sell grey/junk items when visiting a merchant.", nil, ToggleDB, "AutoSellGreys", function() Private:SetupAutoSellGreys() end)
-                    Private.GUI:CreateToggle(ScrollFrame, "Auto Sign Up", "Automatically select your role when signing up for a group. Hold |cFFFFCC00SHIFT|r to override.", nil, ToggleDB, "AutoSignUp", nil)
-                    Private.GUI:CreateToggle(ScrollFrame, "Keystone Reroll", "Shows a reminder to reroll your keystone at the end of a Mythic+.", nil, ToggleDB, "KeystoneReroll", function() Private:UpdateKeystoneRerollReminder() end)
-                    Private.GUI:CreateToggle(ScrollFrame, "Remove Boss Banner", "Prevents the Boss Banner frame from appearing.", nil, ToggleDB, "RemoveBossBanner", nil)
-                    Private.GUI:CreateToggle(ScrollFrame, "Remove Talking Head", "Prevents the Talking Head frame from appearing.", nil, ToggleDB, "RemoveTalkingHead", nil)
-                    Private.GUI:CreateToggle(ScrollFrame, "Skip Cinematics", "Automatically skip cinematics.", nil, ToggleDB, "SkipCinematics", nil)
-                elseif Value == "Alerts" then
-                    TreeGroup:SelectByValue("Alerts\001Bloodlust")
-                elseif Value == "Alerts\001PowerInfusion" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.PowerInfusion, "Enable", function() Private:UpdatePowerInfusionAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.PowerInfusion.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.PowerInfusion, function() Private:UpdatePowerInfusionAlert() end)
-                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.PowerInfusion, function() Private:UpdatePowerInfusionAlert() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.PowerInfusion.Enable)
-                elseif Value == "Alerts\001Innervate" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.Innervate, "Enable", function() Private:UpdateInnervateAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Innervate.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.Innervate, function() Private:UpdateInnervateAlert() end)
-                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.Innervate, function() Private:UpdateInnervateAlert() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Innervate.Enable)
-                elseif Value == "Alerts\001TimeSpiral" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.TimeSpiral, "Enable", function() Private:UpdateTimeSpiralAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.TimeSpiral.Enable)end)
-                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.TimeSpiral, function() Private:UpdateTimeSpiralAlert() end)
-                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.TimeSpiral, function() Private:UpdateTimeSpiralAlert() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.TimeSpiral.Enable)
-                elseif Value == "Alerts\001Bloodlust" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.Bloodlust, "Enable", function() Private:UpdateBloodlustAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Bloodlust.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.Bloodlust, function() Private:UpdateBloodlustAlert() end)
-                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.Bloodlust, function() Private:UpdateBloodlustAlert() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Bloodlust.Enable)
-                elseif Value == "Alerts\001Externals" then
-                    local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, AlertsDB.Externals, "Enable", function() Private:UpdateExternalsAlert() Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Externals.Enable) end)
-                    Private.GUI:LayoutOptions(ScrollFrame, AlertsDB.Externals, function() Private:UpdateExternalsAlert() end)
-                    Private.GUI:SoundOptions(ScrollFrame, AlertsDB.Externals, function() Private:UpdateExternalsAlert() end)
-                    Private.GUI:UpdateGUIState(ScrollFrame, AlertsDB.Externals.Enable)
-                end
-            end)
-            TreeGroup:SelectByValue("Toggles")
-            _GF:AddChild(TreeGroup)
-        elseif Group == "DamageMeter" then
-            local DB = Private.DB.global.DamageMeter
-
-            local Options = {
-                { text = "Window #1", value = "WindowOne" },
-                { text = "Window #2", value = "WindowTwo" },
-                { text = "Window #3", value = "WindowThree" },
-            }
-
-            local TreeGroup = AG:Create("TreeGroup")
-            TreeGroup:SetLayout("Fill")
-            TreeGroup:SetFullWidth(true)
-            TreeGroup:SetFullHeight(true)
-            TreeGroup:SetTree(Options)
-            TreeGroup:SetCallback("OnGroupSelected", function(__GF, _, Value)
-                __GF:ReleaseChildren()
-                if Value == "WindowOne" then
-                    Private.GUI:DamageMeterOptions(__GF, DB[1], function() Private:UpdateDamageMeter() end)
-                elseif Value == "WindowTwo" then
-                    Private.GUI:DamageMeterOptions(__GF, DB[2], function() Private:UpdateDamageMeter() end)
-                elseif Value == "WindowThree" then
-                    Private.GUI:DamageMeterOptions(__GF, DB[3], function() Private:UpdateDamageMeter() end)
-                end
-            end)
-            TreeGroup:SelectByValue("WindowOne")
-            _GF:AddChild(TreeGroup)
-        elseif Group == "CombatAlert" then
-            local DB = Private.DB.global.CombatAlert
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-
-            Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB, "Enable", function() Private:UpdateCombatAlert() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
-
-            Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateCombatAlert() end)
-            Private.GUI:FontOptions(ScrollFrame, DB.Text, function() Private:UpdateCombatAlert() end)
-
-            local TextOptionsGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Text Options", "CENTER")
-
-            Private.GUI:CreateHeading(TextOptionsGroup, "Entering Combat")
-            Private.GUI:CreateColourPicker(TextOptionsGroup, "Colour", 0.5, DB.Text.EnteringCombat, "Colour", function() Private:UpdateCombatAlert() end)
-            Private.GUI:CreateEditBox(TextOptionsGroup, nil, 0.5, DB.Text.EnteringCombat, "Text", function() Private:UpdateCombatAlert() end)
-
-            Private.GUI:CreateHeading(TextOptionsGroup, "Exiting Combat")
-            Private.GUI:CreateColourPicker(TextOptionsGroup, "Colour", 0.5, DB.Text.ExitingCombat, "Colour", function() Private:UpdateCombatAlert() end)
-            Private.GUI:CreateEditBox(TextOptionsGroup, nil, 0.5, DB.Text.ExitingCombat, "Text", function() Private:UpdateCombatAlert() end)
-
-            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-        elseif Group == "DungeonCasts" then
-            local DB = Private.DB.global.DungeonCasts
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-            local Update = function()
-                Private:SetupDungeonCasts()
-                if Private.PreviewDungeonCastsActive and not Private.DungeonCastsFrame.Testing then Private:TestDungeonCasts() end
-            end
-            Private.GUI:CreateToggle(ScrollFrame, "Enable", "Tracks enemy NPC casts on nearby nameplates.", nil, DB, "Enable", function() Update() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
-            Private.GUI:LayoutOptions(ScrollFrame, DB, Update)
-
-            local Colours = Private.GUI:CreateInlineGroup(ScrollFrame, "Colours & Textures", "CENTER")
-            local Texture = AG:Create("LSM30_Statusbar")
-            Texture:SetLabel("Texture")
-            Texture:SetList(Private.LSM:HashTable("statusbar"))
-            Texture:SetValue(DB.Texture)
-            Texture:SetFullWidth(true)
-            Texture:SetCallback("OnValueChanged", function(_, _, Value) Texture:SetValue(Value) DB.Texture = Value Update() end)
-            Colours:AddChild(Texture)
-            Private.GUI:CreateColourPicker(Colours, "Background", 0.5, DB, "BackgroundColour", Update)
-            Private.GUI:CreateColourPicker(Colours, "Interrupt Ready", 0.5, DB, "InterruptibleColour", Update)
-            Private.GUI:CreateColourPicker(Colours, "Cannot Interrupt", 0.5, DB, "NonInterruptibleColour", Update)
-            Private.GUI:CreateColourPicker(Colours, "Interrupt On Cooldown", 0.5, DB, "InterruptOnCooldownColour", Update)
-            Private.GUI:FontOptions(ScrollFrame, DB, Update, true)
-            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-        elseif Group == "CombatTimer" then
-            local DB = Private.DB.global.CombatTimer
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-
-            Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, nil, DB, "Enable", function() Private:UpdateCombatTimer() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
-
-            Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateCombatTimer() end)
-            Private.GUI:FontOptions(ScrollFrame, DB.Text, function() Private:UpdateCombatTimer() end)
-
-            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-        elseif Group == "MouseCursor" then
-            local DB = Private.DB.global.MouseCursor
-
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-            Private.GUI:CreateToggle(ScrollFrame, "Enable", nil, 0.33, DB, "Enable", function() Private:UpdateMouseCursor() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
-
-            Private.GUI:CreateColourPicker(ScrollFrame, "Colour", 0.33, DB, "Colour", function() Private:UpdateMouseCursor() end)
-
-            local MouseCursorTextureDropdown = AG:Create("Dropdown")
-            MouseCursorTextureDropdown:SetLabel("Texture")
-            MouseCursorTextureDropdown:SetList(Private.MouseCursorTexturePreviews)
-            MouseCursorTextureDropdown:SetValue(DB.Texture)
-            MouseCursorTextureDropdown:SetRelativeWidth(0.33)
-            MouseCursorTextureDropdown:SetCallback("OnValueChanged", function(_, _, Value) DB.Texture = Value Private:UpdateMouseCursor() end)
-            MouseCursorTextureDropdown:SetDisabled(not DB.Enable)
-            ScrollFrame:AddChild(MouseCursorTextureDropdown)
-
-            Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateMouseCursor() end)
-            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-        elseif Group == "VendorSupport" then
-            local DB = Private.DB.global.VendorSupport
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-            Private.GUI:CreateToggle(ScrollFrame, "Enable", "This will automatically vendor items that meet the criteria.", nil, DB, "Enable", function() Private:SetupVendorSupport() Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable) end)
-
-            local MinimumQualityDropdown = AG:Create("Dropdown")
-            MinimumQualityDropdown:SetLabel("Minimum Quality")
-            MinimumQualityDropdown:SetList(Private.ItemQualities)
-            MinimumQualityDropdown:SetValue(DB.MinimumQuality)
-            MinimumQualityDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.MinimumQuality = value end)
-            MinimumQualityDropdown:SetRelativeWidth(0.5)
-            ScrollFrame:AddChild(MinimumQualityDropdown)
-
-            local MinimumItemLevelSlider = AG:Create("Slider")
-            MinimumItemLevelSlider:SetLabel("Minimum Item Level")
-            MinimumItemLevelSlider:SetSliderValues(0, 500, 1)
-            MinimumItemLevelSlider:SetValue(DB.MinimumItemLevel)
-            MinimumItemLevelSlider:SetCallback("OnValueChanged", function(_, _, value) DB.MinimumItemLevel = value end)
-            MinimumItemLevelSlider:SetRelativeWidth(0.5)
-            ScrollFrame:AddChild(MinimumItemLevelSlider)
-
-            Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
-        elseif Group == "Profiles" then
-            local ScrollFrame = Private.GUI:CreateScrollFrame(_GF)
-
-            local ProfileInlineGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Profiles", "CENTER")
-
-            local DescriptionLabel = AG:Create("Label")
-            DescriptionLabel:SetText(Private.AddOnName .. " uses a |cFFFFCC00global|r profile shared across all characters. Importing a profile will overwrite your existing settings.")
-            DescriptionLabel:SetJustifyH("CENTER")
-            DescriptionLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE, SLUG")
-            DescriptionLabel:SetFullWidth(true)
-            ProfileInlineGroup:AddChild(DescriptionLabel)
-
-            Private.GUI:CreateButton(ProfileInlineGroup, "Export Profile", 0.33, function() Private:ExportProfile() end)
-            Private.GUI:CreateButton(ProfileInlineGroup, "Import Profile", 0.33, function() Private:ImportProfile() end)
-            Private.GUI:CreateButton(ProfileInlineGroup, "Reset Profile", 0.33, function() Private:ResetProfile() end)
-
-            local ProfileImportsInlineGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Profile Imports", "CENTER")
-
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\ElvUI.tga:16:16|t ElvUI: Profile", 0.5, function() Private.Distributor:ImportProfile(Private:ImportElvUI()["PROFILE"]) end)
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\ElvUI.tga:16:16|t ElvUI: Private", 0.5, function() Private.Distributor:ImportProfile(Private:ImportElvUI()["PRIVATE"]) end)
-
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\Baganator.tga:16:16|t Baganator", nil, function() Baganator.API.ImportString(Private:ImportBaganator(), "Default") end, not C_AddOns.IsAddOnLoaded("Baganator"))
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\BigWigs.tga:16:16|t BigWigs", nil, function() Private:ImportBigWigs() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: Toasts", nil, function() Private:ImportLSToasts() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\Platynator.tga:16:16|t Platynator", nil, function() Platynator.API.ImportString(Private:ImportPlatynator(), "Default") end, not C_AddOns.IsAddOnLoaded("Platynator"))
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\SkironCooldownManager.png:16:16|t Skiron Cooldown Manager", nil, function() SCMAPI.ImportProfile("ElvUI_Unhalted", Private:ImportSkironCooldownManager()) end, not C_AddOns.IsAddOnLoaded("SkironCooldownManager"))
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo_64.png:16:16|t UnhaltedUI", nil, function() Private:ImportUnhaltedUI() end)
-            Private.GUI:CreateButton(ProfileImportsInlineGroup, "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\WarpDeplete.blp:16:16|t WarpDeplete", nil, function() Private:ImportWarpDeplete() Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
-
-            if Private:IsDeveloper() then
-                local ProfileExportsInlineGroup = Private.GUI:CreateInlineGroup(ScrollFrame, "Profile Exports", "CENTER")
-
-                Private.GUI:CreateButton(ProfileExportsInlineGroup, "Export |TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: Toasts", nil, function() Private:ExportLSToasts() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
-                Private.GUI:CreateButton(ProfileExportsInlineGroup, "Export |TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\WarpDeplete.blp:16:16|t WarpDeplete", nil, function() Private:ExportWarpDeplete() end, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
-            end
-        end
-        if Group == "CombatAlert" then Private.PreviewCombatAlertActive = true; Private:PreviewCombatAlert() else Private.PreviewCombatAlertActive = false; Private:PreviewCombatAlert() end
-        if Group ~= "DamageMeter" then Private:SetDamageMeterTestMode(false) end
+    end
+    if Group ~= "DamageMeter" and Private.DamageMeterTestMode then Private:SetDamageMeterTestMode(false) end
+    if Private.PreviewDungeonCastsActive or Group == "DungeonCasts" then
         Private.PreviewDungeonCastsActive = Group == "DungeonCasts"
         Private:TestDungeonCasts()
-        if Group == "QualityOfLife" then Private.PreviewAlertsActive = true; Private:SetupPreviewAlerts() else Private.PreviewAlertsActive = false; Private:SetupPreviewAlerts() end
-    end)
-    TabGroup:SelectTab("AddOnSkins")
-    GUIFrame:AddChild(TabGroup)
-    return GUIFrame
+    end
+    if Private.PreviewAlertsActive or Group == "QualityOfLife" then
+        Private.PreviewAlertsActive = Group == "QualityOfLife"
+        Private:SetupPreviewAlerts()
+    end
 end
 
 function Private:SetupGUI()
-    Private.ElvUI.Options.args.ElvUI_Unhalted = {
-        type = "group",
-        name = Private.AddOnName,
-        order = 20,
-        args = {
-            OpenOptions = {
-                type = "execute",
-                name = "Open Options",
-                order = 1,
-                width = "full",
-                func = function() Private:CreateGUI() end,
-            },
-        },
-    }
+    local GUI = Private.GUI
+    local DB = Private.DB.global
+    local Options = ACH:Group(Private.AddOnName, "V" .. Private.AddOnVersion, 20, "tab")
+    local Args = Options.args
+
+    local AddOnSkins = ACH:Group("AddOn Skins", nil, 1, "tree")
+    for Order, Skin in ipairs({
+        {Key = "AddOnProfiler", Name = "AddOn Profiler", AddOn = "!!AddonProfiler", Update = "UpdateAddOnProfilerSkin"},
+        {Key = "BigWigs", Name = "BigWigs", AddOn = "BigWigs", Update = "UpdateBigWigsSkin"},
+        {Key = "BugSack", Name = "BugSack", AddOn = "BugSack", Update = "UpdateBugSackSkin"},
+        {Key = "SimulationCraft", Name = "SimulationCraft", AddOn = "SimulationCraft", Update = "UpdateSimulationCraftSkin"},
+        {Key = "SkironCooldownManager", Name = "Skiron Cooldown Manager", AddOn = "SkironCooldownManager", Update = "UpdateSkironCooldownManagerSkin"},
+    }) do
+        local SkinDB = DB.AddOnSkins[Skin.Key]
+        local Group = ACH:Group(Skin.Name, nil, Order)
+        Group.disabled = not C_AddOns.IsAddOnLoaded(Skin.AddOn)
+        local Description = Skin.Key == "BigWigs" and "Skins & Positions the BigWigs Minimap Button, along with providing consistent skinning for bars/windows." or "Skins & Positioning the " .. Skin.Name .. " Minimap Button"
+        Group.args.Enable = GUI:Toggle("Enable", Description, 1, 1, SkinDB, "Enable", function() Private:PromptReload() end)
+        Group.args.LayoutOptions = GUI:LayoutOptions(SkinDB, function() Private[Skin.Update](Private) end)
+        GUI:DisableOptions(Group, SkinDB)
+        AddOnSkins.args[Skin.Key] = Group
+    end
+    local Miscellaneous = ACH:Group("Miscellaneous", nil, 6)
+    Miscellaneous.args.LSToasts = GUI:Toggle("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: |cFF1CD3A2Toasts|r", "Adds a skin to LS: Toasts to match the UI aesthetic.", 1, 1, DB.AddOnSkins.Miscellaneous, "LSToasts", function() Private:PromptReload() end)
+    AddOnSkins.args.Miscellaneous = Miscellaneous
+    Args.AddOnSkins = AddOnSkins
+
+    local Blizzard = ACH:Group("Blizzard", nil, 2, "tree")
+    for _, Setting in ipairs({
+        {Key = "ActionStatus", Name = "Action Status", Order = 1, Update = "UpdateActionStatusFrame"},
+        {Key = "UIErrorsFrame", Name = "UI Errors", Order = 3, Update = "UpdateUIErrorsFrame"},
+        {Key = "ZoneText", Name = "Zone Text", Order = 4, Update = "UpdateZoneText"},
+        {Key = "SubZoneText", Name = "Sub Zone Text", Order = 5, Update = "UpdateZoneText"},
+    }) do
+        local SettingDB = DB.Blizzard[Setting.Key]
+        local Update = function() Private[Setting.Update](Private) end
+        local Group = ACH:Group(Setting.Name, nil, Setting.Order)
+        Group.args.Enable = GUI:Toggle("Enable", nil, 1, 1, SettingDB, "Enable", Update)
+        Group.args.LayoutOptions = GUI:LayoutOptions(SettingDB, Update)
+        Group.args.FontOptions = GUI:FontOptions(SettingDB, Update)
+        GUI:DisableOptions(Group, SettingDB)
+        Blizzard.args[Setting.Key] = Group
+    end
+    local PreyDB = DB.Blizzard.BetterPrey
+    local UpdatePrey = function() Private:UpdateBetterPrey() end
+    local BetterPrey = ACH:Group("Better Prey", nil, 2)
+    BetterPrey.args.Enable = GUI:Toggle("Enable", "Displays Prey progression in a more convenient way.", 1, 0.5, PreyDB, "Enable", UpdatePrey)
+    BetterPrey.args.ColourByStage = GUI:Toggle("Colour by Stage", nil, 2, 0.5, PreyDB, "ColourByStage", UpdatePrey)
+    BetterPrey.args.LayoutOptions = GUI:LayoutOptions(PreyDB, UpdatePrey, function() return 12, 12 end)
+    local PreyText = GUI:InlineGroup("Text Options", 11)
+    PreyText.args.Enable = GUI:Toggle("Enable", nil, 1, 1, PreyDB.Text, "Enable", UpdatePrey)
+    PreyText.args.FontOptions = GUI:FontOptions(PreyDB.Text, UpdatePrey)
+    GUI:DisableOptions(PreyText, PreyDB.Text, PreyDB)
+    BetterPrey.args.TextOptions = PreyText
+    GUI:DisableOptions(BetterPrey, PreyDB)
+    Blizzard.args.BetterPrey = BetterPrey
+    Args.Blizzard = Blizzard
+
+    local EnhancementsDB = DB.ElvUIEnhancements
+    local Enhancements = ACH:Group("ElvUI Enhancements", nil, 3)
+    Enhancements.args.ForceAlphaOnLootRoll = GUI:Toggle("Loot Roll: Fix Backdrop", "Force the loot roll backdrop to be fully opaque.", 1, 1, EnhancementsDB, "ForceAlphaOnLootRoll", function() Private:PromptReload() end)
+    Enhancements.args.CastbarInterruptCooldown = GUI:Toggle("Castbar: Interrupt On Cooldown", "Colours interruptible enemy unit frame and nameplate castbars grey while your interrupt is on cooldown.", 2, 1, EnhancementsDB, "CastbarInterruptCooldown", function() Private:UpdateCastbarInterruptCooldown() end)
+    Enhancements.args.OverAbsorbs = GUI:Toggle("Health: Over Absorbs", "Shows a reverse fill absorb bar when absorbs exceed missing health.", 3, 1, EnhancementsDB, "OverAbsorbs", function() Private:UpdateOverAbsorbs() end)
+    Enhancements.args.LFGHelper = GUI:Toggle("LFG: Keystone Helper", "Shows an additional window when searching for Mythic+ dungeons.", 4, 1, EnhancementsDB, "LFGHelper", function() Private:UpdateLFGHelper() end)
+    local OverlayDB = EnhancementsDB.NameplateTextureOverlay
+    local UpdateOverlay = function() Private:UpdateNameplateTextureOverlay() end
+    local Overlay = GUI:InlineGroup("Nameplate: Focus Texture Overlay", 5)
+    Overlay.args.Enable = GUI:Toggle("Enable", "Applies a custom texture over the focus nameplate.", 1, 1, OverlayDB, "Enable", UpdateOverlay)
+    Overlay.args.Texture = GUI:Media("Texture", 2, 0.33, "statusbar", OverlayDB, "Texture", UpdateOverlay)
+    Overlay.args.Colour = GUI:Colour("Colour", 3, 0.33, OverlayDB, "Colour", UpdateOverlay)
+    Overlay.args.Opacity = GUI:Range("Opacity", 4, 0.33, 0, 1, 0.01, OverlayDB, "Opacity", UpdateOverlay, true)
+    GUI:DisableOptions(Overlay, OverlayDB)
+    Enhancements.args.NameplateTextureOverlay = Overlay
+    Args.ElvUIEnhancements = Enhancements
+
+    local QualityOfLife = ACH:Group("Quality of Life", nil, 4, "tree")
+    local Toggles = ACH:Group("Toggles", nil, 1)
+    local ToggleDB = DB.QualityOfLife.Toggles
+    Toggles.args.AutoDelete = GUI:Toggle("Auto Delete", "Automatically complete |cFFFFCC00DELETE|r when applicable.", 1, 1, ToggleDB, "AutoDelete")
+    Toggles.args.AutoQuest = GUI:Toggle("Auto Quest", "Automatically accept and turn in quests when applicable. Hold |cFFFFCC00SHIFT|r to override.", 2, 1, ToggleDB, "AutoQuest", function() Private:SetupAutoQuest() end)
+    Toggles.args.AutoRepair = GUI:Toggle("Auto Repair", "Automatically repair items when visiting a merchant. |cFFFFCC00Guild|r then |cFFFFCC00Personal|r.", 3, 1, ToggleDB, "AutoRepair")
+    Toggles.args.AutoSellGreys = GUI:Toggle("Auto Sell Greys", "Automatically sell grey/junk items when visiting a merchant.", 4, 1, ToggleDB, "AutoSellGreys", function() Private:SetupAutoSellGreys() end)
+    Toggles.args.AutoSignUp = GUI:Toggle("Auto Sign Up", "Automatically select your role when signing up for a group. Hold |cFFFFCC00SHIFT|r to override.", 5, 1, ToggleDB, "AutoSignUp")
+    Toggles.args.KeystoneReroll = GUI:Toggle("Keystone Reroll", "Shows a reminder to reroll your keystone at the end of a Mythic+.", 6, 1, ToggleDB, "KeystoneReroll", function() Private:UpdateKeystoneRerollReminder() end)
+    Toggles.args.RemoveBossBanner = GUI:Toggle("Remove Boss Banner", "Prevents the Boss Banner frame from appearing.", 7, 1, ToggleDB, "RemoveBossBanner")
+    Toggles.args.RemoveTalkingHead = GUI:Toggle("Remove Talking Head", "Prevents the Talking Head frame from appearing.", 8, 1, ToggleDB, "RemoveTalkingHead")
+    Toggles.args.SkipCinematics = GUI:Toggle("Skip Cinematics", "Automatically skip cinematics.", 9, 1, ToggleDB, "SkipCinematics")
+    QualityOfLife.args.Toggles = Toggles
+    local Alerts = ACH:Group("Alerts", nil, 2, "tree")
+    for Order, Alert in ipairs({
+        {Key = "Bloodlust", Name = "Bloodlust", Spell = 2825, Update = "UpdateBloodlustAlert"},
+        {Key = "Externals", Name = "Externals", Spell = 33206, Update = "UpdateExternalsAlert"},
+        {Key = "Innervate", Name = "Innervate", Spell = 29166, Update = "UpdateInnervateAlert"},
+        {Key = "PowerInfusion", Name = "Power Infusion", Spell = 10060, Update = "UpdatePowerInfusionAlert"},
+        {Key = "TimeSpiral", Name = "Time Spiral", Spell = 375234, Update = "UpdateTimeSpiralAlert"},
+    }) do
+        local AlertDB = DB.QualityOfLife.Alerts[Alert.Key]
+        local Update = function() Private[Alert.Update](Private) end
+        local Group = ACH:Group(Alert.Name, nil, Order)
+        Group.icon = Private:FetchSpellTexture(Alert.Spell)
+        Group.args.Enable = GUI:Toggle("Enable", nil, 1, 1, AlertDB, "Enable", Update)
+        Group.args.LayoutOptions = GUI:LayoutOptions(AlertDB, Update)
+        Group.args.SoundOptions = GUI:SoundOptions(AlertDB, Update)
+        GUI:DisableOptions(Group, AlertDB)
+        Alerts.args[Alert.Key] = Group
+    end
+    QualityOfLife.args.Alerts = Alerts
+    Args.QualityOfLife = QualityOfLife
+
+    local DamageMeter = ACH:Group("Damage Meter", nil, 5, "tree")
+    DamageMeter.args.WindowOne = GUI:DamageMeterOptions(DB.DamageMeter[1], 1)
+    DamageMeter.args.WindowTwo = GUI:DamageMeterOptions(DB.DamageMeter[2], 2)
+    DamageMeter.args.WindowThree = GUI:DamageMeterOptions(DB.DamageMeter[3], 3)
+    Args.DamageMeter = DamageMeter
+
+    local CastDB = DB.DungeonCasts
+    local UpdateCasts = function()
+        Private:SetupDungeonCasts()
+        if Private.PreviewDungeonCastsActive and not Private.DungeonCastsFrame.Testing then Private:TestDungeonCasts() end
+    end
+    local DungeonCasts = ACH:Group("Dungeon Casts", nil, 6)
+    DungeonCasts.args.Enable = GUI:Toggle("Enable", "Tracks enemy NPC casts on nearby nameplates.", 1, 1, CastDB, "Enable", UpdateCasts)
+    DungeonCasts.args.LayoutOptions = GUI:LayoutOptions(CastDB, UpdateCasts)
+    local Colours = GUI:InlineGroup("Colours & Textures", 11)
+    Colours.args.Texture = GUI:Media("Texture", 1, 1, "statusbar", CastDB, "Texture", UpdateCasts)
+    Colours.args.BackgroundColour = GUI:Colour("Background", 2, 0.5, CastDB, "BackgroundColour", UpdateCasts)
+    Colours.args.InterruptibleColour = GUI:Colour("Interrupt Ready", 3, 0.5, CastDB, "InterruptibleColour", UpdateCasts)
+    Colours.args.NonInterruptibleColour = GUI:Colour("Cannot Interrupt", 4, 0.5, CastDB, "NonInterruptibleColour", UpdateCasts)
+    Colours.args.InterruptOnCooldownColour = GUI:Colour("Interrupt On Cooldown", 5, 0.5, CastDB, "InterruptOnCooldownColour", UpdateCasts)
+    DungeonCasts.args.Colours = Colours
+    DungeonCasts.args.FontOptions = GUI:FontOptions(CastDB, UpdateCasts, true)
+    DungeonCasts.args.FontOptions.order = 12
+    GUI:DisableOptions(DungeonCasts, CastDB)
+    Args.DungeonCasts = DungeonCasts
+
+    local CombatDB = DB.CombatAlert
+    local UpdateCombat = function() Private:UpdateCombatAlert() end
+    local CombatAlert = ACH:Group("Combat Alert", nil, 7)
+    CombatAlert.args.Enable = GUI:Toggle("Enable", nil, 1, 1, CombatDB, "Enable", UpdateCombat)
+    CombatAlert.args.LayoutOptions = GUI:LayoutOptions(CombatDB, UpdateCombat)
+    CombatAlert.args.FontOptions = GUI:FontOptions(CombatDB.Text, UpdateCombat)
+    local CombatText = GUI:InlineGroup("Text Options", 12)
+    CombatText.args.EnteringCombat = ACH:Header("|cFFCCCCCCEntering Combat|r", 1)
+    CombatText.args.EnteringColour = GUI:Colour("Colour", 2, 0.5, CombatDB.Text.EnteringCombat, "Colour", UpdateCombat)
+    CombatText.args.EnteringText = GUI:Input(nil, 3, 0.5, CombatDB.Text.EnteringCombat, "Text", UpdateCombat)
+    CombatText.args.ExitingCombat = ACH:Header("|cFFCCCCCCExiting Combat|r", 4)
+    CombatText.args.ExitingColour = GUI:Colour("Colour", 5, 0.5, CombatDB.Text.ExitingCombat, "Colour", UpdateCombat)
+    CombatText.args.ExitingText = GUI:Input(nil, 6, 0.5, CombatDB.Text.ExitingCombat, "Text", UpdateCombat)
+    CombatAlert.args.TextOptions = CombatText
+    GUI:DisableOptions(CombatAlert, CombatDB)
+    Args.CombatAlert = CombatAlert
+
+    local TimerDB = DB.CombatTimer
+    local UpdateTimer = function() Private:UpdateCombatTimer() end
+    local CombatTimer = ACH:Group("Combat Timer", nil, 8)
+    CombatTimer.args.Enable = GUI:Toggle("Enable", nil, 1, 1, TimerDB, "Enable", UpdateTimer)
+    CombatTimer.args.LayoutOptions = GUI:LayoutOptions(TimerDB, UpdateTimer)
+    CombatTimer.args.FontOptions = GUI:FontOptions(TimerDB.Text, UpdateTimer)
+    GUI:DisableOptions(CombatTimer, TimerDB)
+    Args.CombatTimer = CombatTimer
+
+    local CursorDB = DB.MouseCursor
+    local UpdateCursor = function() Private:UpdateMouseCursor() end
+    local MouseCursor = ACH:Group("Mouse Cursor", nil, 9)
+    MouseCursor.args.Enable = GUI:Toggle("Enable", nil, 1, 0.33, CursorDB, "Enable", UpdateCursor)
+    MouseCursor.args.Colour = GUI:Colour("Colour", 2, 0.33, CursorDB, "Colour", UpdateCursor)
+    MouseCursor.args.Texture = GUI:Select("Texture", 3, 0.33, Private.MouseCursorTexturePreviews, CursorDB, "Texture", UpdateCursor)
+    MouseCursor.args.LayoutOptions = GUI:LayoutOptions(CursorDB, UpdateCursor)
+    GUI:DisableOptions(MouseCursor, CursorDB)
+    Args.MouseCursor = MouseCursor
+
+    local VendorDB = DB.VendorSupport
+    local VendorSupport = ACH:Group("Vendor Support", nil, 10)
+    VendorSupport.args.Enable = GUI:Toggle("Enable", "This will automatically vendor items that meet the criteria.", 1, 1, VendorDB, "Enable", function() Private:SetupVendorSupport() end)
+    VendorSupport.args.MinimumQuality = GUI:Select("Minimum Quality", 2, 0.5, Private.ItemQualities, VendorDB, "MinimumQuality")
+    VendorSupport.args.MinimumItemLevel = GUI:Range("Minimum Item Level", 3, 0.5, 0, 500, 1, VendorDB, "MinimumItemLevel")
+    GUI:DisableOptions(VendorSupport, VendorDB)
+    Args.VendorSupport = VendorSupport
+
+    local Profiles = ACH:Group("Profiles", nil, 11)
+    local Profile = GUI:InlineGroup("Profiles", 1)
+    Profile.args.Description = ACH:Description(Private.AddOnName .. " uses a |cFFFFCC00global|r profile shared across all characters. Importing a profile will overwrite your existing settings.", 1)
+    Profile.args.Export = GUI:Button("Export Profile", 2, 0.33, function() Private:ExportProfile() end)
+    Profile.args.Import = GUI:Button("Import Profile", 3, 0.33, function() Private:ImportProfile() end)
+    Profile.args.Reset = GUI:Button("Reset Profile", 4, 0.33, function() Private:ResetProfile() end)
+    Profiles.args.Profiles = Profile
+    local Imports = GUI:InlineGroup("Profile Imports", 2)
+    Imports.args.ElvUIProfile = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\ElvUI.tga:16:16|t ElvUI: Profile", 1, 0.5, function() Private.Distributor:ImportProfile(Private:ImportElvUI()["PROFILE"]) end)
+    Imports.args.ElvUIPrivate = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\ElvUI.tga:16:16|t ElvUI: Private", 2, 0.5, function() Private.Distributor:ImportProfile(Private:ImportElvUI()["PRIVATE"]) end)
+    Imports.args.Baganator = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\Baganator.tga:16:16|t Baganator", 3, nil, function() Baganator.API.ImportString(Private:ImportBaganator(), "Default") end, not C_AddOns.IsAddOnLoaded("Baganator"))
+    Imports.args.BigWigs = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\BigWigs.tga:16:16|t BigWigs", 4, nil, function() Private:ImportBigWigs() end, not C_AddOns.IsAddOnLoaded("BigWigs"))
+    Imports.args.LSToasts = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: Toasts", 5, nil, function() Private:ImportLSToasts() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
+    Imports.args.Platynator = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\Platynator.tga:16:16|t Platynator", 6, nil, function() Platynator.API.ImportString(Private:ImportPlatynator(), "Default") end, not C_AddOns.IsAddOnLoaded("Platynator"))
+    Imports.args.SkironCooldownManager = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\SkironCooldownManager.png:16:16|t Skiron Cooldown Manager", 7, nil, function() SCMAPI.ImportProfile("ElvUI_Unhalted", Private:ImportSkironCooldownManager()) end, not C_AddOns.IsAddOnLoaded("SkironCooldownManager"))
+    Imports.args.UnhaltedUI = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo_64.png:16:16|t UnhaltedUI", 8, nil, function() Private:ImportUnhaltedUI() end)
+    Imports.args.WarpDeplete = GUI:Button("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\WarpDeplete.blp:16:16|t WarpDeplete", 9, nil, function() Private:ImportWarpDeplete() Private:PromptReload() end, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
+    Profiles.args.Imports = Imports
+    if Private:IsDeveloper() then
+        local Exports = GUI:InlineGroup("Profile Exports", 3)
+        Exports.args.LSToasts = GUI:Button("Export |TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\LSToasts.TGA:16:16|t LS: Toasts", 1, nil, function() Private:ExportLSToasts() end, not C_AddOns.IsAddOnLoaded("ls_Toasts"))
+        Exports.args.WarpDeplete = GUI:Button("Export |TInterface\\AddOns\\ElvUI_Unhalted\\Media\\AddOns\\WarpDeplete.blp:16:16|t WarpDeplete", 2, nil, function() Private:ExportWarpDeplete() end, not C_AddOns.IsAddOnLoaded("WarpDeplete"))
+        Profiles.args.Exports = Exports
+    end
+    Args.Profiles = Profiles
+
+    Private.ElvUI.Options.args.ElvUI_Unhalted = Options
+    local SkinStatus = Private.ElvUI.Libs.AceConfigDialog:GetStatusTable("ElvUI", {"ElvUI_Unhalted", "AddOnSkins"})
+    if not SkinStatus.groups then SkinStatus.groups = {selected = "BugSack"} end
+
+    hooksecurefunc(Private.ElvUI.Libs.AceConfigDialog, "FeedGroup", function(_, AppName, _, _, RootFrame, Path)
+        if AppName ~= "ElvUI" then return end
+        if not RootFrame.frame.UnhaltedPreviewsHooked then
+            RootFrame.frame:HookScript("OnHide", function() Private:UpdateGUIPreviews() end)
+            RootFrame.frame.UnhaltedPreviewsHooked = true
+        end
+        if Path[1] == "ElvUI_Unhalted" then
+            if Path[2] then Private:UpdateGUIPreviews(Path[2]) end
+            if Path[2] == "QualityOfLife" and Path[3] == "Alerts" and not Path[4] then
+                Private.ElvUI.Libs.AceConfigDialog:SelectGroup("ElvUI", "ElvUI_Unhalted", "QualityOfLife", "Alerts", "Bloodlust")
+            end
+        elseif Path[1] then
+            Private:UpdateGUIPreviews()
+        end
+    end)
 end
