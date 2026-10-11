@@ -76,7 +76,7 @@ function Private:CreateGUI()
                 elseif Value == "BigWigs" then
                     local DB = Private.DB.global.AddOnSkins.BigWigs
                     local ScrollFrame = Private.GUI:CreateScrollFrame(__GF)
-                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positioning the BigWigs Minimap Button", nil, DB, "Enable", function() Private:PromptReload() end)
+                    Private.GUI:CreateToggle(ScrollFrame, "Enable", "Skins & Positions the BigWigs Minimap Button, along with providing consistent skinning for bars/windows.", nil, DB, "Enable", function() Private:PromptReload() end)
                     Private.GUI:LayoutOptions(ScrollFrame, DB, function() Private:UpdateBigWigsSkin() end)
                     Private.GUI:UpdateGUIState(ScrollFrame, DB.Enable)
                 elseif Value == "SimulationCraft" then
