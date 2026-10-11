@@ -340,6 +340,7 @@ local Defaults = {
                 RemoveBossBanner = false,
                 RemoveTalkingHead = false,
                 SkipCinematics = false,
+                SocketHelper = false,
             },
         },
         VendorSupport = {

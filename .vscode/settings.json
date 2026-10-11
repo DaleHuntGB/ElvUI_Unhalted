@@ -79,7 +79,15 @@
         "LFGListSearchPanel_UpdateResults",
         "LE_PARTY_CATEGORY_HOME",
         "LFGListSearchPanel_UpdateResultList",
-        "UIWidgetManager"
+        "UIWidgetManager",
+        "INVSLOT_FIRST_EQUIPPED",
+        "INVSLOT_LAST_EQUIPPED",
+        "CharacterStatsPane",
+        "ItemSocketingFrame",
+        "MouseIsOver",
+        "NUM_TOTAL_EQUIPPED_BAG_SLOTS",
+        "CharacterFrame",
+        "PaperDollItemsFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }

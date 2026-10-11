@@ -51,6 +51,7 @@ Modules/QualityOfLife/Toggles/KeystoneReroll.lua
 Modules/QualityOfLife/Toggles/RemoveBossBanner.lua
 Modules/QualityOfLife/Toggles/RemoveTalkingHeadFrame.lua
 Modules/QualityOfLife/Toggles/SkipCinematics.lua
+Modules/QualityOfLife/SocketHelper.lua
 Modules/QualityOfLife/QualityOfLife.lua
 
 Modules/CombatAlert.lua

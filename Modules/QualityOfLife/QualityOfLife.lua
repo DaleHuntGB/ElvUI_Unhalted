@@ -14,6 +14,7 @@ function Private:SetupQualityOfLife()
     Private:SetupRemoveBossBanner()
     Private:SetupRemoveTalkingHead()
     Private:SetupSkipCinematics()
+    Private:UpdateSocketHelper()
     Private:SetupTimeSpiralAlert()
 end
 
