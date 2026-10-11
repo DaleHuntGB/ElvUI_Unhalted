@@ -17,7 +17,9 @@ local function BindOption(Option, Width, DB, Key, UpdateFunction)
 end
 
 function GUI:Toggle(Name, Desc, Order, Width, DB, Key, UpdateFunction)
-    return BindOption(ACH:Toggle(Name, Desc, Order), Width, DB, Key, UpdateFunction)
+    local Option = ACH:Toggle(Name, Desc, Order)
+    Option.descStyle = "inline"
+    return BindOption(Option, Width, DB, Key, UpdateFunction)
 end
 
 function GUI:Select(Name, Order, Width, Values, DB, Key, UpdateFunction)
