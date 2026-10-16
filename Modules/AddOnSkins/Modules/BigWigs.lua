@@ -1,76 +1,6 @@
 local Private = select(2, ...)
 local S = Private.ElvUI:GetModule("Skins")
 
-local function SkinBigWigsKeysButtons(ScrollChild)
-    for _, Button in ipairs({ScrollChild:GetChildren()}) do
-        if Button:IsObjectType("Button") then
-            if Button.bg then
-                if not Button.backdrop then
-                    Button.bg:Hide()
-                    Button:CreateBackdrop()
-                    Button.text:FontTemplate()
-                end
-            elseif not Button.IsSkinned then
-                if Button.icon then
-                    for _, Region in ipairs({Button:GetRegions()}) do
-                        if Region:IsObjectType("Texture") and Region ~= Button.icon and Region ~= Button.cdbar then
-                            Region:SetTexture()
-                        elseif Region:IsObjectType("FontString") then
-                            Region:FontTemplate()
-                        end
-                    end
-
-                    S:HandleButton(Button)
-                    S:HandleIcon(Button.icon, true)
-                else
-                    S:HandleRotateButton(Button, nil, nil, true)
-                end
-            end
-        end
-    end
-end
-
-local function SkinBigWigsKeysWindow()
-    if not BigWigsAPI then return end
-    local Title = BigWigsAPI:GetLocale("BigWigs").keystoneTitle
-    for _, Frame in ipairs({UIParent:GetChildren()}) do
-        if not Frame:IsForbidden() and Frame.teleportBar and Frame.TitleContainer and Frame.TitleContainer.TitleText:GetText() == Title then
-            if Frame.UnhaltedKeysSkinned then return end
-
-            S:HandlePortraitFrame(Frame)
-            Frame.PortraitContainer:Hide()
-            Frame.TitleContainer.TitleText:FontTemplate()
-            Frame.tip:StripTextures()
-            Frame.tip:SetTemplate("Transparent")
-            for _, Arrow in ipairs({Frame.tip:GetChildren()}) do Arrow:Hide() end
-
-            local PreviousTab
-            for _, Child in ipairs({Frame:GetChildren()}) do
-                if Child:IsObjectType("ScrollFrame") then
-                    S:HandleTrimScrollBar(Child.ScrollBar)
-                    local ScrollChild = Child:GetScrollChild()
-                    SkinBigWigsKeysButtons(ScrollChild)
-                    -- BigWigs resizes this container after rebuilding rows, including incoming key updates.
-                    hooksecurefunc(ScrollChild, "SetHeight", SkinBigWigsKeysButtons)
-                elseif Child:IsObjectType("Button") and Child.LeftActive then
-                    Child:StripTextures()
-                    S:HandleTab(Child)
-                    Child:ClearAllPoints()
-                    if PreviousTab then
-                        Child:Point("TOPLEFT", PreviousTab, "TOPRIGHT", -5, 0)
-                    else
-                        Child:Point("TOPLEFT", Frame, "BOTTOMLEFT", -3, 0)
-                    end
-                    PreviousTab = Child
-                end
-            end
-
-            Frame.UnhaltedKeysSkinned = true
-            return
-        end
-    end
-end
-
 local function SkinBigWigsLFGTimer(_, Frame, Name)
     if Name ~= "QueueTimer" then return end
 
@@ -214,7 +144,6 @@ function Private:SetupBigWigsSkin()
     if not Private.DB.global.AddOnSkins.BigWigs.Enable then return end
     if not C_AddOns.IsAddOnLoaded("BigWigs") then return end
 
-    SkinBigWigsKeysWindow()
     BigWigsLoader.RegisterMessage(Private, "BigWigs_FrameCreated", SkinBigWigsLFGTimer)
 
     local DB = Private.DB.global.AddOnSkins.BigWigs
@@ -274,7 +203,6 @@ function Private:SetupBigWigsSkin()
     end
 
     RegisterBigWigsBarSkin()
-
 end
 
 function Private:UpdateBigWigsSkin()
