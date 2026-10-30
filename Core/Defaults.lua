@@ -1,0 +1,145 @@
+local Private = select(2, ...)
+
+local Defaults = {
+    global = {
+        AddOnSkins = {
+            BugSack = {
+                Enable = true,
+                Layout = {"TOPRIGHT", "TOPRIGHT", -1.1, -1.1},
+                Size = {18, 18},
+            },
+        },
+        Alerts = {
+            Combat = {
+                Enable = true,
+                Layout = {"CENTER", "CENTER", 0, 75.1},
+                Text = {
+                    FontSize = 15,
+                    Enter = {
+                        Text = "+Combat",
+                        Colour = {204/255, 64/255, 64/255}
+                    },
+                    Exit = {
+                        Text = "-Combat",
+                        Colour = {64/255, 204/255, 64/255}
+                    },
+                },
+                HoldTime = 1.5,
+            },
+            PowerInfusion = {
+                Enable = false,
+                Layout = {"CENTER", "CENTER", 0.1, 125.1},
+                Size = {38, 38},
+                Sound = "None",
+                SoundChannel = "Master",
+            },
+            TimeSpiral = {
+                Enable = false,
+                Layout = {"CENTER", "CENTER", 0.1, 164.1},
+                Size = {38, 38},
+                Sound = "None",
+                SoundChannel = "Master",
+            }
+        },
+        Blizzard = {
+            CleanObjectiveTrackerBanner = true,
+            UIErrorsFrame = {
+                Enable = false,
+                Hide = false,
+                Layout = {"CENTER", "CENTER", 0, 125.1},
+            }
+        },
+        ElvUI = {
+            LootRollFix = true,
+            InterruptOnCooldown = true,
+            Movers = {
+                ElvAB_1 = {
+                    Enable = false,
+                    Layout = {"CENTER", "ElvUIParent", "CENTER", 0, 0},
+                },
+                ElvAB_2 = {
+                    Enable = false,
+                    Layout = {"CENTER", "ElvUIParent", "CENTER", 0, 0},
+                },
+                ElvAB_3 = {
+                    Enable = false,
+                    Layout = {"CENTER", "ElvUIParent", "CENTER", 0, 0},
+                },
+                ElvAB_4 = {
+                    Enable = false,
+                    Layout = {"CENTER", "ElvUIParent", "CENTER", 0, 0},
+                },
+                ElvAB_5 = {
+                    Enable = false,
+                    Layout = {"CENTER", "ElvUIParent", "CENTER", 0, 0},
+                },
+                ElvAB_6 = {
+                    Enable = false,
+                    Layout = {"CENTER", "ElvUIParent", "CENTER", 0, 0},
+                },
+                ElvUF_PlayerMover = {
+                    Enable = false,
+                    Layout = {"CENTER", "UIParent", "CENTER", -425.1, -275.1},
+                },
+                ElvUF_TargetMover = {
+                    Enable = false,
+                    Layout = {"CENTER", "UIParent", "CENTER", 425.1, -275.1},
+                },
+                ElvUF_TargetCastbarMover = {
+                    Enable = false,
+                    Layout = {"TOPLEFT", "ElvUF_Target", "BOTTOMLEFT", -0.1, -1.1},
+                },
+                ElvUF_PetMover = {
+                    Enable = false,
+                    Layout = {"TOPLEFT", "ElvUF_Player", "BOTTOMLEFT", 0, -1.1},
+                },
+                ElvUF_FocusMover = {
+                    Enable = false,
+                    Layout = {"BOTTOMRIGHT", "UIParent", "TOPLEFT", -1.1, 1.1},
+                },
+            }
+        },
+        MinimapStats = {
+            Time = {
+                Enable = true,
+                UpdateInterval = 30,
+                Format = "24H",
+                Layout = { "BOTTOMLEFT", "BOTTOMLEFT", 1, 16 },
+                FontSize = 15,
+                Colour = {255/255, 255/255, 255/255},
+            },
+            SystemStats = {
+                Enable = true,
+                UpdateInterval = 3,
+                Format = "FPS_MS",
+                Seperator = "•",
+                Layout = { "BOTTOMLEFT", "BOTTOMLEFT", 3, 2 },
+                FontSize = 12,
+                Colour = {255/255, 255/255, 255/255},
+            },
+            Location = {
+                Enable = true,
+                Layout = { "TOPLEFT", "TOPLEFT", 3, -3 },
+                FontSize = 12,
+                ShowSubZone = true,
+            },
+            InstanceDifficulty = {
+                Enable = true,
+                Layout = { "TOPLEFT", "TOPLEFT", 3, -15 },
+                FontSize = 12,
+            }
+        },
+        Toggles = {
+            AutoDelete = true,
+            AutoSignUp = true,
+            HideBossBanner = true,
+            HideLossOfControl = true,
+            HideTalkingHead = true,
+            SkipCinematics = true,
+        }
+    }
+}
+
+function Private:GetDefaults()
+    return Defaults
+end

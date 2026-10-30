@@ -1,0 +1,37 @@
+## Title: |cFF1784d1ElvUI|r |cFF6080FFUnhalted|r
+## Group: ElvUI
+## Interface: 120105
+## Version: @project-version@
+## SavedVariables: UHDB
+## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo.png
+
+Core/Constants.lua
+Core/Core.lua
+Core/Defaults.lua
+Core/GUI.lua
+Core/SharedMedia.lua
+
+Modules/AddOnSkins/BugSack.lua
+
+Modules/Alerts/Combat.lua
+Modules/Alerts/PowerInfusion.lua
+Modules/Alerts/TimeSpiral.lua
+
+Modules/Blizzard/ObjectiveTrackerBanner.lua
+Modules/Blizzard/UIErrorsFrame.lua
+
+Modules/ElvUI/EnhancedMovers.lua
+Modules/ElvUI/InterruptOnCooldown.lua
+Modules/ElvUI/LootRollFix.lua
+
+Modules/MinimapStats/InstanceDifficulty.lua
+Modules/MinimapStats/Location.lua
+Modules/MinimapStats/SystemStats.lua
+Modules/MinimapStats/Time.lua
+
+Modules/Toggles/AutoDelete.lua
+Modules/Toggles/AutoSignUp.lua
+Modules/Toggles/BossBanner.lua
+Modules/Toggles/LossOfControl.lua
+Modules/Toggles/SkipCinematics.lua
+Modules/Toggles/TalkingHead.lua
