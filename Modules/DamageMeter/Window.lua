@@ -168,11 +168,16 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
 
     local Frame = CreateFrame("Frame", "DamageMeter_0" .. DamageMeterCount, UIParent, "BackdropTemplate")
     Frame.DamageMeterDB = DB
-    Frame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
-    Frame:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
-    Frame:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
     Frame:SetPoint(DB.Layout[1], _G["UIParent"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
     Frame:SetSize(DB.Size[1], DB.Size[2])
+
+    if DB.ShowBackdrop then
+        Frame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
+        Frame:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
+        Frame:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
+    else
+        Frame:SetBackdrop(nil)
+    end
 
     Frame.ScrollRange = 0
     Frame.ScrollRows = Window_OnMouseWheel
@@ -193,11 +198,16 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     Frame.ScrollFrame:SetScrollChild(Frame.ScrollChild)
 
     Frame.TitleBar = CreateFrame("Frame", nil, Frame, "BackdropTemplate")
-    Frame.TitleBar:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
-    Frame.TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
-    Frame.TitleBar:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
     Frame.TitleBar:SetPoint("BOTTOMLEFT", Frame, "TOPLEFT", TitleBarDB.XOffset, TitleBarDB.YOffset)
     Frame.TitleBar:SetSize(DB.Size[1], TitleBarDB.Height)
+
+    if TitleBarDB.ShowBackdrop then
+        Frame.TitleBar:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
+        Frame.TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
+        Frame.TitleBar:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
+    else
+        Frame.TitleBar:SetBackdrop(nil)
+    end
 
     Frame.TitleBar:EnableMouse(true)
     Frame.TitleBar:SetScript("OnEnter", TitleBar_OnEnter)
@@ -237,6 +247,14 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     DamageMeterFrame:SetPoint(DB.Layout[1], _G["UIParent"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
     DamageMeterFrame:SetSize(DB.Size[1], DB.Size[2])
 
+    if DB.ShowBackdrop then
+        DamageMeterFrame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
+        DamageMeterFrame:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
+        DamageMeterFrame:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
+    else
+        DamageMeterFrame:SetBackdrop(nil)
+    end
+
     local RowHeight = (DB.Size[2] - 2) / DB.Rows
     for i = 1, math.max(DB.Rows, #DamageMeterFrame.Rows) do
         local Row = DamageMeterFrame.Rows[i]
@@ -254,6 +272,14 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     DamageMeterFrame.TitleBar:ClearAllPoints()
     DamageMeterFrame.TitleBar:SetPoint("BOTTOMLEFT", DamageMeterFrame, "TOPLEFT", TitleBarDB.XOffset, TitleBarDB.YOffset)
     DamageMeterFrame.TitleBar:SetSize(DB.Size[1], TitleBarDB.Height)
+
+    if TitleBarDB.ShowBackdrop then
+        DamageMeterFrame.TitleBar:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
+        DamageMeterFrame.TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
+        DamageMeterFrame.TitleBar:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
+    else
+        DamageMeterFrame.TitleBar:SetBackdrop(nil)
+    end
 
     DamageMeterFrame.TitleBar.Text:ClearAllPoints()
     DamageMeterFrame.TitleBar.Text:SetPoint(TitleBarTextDB.Layout[1], DamageMeterFrame.TitleBar, TitleBarTextDB.Layout[2], TitleBarTextDB.Layout[3], TitleBarTextDB.Layout[4])

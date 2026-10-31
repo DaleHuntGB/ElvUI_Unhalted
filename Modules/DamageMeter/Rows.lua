@@ -6,7 +6,6 @@ local SingleMeterTypes = {
 	[Enum.DamageMeterType.Dispels] = true,
 	[Enum.DamageMeterType.DamageTaken] = true,
 	[Enum.DamageMeterType.AvoidableDamageTaken] = true,
-	[Enum.DamageMeterType.Deaths] = true,
 	[Enum.DamageMeterType.EnemyDamageTaken] = true,
 }
 
@@ -76,8 +75,6 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
         end
 
         Row.StatusBar:SetStatusBarColor(BarColour.r, BarColour.g, BarColour.b, BarColour.a or 1)
-        Row.StatusBar:SetMinMaxValues(0, MaxAmount)
-        Row.StatusBar:SetValue(CombatSource.totalAmount)
 
         Row.Name_Text:SetText(Private:StripRealm(CombatSource.name, CombatSource.classFilename))
 
@@ -87,12 +84,19 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
             Row.Name_Text:SetTextColor(TextDB.Name_Colour[1], TextDB.Name_Colour[2], TextDB.Name_Colour[3])
         end
 
-        if SingleMeterTypes[DB.MeterType] then
-            Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.totalAmount))
-        elseif PerSecondMeterTypes[DB.MeterType] then
-            Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.amountPerSecond))
+        if DB.MeterType == Enum.DamageMeterType.Deaths then
+            Private:UpdateDeathRow(Row)
         else
-            Row.Amount_Text:SetFormattedText(DB.Text.Amount_Format, Private:AbbreviateValue(CombatSource.totalAmount), Private:AbbreviateValue(CombatSource.amountPerSecond))
+            Row.StatusBar:SetMinMaxValues(0, MaxAmount)
+            Row.StatusBar:SetValue(CombatSource.totalAmount)
+
+            if SingleMeterTypes[DB.MeterType] then
+                Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.totalAmount))
+            elseif PerSecondMeterTypes[DB.MeterType] then
+                Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.amountPerSecond))
+            else
+                Row.Amount_Text:SetFormattedText(DB.Text.Amount_Format, Private:AbbreviateValue(CombatSource.totalAmount), Private:AbbreviateValue(CombatSource.amountPerSecond))
+            end
         end
 
         if TextDB.Amount_ColourByClass and ClassColour then

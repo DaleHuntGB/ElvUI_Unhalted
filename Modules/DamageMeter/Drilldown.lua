@@ -54,6 +54,10 @@ function Private:CreateDrilldown(Row)
 
             local DB = SourceRow.DamageMeterDB
 
+            if DB.MeterType == Enum.DamageMeterType.Deaths then
+                return Private:RefreshDeathRecap(Drilldown, SourceRow, CreateSpellRow)
+            end
+
             if issecretvalue(CombatSource.sourceGUID) or issecretvalue(CombatSource.sourceCreatureID) then Drilldown:Hide() return end
             if not CombatSource.sourceGUID and not CombatSource.sourceCreatureID then Drilldown:Hide() return end
             if not C_DamageMeter.IsDamageMeterAvailable() then Drilldown:Hide() return end
