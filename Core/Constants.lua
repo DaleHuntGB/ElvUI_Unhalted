@@ -133,3 +133,7 @@ function Private:AbbreviateValue(value)
     AbbreviationData[#AbbreviationData + 1] = {breakpoint = 1e-6, abbreviation = "", significandDivisor = 0.1, fractionDivisor = 10, abbreviationIsGlobal = false}
     return AbbreviateNumbers(value, {config = CreateAbbreviateConfig(AbbreviationData)})
 end
+
+function Private:IsAddOnLoaded(AddOnName)
+    return C_AddOns.IsAddOnLoaded(AddOnName)
+end

@@ -29,13 +29,6 @@ Modules/DamageMeter/Drilldown.lua
 Modules/DamageMeter/Rows.lua
 Modules/DamageMeter/Window.lua
 
-Modules/MythicPlusTimer/Core.lua
-Modules/MythicPlusTimer/Rows.lua
-Modules/MythicPlusTimer/Objectives.lua
-Modules/MythicPlusTimer/Timer.lua
-Modules/MythicPlusTimer/Tracker.lua
-Modules/MythicPlusTimer/Window.lua
-
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua
@@ -44,6 +37,18 @@ Modules/MinimapStats/InstanceDifficulty.lua
 Modules/MinimapStats/Location.lua
 Modules/MinimapStats/SystemStats.lua
 Modules/MinimapStats/Time.lua
+
+Modules/MythicPlusTimer/Core.lua
+Modules/MythicPlusTimer/Rows.lua
+Modules/MythicPlusTimer/Objectives.lua
+Modules/MythicPlusTimer/Timer.lua
+Modules/MythicPlusTimer/Tracker.lua
+Modules/MythicPlusTimer/Window.lua
+
+Modules/Profiles/BigWigs.lua
+Modules/Profiles/ElvUI.lua
+Modules/Profiles/Platynator.lua
+Modules/Profiles/SkironCooldownManager.lua
 
 Modules/Toggles/AutoDelete.lua
 Modules/Toggles/AutoSignUp.lua

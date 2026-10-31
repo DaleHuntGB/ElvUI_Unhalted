@@ -44,7 +44,9 @@
         "ScenarioObjectiveTracker",
         "ObjectiveTrackerManager",
         "COMPLETE",
-        "ObjectiveTrackerFrame"
+        "ObjectiveTrackerFrame",
+        "StaticPopup_Show",
+        "CLOSE"
     ],
     "Lua.type.weakUnionCheck": true
 }
