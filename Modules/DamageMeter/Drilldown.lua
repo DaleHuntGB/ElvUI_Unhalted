@@ -7,7 +7,7 @@ local TEXT_PADDING = 3
 function Private:CreateDrilldown(Row)
     if not Row.CombatSource then return end
 
-    local DamageMeterFrame = Row:GetParent()
+    local DamageMeterFrame = Row.DamageMeterFrame
     local Frame = DamageMeterFrame.Drilldown
 
     if not Frame then

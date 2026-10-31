@@ -18,6 +18,10 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
         Row.Icon:SetSize(Height, Height)
     end
 
+    local function Row_OnMouseWheel(_, Delta)
+        DamageMeterFrame:ScrollRows(Delta)
+    end
+
     local function Row_OnMouseDown(_, Button)
         if IsShiftKeyDown() and Button == "LeftButton" then
             -- Implement
@@ -85,13 +89,15 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
 
     local RowHeight = (DB.Size[2] - 2) / DB.Rows
 
-    local Row = CreateFrame("Frame", nil, DamageMeterFrame, "BackdropTemplate")
+    local Row = CreateFrame("Frame", nil, DamageMeterFrame.ScrollChild, "BackdropTemplate")
     Row.DamageMeterDB = DB
+    Row.DamageMeterFrame = DamageMeterFrame
     Row:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = nil, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
     Row:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
     Row:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
-    Row:SetPoint("TOPLEFT", DamageMeterFrame, "TOPLEFT", 1, -1 - ((RowCount - 1) * RowHeight))
-    Row:SetPoint("BOTTOMRIGHT", DamageMeterFrame, "BOTTOMRIGHT", -1, 1 + ((DB.Rows - RowCount) * RowHeight))
+    Row:SetPoint("TOPLEFT", DamageMeterFrame.ScrollChild, "TOPLEFT", 0, -((RowCount - 1) * RowHeight))
+    Row:SetPoint("TOPRIGHT", DamageMeterFrame.ScrollChild, "TOPRIGHT", 0, -((RowCount - 1) * RowHeight))
+    Row:SetHeight(RowHeight)
 
     Row.Icon = Row:CreateTexture(nil, "OVERLAY")
     Row.Icon:SetPoint("LEFT", Row, "LEFT", 0, 0)
@@ -125,10 +131,12 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
     Row.Amount_Text:SetJustifyH("RIGHT")
 
     Row:EnableMouse(true)
+    Row:EnableMouseWheel(true)
     Row:SetScript("OnEnter", Row_OnEnter)
     Row:SetScript("OnLeave", Row_OnLeave)
     Row:SetScript("OnMouseDown", Row_OnMouseDown)
     Row:SetScript("OnSizeChanged", Row_OnSizeChanged)
+    Row:SetScript("OnMouseWheel", Row_OnMouseWheel)
 
     Row.Clear = Row_Clear
     Row.Update = Row_Update

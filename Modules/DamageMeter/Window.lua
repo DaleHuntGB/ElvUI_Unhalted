@@ -6,20 +6,44 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     local TitleBarDB = DB.TitleBar
     local TitleBarTextDB = TitleBarDB.Text
 
-    local function Window_RefreshData(Frame)
+    local function Window_OnMouseWheel(Frame, Delta)
+        local CurrentOffset = Frame.ScrollFrame:GetVerticalScroll()
+        local RowHeight = (DB.Size[2] - 2) / DB.Rows
+        local Offset = math.max(0, math.min(Frame.ScrollRange, CurrentOffset - Delta * RowHeight))
+        if Offset == CurrentOffset then return end
+        if Frame.Drilldown then Frame.Drilldown:Hide() end
+        Frame.ScrollFrame:SetVerticalScroll(Offset)
+    end
+
+    local function Window_RefreshData(Frame, ResetScroll)
         local CombatSession;
         if C_DamageMeter.IsDamageMeterAvailable() then
             CombatSession = C_DamageMeter.GetCombatSessionFromType(DB.SessionType, DB.MeterType)
         end
 
         local CombatSources = CombatSession and CombatSession.combatSources
-        for i, Row in ipairs(Frame.Rows) do
-            if i <= DB.Rows and CombatSources then
-                Row:Update(CombatSources[i], CombatSession.maxAmount)
-            else
-                Row:Clear()
-            end
+        local SourceCount = CombatSources and #CombatSources or 0
+        local Height = DB.Size[2] - 2
+        local RowHeight = Height / DB.Rows
+        Frame.ScrollRange = math.max(0, SourceCount * RowHeight - Height)
+        Frame.ScrollChild:SetSize(DB.Size[1] - 2, Height + Frame.ScrollRange)
+        if ResetScroll then
+            if Frame.Drilldown then Frame.Drilldown:Hide() end
+            Frame.ScrollFrame:SetVerticalScroll(0)
         end
+
+        for i = 1, SourceCount do
+            local Row = Frame.Rows[i]
+            if not Row then
+                Row = Private:CreateRow(Frame, i, DB)
+                Frame.Rows[i] = Row
+            end
+            Row:Update(CombatSources[i], CombatSession.maxAmount)
+        end
+        for i = SourceCount + 1, #Frame.Rows do
+            Frame.Rows[i]:Clear()
+        end
+        Frame:ScrollRows(0)
     end
 
     local function Window_OnEvent(Frame, Event, MeterType, SessionID)
@@ -29,10 +53,10 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             end
         elseif Event == "DAMAGE_METER_CURRENT_SESSION_UPDATED" then
             if DB.SessionType == Enum.DamageMeterSessionType.Current then
-                Frame:RefreshData()
+                Frame:RefreshData(true)
             end
         elseif Event == "DAMAGE_METER_RESET" then
-            Frame:RefreshData()
+            Frame:RefreshData(true)
         elseif Event == "PLAYER_REGEN_ENABLED" then
             Frame:RefreshData()
         end
@@ -68,6 +92,20 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     Frame:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
     Frame:SetPoint(DB.Layout[1], _G["UIParent"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
     Frame:SetSize(DB.Size[1], DB.Size[2])
+
+    Frame.ScrollRange = 0
+    Frame.ScrollRows = Window_OnMouseWheel
+    Frame:EnableMouseWheel(true)
+    Frame:SetScript("OnMouseWheel", Window_OnMouseWheel)
+
+    Frame.ScrollFrame = CreateFrame("ScrollFrame", nil, Frame)
+    Frame.ScrollFrame:SetPoint("TOPLEFT", Frame, "TOPLEFT", 1, -1)
+    Frame.ScrollFrame:SetPoint("BOTTOMRIGHT", Frame, "BOTTOMRIGHT", -1, 1)
+    Frame.ScrollFrame:EnableMouseWheel(true)
+    Frame.ScrollFrame:SetScript("OnMouseWheel", function(_, Delta) Frame:ScrollRows(Delta) end)
+    Frame.ScrollChild = CreateFrame("Frame", nil, Frame.ScrollFrame)
+    Frame.ScrollChild:SetSize(DB.Size[1] - 2, DB.Size[2] - 2)
+    Frame.ScrollFrame:SetScrollChild(Frame.ScrollChild)
 
     Frame.TitleBar = CreateFrame("Frame", nil, Frame, "BackdropTemplate")
     Frame.TitleBar:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
@@ -115,20 +153,17 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     DamageMeterFrame:SetSize(DB.Size[1], DB.Size[2])
 
     local RowHeight = (DB.Size[2] - 2) / DB.Rows
-    for i = 1, DB.Rows do
+    for i = 1, math.max(DB.Rows, #DamageMeterFrame.Rows) do
         local Row = DamageMeterFrame.Rows[i]
         if not Row then
             Row = Private:CreateRow(DamageMeterFrame, i, DB)
             DamageMeterFrame.Rows[i] = Row
         end
         Row:ClearAllPoints()
-        Row:SetPoint("TOPLEFT", DamageMeterFrame, "TOPLEFT", 1, -1 - ((i - 1) * RowHeight))
-        Row:SetPoint("BOTTOMRIGHT", DamageMeterFrame, "BOTTOMRIGHT", -1, 1 + ((DB.Rows - i) * RowHeight))
+        Row:SetPoint("TOPLEFT", DamageMeterFrame.ScrollChild, "TOPLEFT", 0, -((i - 1) * RowHeight))
+        Row:SetPoint("TOPRIGHT", DamageMeterFrame.ScrollChild, "TOPRIGHT", 0, -((i - 1) * RowHeight))
+        Row:SetHeight(RowHeight)
         Row:Show()
-    end
-
-    for i = DB.Rows + 1, #DamageMeterFrame.Rows do
-        DamageMeterFrame.Rows[i]:Hide()
     end
 
     DamageMeterFrame.TitleBar:ClearAllPoints()
