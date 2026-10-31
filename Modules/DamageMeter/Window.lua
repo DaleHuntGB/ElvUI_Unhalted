@@ -110,6 +110,9 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             Frame.SessionID = nil
             Frame.SessionName = nil
             Frame:RefreshData(true)
+        elseif Event == "CHALLENGE_MODE_START" then
+            C_DamageMeter.ResetAllCombatSessions()
+            Frame:RefreshData(true)
         elseif Event == "PLAYER_REGEN_ENABLED" then
             Frame:RefreshData()
         end
@@ -121,6 +124,7 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             Frame:RegisterEvent("DAMAGE_METER_CURRENT_SESSION_UPDATED")
             Frame:RegisterEvent("DAMAGE_METER_RESET")
             Frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            Frame:RegisterEvent("CHALLENGE_MODE_START")
             if Frame:IsShown() then
                 Frame:RefreshData()
             else
