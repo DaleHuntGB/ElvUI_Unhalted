@@ -37,7 +37,9 @@
         "ObjectiveTrackerTopBannerFrame",
         "MinimapCluster",
         "Background",
-        "RAID_CLASS_COLORS"
+        "RAID_CLASS_COLORS",
+        "ACTION_SWING",
+        "UNKNOWN"
     ],
     "Lua.type.weakUnionCheck": true
 }

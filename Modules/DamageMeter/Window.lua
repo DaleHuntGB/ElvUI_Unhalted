@@ -33,6 +33,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             end
         elseif Event == "DAMAGE_METER_RESET" then
             Frame:RefreshData()
+        elseif Event == "PLAYER_REGEN_ENABLED" then
+            Frame:RefreshData()
         end
     end
 
@@ -97,6 +99,7 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     Frame:RegisterEvent("DAMAGE_METER_COMBAT_SESSION_UPDATED")
     Frame:RegisterEvent("DAMAGE_METER_CURRENT_SESSION_UPDATED")
     Frame:RegisterEvent("DAMAGE_METER_RESET")
+    Frame:RegisterEvent("PLAYER_REGEN_ENABLED")
     Frame:RefreshData()
 
     return Frame

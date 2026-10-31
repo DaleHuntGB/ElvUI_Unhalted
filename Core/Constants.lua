@@ -124,3 +124,9 @@ function Private:StripRealm(Name, ClassFilename)
     if ClassFilename == "" then return Name end
     return Ambiguate(Name, "short")
 end
+
+function Private:AbbreviateValue(value)
+    local AbbreviationData = C_StringUtil.GetDefaultAbbreviationBreakpoints()
+    AbbreviationData[#AbbreviationData + 1] = {breakpoint = 1e-6, abbreviation = "", significandDivisor = 0.1, fractionDivisor = 10, abbreviationIsGlobal = false}
+    return AbbreviateNumbers(value, {config = CreateAbbreviateConfig(AbbreviationData)})
+end
