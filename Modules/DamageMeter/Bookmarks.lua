@@ -39,7 +39,11 @@ function Private:CreateBookmarks(Frame)
             if Button == "LeftButton" then
                 DamageMeterFrame:HideBookmarks(Bookmark.MeterType)
             elseif Button == "RightButton" then
-                DamageMeterFrame:HideBookmarks()
+                if IsShiftKeyDown() then
+                    Private:ShowCombatSessions(DamageMeterFrame)
+                else
+                    DamageMeterFrame:HideBookmarks()
+                end
             end
         end
 

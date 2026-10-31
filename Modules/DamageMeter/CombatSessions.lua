@@ -38,7 +38,11 @@ function Private:ShowCombatSessions(Frame)
             if Button == "LeftButton" then
                 DamageMeterFrame:HideCombatSessions(Entry)
             elseif Button == "RightButton" then
-                DamageMeterFrame:HideCombatSessions()
+                if IsShiftKeyDown() then
+                    DamageMeterFrame:HideCombatSessions()
+                else
+                    Private:CreateBookmarks(DamageMeterFrame)
+                end
             end
         end
 

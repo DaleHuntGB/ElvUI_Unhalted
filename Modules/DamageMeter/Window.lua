@@ -7,7 +7,13 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     local TitleBarTextDB = TitleBarDB.Text
 
     local function Window_OnMouseDown(Frame, Button)
-        if Button == "RightButton" then Private:CreateBookmarks(Frame) end
+        if Button == "RightButton" then
+            if IsShiftKeyDown() then
+                Private:ShowCombatSessions(Frame)
+            else
+                Private:CreateBookmarks(Frame)
+            end
+        end
     end
 
     local function Window_OnMouseWheel(Frame, Delta)
@@ -113,7 +119,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
         GameTooltip:SetOwner(TitleBar, "ANCHOR_NONE")
         GameTooltip:SetPoint("BOTTOMRIGHT", TitleBar, "TOPRIGHT", 0, 1)
         GameTooltip:AddDoubleLine("|cFFFFCC00Left Click|r", "Swap Sessions - Current or Overall", 1, 1, 1, 1, 1, 1)
-        GameTooltip:AddDoubleLine("|cFFFFCC00Right Click|r", "Combat Sessions", 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine("|cFFFFCC00Right Click|r", "Meter Types", 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine("|cFFFFCC00Shift + Right Click|r", "Combat Sessions", 1, 1, 1, 1, 1, 1)
         GameTooltip:AddDoubleLine("|cFFFFCC00Middle Click|r", "Reset Damage Meters", 1, 1, 1, 1, 1, 1)
         GameTooltip:Show()
     end
@@ -147,10 +154,9 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
                 Window:RefreshData(true)
             end
         elseif IsShiftKeyDown() and Button == "RightButton" then
-            -- Implement
+            Window_OnMouseDown(TitleBar:GetParent(), Button)
         elseif not IsShiftKeyDown() and Button == "RightButton" then
-            local Window = TitleBar:GetParent()
-            Private:ShowCombatSessions(Window)
+            Window_OnMouseDown(TitleBar:GetParent(), Button)
         elseif IsShiftKeyDown() and Button == "MiddleButton" then
             -- Implement
         elseif not IsShiftKeyDown() and Button == "MiddleButton" then
@@ -219,6 +225,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     Private.E:SetFont(Frame.TitleBar.Text, Private:FetchFont(Private.E.db.general.font), TitleBarTextDB.FontSize, Private.E.db.general.fontStyle)
     Frame.TitleBar.Text:SetText(Private.MeterTypes[DB.MeterType])
     Frame.TitleBar.Text:SetTextColor(TitleBarTextDB.Colour[1], TitleBarTextDB.Colour[2], TitleBarTextDB.Colour[3])
+    Frame.TitleBar:SetShown(TitleBarDB.Enable)
+    Frame.TitleBar.Text:SetShown(TitleBarTextDB.Enable)
 
     Frame.Rows = {}
 
@@ -240,6 +248,7 @@ end
 
 function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     local DB = DamageMeterDB
+    local TextDB = DB.Text
     local TitleBarDB = DB.TitleBar
     local TitleBarTextDB = TitleBarDB.Text
 
@@ -256,6 +265,8 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     end
 
     local RowHeight = (DB.Size[2] - 2) / DB.Rows
+    local Texture = Private.LSM:Fetch("statusbar", DB.Texture)
+    local Font = Private:FetchFont(Private.E.db.general.font)
     for i = 1, math.max(DB.Rows, #DamageMeterFrame.Rows) do
         local Row = DamageMeterFrame.Rows[i]
         if not Row then
@@ -266,6 +277,14 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
         Row:SetPoint("TOPLEFT", DamageMeterFrame.ScrollChild, "TOPLEFT", 0, -((i - 1) * RowHeight))
         Row:SetPoint("TOPRIGHT", DamageMeterFrame.ScrollChild, "TOPRIGHT", 0, -((i - 1) * RowHeight))
         Row:SetHeight(RowHeight)
+
+        Row.StatusBar:SetStatusBarTexture(Texture)
+        Private.E:SetFont(Row.Name_Text, Font, TextDB.Name_FontSize, Private.E.db.general.fontStyle)
+        Row.Name_Text:ClearAllPoints()
+        Row.Name_Text:SetPoint("LEFT", Row.StatusBar, "LEFT", TextDB.Name_XOffset, TextDB.Name_YOffset)
+        Private.E:SetFont(Row.Amount_Text, Font, TextDB.Amount_FontSize, Private.E.db.general.fontStyle)
+        Row.Amount_Text:ClearAllPoints()
+        Row.Amount_Text:SetPoint("RIGHT", Row.StatusBar, "RIGHT", TextDB.Amount_XOffset, TextDB.Amount_YOffset)
         Row:Show()
     end
 
@@ -286,7 +305,10 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     Private.E:SetFont(DamageMeterFrame.TitleBar.Text, Private:FetchFont(Private.E.db.general.font), TitleBarTextDB.FontSize, Private.E.db.general.fontStyle)
     DamageMeterFrame.TitleBar.Text:SetText(Private.MeterTypes[DB.MeterType])
     DamageMeterFrame.TitleBar.Text:SetTextColor(TitleBarTextDB.Colour[1], TitleBarTextDB.Colour[2], TitleBarTextDB.Colour[3])
+    DamageMeterFrame.TitleBar:SetShown(TitleBarDB.Enable)
+    DamageMeterFrame.TitleBar.Text:SetShown(TitleBarTextDB.Enable)
 
+    if DamageMeterFrame.Drilldown then DamageMeterFrame.Drilldown:UpdateSettings(DB) end
     DamageMeterFrame:RefreshData()
 
     return DamageMeterFrame
