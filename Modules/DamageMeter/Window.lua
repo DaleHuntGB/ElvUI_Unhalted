@@ -25,7 +25,9 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             Frame:RefreshBookmarks()
             return
         end
+
         local CombatSession;
+
         if C_DamageMeter.IsDamageMeterAvailable() then
             CombatSession = C_DamageMeter.GetCombatSessionFromType(DB.SessionType, DB.MeterType)
         end
@@ -40,6 +42,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             if Frame.Drilldown then Frame.Drilldown:Hide() end
             Frame.ScrollFrame:SetVerticalScroll(0)
         end
+
+        Frame.TitleBar.Text:SetText(Private.MeterTypes[DB.MeterType] .. (DB.SessionType == Enum.DamageMeterSessionType.Current and "" or " - Overall"))
 
         for i = 1, SourceCount do
             local Row = Frame.Rows[i]
@@ -73,25 +77,43 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
 
     local function TitleBar_OnEnter(TitleBar)
         TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.g * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.b * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.a)
+        GameTooltip:SetOwner(TitleBar, "ANCHOR_NONE")
+        GameTooltip:SetPoint("BOTTOMRIGHT", TitleBar, "TOPRIGHT", 0, 1)
+        GameTooltip:AddDoubleLine("|cFFFFCC00Left Click|r", "Swap Sessions - Current or Overall", 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine("|cFFFFCC00Right Click|r", "Combat Sessions", 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine("|cFFFFCC00Middle Click|r", "Reset Damage Meters", 1, 1, 1, 1, 1, 1)
+        GameTooltip:Show()
     end
 
     local function TitleBar_OnLeave(TitleBar)
         TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
+        GameTooltip:Hide()
     end
 
-    local function TitleBar_OnMouseDown(_, Button)
+    local function TitleBar_OnMouseDown(TitleBar, Button)
         if IsShiftKeyDown() and Button == "LeftButton" then
             -- Implement
         elseif not IsShiftKeyDown() and Button == "LeftButton" then
-            -- Implement
+            local Window = TitleBar:GetParent()
+            if DB.SessionType == Enum.DamageMeterSessionType.Current then
+                DB.SessionType = Enum.DamageMeterSessionType.Overall
+            else
+                DB.SessionType = Enum.DamageMeterSessionType.Current
+            end
+            Window:RefreshData(true)
         elseif IsShiftKeyDown() and Button == "RightButton" then
             -- Implement
         elseif not IsShiftKeyDown() and Button == "RightButton" then
-            -- Implement
+            local Window = TitleBar:GetParent()
+            Private:ShowCombatSessions(Window)
         elseif IsShiftKeyDown() and Button == "MiddleButton" then
             -- Implement
         elseif not IsShiftKeyDown() and Button == "MiddleButton" then
-            -- Implement
+            local Window = TitleBar:GetParent()
+            C_DamageMeter.ResetAllCombatSessions()
+            if Window.ShowingBookmarks then
+                Window:HideBookmarks()
+            end
         end
     end
 

@@ -63,7 +63,7 @@ function Private:CreateBookmarks(Frame)
             local RowHeight = Height / DB.Rows
             Window.ScrollRange = math.max(0, #MeterTypes * RowHeight - Height)
             Window.ScrollChild:SetSize(DB.Size[1] - 2, Height + Window.ScrollRange)
-            Window.TitleBar.Text:SetText("Bookmarks")
+            Window.TitleBar.Text:SetText("Meter Types")
 
             for i, MeterType in ipairs(MeterTypes) do
                 local Bookmark = Window.Bookmarks[i]
