@@ -20,6 +20,8 @@ Modules/Alerts/TimeSpiral.lua
 Modules/Blizzard/ObjectiveTrackerBanner.lua
 Modules/Blizzard/UIErrorsFrame.lua
 
+Modules/DamageMeter/Core.lua
+
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua

@@ -164,7 +164,9 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.LayoutGroup.args.YOffset = ACH:Range("Y Offset", nil, 4, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Layout[4] end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Layout[4] = value Private:UpdateUIErrorsFrame() end, function() return not Private.DB.global.Blizzard.UIErrorsFrame.Enable end)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.LayoutGroup.args.YOffset.relWidth = 0.5
 
-    Private.GUI.args.ElvUI = ACH:Group("ElvUI", nil, 4, "tab")
+    Private.GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 4, "tab")
+
+    Private.GUI.args.ElvUI = ACH:Group("ElvUI", nil, 5, "tab")
     Private.GUI.args.ElvUI.args.EnhancedAnchors = ACH:Group("Enhanced Anchors", nil, 1)
     Private.GUI.args.ElvUI.args.EnhancedAnchors.args.ActionBars = ACH:Group("Action Bars", nil, 1, "tab")
 
@@ -231,7 +233,7 @@ function Private:SetupGUI()
     Private.GUI.args.ElvUI.args.Miscellaneous.args.LootRollFix = ACH:Toggle( "Fix Loot Roll Alpha", "Correctly applies the alpha to the |cFFFFCC00loot roll|r windows.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.LootRollFix end, function(_, value) Private.DB.global.ElvUI.LootRollFix = value Private.E:StaticPopup_Show("CONFIG_RL") end )
     Private.GUI.args.ElvUI.args.Miscellaneous.args.LootRollFix.descStyle = "inline"
 
-    Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 5, "tab")
+    Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 6, "tab")
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
 
     Private.GUI.args.MinimapStats.args.Time.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Enable end, function(_, value) Private.DB.global.MinimapStats.Time.Enable = value Private:UpdateTime() end)
@@ -326,7 +328,7 @@ function Private:SetupGUI()
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.MinimapStats.InstanceDifficulty.FontSize end, function(_, value) Private.DB.global.MinimapStats.InstanceDifficulty.FontSize = value Private:UpdateInstanceDifficulty() end, function() return not Private.DB.global.MinimapStats.InstanceDifficulty.Enable end)
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize.relWidth = 0.33
 
-    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 6, "tab")
+    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 7, "tab")
 
     local Toggles = {
         [1] = { name = "Auto Delete", desc = "Auto populates |cFFFFCC00delete|r where required.", value = Private.DB.global.Toggles.AutoDelete, requiresReload = false },

@@ -18,6 +18,8 @@ function AddOn:OnEnable()
     -- [[ Blizzard ]]
     Private:SetupObjectiveTrackerBanner()
     Private:SetupUIErrorsFrame()
+    -- [[ Damage Meter ]]
+    Private:SetupDamageMeters()
     -- [[ ElvUI]]
     Private:SetupEnhancedMovers()
     Private:SetupInterruptOnCooldown()

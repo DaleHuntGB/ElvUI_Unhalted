@@ -7,6 +7,9 @@ Private.LibDBIcon = LibStub("LibDBIcon-1.0", true)
 
 Private.E = unpack(ElvUI)
 Private.E.AccentColour = CreateColor(Private.E.db.general.valuecolor.r, Private.E.db.general.valuecolor.g, Private.E.db.general.valuecolor.b, Private.E.db.general.valuecolor.a):GenerateHexColor()
+Private.E.BackgroundColour = Private.E.db.general.backdropcolor
+Private.E.BackgroundFadeColour = Private.E.db.general.backdropfadecolor
+Private.E.bordercolour = Private.E.db.general.bordercolor
 
 Private.AnchorPoints = {
     ["TOPLEFT"] = "TOPLEFT",
@@ -34,6 +37,30 @@ Private.InterruptIDs = {
     SHAMAN          = {57994},
     WARLOCK         = {19647, 132409, 89766, 119910, 1276467},
     WARRIOR         = {6552},
+}
+
+Private.MeterTypes = {
+    [Enum.DamageMeterType.DamageDone] = DAMAGE_METER_TYPE_DAMAGE_DONE,
+    [Enum.DamageMeterType.Dps] = DAMAGE_METER_TYPE_DPS,
+    [Enum.DamageMeterType.HealingDone] = DAMAGE_METER_TYPE_HEALING_DONE,
+    [Enum.DamageMeterType.Hps] = DAMAGE_METER_TYPE_HPS,
+    [Enum.DamageMeterType.Absorbs] = DAMAGE_METER_TYPE_ABSORBS,
+    [Enum.DamageMeterType.Interrupts] = DAMAGE_METER_TYPE_INTERRUPTS,
+    [Enum.DamageMeterType.Dispels] = DAMAGE_METER_TYPE_DISPELS,
+    [Enum.DamageMeterType.DamageTaken] = DAMAGE_METER_TYPE_DAMAGE_TAKEN,
+    [Enum.DamageMeterType.AvoidableDamageTaken] = DAMAGE_METER_TYPE_AVOIDABLE_DAMAGE_TAKEN,
+    [Enum.DamageMeterType.Deaths] = DAMAGE_METER_TYPE_DEATHS,
+    [Enum.DamageMeterType.EnemyDamageTaken] = DAMAGE_METER_TYPE_ENEMY_DAMAGE_TAKEN,
+}
+
+Private.MeterAmountFormats = {
+    ["%s • %s"] = "999K • 99.9K",
+    ["%s - %s"] = "999K - 99.9K",
+    ["%s » %s"] = "999K » 99.9K",
+    ["%s | %s"] = "999K | 99.9K",
+    ["%s [%s]"] = "999K [99.9K]",
+    ["%s (%s)"] = "999K (99.9K)",
+    ["%s <%s>"] = "999K <99.9K>",
 }
 
 function Private:FetchFont(Font)
@@ -91,4 +118,9 @@ function Private:SetVisibilityConditions(actionBar)
     DB.visibility = "[target=vehicle,exists]show;[overridebar]show;[possessbar]show;[bonusbar:5]show;hide"
 
     AB:UpdateButtonSettings(actionBar)
+end
+
+function Private:StripRealm(Name, ClassFilename)
+    if ClassFilename == "" then return Name end
+    return Ambiguate(Name, "short")
 end

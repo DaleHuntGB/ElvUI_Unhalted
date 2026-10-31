@@ -35,6 +35,7 @@
         "Add",
         "UIErrorsFrame",
         "ObjectiveTrackerTopBannerFrame",
-        "MinimapCluster"
+        "MinimapCluster",
+        "Background"
     ]
 }
