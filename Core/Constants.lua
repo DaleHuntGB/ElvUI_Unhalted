@@ -88,6 +88,7 @@ function Private:UpdateMover(isEnabled, moverName, moverLayout)
     end
     Private.E:LoadMovers()
 end
+
 function Private:FetchReactionColour()
     local PVPZone = C_PvP.GetZonePVPInfo()
     if PVPZone == "arena" then
