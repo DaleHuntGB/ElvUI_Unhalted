@@ -83,7 +83,7 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.Combat.args.FontGroup.args.ExitCombatColour = ACH:Color("Exiting Combat: Colour", nil, 9, false, "relative", function() return unpack(Private.DB.global.Alerts.Combat.Text.Exit.Colour) end, function(_, r, g, b) Private.DB.global.Alerts.Combat.Text.Exit.Colour = {r, g, b} Private:UpdateCombatAlert() end, function() return not Private.DB.global.Alerts.Combat.Enable end)
     Private.GUI.args.Alerts.args.Combat.args.FontGroup.args.ExitCombatColour.relWidth = 0.5
 
-    Private.GUI.args.Alerts.args.PowerInfusion = ACH:Group("Power Infusion", nil, 2, "tab")
+    Private.GUI.args.Alerts.args.PowerInfusion = ACH:Group("Power Infusion", nil, 2, "tab", nil, nil, nil, function() return Private.isForever end)
 
     Private.GUI.args.Alerts.args.PowerInfusion.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.PowerInfusion.Enable end, function(_, value) Private.DB.global.Alerts.PowerInfusion.Enable = value Private:UpdatePowerInfusionAlert() end)
     Private.GUI.args.Alerts.args.PowerInfusion.args.Enable.descStyle = "inline"
@@ -111,7 +111,7 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.PowerInfusion.args.SoundGroup.args.SoundChannel = ACH:Select("Sound Channel", nil, 2, {["Master"] = "Master", ["SFX"] = "SFX", ["Music"] = "Music", ["Ambience"] = "Ambience"}, nil, "relative", function() return Private.DB.global.Alerts.PowerInfusion.SoundChannel end, function(_, value) Private.DB.global.Alerts.PowerInfusion.SoundChannel = value Private:UpdatePowerInfusionAlert() end, function() return not Private.DB.global.Alerts.PowerInfusion.Enable end)
     Private.GUI.args.Alerts.args.PowerInfusion.args.SoundGroup.args.SoundChannel.relWidth = 0.5
 
-    Private.GUI.args.Alerts.args.TimeSpiral = ACH:Group("Time Spiral", nil, 3, "tab")
+    Private.GUI.args.Alerts.args.TimeSpiral = ACH:Group("Time Spiral", nil, 3, "tab", nil, nil, nil, function() return Private.isForever end)
 
     Private.GUI.args.Alerts.args.TimeSpiral.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.TimeSpiral.Enable end, function(_, value) Private.DB.global.Alerts.TimeSpiral.Enable = value Private:UpdateTimeSpiralAlert() end)
     Private.GUI.args.Alerts.args.TimeSpiral.args.Enable.descStyle = "inline"
@@ -413,7 +413,7 @@ function Private:SetupGUI()
     end
 
     Private.GUI.args.ElvUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 2)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.InterruptOnCooldown = ACH:Toggle( "Interrupt on Cooldown", "Colours the castbar |cFF808080grey|r when your |cFFFFCC00interrupt|r is on cooldown.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.InterruptOnCooldown end, function(_, value) Private.DB.global.ElvUI.InterruptOnCooldown = value Private.E:StaticPopup_Show("CONFIG_RL") end )
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.InterruptOnCooldown = ACH:Toggle("Interrupt on Cooldown", "Colours the castbar |cFF808080grey|r when your |cFFFFCC00interrupt|r is on cooldown.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.InterruptOnCooldown end, function(_, value) Private.DB.global.ElvUI.InterruptOnCooldown = value Private.E:StaticPopup_Show("CONFIG_RL") end, nil, function() return Private.isForever end)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.InterruptOnCooldown.descStyle = "inline"
     Private.GUI.args.ElvUI.args.Miscellaneous.args.LootRollFix = ACH:Toggle( "Fix Loot Roll Alpha", "Correctly applies the alpha to the |cFFFFCC00loot roll|r windows.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.LootRollFix end, function(_, value) Private.DB.global.ElvUI.LootRollFix = value Private.E:StaticPopup_Show("CONFIG_RL") end )
     Private.GUI.args.ElvUI.args.Miscellaneous.args.LootRollFix.descStyle = "inline"
