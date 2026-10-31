@@ -157,6 +157,42 @@ local Defaults = {
                     Amount_Colour = {255/255, 255/255, 255/255},
                     Amount_Format = "%s • %s",
                 },
+            },
+            [4] = {
+                Enable = true,
+                ShowBackdrop = true,
+                Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -222.1, 180.1},
+                Size = {220, 92},
+                MeterType = Enum.DamageMeterType.Hps,
+                SessionType = Enum.DamageMeterSessionType.Current,
+                Rows = 3,
+                Texture = "Blizzard Raid Bar",
+                TitleBar = {
+                    Enable = true,
+                    ShowBackdrop = true,
+                    Height = 24,
+                    XOffset = 0,
+                    YOffset = 1,
+                    Text = {
+                        Enable = true,
+                        Layout = {"LEFT", "LEFT", 3, 0},
+                        FontSize = 12,
+                        Colour = {255/255, 255/255, 255/255}
+                    }
+                },
+                Text = {
+                    Name_FontSize = 12,
+                    Name_XOffset = 3,
+                    Name_YOffset = 0,
+                    Name_ColourByClass = false,
+                    Name_Colour = {255/255, 255/255, 255/255},
+                    Amount_FontSize = 12,
+                    Amount_XOffset = -3,
+                    Amount_YOffset = 0,
+                    Amount_ColourByClass = false,
+                    Amount_Colour = {255/255, 255/255, 255/255},
+                    Amount_Format = "%s • %s",
+                },
             }
         },
         ElvUI = {
