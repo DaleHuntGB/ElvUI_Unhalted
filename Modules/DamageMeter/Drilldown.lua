@@ -65,8 +65,10 @@ function Private:CreateDrilldown(Row)
             local ClassColour = RAID_CLASS_COLORS[CombatSource.classFilename]
             local BarColour = ClassColour or Private.E.db.general.valuecolor
             local Width = 0
+            local RowCount = math.min(#CombatSpells, 10)
 
-            for i, CombatSpell in ipairs(CombatSpells) do
+            for i = 1, RowCount do
+                local CombatSpell = CombatSpells[i]
                 local Entry = Drilldown.Rows[i]
                 if not Entry then
                     Entry = CreateSpellRow(Drilldown, DB)
@@ -74,7 +76,7 @@ function Private:CreateDrilldown(Row)
                 end
                 Entry:ClearAllPoints()
                 Entry:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", INSET, -INSET - ((i - 1) * (BAR_HEIGHT + SPACING)))
-                Entry:SetPoint("BOTTOMRIGHT", Drilldown, "BOTTOMRIGHT", -INSET, INSET + ((#CombatSpells - i) * (BAR_HEIGHT + SPACING)))
+                Entry:SetPoint("BOTTOMRIGHT", Drilldown, "BOTTOMRIGHT", -INSET, INSET + ((RowCount - i) * (BAR_HEIGHT + SPACING)))
                 Entry.StatusBar:SetMinMaxValues(0, SessionSource.maxAmount)
                 Entry.StatusBar:SetValue(CombatSpell.totalAmount)
                 Entry.StatusBar:SetStatusBarColor(BarColour.r, BarColour.g, BarColour.b, BarColour.a or 1)
@@ -101,11 +103,11 @@ function Private:CreateDrilldown(Row)
                 end
                 Entry:Show()
             end
-            for i = #CombatSpells + 1, #Drilldown.Rows do
+            for i = RowCount + 1, #Drilldown.Rows do
                 Drilldown.Rows[i]:Hide()
             end
 
-            Drilldown:SetSize(DB.Size[1], INSET * 2 + #CombatSpells * BAR_HEIGHT + (#CombatSpells - 1) * SPACING)
+            Drilldown:SetSize(DB.Size[1], INSET * 2 + RowCount * BAR_HEIGHT + (RowCount - 1) * SPACING)
 
             return true
         end
