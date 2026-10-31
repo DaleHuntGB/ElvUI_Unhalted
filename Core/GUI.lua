@@ -170,7 +170,7 @@ function Private:SetupGUI()
         Private.GUI.args.DamageMeter.args["Window" .. i] = ACH:Group("Window "..i, nil, i, "tab")
         Private.GUI.args.DamageMeter.args["Window" .. i].args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.DamageMeter[i].Enable end, function(_, value) Private.DB.global.DamageMeter[i].Enable = value Private:UpdateDamageMeters() end)
         Private.GUI.args.DamageMeter.args["Window" .. i].args.Enable.relWidth = 0.5
-        Private.GUI.args.DamageMeter.args["Window" .. i].args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 1, nil, nil, "relative", function() return Private.DB.global.DamageMeter[i].ShowBackdrop end, function(_, value) Private.DB.global.DamageMeter[i].ShowBackdrop = value Private:UpdateWindow(_G["DamageMeter_0"..i], Private.DB.global.DamageMeter[i]) end)
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.ShowBackdrop = ACH:Toggle("Show Backdrop", nil, 1, nil, nil, "relative", function() return Private.DB.global.DamageMeter[i].ShowBackdrop end, function(_, value) Private.DB.global.DamageMeter[i].ShowBackdrop = value Private:UpdateWindow(_G["DamageMeter_0"..i], Private.DB.global.DamageMeter[i]) end, function() return not Private.DB.global.DamageMeter[i].Enable end)
         Private.GUI.args.DamageMeter.args["Window" .. i].args.ShowBackdrop.relWidth = 0.5
 
         Private.GUI.args.DamageMeter.args["Window" .. i].args.LayoutGroup = ACH:Group("Layout & Positioning", nil, 2, "tab")

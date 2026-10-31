@@ -26,6 +26,7 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     local function Window_RefreshData(Frame, ResetScroll)
+        if not DB.Enable then return end
         if Frame.ShowingCombatSessions then
             if ResetScroll then Frame.DamageScrollOffset = 0 end
             Frame:RefreshCombatSessions()
@@ -111,6 +112,26 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             Frame:RefreshData(true)
         elseif Event == "PLAYER_REGEN_ENABLED" then
             Frame:RefreshData()
+        end
+    end
+
+    local function Window_UpdateEnabled(Frame)
+        if DB.Enable then
+            Frame:RegisterEvent("DAMAGE_METER_COMBAT_SESSION_UPDATED")
+            Frame:RegisterEvent("DAMAGE_METER_CURRENT_SESSION_UPDATED")
+            Frame:RegisterEvent("DAMAGE_METER_RESET")
+            Frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            if Frame:IsShown() then
+                Frame:RefreshData()
+            else
+                Frame:Show()
+            end
+        else
+            Frame:UnregisterAllEvents()
+            if Frame.Drilldown then Frame.Drilldown:Hide() end
+            if Frame.ShowingBookmarks then Frame:HideBookmarks() end
+            if Frame.ShowingCombatSessions then Frame:HideCombatSessions() end
+            Frame:Hide()
         end
     end
 
@@ -235,13 +256,10 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     Frame.RefreshData = Window_RefreshData
+    Frame.UpdateEnabled = Window_UpdateEnabled
     Frame:SetScript("OnEvent", Window_OnEvent)
     Frame:SetScript("OnShow", Window_RefreshData)
-    Frame:RegisterEvent("DAMAGE_METER_COMBAT_SESSION_UPDATED")
-    Frame:RegisterEvent("DAMAGE_METER_CURRENT_SESSION_UPDATED")
-    Frame:RegisterEvent("DAMAGE_METER_RESET")
-    Frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    Frame:RefreshData()
+    Frame:UpdateEnabled()
 
     return Frame
 end
@@ -251,6 +269,11 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     local TextDB = DB.Text
     local TitleBarDB = DB.TitleBar
     local TitleBarTextDB = TitleBarDB.Text
+
+    if not DB.Enable then
+        DamageMeterFrame:UpdateEnabled()
+        return DamageMeterFrame
+    end
 
     DamageMeterFrame:ClearAllPoints()
     DamageMeterFrame:SetPoint(DB.Layout[1], _G["UIParent"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
@@ -309,7 +332,7 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     DamageMeterFrame.TitleBar.Text:SetShown(TitleBarTextDB.Enable)
 
     if DamageMeterFrame.Drilldown then DamageMeterFrame.Drilldown:UpdateSettings(DB) end
-    DamageMeterFrame:RefreshData()
+    DamageMeterFrame:UpdateEnabled()
 
     return DamageMeterFrame
 end

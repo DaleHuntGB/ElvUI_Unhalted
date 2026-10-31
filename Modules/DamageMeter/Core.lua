@@ -12,11 +12,11 @@ end
 function Private:UpdateDamageMeters()
     for i in pairs(Private.DB.global.DamageMeter) do
         local DB = Private.DB.global.DamageMeter[i]
-        if DB.Enable then
-            local Frame = _G["DamageMeter_0"..i]
-            if Frame then
-                Private:UpdateWindow(Frame, DB)
-            end
+        local Frame = _G["DamageMeter_0"..i]
+        if Frame then
+            Private:UpdateWindow(Frame, DB)
+        elseif DB.Enable then
+            Private:CreateWindow(DB, i)
         end
     end
 end
