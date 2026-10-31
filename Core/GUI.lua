@@ -261,11 +261,11 @@ function Private:SetupGUI()
     Private.GUI.args.MythicPlusTimer.args.Preview = ACH:Toggle("Preview", nil, 2, nil, nil, "relative", function() return Private.MythicPlusTimerPreview end, function(_, value) Private.MythicPlusTimerPreview = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
     Private.GUI.args.MythicPlusTimer.args.Preview.relWidth = 0.5
     Private.GUI.args.MythicPlusTimer.args.ShowDeaths = ACH:Toggle("Deaths", nil, 6, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.ShowDeaths end, function(_, value) Private.DB.global.MythicPlusTimer.ShowDeaths = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
-    Private.GUI.args.MythicPlusTimer.args.ShowDeaths.relWidth = 0.5
+    Private.GUI.args.MythicPlusTimer.args.ShowDeaths.relWidth = 0.33
     Private.GUI.args.MythicPlusTimer.args.ShowBosses = ACH:Toggle("Boss Objectives", nil, 7, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.ShowBosses end, function(_, value) Private.DB.global.MythicPlusTimer.ShowBosses = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
-    Private.GUI.args.MythicPlusTimer.args.ShowBosses.relWidth = 0.5
+    Private.GUI.args.MythicPlusTimer.args.ShowBosses.relWidth = 0.33
     Private.GUI.args.MythicPlusTimer.args.ShowForces = ACH:Toggle("Enemy Forces", nil, 8, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.ShowForces end, function(_, value) Private.DB.global.MythicPlusTimer.ShowForces = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
-    Private.GUI.args.MythicPlusTimer.args.ShowForces.relWidth = 0.5
+    Private.GUI.args.MythicPlusTimer.args.ShowForces.relWidth = 0.33
 
     Private.GUI.args.MythicPlusTimer.args.LayoutGroup = ACH:Group("Layout & Positioning", nil, 9, "tab")
     Private.GUI.args.MythicPlusTimer.args.LayoutGroup.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.MythicPlusTimer.Layout[1] end, function(_, value) Private.DB.global.MythicPlusTimer.Layout[1] = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
