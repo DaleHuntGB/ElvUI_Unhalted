@@ -4,7 +4,30 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
     local DB = DamageMeterDB
     local TitleBarDB = DB.TitleBar
     local TitleBarTextDB = TitleBarDB.Text
-    local TextDB = DB.Text
+
+    local function TitleBar_OnEnter(TitleBar)
+        TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.g * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.b * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.a)
+    end
+
+    local function TitleBar_OnLeave(TitleBar)
+        TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
+    end
+
+    local function TitleBar_OnMouseDown(_, Button)
+        if IsShiftKeyDown() and Button == "LeftButton" then
+            -- Implement
+        elseif not IsShiftKeyDown() and Button == "LeftButton" then
+            -- Implement
+        elseif IsShiftKeyDown() and Button == "RightButton" then
+            -- Implement
+        elseif not IsShiftKeyDown() and Button == "RightButton" then
+            -- Implement
+        elseif IsShiftKeyDown() and Button == "MiddleButton" then
+            -- Implement
+        elseif not IsShiftKeyDown() and Button == "MiddleButton" then
+            -- Implement
+        end
+    end
 
     local Frame = CreateFrame("Frame", "DamageMeter_0"..DamageMeterCount, UIParent, "BackdropTemplate")
     Frame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
@@ -19,6 +42,11 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
     Frame.TitleBar:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
     Frame.TitleBar:SetPoint("BOTTOMLEFT", Frame, "TOPLEFT", TitleBarDB.XOffset, TitleBarDB.YOffset)
     Frame.TitleBar:SetSize(DB.Size[1], TitleBarDB.Height)
+
+    Frame.TitleBar:EnableMouse(true)
+    Frame.TitleBar:SetScript("OnEnter", TitleBar_OnEnter)
+    Frame.TitleBar:SetScript("OnLeave", TitleBar_OnLeave)
+    Frame.TitleBar:SetScript("OnMouseDown", TitleBar_OnMouseDown)
 
     Frame.TitleBar.Text = Frame.TitleBar:CreateFontString(nil, "OVERLAY")
     Frame.TitleBar.Text:SetPoint(TitleBarTextDB.Layout[1], Frame.TitleBar, TitleBarTextDB.Layout[2], TitleBarTextDB.Layout[3], TitleBarTextDB.Layout[4])
