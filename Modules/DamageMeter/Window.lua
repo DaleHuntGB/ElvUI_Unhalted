@@ -106,7 +106,6 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
     local DB = DamageMeterDB
     local TitleBarDB = DB.TitleBar
     local TitleBarTextDB = TitleBarDB.Text
-    local TextDB = DB.Text
 
     DamageMeterFrame:ClearAllPoints()
     DamageMeterFrame:SetPoint(DB.Layout[1], _G["UIParent"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
