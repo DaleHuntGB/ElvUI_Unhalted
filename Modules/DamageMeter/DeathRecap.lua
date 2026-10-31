@@ -24,7 +24,6 @@ function Private:UpdateDeathRow(Row)
     elseif DeathTime and DeathTime >= 0 then
         Row.Amount_Text:SetText(SecondsToClock(DeathTime))
     else
-        -- Overall sessions do not provide elapsed death times.
         Row.Amount_Text:SetText("")
     end
 end
