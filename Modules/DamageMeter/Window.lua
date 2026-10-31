@@ -20,6 +20,11 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     local function Window_RefreshData(Frame, ResetScroll)
+        if Frame.ShowingCombatSessions then
+            if ResetScroll then Frame.DamageScrollOffset = 0 end
+            Frame:RefreshCombatSessions()
+            return
+        end
         if Frame.ShowingBookmarks then
             if ResetScroll then Frame.DamageScrollOffset = 0 end
             Frame:RefreshBookmarks()
@@ -29,7 +34,29 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
         local CombatSession;
 
         if C_DamageMeter.IsDamageMeterAvailable() then
-            CombatSession = C_DamageMeter.GetCombatSessionFromType(DB.SessionType, DB.MeterType)
+            if Frame.SessionID then
+                local SessionFound = false
+                for _, Session in ipairs(C_DamageMeter.GetAvailableCombatSessions()) do
+                    if Session.sessionID == Frame.SessionID then
+                        Frame.SessionName = Session.name
+                        if not Frame.SessionName or Frame.SessionName == "" then
+                            Frame.SessionName = DAMAGE_METER_COMBAT_NUMBER:format(Session.sessionID)
+                        end
+                        SessionFound = true
+                        break
+                    end
+                end
+                if SessionFound then
+                    CombatSession = C_DamageMeter.GetCombatSessionFromID(Frame.SessionID, DB.MeterType)
+                else
+                    Frame.SessionID = nil
+                    Frame.SessionName = nil
+                    ResetScroll = true
+                end
+            end
+            if not Frame.SessionID then
+                CombatSession = C_DamageMeter.GetCombatSessionFromType(DB.SessionType, DB.MeterType)
+            end
         end
 
         local CombatSources = CombatSession and CombatSession.combatSources
@@ -43,7 +70,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             Frame.ScrollFrame:SetVerticalScroll(0)
         end
 
-        Frame.TitleBar.Text:SetText(Private.MeterTypes[DB.MeterType] .. (DB.SessionType == Enum.DamageMeterSessionType.Current and "" or " - Overall"))
+        local SessionName = Frame.SessionID and Frame.SessionName or (DB.SessionType == Enum.DamageMeterSessionType.Current and "" or "Overall")
+        Frame.TitleBar.Text:SetText(Private.MeterTypes[DB.MeterType] .. (SessionName ~= "" and " - " .. SessionName or ""))
 
         for i = 1, SourceCount do
             local Row = Frame.Rows[i]
@@ -61,14 +89,19 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
 
     local function Window_OnEvent(Frame, Event, MeterType, SessionID)
         if Event == "DAMAGE_METER_COMBAT_SESSION_UPDATED" then
-            if MeterType == DB.MeterType and SessionID == 0 then
+            local SelectedSessionID = not Frame.ShowingCombatSessions and Frame.SessionID
+            if MeterType == DB.MeterType and (SelectedSessionID == SessionID or (not SelectedSessionID and SessionID == 0)) then
                 Frame:RefreshData()
             end
         elseif Event == "DAMAGE_METER_CURRENT_SESSION_UPDATED" then
-            if DB.SessionType == Enum.DamageMeterSessionType.Current then
+            if not Frame.SessionID and DB.SessionType == Enum.DamageMeterSessionType.Current then
                 Frame:RefreshData(true)
+            elseif Frame.ShowingCombatSessions or Frame.SessionID then
+                Frame:RefreshData()
             end
         elseif Event == "DAMAGE_METER_RESET" then
+            Frame.SessionID = nil
+            Frame.SessionName = nil
             Frame:RefreshData(true)
         elseif Event == "PLAYER_REGEN_ENABLED" then
             Frame:RefreshData()
@@ -95,12 +128,24 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             -- Implement
         elseif not IsShiftKeyDown() and Button == "LeftButton" then
             local Window = TitleBar:GetParent()
-            if DB.SessionType == Enum.DamageMeterSessionType.Current then
+            if Window.SessionID then
+                DB.SessionType = Enum.DamageMeterSessionType.Current
+            elseif DB.SessionType == Enum.DamageMeterSessionType.Current then
                 DB.SessionType = Enum.DamageMeterSessionType.Overall
             else
                 DB.SessionType = Enum.DamageMeterSessionType.Current
             end
-            Window:RefreshData(true)
+            Window.SessionID = nil
+            Window.SessionName = nil
+            if Window.ShowingCombatSessions then
+                Window.DamageScrollOffset = 0
+                Window:HideCombatSessions()
+            elseif Window.ShowingBookmarks then
+                Window.DamageScrollOffset = 0
+                Window:HideBookmarks()
+            else
+                Window:RefreshData(true)
+            end
         elseif IsShiftKeyDown() and Button == "RightButton" then
             -- Implement
         elseif not IsShiftKeyDown() and Button == "RightButton" then
@@ -110,8 +155,12 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             -- Implement
         elseif not IsShiftKeyDown() and Button == "MiddleButton" then
             local Window = TitleBar:GetParent()
+            Window.SessionID = nil
+            Window.SessionName = nil
             C_DamageMeter.ResetAllCombatSessions()
-            if Window.ShowingBookmarks then
+            if Window.ShowingCombatSessions then
+                Window:HideCombatSessions()
+            elseif Window.ShowingBookmarks then
                 Window:HideBookmarks()
             end
         end

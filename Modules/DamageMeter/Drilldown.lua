@@ -58,7 +58,12 @@ function Private:CreateDrilldown(Row)
             if not CombatSource.sourceGUID and not CombatSource.sourceCreatureID then Drilldown:Hide() return end
             if not C_DamageMeter.IsDamageMeterAvailable() then Drilldown:Hide() return end
 
-            local SessionSource = C_DamageMeter.GetCombatSessionSourceFromType(DB.SessionType, DB.MeterType, CombatSource.sourceGUID, CombatSource.sourceCreatureID)
+            local SessionSource;
+            if DamageMeterFrame.SessionID then
+                SessionSource = C_DamageMeter.GetCombatSessionSourceFromID(DamageMeterFrame.SessionID, DB.MeterType, CombatSource.sourceGUID, CombatSource.sourceCreatureID)
+            else
+                SessionSource = C_DamageMeter.GetCombatSessionSourceFromType(DB.SessionType, DB.MeterType, CombatSource.sourceGUID, CombatSource.sourceCreatureID)
+            end
             local CombatSpells = SessionSource and SessionSource.combatSpells
             if not CombatSpells or #CombatSpells == 0 then Drilldown:Hide() return end
 

@@ -22,6 +22,7 @@ Modules/Blizzard/UIErrorsFrame.lua
 
 Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Bookmarks.lua
+Modules/DamageMeter/CombatSessions.lua
 Modules/DamageMeter/Drilldown.lua
 Modules/DamageMeter/Rows.lua
 Modules/DamageMeter/Window.lua

@@ -9,6 +9,7 @@ function Private:CreateBookmarks(Frame)
         DamageMeterFrame:HideBookmarks()
         return
     end
+    if DamageMeterFrame.ShowingCombatSessions then DamageMeterFrame:HideCombatSessions() end
 
     if not DamageMeterFrame.Bookmarks then
         local function Bookmarks_Hide(Window, MeterType)
