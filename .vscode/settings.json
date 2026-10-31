@@ -36,6 +36,8 @@
         "UIErrorsFrame",
         "ObjectiveTrackerTopBannerFrame",
         "MinimapCluster",
-        "Background"
-    ]
+        "Background",
+        "RAID_CLASS_COLORS"
+    ],
+    "Lua.type.weakUnionCheck": true
 }

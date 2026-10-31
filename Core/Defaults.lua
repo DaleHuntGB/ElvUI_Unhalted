@@ -58,6 +58,7 @@ local Defaults = {
                 MeterType = Enum.DamageMeterType.DamageDone,
                 SessionType = Enum.DamageMeterSessionType.Current,
                 Rows = 5,
+                Texture = "Blizzard Raid Bar",
                 TitleBar = {
                     Enable = true,
                     ShowBackdrop = true,

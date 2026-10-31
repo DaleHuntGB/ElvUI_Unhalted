@@ -21,6 +21,8 @@ Modules/Blizzard/ObjectiveTrackerBanner.lua
 Modules/Blizzard/UIErrorsFrame.lua
 
 Modules/DamageMeter/Core.lua
+Modules/DamageMeter/Rows.lua
+Modules/DamageMeter/Window.lua
 
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
