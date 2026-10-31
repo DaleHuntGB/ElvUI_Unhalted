@@ -28,9 +28,9 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
         elseif not IsShiftKeyDown() and Button == "LeftButton" then
             -- Implement
         elseif IsShiftKeyDown() and Button == "RightButton" then
-            -- Implement
+            Private:CreateBookmarks(DamageMeterFrame)
         elseif not IsShiftKeyDown() and Button == "RightButton" then
-            -- Implement
+            Private:CreateBookmarks(DamageMeterFrame)
         elseif IsShiftKeyDown() and Button == "MiddleButton" then
             -- Implement
         elseif not IsShiftKeyDown() and Button == "MiddleButton" then

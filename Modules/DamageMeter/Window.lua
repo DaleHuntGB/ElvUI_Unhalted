@@ -6,6 +6,10 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     local TitleBarDB = DB.TitleBar
     local TitleBarTextDB = TitleBarDB.Text
 
+    local function Window_OnMouseDown(Frame, Button)
+        if Button == "RightButton" then Private:CreateBookmarks(Frame) end
+    end
+
     local function Window_OnMouseWheel(Frame, Delta)
         local CurrentOffset = Frame.ScrollFrame:GetVerticalScroll()
         local RowHeight = (DB.Size[2] - 2) / DB.Rows
@@ -16,6 +20,11 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     local function Window_RefreshData(Frame, ResetScroll)
+        if Frame.ShowingBookmarks then
+            if ResetScroll then Frame.DamageScrollOffset = 0 end
+            Frame:RefreshBookmarks()
+            return
+        end
         local CombatSession;
         if C_DamageMeter.IsDamageMeterAvailable() then
             CombatSession = C_DamageMeter.GetCombatSessionFromType(DB.SessionType, DB.MeterType)
@@ -86,7 +95,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
         end
     end
 
-    local Frame = CreateFrame("Frame", "DamageMeter_0"..DamageMeterCount, UIParent, "BackdropTemplate")
+    local Frame = CreateFrame("Frame", "DamageMeter_0" .. DamageMeterCount, UIParent, "BackdropTemplate")
+    Frame.DamageMeterDB = DB
     Frame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
     Frame:SetBackdropColor(Private.E.BackgroundFadeColour.r, Private.E.BackgroundFadeColour.g, Private.E.BackgroundFadeColour.b, Private.E.BackgroundFadeColour.a)
     Frame:SetBackdropBorderColor(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
@@ -95,13 +105,17 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
 
     Frame.ScrollRange = 0
     Frame.ScrollRows = Window_OnMouseWheel
+    Frame:EnableMouse(true)
     Frame:EnableMouseWheel(true)
+    Frame:SetScript("OnMouseDown", Window_OnMouseDown)
     Frame:SetScript("OnMouseWheel", Window_OnMouseWheel)
 
     Frame.ScrollFrame = CreateFrame("ScrollFrame", nil, Frame)
     Frame.ScrollFrame:SetPoint("TOPLEFT", Frame, "TOPLEFT", 1, -1)
     Frame.ScrollFrame:SetPoint("BOTTOMRIGHT", Frame, "BOTTOMRIGHT", -1, 1)
+    Frame.ScrollFrame:EnableMouse(true)
     Frame.ScrollFrame:EnableMouseWheel(true)
+    Frame.ScrollFrame:SetScript("OnMouseDown", function(_, Button) Window_OnMouseDown(Frame, Button) end)
     Frame.ScrollFrame:SetScript("OnMouseWheel", function(_, Delta) Frame:ScrollRows(Delta) end)
     Frame.ScrollChild = CreateFrame("Frame", nil, Frame.ScrollFrame)
     Frame.ScrollChild:SetSize(DB.Size[1] - 2, DB.Size[2] - 2)
