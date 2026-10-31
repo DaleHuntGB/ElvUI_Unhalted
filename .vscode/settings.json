@@ -39,7 +39,8 @@
         "Background",
         "RAID_CLASS_COLORS",
         "ACTION_SWING",
-        "UNKNOWN"
+        "UNKNOWN",
+        "PixelUtil"
     ],
     "Lua.type.weakUnionCheck": true
 }

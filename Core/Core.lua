@@ -10,6 +10,7 @@ function AddOn:OnEnable()
     Private:RegisterSharedMedia()
     Private:SetupGUI()
     -- [[ AddOnSkins ]]
+    Private:SetupBigWigsSkin()
     Private:SetupBugSackSkin()
     -- [[ Alerts ]]
     Private:SetupCombatAlert()
