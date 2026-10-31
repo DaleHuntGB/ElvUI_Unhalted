@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 
 function Private:SetupPowerInfusionAlert()
-    if not Private.isForever then return end
+    if Private.isForever then return end
     local DB = Private.DB.global.Alerts.PowerInfusion
 
     if not Private.PowerInfusionAlertContainer then

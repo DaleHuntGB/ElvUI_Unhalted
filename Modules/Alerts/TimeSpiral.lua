@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 
 function Private:SetupTimeSpiralAlert()
-    if not Private.isForever then return end
+    if Private.isForever then return end
     local DB = Private.DB.global.Alerts.TimeSpiral
 
     if not Private.TimeSpiralAlertContainer then

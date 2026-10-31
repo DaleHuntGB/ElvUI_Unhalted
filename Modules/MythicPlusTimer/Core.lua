@@ -2,7 +2,7 @@ local Private = select(2, ...)
 Private.MythicPlusTimerPreview = false
 
 function Private:SetupMythicPlusTimer()
-    if not Private.isForever then return end
+    if Private.isForever then return end
     local DB = Private.DB.global.MythicPlusTimer
     if DB.Enable then
         Private.MythicPlusTimerFrame = Private:CreateMythicPlusWindow(DB)
