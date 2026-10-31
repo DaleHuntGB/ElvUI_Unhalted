@@ -83,6 +83,7 @@ local Defaults = {
                     Amount_YOffset = 0,
                     Amount_ColourByClass = false,
                     Amount_Colour = {255/255, 255/255, 255/255},
+                    Amount_Format = "%s • %s",
                 },
             }
         },

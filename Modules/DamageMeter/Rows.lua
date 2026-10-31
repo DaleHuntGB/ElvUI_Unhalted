@@ -1,5 +1,20 @@
 local Private = select(2, ...)
 
+local SingleMeterTypes = {
+	[Enum.DamageMeterType.Absorbs] = true,
+	[Enum.DamageMeterType.Interrupts] = true,
+	[Enum.DamageMeterType.Dispels] = true,
+	[Enum.DamageMeterType.DamageTaken] = true,
+	[Enum.DamageMeterType.AvoidableDamageTaken] = true,
+	[Enum.DamageMeterType.Deaths] = true,
+	[Enum.DamageMeterType.EnemyDamageTaken] = true,
+}
+
+local PerSecondMeterTypes = {
+	[Enum.DamageMeterType.Dps] = true,
+	[Enum.DamageMeterType.Hps] = true,
+}
+
 function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
     local DB = DamageMeterDB
     local TextDB = DB.Text
@@ -55,6 +70,7 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
 
         local ClassColour = RAID_CLASS_COLORS[CombatSource.classFilename]
         local BarColour = ClassColour or Private.E.db.general.valuecolor
+
         if Row.Icon then
             Row.Icon:SetTexture(CombatSource.specIconID)
         end
@@ -71,10 +87,12 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
             Row.Name_Text:SetTextColor(TextDB.Name_Colour[1], TextDB.Name_Colour[2], TextDB.Name_Colour[3])
         end
 
-        if DB.MeterType == Enum.DamageMeterType.Dps or DB.MeterType == Enum.DamageMeterType.Hps then
+        if SingleMeterTypes[DB.MeterType] then
+            Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.totalAmount))
+        elseif PerSecondMeterTypes[DB.MeterType] then
             Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.amountPerSecond))
         else
-            Row.Amount_Text:SetText(Private:AbbreviateValue(CombatSource.totalAmount))
+            Row.Amount_Text:SetFormattedText(DB.Text.Amount_Format, Private:AbbreviateValue(CombatSource.totalAmount), Private:AbbreviateValue(CombatSource.amountPerSecond))
         end
 
         if TextDB.Amount_ColourByClass and ClassColour then
