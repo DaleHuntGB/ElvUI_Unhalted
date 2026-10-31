@@ -159,7 +159,7 @@ local Defaults = {
                 },
             },
             [4] = {
-                Enable = true,
+                Enable = false,
                 ShowBackdrop = true,
                 Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -222.1, 180.1},
                 Size = {220, 92},
