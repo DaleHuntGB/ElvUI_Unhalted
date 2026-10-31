@@ -11,6 +11,8 @@ Private.E.BackgroundColour = Private.E.db.general.backdropcolor
 Private.E.BackgroundFadeColour = Private.E.db.general.backdropfadecolor
 Private.E.bordercolour = Private.E.db.general.bordercolor
 
+Private.isForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+
 Private.AnchorPoints = {
     ["TOPLEFT"] = "TOPLEFT",
     ["TOP"] = "TOP",

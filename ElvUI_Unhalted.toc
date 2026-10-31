@@ -29,6 +29,13 @@ Modules/DamageMeter/Drilldown.lua
 Modules/DamageMeter/Rows.lua
 Modules/DamageMeter/Window.lua
 
+Modules/MythicPlusTimer/Core.lua
+Modules/MythicPlusTimer/Rows.lua
+Modules/MythicPlusTimer/Objectives.lua
+Modules/MythicPlusTimer/Timer.lua
+Modules/MythicPlusTimer/Tracker.lua
+Modules/MythicPlusTimer/Window.lua
+
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua

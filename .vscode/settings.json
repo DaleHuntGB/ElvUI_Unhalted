@@ -40,7 +40,11 @@
         "RAID_CLASS_COLORS",
         "ACTION_SWING",
         "UNKNOWN",
-        "PixelUtil"
+        "PixelUtil",
+        "ScenarioObjectiveTracker",
+        "ObjectiveTrackerManager",
+        "COMPLETE",
+        "ObjectiveTrackerFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }

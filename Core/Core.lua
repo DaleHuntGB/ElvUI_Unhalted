@@ -21,6 +21,8 @@ function AddOn:OnEnable()
     Private:SetupUIErrorsFrame()
     -- [[ Damage Meter ]]
     Private:SetupDamageMeters()
+    -- [[ Mythic+ Timer ]]
+    Private:SetupMythicPlusTimer()
     -- [[ ElvUI]]
     Private:SetupEnhancedMovers()
     Private:SetupInterruptOnCooldown()
