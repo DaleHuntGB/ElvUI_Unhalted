@@ -137,3 +137,9 @@ end
 function Private:IsAddOnLoaded(AddOnName)
     return C_AddOns.IsAddOnLoaded(AddOnName)
 end
+
+function Private:IsDeveloper()
+    local _, BTag = BNGetInfo()
+    local isDeveloper = BTag == "Unhalted#2639"
+    return isDeveloper
+end

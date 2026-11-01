@@ -49,6 +49,7 @@ Modules/Profiles/BigWigs.lua
 Modules/Profiles/ElvUI.lua
 Modules/Profiles/Platynator.lua
 Modules/Profiles/SkironCooldownManager.lua
+Modules/Profiles/UnhaltedUI.lua
 
 Modules/Toggles/AutoDelete.lua
 Modules/Toggles/AutoSignUp.lua
