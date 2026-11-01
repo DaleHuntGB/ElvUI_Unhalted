@@ -150,7 +150,7 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Enable end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Enable.relWidth = 0.5
 
-    Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Hide = ACH:Toggle("Hide", nil, 2, nil, nil, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Hide end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Hide = value Private:UpdateUIErrorsFrame() end, function() return not Private.DB.global.Blizzard.UIErrorsFrame.Enable end)
+    Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Hide = ACH:Toggle("Hide (|cFFCC4040Not Recommended|r)", nil, 2, nil, nil, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Hide end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Hide = value Private:UpdateUIErrorsFrame() end, function() return not Private.DB.global.Blizzard.UIErrorsFrame.Enable end)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Hide.relWidth = 0.5
 
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.LayoutGroup = ACH:Group("Layout", nil, 2)
