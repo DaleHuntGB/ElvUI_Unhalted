@@ -22,7 +22,7 @@ local ACH = Private.ACH
 ]]
 
 function Private:SetupGUI()
-    Private.GUI = ACH:Group(format("|cFF6080FF%s|r", "UnhaltedUI"), nil, 999, "tree")
+    Private.GUI = ACH:Group("|cFF6080FFUnhalted|r|cFF808080UI|r", nil, 999, "tree")
 
     Private.GUI.args.AddOnSkins = ACH:Group("AddOn Skins", nil, 1, "tab")
     Private.GUI.args.AddOnSkins.args.BugSack = ACH:Group("BugSack", nil, 1, "tab", nil, nil, nil, function() return not C_AddOns.IsAddOnLoaded("BugSack") end)
@@ -538,9 +538,9 @@ function Private:SetupGUI()
     Private.GUI.args.Profiles.args.Platynator.relWidth = 1
     Private.GUI.args.Profiles.args.SkironCooldownManager = ACH:Execute("|TInterface\\AddOns\\SkironCooldownManager\\Media\\Logo.png:16:16|t |cFF4080FFSkiron|r|cFFFFFFFFCooldownManager|r", nil, 4, function() Private:ImportSkironCooldownManager() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("SkironCooldownManager") end)
     Private.GUI.args.Profiles.args.SkironCooldownManager.relWidth = 1
-    Private.GUI.args.Profiles.args.ImportUnhaltedUI = ACH:Execute("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo.png:16:16|t |cFF1784d1ElvUI|r |cFF6080FFUnhalted|r", nil, 5, function() Private:ImportUnhaltedUI() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("ElvUI_Unhalted") end)
+    Private.GUI.args.Profiles.args.ImportUnhaltedUI = ACH:Execute("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo.png:16:16|t |cFF6080FFUnhalted|r|cFF808080UI|r", nil, 5, function() Private:ImportUnhaltedUI() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("ElvUI_Unhalted") end)
     Private.GUI.args.Profiles.args.ImportUnhaltedUI.relWidth = 1
-    -- Private.GUI.args.Profiles.args.ExportUnhaltedUI = ACH:Execute("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo.png:16:16|t |cFF1784d1ElvUI|r |cFF6080FFUnhalted|r (Export)", nil, 6, function() Private:ExportUnhaltedUI() end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsDeveloper() end)
+    -- Private.GUI.args.Profiles.args.ExportUnhaltedUI = ACH:Execute("|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Logo.png:16:16|t |cFF6080FFUnhalted|r|cFF808080UI|r (Export)", nil, 6, function() Private:ExportUnhaltedUI() end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsDeveloper() end)
     -- Private.GUI.args.Profiles.args.ExportUnhaltedUI.relWidth = 1
 
     if Private.E then Private.E.Options.args.ElvUIAnchors = Private.GUI end
