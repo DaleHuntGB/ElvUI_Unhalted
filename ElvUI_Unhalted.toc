@@ -1,6 +1,7 @@
 ## Title: |cFF6080FFUnhalted|r|cFF808080UI|r
 ## Group: ElvUI
 ## Interface: 120105
+## RequiredDeps: ElvUI
 ## Version: @project-version@
 ## SavedVariables: UHDB
 ## X-Curse-Project-ID: 1692219
