@@ -116,7 +116,7 @@ function Private:CreateDrilldown(Row)
                     if SpecIconID and SpecIconID ~= 0 then
                         Entry.Icon:SetTexture(SpecIconID)
                     else
-                        Entry.Icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
+                        Entry.Icon:SetTexture(135274)
                     end
                     Entry.Name_Text:SetText(Private:StripRealm(UnitName, UnitDetails.unitClassFilename))
                 elseif not issecretvalue(SpellID) and SpellID == 0 then
