@@ -1,9 +1,10 @@
-## Title: |cFF1784d1ElvUI|r |cFF6080FFUnhalted|r|cFF808080UI|r
+## Title: |cFF6080FFUnhalted|r|cFF808080UI|r
 ## Group: ElvUI
 ## Interface: 120105
 ## Version: @project-version@
 ## SavedVariables: UHDB
 ## IconTexture: Interface\AddOns\ElvUI_Unhalted\Media\Logo.png
+## Notes: |cFF6080FFUnhalted|r|cFF808080UI|r is built on |cFF1784d1ElvUI|r with a focus on providing quality of life & cosmetics to improve overall gameplay.
 
 Core/Constants.lua
 Core/Core.lua
