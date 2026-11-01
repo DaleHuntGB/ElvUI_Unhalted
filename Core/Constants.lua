@@ -65,6 +65,16 @@ Private.MeterAmountFormats = {
     ["%s <%s>"] = "999K <99.9K>",
 }
 
+Private.Crosshairs = {
+    ["CROSSHAIR_01"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_01.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_01.png:18:18|t" },
+    ["CROSSHAIR_02"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_02.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_02.png:18:18|t" },
+    ["CROSSHAIR_03"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_03.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_03.png:18:18|t" },
+    ["CROSSHAIR_04"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_04.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_04.png:18:18|t" },
+    ["CROSSHAIR_05"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_05.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_05.png:18:18|t" },
+    ["CROSSHAIR_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_06.png:18:18|t" },
+    ["CROSSHAIR_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_07.png:18:18|t" },
+}
+
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)
 end

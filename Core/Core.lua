@@ -21,8 +21,6 @@ function AddOn:OnEnable()
     Private:SetupUIErrorsFrame()
     -- [[ Damage Meter ]]
     Private:SetupDamageMeters()
-    -- [[ Mythic+ Timer ]]
-    Private:SetupMythicPlusTimer()
     -- [[ ElvUI]]
     Private:SetupEnhancedMovers()
     Private:SetupInterruptOnCooldown()
@@ -32,6 +30,10 @@ function AddOn:OnEnable()
     Private:SetupLocation()
     Private:SetupSystemStats()
     Private:SetupTime()
+    -- [[ Miscellaneous ]]
+    Private:SetupCrosshair()
+    -- [[ Mythic+ Timer ]]
+    Private:SetupMythicPlusTimer()
     -- [[ Toggles ]]
     Private:SetupAutoDelete()
     Private:SetupAutoSignUp()

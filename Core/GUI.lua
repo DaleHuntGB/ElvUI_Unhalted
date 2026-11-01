@@ -417,7 +417,33 @@ function Private:SetupGUI()
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.MinimapStats.InstanceDifficulty.FontSize end, function(_, value) Private.DB.global.MinimapStats.InstanceDifficulty.FontSize = value Private:UpdateInstanceDifficulty() end, function() return not Private.DB.global.MinimapStats.InstanceDifficulty.Enable end)
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize.relWidth = 0.33
 
-    Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 6, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 6, "tab")
+
+    Private.GUI.args.Miscellaneous.args.Crosshair = ACH:Group("Crosshair", nil, 1, "tab")
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Enable end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Enable = value Private:UpdateCrosshair() end, nil)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Colour = ACH:Color("Colour", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.Crosshair.Color) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.Crosshair.Color = {r, g, b, a} Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Colour.relWidth = 0.33
+
+    local CrosshairPreviews = {}
+    for Key, Crosshair in pairs(Private.Crosshairs) do CrosshairPreviews[Key] = Crosshair.Preview end
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Texture = ACH:Select("Texture", nil, 3, CrosshairPreviews, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Texture end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Texture = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Texture.relWidth = 0.33
+
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout = ACH:Group("Layout", nil, 4)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.inline = true
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Layout[1] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Layout[1] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.AnchorFrom.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Layout[2] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.AnchorTo.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Layout[3] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.XOffset.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Layout[4] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.YOffset.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size = ACH:Range("Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Size[1] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Size[1] = value Private.DB.global.Miscellaneous.Crosshair.Size[2] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
+    Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size.relWidth = 0.33
+
+    Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 7, "tab", nil, nil, nil, function() return Private.isForever end)
     Private.GUI.args.MythicPlusTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.Enable end, function(_, value) Private.DB.global.MythicPlusTimer.Enable = value Private:UpdateMythicPlusTimer() end, nil)
     Private.GUI.args.MythicPlusTimer.args.Enable.relWidth = 0.5
     Private.GUI.args.MythicPlusTimer.args.Preview = ACH:Toggle("Preview", nil, 2, nil, nil, "relative", function() return Private.MythicPlusTimerPreview end, function(_, value) Private.MythicPlusTimerPreview = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
@@ -513,7 +539,7 @@ function Private:SetupGUI()
     Private.GUI.args.MythicPlusTimer.args.Colours.args.Expired = ACH:Color("Over Time", nil, 5, false, "relative", function() return unpack(Private.DB.global.MythicPlusTimer.Colours.Expired) end, function(_, r, g, b) Private.DB.global.MythicPlusTimer.Colours.Expired = {r, g, b} Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
     Private.GUI.args.MythicPlusTimer.args.Colours.args.Expired.relWidth = 0.5
 
-    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 7, "tab")
+    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 8, "tab")
 
     local Toggles = {
         [1] = { name = "Auto Delete", desc = "Auto populates |cFFFFCC00delete|r where required.", value = Private.DB.global.Toggles.AutoDelete, requiresReload = false, isRetail = false },
