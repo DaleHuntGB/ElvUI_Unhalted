@@ -18,6 +18,11 @@ function Private:CreateMythicPlusRow(Window, Index, DB)
         Row.Name_Text:SetPoint("LEFT", Row.StatusBar, "LEFT", TextDB.Name_XOffset, TextDB.Name_YOffset)
         Row.Name_Text:SetPoint("RIGHT", Row.Amount_Text, "LEFT", -3, TextDB.Name_YOffset - TextDB.Amount_YOffset)
         Row.Name_Text:SetTextColor(unpack(TextDB.Name_Colour))
+        if Row.TickTexts then
+            for _, Text in ipairs(Row.TickTexts) do
+                Private.E:SetFont(Text, Font, TextDB.Amount_FontSize, Private.E.db.general.fontStyle)
+            end
+        end
     end
 
     local Row = CreateFrame("Frame", nil, Window)
@@ -33,6 +38,15 @@ function Private:CreateMythicPlusRow(Window, Index, DB)
     Row.Amount_Text = Row.StatusBar:CreateFontString(nil, "OVERLAY")
     Row.Amount_Text:SetJustifyH("RIGHT")
     Row.Amount_Text:SetWordWrap(false)
+    if Index == 1 then
+        Row.TickTexts = {}
+        for i = 1, 2 do
+            local Text = Row.StatusBar:CreateFontString(nil, "OVERLAY")
+            Text:SetJustifyH("RIGHT")
+            Text:SetWordWrap(false)
+            Row.TickTexts[i] = Text
+        end
+    end
     Row.UpdateSettings = Row_UpdateSettings
     Row:UpdateSettings(DB)
     return Row

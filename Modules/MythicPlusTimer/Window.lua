@@ -50,7 +50,7 @@ function Private:CreateMythicPlusWindow(DB)
             return
         end
         Frame.TitleBar.Text:SetFormattedText("%s +%d", Data.Name, Data.Level)
-        Frame.TitleBar.Deaths_Text:SetFormattedText("|cFFCC4040Deaths|r - %d (%s)", Data.Deaths, SecondsToClock(Data.TimeLost))
+        Frame.TitleBar.Deaths_Text:SetFormattedText("|cFFCC4040Deaths|r: %d - %s", Data.Deaths, SecondsToClock(Data.TimeLost))
         Private:RefreshMythicPlusClock(Frame)
         local Index = Private:RenderMythicPlusObjectives(Frame, Data, 2)
         for i = Index, #Frame.Rows do Frame.Rows[i]:Hide() end
