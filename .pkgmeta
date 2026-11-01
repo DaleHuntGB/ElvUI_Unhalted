@@ -1,0 +1,14 @@
+package-as: ElvUI_Unhalted
+enable-nolib-creation: no
+
+curse-id: 1692219
+
+externals:
+
+ignore:
+    - README.md
+    - .git/
+    - .github/
+    - .vscode/
+    - .pkgmeta
+    - release.sh
