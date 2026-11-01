@@ -277,11 +277,11 @@ local Defaults = {
         },
         Miscellaneous = {
             Crosshair = {
-                Enable = true,
+                Enable = false,
                 Size = {16, 16},
                 Layout = {"CENTER", "CENTER", 0, 0},
                 Color = {1, 1, 1, 1},
-                Texture = "CROSSHAIR_01",
+                Texture = "CROSSHAIR_02",
             }
         },
         MythicPlusTimer = {
