@@ -6,6 +6,7 @@ function Private:SetupEnhancedMovers()
 
     Private:SetMover(Private.DB.global.ElvUI.Movers.ElvUF_PlayerMover.Enable, "ElvUF_PlayerMover", table.concat(Private.DB.global.ElvUI.Movers.ElvUF_PlayerMover.Layout, ","))
     Private:SetMover(Private.DB.global.ElvUI.Movers.ElvUF_TargetMover.Enable, "ElvUF_TargetMover", table.concat(Private.DB.global.ElvUI.Movers.ElvUF_TargetMover.Layout, ","))
+    Private:SetMover(Private.DB.global.ElvUI.Movers.ElvUF_TargetCastbarMover.Enable, "ElvUF_TargetCastbarMover", table.concat(Private.DB.global.ElvUI.Movers.ElvUF_TargetCastbarMover.Layout, ","))
     Private:SetMover(Private.DB.global.ElvUI.Movers.ElvUF_PetMover.Enable, "ElvUF_PetMover", table.concat(Private.DB.global.ElvUI.Movers.ElvUF_PetMover.Layout, ","))
     Private:SetMover(Private.DB.global.ElvUI.Movers.ElvUF_FocusMover.Enable, "ElvUF_FocusMover", table.concat(Private.DB.global.ElvUI.Movers.ElvUF_FocusMover.Layout, ","))
 
