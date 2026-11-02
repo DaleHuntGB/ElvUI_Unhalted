@@ -75,6 +75,17 @@ Private.Crosshairs = {
     ["CROSSHAIR_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_07.png:18:18|t" },
 }
 
+Private.MouseCursors = {
+    ["CURSOR_01"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_01.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_01.png:18:18|t" },
+    ["CURSOR_02"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_02.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_02.png:18:18|t" },
+    ["CURSOR_03"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_03.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_03.png:18:18|t" },
+    ["CURSOR_04"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_04.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_04.png:18:18|t" },
+    ["CURSOR_05"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_05.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_05.png:18:18|t" },
+    ["CURSOR_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png:18:18|t" },
+    ["CURSOR_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png:18:18|t" },
+    ["CURSOR_08"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png:18:18|t" },
+}
+
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)
 end

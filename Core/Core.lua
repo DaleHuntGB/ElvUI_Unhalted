@@ -32,6 +32,7 @@ function AddOn:OnEnable()
     Private:SetupTime()
     -- [[ Miscellaneous ]]
     Private:SetupCrosshair()
+    Private:SetupMouseCursor()
     -- [[ Mythic+ Timer ]]
     Private:SetupMythicPlusTimer()
     -- [[ Toggles ]]

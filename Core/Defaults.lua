@@ -280,8 +280,15 @@ local Defaults = {
                 Enable = false,
                 Size = {16, 16},
                 Layout = {"CENTER", "CENTER", 0, 0},
-                Color = {1, 1, 1, 1},
+                Colour = {1, 1, 1, 1},
                 Texture = "CROSSHAIR_02",
+            },
+            MouseCursor = {
+                Enable = false,
+                Size = {24, 24},
+                Layout = {"CENTER", "CENTER", 0, 0},
+                Colour = {1, 1, 1, 1},
+                Texture = "CURSOR_01",
             }
         },
         MythicPlusTimer = {

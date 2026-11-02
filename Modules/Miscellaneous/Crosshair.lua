@@ -10,7 +10,7 @@ function Private:SetupCrosshair()
     Crosshair.Texture = Crosshair:CreateTexture(nil, "BACKGROUND")
     Crosshair.Texture:SetAllPoints()
     Crosshair.Texture:SetTexture(Private.Crosshairs[DB.Texture].Path)
-    Crosshair.Texture:SetVertexColor(DB.Color[1], DB.Color[2], DB.Color[3], DB.Color[4])
+    Crosshair.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
 
     Private.Crosshair = Crosshair
 
@@ -25,7 +25,7 @@ function Private:UpdateCrosshair()
     Private.Crosshair:SetPoint(DB.Layout[1], _G["WorldFrame"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
 
     Private.Crosshair.Texture:SetTexture(Private.Crosshairs[DB.Texture].Path)
-    Private.Crosshair.Texture:SetVertexColor(DB.Color[1], DB.Color[2], DB.Color[3], DB.Color[4])
+    Private.Crosshair.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
 
     Private.Crosshair:SetShown(DB.Enable)
 end

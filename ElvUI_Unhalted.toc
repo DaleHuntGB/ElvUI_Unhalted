@@ -42,6 +42,7 @@ Modules/MinimapStats/SystemStats.lua
 Modules/MinimapStats/Time.lua
 
 Modules/Miscellaneous/Crosshair.lua
+Modules/Miscellaneous/MouseCursor.lua
 
 Modules/MythicPlusTimer/Core.lua
 Modules/MythicPlusTimer/Rows.lua
