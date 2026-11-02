@@ -3,6 +3,7 @@ local Private = select(2, ...)
 Private.AddOn = LibStub("AceAddon-3.0"):NewAddon("ElvUI_Unhalted")
 Private.LSM = LibStub("LibSharedMedia-3.0")
 Private.ACH = LibStub("LibAceConfigHelper")
+Private.AG = LibStub("AceGUI-3.0")
 Private.LibDBIcon = LibStub("LibDBIcon-1.0", true)
 
 Private.E = unpack(ElvUI)
@@ -76,14 +77,16 @@ Private.Crosshairs = {
 }
 
 Private.MouseCursors = {
-    ["CURSOR_01"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_01.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_01.png:18:18|t" },
-    ["CURSOR_02"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_02.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_02.png:18:18|t" },
-    ["CURSOR_03"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_03.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_03.png:18:18|t" },
-    ["CURSOR_04"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_04.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_04.png:18:18|t" },
-    ["CURSOR_05"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_05.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_05.png:18:18|t" },
-    ["CURSOR_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png:18:18|t" },
-    ["CURSOR_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png:18:18|t" },
-    ["CURSOR_08"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png:18:18|t" },
+    ["CURSOR_01"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_01.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_01.png:18:18|t", isAtlas = false },
+    ["CURSOR_02"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_02.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_02.png:18:18|t", isAtlas = false },
+    ["CURSOR_03"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_03.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_03.png:18:18|t", isAtlas = false },
+    ["CURSOR_04"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_04.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_04.png:18:18|t", isAtlas = false },
+    ["CURSOR_05"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_05.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_05.png:18:18|t", isAtlas = false },
+    ["CURSOR_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png:18:18|t", isAtlas = false },
+    ["CURSOR_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png:18:18|t", isAtlas = false },
+    ["CURSOR_08"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png:18:18|t", isAtlas = false },
+    ["CURSOR_09"] = { Path = "talents-search-notonactionbar", Preview = "|A:talents-search-notonactionbar:32:32|a", isAtlas = true },
+    ["CURSOR_10"] = { Path = "talents-search-notonactionbarhidden", Preview = "|A:talents-search-notonactionbarhidden:32:32|a", isAtlas = true }
 }
 
 function Private:FetchFont(Font)

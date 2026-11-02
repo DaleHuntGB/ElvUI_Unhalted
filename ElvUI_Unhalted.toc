@@ -12,6 +12,7 @@ Core/Constants.lua
 Core/Core.lua
 Core/Defaults.lua
 Core/GUI.lua
+Core/GUIWidgets.lua
 Core/SharedMedia.lua
 
 Modules/AddOnSkins/BigWigs.lua
