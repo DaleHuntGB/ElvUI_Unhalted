@@ -582,7 +582,7 @@ function Private:SetupGUI()
     Private.GUI.args.Profiles = ACH:Group("Profiles", nil, 8, "tab")
     Private.GUI.args.Profiles.args.BigWigs = ACH:Execute("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|t BigWigs", nil, 1, function() Private:ImportBigWigs() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("BigWigs") end)
     Private.GUI.args.Profiles.args.BigWigs.relWidth = 1
-    Private.GUI.args.Profiles.args.ElvUI = ACH:Execute("|TInterface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon:16:16|t |cFF1784d1ElvUI|r", nil, 2, function() Private:ImportElvUI() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("ElvUI") end)
+    Private.GUI.args.Profiles.args.ElvUI = ACH:Execute("|TInterface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon:16:16|t |cFF1784d1ElvUI|r", nil, 2, function() Private:ImportElvUI() end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("ElvUI") end)
     Private.GUI.args.Profiles.args.ElvUI.relWidth = 1
     Private.GUI.args.Profiles.args.Platynator = ACH:Execute("|TInterface\\AddOns\\Platynator\\Assets\\logo.tga:16:16|t Platynator", nil, 3, function() Private:ImportPlatynator() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("Platynator") end)
     Private.GUI.args.Profiles.args.Platynator.relWidth = 1

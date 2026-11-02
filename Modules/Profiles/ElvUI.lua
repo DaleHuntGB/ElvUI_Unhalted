@@ -5,9 +5,10 @@ local PrivateImportString = "!E2!bZTLcuNGDEW3qVQWWWbp75hdrLf1tCSnskuBJET2uB8Muil
 local GlobalImportString = "!E2!TZHPctMwEMY7DA9ROPkNuHDqLdjxn1SO08SZlhOztjexZtZaIckB98SrxHQYnosLL5AcuCHPhJab9H370367GrMGHDj86uwo6t467lagkOzxdlY7ySr4AMb+zB0zOalnqm7Z5LNlmBbrT+F2vSnWcYty37rr60hBh/9jywv1sdjtLLqrTPXdiqVy9vU/6+FizXfs5TFGBRXhOZquq9jIx+Cuh8b4jEFZzr/IxrVvXv1OPeKk2tsfi6g3UEmSbnhKliygQjpne6Ym9I3saTEdYzYduCjeCpFrNHXZGrStN4KolB0eb3cEts3UQTo8PbwtgVC5d4LZBRuNtQSSjzBNdRSNtJpg2LiBMBHFLCq25SJz2AUCD0ijYEXD/HMvtcbm/JwoDrmrwI3p1C/uiU4v1mawnv/+LCTk/0PVQ5QW+TyzqMGPzyb89W1M9qjQAD1t7tlQk4MOmU0jlSfsMdVs5RQzKYuVmMflugM9I93CfYsq54Pf2J/3V3c7aNCjL+KpuEjTMqcHfNXNzZ64AvoL"
 
 function Private:ImportElvUI()
-    local Distributor = Private.E:GetModules("Distributor")
+    local Distributor = Private.E:GetModule("Distributor")
     if not Distributor then return end
-    C_Timer.After(1, function() Distributor:ImportProfile(ProfileImportString) end)
-    C_Timer.After(2, function() Distributor:ImportProfile(PrivateImportString) end)
-    C_Timer.After(3, function() Distributor:ImportProfile(GlobalImportString) end)
+    C_Timer.After(0.33, function() Distributor:ImportProfile(ProfileImportString) end)
+    C_Timer.After(0.66, function() Distributor:ImportProfile(PrivateImportString) end)
+    C_Timer.After(1, function() Distributor:ImportProfile(GlobalImportString) end)
+    C_Timer.After(1.33, function() Private.E:StaticPopup_Show("CONFIG_RL") end)
 end
