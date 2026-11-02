@@ -11,5 +11,6 @@ function Private:ImportElvUI()
     C_Timer.After(0.66, function() Distributor:ImportProfile(PrivateImportString) end)
     C_Timer.After(1, function() Distributor:ImportProfile(GlobalImportString) end)
     Private.E.db.chat.hideVoiceButtons = true
+    Private.E.db.movers.ElvUF_PartyMover = "BOTTOMLEFT,ElvUIParent,BOTTOMLEFT,550.1,562.1"
     C_Timer.After(1.33, function() Private.E:StaticPopup_Show("CONFIG_RL") end)
 end
