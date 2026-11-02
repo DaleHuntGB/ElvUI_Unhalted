@@ -26,6 +26,13 @@ local Defaults = {
                 },
                 HoldTime = 1.5,
             },
+            Innervate = {
+                Enable = false,
+                Layout = {"CENTER", "CENTER", 0.1, 203.1},
+                Size = {38, 38},
+                Sound = "None",
+                SoundChannel = "Master",
+            },
             PowerInfusion = {
                 Enable = false,
                 Layout = {"CENTER", "CENTER", 0.1, 125.1},

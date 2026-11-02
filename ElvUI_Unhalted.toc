@@ -19,6 +19,7 @@ Modules/AddOnSkins/BigWigs.lua
 Modules/AddOnSkins/BugSack.lua
 
 Modules/Alerts/Combat.lua
+Modules/Alerts/Innervate.lua
 Modules/Alerts/PowerInfusion.lua
 Modules/Alerts/TimeSpiral.lua
 

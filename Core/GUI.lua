@@ -83,7 +83,35 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.Combat.args.FontGroup.args.ExitCombatColour = ACH:Color("Exiting Combat: Colour", nil, 9, false, "relative", function() return unpack(Private.DB.global.Alerts.Combat.Text.Exit.Colour) end, function(_, r, g, b) Private.DB.global.Alerts.Combat.Text.Exit.Colour = {r, g, b} Private:UpdateCombatAlert() end, function() return not Private.DB.global.Alerts.Combat.Enable end)
     Private.GUI.args.Alerts.args.Combat.args.FontGroup.args.ExitCombatColour.relWidth = 0.5
 
-    Private.GUI.args.Alerts.args.PowerInfusion = ACH:Group("Power Infusion", nil, 2, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.Alerts.args.Innervate = ACH:Group("|T136048:18:18|t Innervate", nil, 2, "tab", nil, nil, nil, function() return Private.isForever end)
+
+    Private.GUI.args.Alerts.args.Innervate.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.Innervate.Enable end, function(_, value) Private.DB.global.Alerts.Innervate.Enable = value Private:UpdateInnervateAlert() end)
+    Private.GUI.args.Alerts.args.Innervate.args.Enable.descStyle = "inline"
+    Private.GUI.args.Alerts.args.Innervate.args.Enable.relWidth = 1
+
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup = ACH:Group("Layout", nil, 2, "tab")
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.inline = true
+
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Alerts.Innervate.Layout[1] end, function(_, value) Private.DB.global.Alerts.Innervate.Layout[1] = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.AnchorFrom.relWidth = 0.5
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Alerts.Innervate.Layout[2] end, function(_, value) Private.DB.global.Alerts.Innervate.Layout[2] = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.AnchorTo.relWidth = 0.5
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.XOffset = ACH:Range("X Offset", nil, 3, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Alerts.Innervate.Layout[3] end, function(_, value) Private.DB.global.Alerts.Innervate.Layout[3] = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.XOffset.relWidth = 0.33
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.YOffset = ACH:Range("Y Offset", nil, 4, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Alerts.Innervate.Layout[4] end, function(_, value) Private.DB.global.Alerts.Innervate.Layout[4] = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.YOffset.relWidth = 0.33
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.Size = ACH:Range("Size", nil, 5, {min = 0, max = 64, softMin = 8, softMax = 48, step = 1}, "relative", function() return Private.DB.global.Alerts.Innervate.Size[1] end, function(_, value) Private.DB.global.Alerts.Innervate.Size[1] = value Private.DB.global.Alerts.Innervate.Size[2] = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.LayoutGroup.args.Size.relWidth = 0.33
+
+    Private.GUI.args.Alerts.args.Innervate.args.SoundGroup = ACH:Group("Fonts", nil, 3, "tab")
+    Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.inline = true
+
+    Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.args.Sound = ACH:SharedMediaSound("Sound", nil, 1, "relative", function() return Private.DB.global.Alerts.Innervate.Sound end, function(_, value) Private.DB.global.Alerts.Innervate.Sound = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.args.Sound.relWidth = 0.5
+    Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.args.SoundChannel = ACH:Select("Sound Channel", nil, 2, {["Master"] = "Master", ["SFX"] = "SFX", ["Music"] = "Music", ["Ambience"] = "Ambience"}, nil, "relative", function() return Private.DB.global.Alerts.Innervate.SoundChannel end, function(_, value) Private.DB.global.Alerts.Innervate.SoundChannel = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
+    Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.args.SoundChannel.relWidth = 0.5
+
+    Private.GUI.args.Alerts.args.PowerInfusion = ACH:Group("|T135939:18:18|t Power Infusion", nil, 3, "tab", nil, nil, nil, function() return Private.isForever end)
 
     Private.GUI.args.Alerts.args.PowerInfusion.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.PowerInfusion.Enable end, function(_, value) Private.DB.global.Alerts.PowerInfusion.Enable = value Private:UpdatePowerInfusionAlert() end)
     Private.GUI.args.Alerts.args.PowerInfusion.args.Enable.descStyle = "inline"
@@ -111,7 +139,7 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.PowerInfusion.args.SoundGroup.args.SoundChannel = ACH:Select("Sound Channel", nil, 2, {["Master"] = "Master", ["SFX"] = "SFX", ["Music"] = "Music", ["Ambience"] = "Ambience"}, nil, "relative", function() return Private.DB.global.Alerts.PowerInfusion.SoundChannel end, function(_, value) Private.DB.global.Alerts.PowerInfusion.SoundChannel = value Private:UpdatePowerInfusionAlert() end, function() return not Private.DB.global.Alerts.PowerInfusion.Enable end)
     Private.GUI.args.Alerts.args.PowerInfusion.args.SoundGroup.args.SoundChannel.relWidth = 0.5
 
-    Private.GUI.args.Alerts.args.TimeSpiral = ACH:Group("Time Spiral", nil, 3, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.Alerts.args.TimeSpiral = ACH:Group("|T4622479:18:18|t Time Spiral", nil, 4, "tab", nil, nil, nil, function() return Private.isForever end)
 
     Private.GUI.args.Alerts.args.TimeSpiral.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.TimeSpiral.Enable end, function(_, value) Private.DB.global.Alerts.TimeSpiral.Enable = value Private:UpdateTimeSpiralAlert() end)
     Private.GUI.args.Alerts.args.TimeSpiral.args.Enable.descStyle = "inline"

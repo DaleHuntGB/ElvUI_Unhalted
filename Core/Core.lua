@@ -14,6 +14,7 @@ function AddOn:OnEnable()
     Private:SetupBugSackSkin()
     -- [[ Alerts ]]
     Private:SetupCombatAlert()
+    Private:SetupInnervateAlert()
     Private:SetupPowerInfusionAlert()
     Private:SetupTimeSpiralAlert()
     -- [[ Blizzard ]]
