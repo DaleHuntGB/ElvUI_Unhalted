@@ -443,7 +443,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size = ACH:Range("Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Size[1] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Size[1] = value Private.DB.global.Miscellaneous.Crosshair.Size[2] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("MouseCursor", nil, 2, "tab")
+    Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 2, "tab")
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.MouseCursor.Enable end, function(_, value) Private.DB.global.Miscellaneous.MouseCursor.Enable = value Private:UpdateMouseCursor() end, nil)
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Colour = ACH:Color("Colour", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.MouseCursor.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.MouseCursor.Colour = {r, g, b, a} Private:UpdateMouseCursor() end, function() return not Private.DB.global.Miscellaneous.MouseCursor.Enable end)
