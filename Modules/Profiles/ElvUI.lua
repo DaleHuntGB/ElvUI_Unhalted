@@ -10,5 +10,6 @@ function Private:ImportElvUI()
     C_Timer.After(0.33, function() Distributor:ImportProfile(ProfileImportString) end)
     C_Timer.After(0.66, function() Distributor:ImportProfile(PrivateImportString) end)
     C_Timer.After(1, function() Distributor:ImportProfile(GlobalImportString) end)
+    Private.E.db.chat.hideVoiceButtons = true
     C_Timer.After(1.33, function() Private.E:StaticPopup_Show("CONFIG_RL") end)
 end
