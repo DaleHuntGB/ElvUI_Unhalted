@@ -113,7 +113,7 @@ function Private:CreateDrilldown(Row)
                 local UnitName = UnitDetails and UnitDetails.unitName
                 if DB.MeterType == Enum.DamageMeterType.EnemyDamageTaken and (Private:SecretValue(UnitName) or (UnitName and UnitName ~= "")) then
                     local SpecIconID = UnitDetails.specIconID
-                    if SpecIconID and SpecIconID ~= 0 then
+                    if Private:SecretValue(SpecIconID) or SpecIconID then
                         Entry.Icon:SetTexture(SpecIconID)
                     else
                         Entry.Icon:SetTexture(135274)

@@ -71,7 +71,7 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
         local BarColour = ClassColour or Private.E.db.general.valuecolor
 
         if Row.Icon then
-            if CombatSource.specIconID then
+            if Private:SecretValue(CombatSource.specIconID) or CombatSource.specIconID then
                 Row.Icon:SetTexture(CombatSource.specIconID)
             else
                 Row.Icon:SetTexture(135274)
