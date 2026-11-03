@@ -43,7 +43,7 @@ local function CombatResurrection_OnEvent(Frame, Event)
         Frame:SetPoint(DB.Layout[1], _G[DB.AnchorParent] or UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     end
 
-    local Active = Frame.InEncounter or Frame.InChallenge
+    local Active = (Frame.InEncounter or Frame.InChallenge) and GetNumGroupMembers() > 1
     local Shown = Private.CombatResurrectionPreview or Active
     Frame:SetShown(Shown)
     Frame:SetScript("OnUpdate", Active and CombatResurrection_OnUpdate or nil)
@@ -88,6 +88,7 @@ function Private:SetupCombatResurrection()
     if DB.Enable then
         Frame:RegisterEvent("ENCOUNTER_START")
         Frame:RegisterEvent("ENCOUNTER_END")
+        Frame:RegisterEvent("GROUP_ROSTER_UPDATE")
         Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         Frame:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
@@ -121,7 +122,8 @@ function Private:UpdateCombatResurrection()
     Frame.Text:SetJustifyH(Private.JustificationH[DB.Layout[1]])
     Frame.Text:SetTextColor(DB.Text.Colour[1], DB.Text.Colour[2], DB.Text.Colour[3], DB.Text.Colour[4] or 1)
 
-    local Shown = DB.Enable and (Private.CombatResurrectionPreview or Frame.InEncounter or Frame.InChallenge)
+    local Active = (Frame.InEncounter or Frame.InChallenge) and GetNumGroupMembers() > 1
+    local Shown = DB.Enable and (Private.CombatResurrectionPreview or Active)
     Frame:SetShown(Shown)
     if Shown then
         Frame.TimeSinceLastUpdate = 0
@@ -131,6 +133,7 @@ function Private:UpdateCombatResurrection()
     if DB.Enable then
         Frame:RegisterEvent("ENCOUNTER_START")
         Frame:RegisterEvent("ENCOUNTER_END")
+        Frame:RegisterEvent("GROUP_ROSTER_UPDATE")
         Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         Frame:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
@@ -143,6 +146,7 @@ function Private:UpdateCombatResurrection()
     else
         Frame:UnregisterEvent("ENCOUNTER_START")
         Frame:UnregisterEvent("ENCOUNTER_END")
+        Frame:UnregisterEvent("GROUP_ROSTER_UPDATE")
         Frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
         Frame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
         Frame:UnregisterEvent("PLAYER_DIFFICULTY_CHANGED")
