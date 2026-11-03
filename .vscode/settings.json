@@ -6,10 +6,14 @@
         "**/.jj": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        ".vscode": true
+        ".vscode": true,
+        ".github": true,
+        ".pkgmeta": true
     },
     "hide-files.files": [
-        ".vscode"
+        ".vscode",
+        ".github",
+        ".pkgmeta"
     ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
