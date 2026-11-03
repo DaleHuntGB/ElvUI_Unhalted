@@ -354,13 +354,15 @@ function Private:SetupGUI()
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
 
     Private.GUI.args.MinimapStats.args.Time.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Enable end, function(_, value) Private.DB.global.MinimapStats.Time.Enable = value Private:UpdateTime() end)
-    Private.GUI.args.MinimapStats.args.Time.args.Enable.relWidth = 0.33
-    Private.GUI.args.MinimapStats.args.Time.args.Format = ACH:Select("Format", nil, 2, {["24H"] = "24H", ["12H"] = "12H"}, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Format end, function(_, value) Private.DB.global.MinimapStats.Time.Format = value Private:UpdateTime() end, function() return not Private.DB.global.MinimapStats.Time.Enable end)
-    Private.GUI.args.MinimapStats.args.Time.args.Format.relWidth = 0.33
-    Private.GUI.args.MinimapStats.args.Time.args.UpdateInterval = ACH:Range("Update Interval", nil, 3, {min = 1, max = 60, softMin = 1, softMax = 30, step = 1}, "relative", function() return Private.DB.global.MinimapStats.Time.UpdateInterval end, function(_, value) Private.DB.global.MinimapStats.Time.UpdateInterval = value Private:UpdateTime() end, function() return not Private.DB.global.MinimapStats.Time.Enable end)
-    Private.GUI.args.MinimapStats.args.Time.args.UpdateInterval.relWidth = 0.33
+    Private.GUI.args.MinimapStats.args.Time.args.Enable.relWidth = 0.5
+    Private.GUI.args.MinimapStats.args.Time.args.ShowWeather = ACH:Toggle("Show Weather", nil, 2, nil, nil, "relative", function() return Private.DB.global.MinimapStats.Time.ShowWeather end, function(_, value) Private.DB.global.MinimapStats.Time.ShowWeather = value Private:UpdateTime() end)
+    Private.GUI.args.MinimapStats.args.Time.args.ShowWeather.relWidth = 0.5
+    Private.GUI.args.MinimapStats.args.Time.args.Format = ACH:Select("Format", nil, 3, {["24H"] = "24H", ["12H"] = "12H"}, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Format end, function(_, value) Private.DB.global.MinimapStats.Time.Format = value Private:UpdateTime() end, function() return not Private.DB.global.MinimapStats.Time.Enable end)
+    Private.GUI.args.MinimapStats.args.Time.args.Format.relWidth = 0.5
+    Private.GUI.args.MinimapStats.args.Time.args.UpdateInterval = ACH:Range("Update Interval", nil, 4, {min = 1, max = 60, softMin = 1, softMax = 30, step = 1}, "relative", function() return Private.DB.global.MinimapStats.Time.UpdateInterval end, function(_, value) Private.DB.global.MinimapStats.Time.UpdateInterval = value Private:UpdateTime() end, function() return not Private.DB.global.MinimapStats.Time.Enable end)
+    Private.GUI.args.MinimapStats.args.Time.args.UpdateInterval.relWidth = 0.5
 
-    Private.GUI.args.MinimapStats.args.Time.args.Layout = ACH:Group("Layout", nil, 4)
+    Private.GUI.args.MinimapStats.args.Time.args.Layout = ACH:Group("Layout", nil, 5)
     Private.GUI.args.MinimapStats.args.Time.args.Layout.inline = true
     Private.GUI.args.MinimapStats.args.Time.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Layout[1] end, function(_, value) Private.DB.global.MinimapStats.Time.Layout[1] = value Private:UpdateTime() end, function() return not Private.DB.global.MinimapStats.Time.Enable end)
     Private.GUI.args.MinimapStats.args.Time.args.Layout.args.AnchorFrom.relWidth = 0.5

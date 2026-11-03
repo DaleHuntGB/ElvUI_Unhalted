@@ -9,6 +9,11 @@ local function FetchTime()
     end
 end
 
+local function FetchWeather()
+    local DB = Private.DB.global.MinimapStats.Time
+    return DB.ShowWeather and ("|T" .. Private.Weather[C_Weather.GetCurrentWeather().type] .. ":" .. DB.FontSize * 0.7 .. ":" .. DB.FontSize * 0.7 .. "|t" or "") or ""
+end
+
 local function Time_OnEnter()
     local AccentColour = Private.E.AccentColour
     local RaidLockouts = {}
@@ -80,7 +85,13 @@ function Private:SetupTime()
     Private.TimeFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
     Private.TimeFrame.Text:SetWordWrap(false)
     Private.TimeFrame.Text:SetNonSpaceWrap(true)
-    Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetUnboundedStringWidth())
+
+    Private.TimeFrame.Weather = Private.TimeFrame:CreateTexture(nil, "OVERLAY")
+    Private.TimeFrame.Weather:SetPoint("RIGHT", Private.TimeFrame.Text, "TOPRIGHT", 0, 0)
+    Private.TimeFrame.Weather:SetTexture(Private.Weather[C_Weather.GetCurrentWeather().type])
+    Private.TimeFrame.Weather:SetSize(DB.FontSize * 0.7, DB.FontSize * 0.7)
+
+    Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
     Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
 
     if DB.Enable then
@@ -88,13 +99,15 @@ function Private:SetupTime()
             Private.TimeFrame.TimeSinceLastUpdate = (Private.TimeFrame.TimeSinceLastUpdate or 0) + timeElapsed
             if Private.TimeFrame.TimeSinceLastUpdate >= DB.UpdateInterval then
                 Private.TimeFrame.Text:SetText(FetchTime())
-                Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetUnboundedStringWidth())
+                Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
                 Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
                 Private.TimeFrame.TimeSinceLastUpdate = 0
             end
         end)
         Private.TimeFrame:SetScript("OnEnter", Time_OnEnter)
         Private.TimeFrame:SetScript("OnLeave", Time_OnLeave)
+        Private.TimeFrame.Weather:SetSize(DB.FontSize * 0.7, DB.FontSize * 0.7)
+        Private.TimeFrame.Weather:SetShown(DB.ShowWeather)
     end
 
     Private.TimeFrame:SetShown(DB.Enable)
@@ -109,29 +122,35 @@ function Private:UpdateTime()
     Private.TimeFrame.Text:SetWordWrap(false)
     Private.TimeFrame.Text:SetNonSpaceWrap(true)
 
+    Private.TimeFrame.Weather:SetTexture(Private.Weather[C_Weather.GetCurrentWeather().type])
+    Private.TimeFrame.Weather:SetSize(DB.FontSize * 0.7, DB.FontSize * 0.7)
+
     if DB.Enable then
         Private.TimeFrame:SetScript("OnUpdate", function(_, timeElapsed)
             Private.TimeFrame.TimeSinceLastUpdate = (Private.TimeFrame.TimeSinceLastUpdate or 0) + timeElapsed
             if Private.TimeFrame.TimeSinceLastUpdate >= DB.UpdateInterval then
                 Private.TimeFrame.Text:SetText(FetchTime())
-                Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetUnboundedStringWidth())
+                Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
                 Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
                 Private.TimeFrame.TimeSinceLastUpdate = 0
             end
         end)
         Private.TimeFrame:SetScript("OnEnter", Time_OnEnter)
         Private.TimeFrame:SetScript("OnLeave", Time_OnLeave)
+        Private.TimeFrame.Weather:SetSize(DB.FontSize * 0.7, DB.FontSize * 0.7)
+        Private.TimeFrame.Weather:SetShown(DB.ShowWeather)
     else
         Private.TimeFrame:SetScript("OnUpdate", nil)
         Private.TimeFrame:SetScript("OnEnter", nil)
         Private.TimeFrame:SetScript("OnLeave", nil)
+        Private.TimeFrame.Weather:SetShown(false)
     end
 
     Private.TimeFrame:ClearAllPoints()
     Private.TimeFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
     Private.TimeFrame.Text:ClearAllPoints()
     Private.TimeFrame.Text:SetPoint(DB.Layout[1], Private.TimeFrame, DB.Layout[1], 0, 0)
-    Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetUnboundedStringWidth())
+    Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
     Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
     Private.TimeFrame:SetShown(DB.Enable)
 end

@@ -132,6 +132,12 @@ Private.GVaultLevels = {
     }
 }
 
+Private.Weather = {
+    [0] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Weather\\Clear.png",
+    [1] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Weather\\Rain.png",
+    [2] = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Weather\\Snow.png",
+}
+
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)
 end
