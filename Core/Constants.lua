@@ -89,6 +89,49 @@ Private.MouseCursors = {
     ["CURSOR_10"] = { Path = "talents-search-notonactionbarhidden", Preview = "|A:talents-search-notonactionbarhidden:32:32|a", isAtlas = true }
 }
 
+Private.RaidDifficultyIDs = {
+    [14] = "Normal",
+    [15] = "Heroic",
+    [16] = "Mythic",
+    [17] = "LFR",
+}
+
+Private.GVaultLevels = {
+    ["Mythic+"] = {
+        [0]  = 302,
+        [2]  = 305,
+        [3]  = 305,
+        [4]  = 308,
+        [5]  = 311,
+        [6]  = 311,
+        [7]  = 315,
+        [8]  = 315,
+        [9]  = 315,
+        [10] = 318,
+    },
+
+    ["World"] = {
+        [1]  = 279,
+        [2]  = 282,
+        [3]  = 285,
+        [4]  = 289,
+        [5]  = 292,
+        [6]  = 295,
+        [7]  = 298,
+        [8]  = 302,
+        [9]  = 305,
+        [10] = 305,
+        [11] = 305,
+    },
+
+    ["Raids"] = {
+        [14] = 292, -- Raid Finder
+        [15] = 305, -- Normal
+        [16] = 318, -- Heroic
+        [17] = 334, -- Mythic
+    }
+}
+
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)
 end

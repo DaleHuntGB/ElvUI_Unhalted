@@ -46,7 +46,8 @@
         "COMPLETE",
         "ObjectiveTrackerFrame",
         "StaticPopup_Show",
-        "CLOSE"
+        "CLOSE",
+        "WeeklyRewardsUtil"
     ],
     "Lua.type.weakUnionCheck": true
 }
