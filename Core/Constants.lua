@@ -132,6 +132,16 @@ Private.GVaultLevels = {
     }
 }
 
+Private.JustificationH = {
+    ["TOPLEFT"] = "TOPLEFT",
+    ["TOPRIGHT"] = "TOPRIGHT",
+    ["LEFT"] = "LEFT",
+    ["CENTER"] = "CENTER",
+    ["RIGHT"] = "RIGHT",
+    ["BOTTOMLEFT"] = "BOTTOMLEFT",
+    ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+}
+
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)
 end

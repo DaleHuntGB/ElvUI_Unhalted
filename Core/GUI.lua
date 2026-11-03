@@ -447,7 +447,31 @@ function Private:SetupGUI()
 
     Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 6, "tab")
 
-    Private.GUI.args.Miscellaneous.args.Crosshair = ACH:Group("Crosshair", nil, 1, "tab")
+    Private.GUI.args.Miscellaneous.args.CombatTimer = ACH:Group("Combat Timer", nil, 1, "tab")
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Enable end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Enable = value Private:UpdateCombatTimer() end, nil)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.OOCOpacity = ACH:Range("Opacity (Out of Combat)", nil, 2, { min = 0, max = 1, step = 0.01 }, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.OOCOpacity end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.OOCOpacity = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.OOCOpacity.relWidth = 0.5
+
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout = ACH:Group("Layout", nil, 3)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.inline = true
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Layout[1] end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Layout[1] = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.AnchorFrom.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Layout[2] = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.AnchorTo.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Layout[3] = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.XOffset.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Layout[4] = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Layout.args.YOffset.relWidth = 0.5
+
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font = ACH:Group("Font", nil, 4)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.inline = true
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.args.Colour = ACH:Color("Colour", nil, 1, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.CombatTimer.Text.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.CombatTimer.Text.Colour = {r, g, b, a} Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.args.Colour.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Text.FontSize = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.args.FontSize.relWidth = 0.5
+
+    Private.GUI.args.Miscellaneous.args.Crosshair = ACH:Group("Crosshair", nil, 2, "tab")
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Enable end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Enable = value Private:UpdateCrosshair() end, nil)
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Colour = ACH:Color("Colour", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.Crosshair.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.Crosshair.Colour = {r, g, b, a} Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
@@ -471,7 +495,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size = ACH:Range("Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Size[1] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Size[1] = value Private.DB.global.Miscellaneous.Crosshair.Size[2] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 2, "tab")
+    Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 3, "tab")
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.MouseCursor.Enable end, function(_, value) Private.DB.global.Miscellaneous.MouseCursor.Enable = value Private:UpdateMouseCursor() end, nil)
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Colour = ACH:Color("Colour", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.MouseCursor.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.MouseCursor.Colour = {r, g, b, a} Private:UpdateMouseCursor() end, function() return not Private.DB.global.Miscellaneous.MouseCursor.Enable end)

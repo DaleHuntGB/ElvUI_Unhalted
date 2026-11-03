@@ -283,6 +283,17 @@ local Defaults = {
             }
         },
         Miscellaneous = {
+            CombatTimer = {
+                Enable = true,
+                OOCOpacity = 0.33,
+                Layout = {"LEFT", "LEFT", 3.1, 0.1},
+                AnchorParent = "ElvUF_Player",
+                Text = {
+                    FontSize = 12,
+                    Colour = {255/255, 255/255, 255/255},
+                    Format = "00:00",
+                },
+            },
             Crosshair = {
                 Enable = false,
                 Size = {16, 16},
@@ -296,7 +307,7 @@ local Defaults = {
                 Layout = {"CENTER", "CENTER", 0, 0},
                 Colour = {1, 1, 1, 1},
                 Texture = "CURSOR_01",
-            }
+            },
         },
         MythicPlusTimer = {
             Enable = true,
