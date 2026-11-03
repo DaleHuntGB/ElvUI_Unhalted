@@ -25,7 +25,8 @@ local function CombatResurrection_OnUpdate(Frame, TimeElapsed)
 end
 
 local function CombatResurrection_OnEvent(Frame, Event)
-    if not Private.DB.global.Miscellaneous.CombatResurrection.Enable then return end
+    local DB = Private.DB.global.Miscellaneous.CombatResurrection
+    if not DB.Enable then return end
 
     if Event == "ENCOUNTER_START" then
         Frame.InEncounter = true
@@ -38,6 +39,8 @@ local function CombatResurrection_OnEvent(Frame, Event)
     elseif Event == "PLAYER_ENTERING_WORLD" or Event == "ZONE_CHANGED_NEW_AREA" or Event == "PLAYER_DIFFICULTY_CHANGED" then
         Frame.InEncounter = C_InstanceEncounter.IsEncounterInProgress()
         Frame.InChallenge = not Private.isForever and C_ChallengeMode.IsChallengeModeActive()
+        Frame:ClearAllPoints()
+        Frame:SetPoint(DB.Layout[1], _G[DB.AnchorParent] or UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     end
 
     local Active = Frame.InEncounter or Frame.InChallenge
