@@ -24,14 +24,14 @@ function Private:CreateMythicPlusWindow(DB)
         local Run = Frame.Run
         if not Run or Run.Completed then return end
         local Info = C_ChallengeMode.GetChallengeCompletionInfo()
-        if not Info or issecretvalue(Info.mapChallengeModeID) or issecretvalue(Info.time) then return end
+        if not Info or Private:SecretValue(Info.mapChallengeModeID) or Private:SecretValue(Info.time) then return end
         if Info.mapChallengeModeID ~= Run.MapID or Info.time <= 0 then return end
         Run.Completed, Run.Completing = true, nil
         Run.Elapsed = Info.time / 1000
         Run.Deaths, Run.TimeLost = C_ChallengeMode.GetDeathCount()
-        if not issecretvalue(Info.level) and Info.level > 0 then Run.Level = Info.level end
-        Run.OnTime = not issecretvalue(Info.onTime) and Info.onTime
-        Run.Upgrade = not issecretvalue(Info.keystoneUpgradeLevels) and Info.keystoneUpgradeLevels or 0
+        if not Private:SecretValue(Info.level) and Info.level > 0 then Run.Level = Info.level end
+        Run.OnTime = not Private:SecretValue(Info.onTime) and Info.onTime
+        Run.Upgrade = not Private:SecretValue(Info.keystoneUpgradeLevels) and Info.keystoneUpgradeLevels or 0
         Frame:StopClock()
     end
 
@@ -63,7 +63,7 @@ function Private:CreateMythicPlusWindow(DB)
         if not DB.Enable then return end
         local _, InstanceType, Difficulty, _, _, _, _, InstanceID = GetInstanceInfo()
         local MapID = C_ChallengeMode.GetActiveChallengeMapID()
-        if issecretvalue(MapID) then MapID = nil end
+        if Private:SecretValue(MapID) then MapID = nil end
         local Active = C_ChallengeMode.IsChallengeModeActive()
         if InstanceType ~= "party" or Difficulty ~= 8 or (Frame.Resetting and not Active) then
             Frame.Run = nil
@@ -81,16 +81,16 @@ function Private:CreateMythicPlusWindow(DB)
                 local Name, _, Limit = C_ChallengeMode.GetMapUIInfo(MapID)
                 local Level, Affixes = C_ChallengeMode.GetActiveKeystoneInfo()
                 Run.Name = Name
-                if issecretvalue(Level) or Level > 0 then Run.Level = Level end
-                Run.Limit = not issecretvalue(Limit) and Limit or 0
+                if Private:SecretValue(Level) or Level > 0 then Run.Level = Level end
+                Run.Limit = not Private:SecretValue(Limit) and Limit or 0
                 Run.Peril = false
                 for _, AffixID in ipairs(Affixes) do
-                    if not issecretvalue(AffixID) and AffixID == 152 then Run.Peril = true end
+                    if not Private:SecretValue(AffixID) and AffixID == 152 then Run.Peril = true end
                 end
                 Run.TimerID = nil
                 for _, TimerID in ipairs({GetWorldElapsedTimers()}) do
                     local _, _, TimerType = GetWorldElapsedTime(TimerID)
-                    if not issecretvalue(TimerType) and TimerType == Enum.WorldElapsedTimerTypes.ChallengeMode then Run.TimerID = TimerID break end
+                    if not Private:SecretValue(TimerType) and TimerType == Enum.WorldElapsedTimerTypes.ChallengeMode then Run.TimerID = TimerID break end
                 end
                 Run.Deaths, Run.TimeLost = C_ChallengeMode.GetDeathCount()
                 Private:ReadMythicPlusObjectives(Frame)
@@ -136,10 +136,10 @@ function Private:CreateMythicPlusWindow(DB)
         elseif Event == "ENCOUNTER_END" then
             if not Frame.Run or Frame.Run.Completed then return end
             local EncounterID, Name, _, _, Success = ...
-            if not issecretvalue(Success) and Success == 1 then
+            if not Private:SecretValue(Success) and Success == 1 then
                 Private:RecordMythicPlusBoss(Frame, EncounterID, Name)
             end
-        elseif Event == "WORLD_STATE_TIMER_STOP" and Frame.Run and not issecretvalue(...) and not issecretvalue(Frame.Run.TimerID) and ... == Frame.Run.TimerID then
+        elseif Event == "WORLD_STATE_TIMER_STOP" and Frame.Run and not Private:SecretValue(...) and not Private:SecretValue(Frame.Run.TimerID) and ... == Frame.Run.TimerID then
             Frame.Run.TimerID = nil
         elseif (Event == "SCENARIO_UPDATE" or Event == "SCENARIO_CRITERIA_UPDATE" or Event == "SCENARIO_POI_UPDATE") and not Frame.Run then
             return

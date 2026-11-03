@@ -66,6 +66,13 @@ Private.MeterAmountFormats = {
     ["%s <%s>"] = "999K <99.9K>",
 }
 
+Private.CombatResurrectionFormats = {
+    ["%s • %s"] = "1 • 00:00",
+    ["%s - %s"] = "1 - 00:00",
+    ["%s » %s"] = "1 » 00:00",
+    ["%s | %s"] = "1 | 00:00",
+}
+
 Private.Crosshairs = {
     ["CROSSHAIR_01"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_01.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_01.png:18:18|t" },
     ["CROSSHAIR_02"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_02.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Crosshairs\\Crosshair_02.png:18:18|t" },
@@ -141,6 +148,10 @@ Private.JustificationH = {
     ["BOTTOMLEFT"] = "BOTTOMLEFT",
     ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
 }
+
+function Private:SecretValue(Value)
+    return issecretvalue and issecretvalue(Value) or false
+end
 
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)

@@ -294,6 +294,16 @@ local Defaults = {
                     Format = "00:00",
                 },
             },
+            CombatResurrection = {
+                Enable = true,
+                Layout = {"CENTER", "CENTER", 0.1, 0.1},
+                AnchorParent = "ElvUF_Player",
+                Text = {
+                    FontSize = 12,
+                    Colour = {255/255, 255/255, 255/255},
+                    Format = "%s • %s",
+                },
+            },
             Crosshair = {
                 Enable = false,
                 Size = {16, 16},

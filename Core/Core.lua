@@ -32,6 +32,7 @@ function AddOn:OnEnable()
     Private:SetupSystemStats()
     Private:SetupTime()
     -- [[ Miscellaneous ]]
+    Private:SetupCombatResurrection()
     Private:SetupCombatTimer()
     Private:SetupCrosshair()
     Private:SetupMouseCursor()

@@ -19,7 +19,7 @@ function Private:UpdateDeathRow(Row)
 
     if not Row.DamageMeterFrame.SessionID and Row.DamageMeterDB.SessionType == Enum.DamageMeterSessionType.Overall then
         Row.Amount_Text:SetText("")
-    elseif issecretvalue(DeathTime) then
+    elseif Private:SecretValue(DeathTime) then
         Row.Amount_Text:SetFormattedText("%.0fs", DeathTime)
     elseif DeathTime and DeathTime >= 0 then
         Row.Amount_Text:SetText(SecondsToClock(DeathTime))
@@ -30,14 +30,14 @@ end
 
 function Private:RefreshDeathRecap(Drilldown, Row, CreateEntry)
     local RecapID = Row.CombatSource.deathRecapID
-    if issecretvalue(RecapID) or not RecapID or RecapID == 0 then Drilldown:Hide() return end
+    if Private:SecretValue(RecapID) or not RecapID or RecapID == 0 then Drilldown:Hide() return end
 
     local Events = C_DeathRecap.GetRecapEvents(RecapID)
     if not Events or #Events == 0 then Drilldown:Hide() return end
 
     local DB = Row.DamageMeterDB
     local MaxHealth = C_DeathRecap.GetRecapMaxHealth(RecapID)
-    local HasMaxHealth = issecretvalue(MaxHealth) or (MaxHealth and MaxHealth > 0)
+    local HasMaxHealth = Private:SecretValue(MaxHealth) or (MaxHealth and MaxHealth > 0)
     local ClassColour = RAID_CLASS_COLORS[Row.CombatSource.classFilename]
     local BarColour = ClassColour or Private.E.db.general.valuecolor
     local RowCount = math.min(#Events, 10)
@@ -53,7 +53,7 @@ function Private:RefreshDeathRecap(Drilldown, Row, CreateEntry)
         Entry:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", INSET, -INSET - ((i - 1) * BAR_HEIGHT))
         Entry:SetPoint("BOTTOMRIGHT", Drilldown, "BOTTOMRIGHT", -INSET, INSET + ((RowCount - i) * BAR_HEIGHT))
         local Amount = Event.amount
-        if not issecretvalue(Amount) and not Amount then Amount = 0 end
+        if not Private:SecretValue(Amount) and not Amount then Amount = 0 end
         if HasMaxHealth then
             Entry.StatusBar:SetMinMaxValues(0, MaxHealth)
             Entry.StatusBar:SetValue(Amount)
@@ -66,28 +66,28 @@ function Private:RefreshDeathRecap(Drilldown, Row, CreateEntry)
         local SpellID = Event.spellId
         local SpellName = Event.spellName
         local SpellTexture
-        if not issecretvalue(Event.event) then
+        if not Private:SecretValue(Event.event) then
             if Event.event == "SWING_DAMAGE" then
                 SpellID = 88163
                 SpellName = ACTION_SWING
-            elseif Event.event == "ENVIRONMENTAL_DAMAGE" and not issecretvalue(Event.environmentalType) and Event.environmentalType then
+            elseif Event.event == "ENVIRONMENTAL_DAMAGE" and not Private:SecretValue(Event.environmentalType) and Event.environmentalType then
                 local EnvironmentalType = string.upper(Event.environmentalType)
                 SpellName = _G["ACTION_ENVIRONMENTAL_DAMAGE_" .. EnvironmentalType] or UNKNOWN
                 SpellTexture = "Interface\\Icons\\" .. (EnvironmentalIcons[EnvironmentalType] or "ability_creature_cursed_05")
             end
         end
-        if issecretvalue(SpellID) or (SpellID and SpellID ~= 0) then
+        if Private:SecretValue(SpellID) or (SpellID and SpellID ~= 0) then
             if not SpellTexture then SpellTexture = C_Spell.GetSpellTexture(SpellID) end
-            if not issecretvalue(SpellName) and not SpellName then SpellName = C_Spell.GetSpellName(SpellID) end
+            if not Private:SecretValue(SpellName) and not SpellName then SpellName = C_Spell.GetSpellName(SpellID) end
         end
-        if not issecretvalue(SpellName) and not SpellName then SpellName = UNKNOWN end
-        if not issecretvalue(SpellTexture) and not SpellTexture then SpellTexture = "Interface\\Icons\\INV_Misc_QuestionMark" end
+        if not Private:SecretValue(SpellName) and not SpellName then SpellName = UNKNOWN end
+        if not Private:SecretValue(SpellTexture) and not SpellTexture then SpellTexture = "Interface\\Icons\\INV_Misc_QuestionMark" end
         Entry.Icon:SetTexture(SpellTexture)
         Entry.Name_Text:SetText(SpellName)
 
         local Damage = Private:AbbreviateValue(Amount)
         local CurrentHealth = Event.currentHP
-        if not issecretvalue(MaxHealth) and HasMaxHealth and not issecretvalue(CurrentHealth) and CurrentHealth then
+        if not Private:SecretValue(MaxHealth) and HasMaxHealth and not Private:SecretValue(CurrentHealth) and CurrentHealth then
             local HealthPercent = math.floor(math.max(0, math.min(100, CurrentHealth / MaxHealth * 100)))
             Entry.Amount_Text:SetFormattedText("%s (%d%%)", Damage, HealthPercent)
         else

@@ -2,7 +2,7 @@ local Private = select(2, ...)
 
 function Private:RecordMythicPlusBoss(Frame, EncounterID, Name)
     local Run = Frame.Run
-    if not Run or Run.Completed or issecretvalue(EncounterID) or not EncounterID then return end
+    if not Run or Run.Completed or Private:SecretValue(EncounterID) or not EncounterID then return end
     Private:ReadMythicPlusTime(Frame)
     Run.BossCompletions = Run.BossCompletions or {}
     if not Run.BossCompletions[EncounterID] then
@@ -21,7 +21,7 @@ end
 
 function Private:ReadMythicPlusObjectives(Frame)
     local Step = C_ScenarioInfo.GetScenarioStepInfo()
-    if not Step or issecretvalue(Step.numCriteria) then return end
+    if not Step or Private:SecretValue(Step.numCriteria) then return end
     Private:ReadMythicPlusTime(Frame)
     local Run = Frame.Run
     local Previous = {}
@@ -29,12 +29,12 @@ function Private:ReadMythicPlusObjectives(Frame)
     local Objectives = {}
     for Index = 1, Step.numCriteria do
         local Info = C_ScenarioInfo.GetCriteriaInfo(Index)
-        if Info and not issecretvalue(Info.isWeightedProgress) then
+        if Info and not Private:SecretValue(Info.isWeightedProgress) then
             local ID = Info.criteriaID
-            if issecretvalue(ID) or not ID or ID == 0 then ID = Index end
+            if Private:SecretValue(ID) or not ID or ID == 0 then ID = Index end
             local Objective = Previous[ID] or {ID = ID}
             local EncounterID
-            if not issecretvalue(Info.criteriaType) and Info.criteriaType == 165 and not issecretvalue(Info.assetID) then
+            if not Private:SecretValue(Info.criteriaType) and Info.criteriaType == 165 and not Private:SecretValue(Info.assetID) then
                 EncounterID = Info.assetID
             end
             Objective.EncounterID = EncounterID
@@ -43,16 +43,16 @@ function Private:ReadMythicPlusObjectives(Frame)
             Objective.Value = Info.quantity
             Objective.Maximum = Info.isWeightedProgress and 100 or Info.totalQuantity
             Objective.Percent = Info.isWeightedProgress
-            Objective.Complete = Completion ~= nil or (not issecretvalue(Info.completed) and Info.completed)
+            Objective.Complete = Completion ~= nil or (not Private:SecretValue(Info.completed) and Info.completed)
             if not Objective.Percent then
                 if Completion then
                     Objective.Name = Completion.Name
                     Objective.CompletionTime = Completion.Time
-                elseif not issecretvalue(Objective.Name) then
+                elseif not Private:SecretValue(Objective.Name) then
                     Objective.Name = Objective.Name:gsub("^Defeat%s+", ""):gsub("%s+defeated$", "")
                 end
                 if Objective.Complete then
-                    if not issecretvalue(Objective.CompletionTime) and not Objective.CompletionTime and not issecretvalue(Run.Elapsed) and not issecretvalue(Info.elapsed) and Info.elapsed then
+                    if not Private:SecretValue(Objective.CompletionTime) and not Objective.CompletionTime and not Private:SecretValue(Run.Elapsed) and not Private:SecretValue(Info.elapsed) and Info.elapsed then
                         Objective.CompletionTime = math.max(0, Run.Elapsed - Info.elapsed)
                     end
                     Objective.Value = Objective.Maximum
@@ -71,15 +71,15 @@ function Private:RenderMythicPlusObjectives(Frame, Data, Index)
             local Row = Frame:GetRow(Index)
             local Colour = Objective.Complete and DB.Colours.Complete or DB.Colours.Progress
             local Maximum = Objective.Maximum
-            if not issecretvalue(Maximum) and (not Maximum or Maximum <= 0) then Maximum = 1 end
+            if not Private:SecretValue(Maximum) and (not Maximum or Maximum <= 0) then Maximum = 1 end
             Row.StatusBar:SetMinMaxValues(0, Maximum)
             Row.StatusBar:SetValue(Objective.Value)
             Row.StatusBar:SetStatusBarColor(unpack(Colour))
             Row.Name_Text:SetText(Objective.Name)
             if Objective.Percent then
                 Row.Amount_Text:SetFormattedText("%.1f%%", Objective.Value)
-            elseif Objective.Complete and (issecretvalue(Objective.CompletionTime) or Objective.CompletionTime ~= nil) then
-                if issecretvalue(Objective.CompletionTime) then
+            elseif Objective.Complete and (Private:SecretValue(Objective.CompletionTime) or Objective.CompletionTime ~= nil) then
+                if Private:SecretValue(Objective.CompletionTime) then
                     Row.Amount_Text:SetFormattedText("%.0fs", Objective.CompletionTime)
                 else
                     Row.Amount_Text:SetText(SecondsToClock(Objective.CompletionTime))

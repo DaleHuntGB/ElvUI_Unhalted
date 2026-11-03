@@ -43,6 +43,7 @@ Modules/MinimapStats/Location.lua
 Modules/MinimapStats/SystemStats.lua
 Modules/MinimapStats/Time.lua
 
+Modules/Miscellaneous/CombatResurrection.lua
 Modules/Miscellaneous/CombatTimer.lua
 Modules/Miscellaneous/Crosshair.lua
 Modules/Miscellaneous/MouseCursor.lua

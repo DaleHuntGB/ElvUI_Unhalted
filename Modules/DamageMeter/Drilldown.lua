@@ -76,7 +76,7 @@ function Private:CreateDrilldown(Row)
                 return Private:RefreshDeathRecap(Drilldown, SourceRow, CreateSpellRow)
             end
 
-            if issecretvalue(CombatSource.sourceGUID) or issecretvalue(CombatSource.sourceCreatureID) then Drilldown:Hide() return end
+            if Private:SecretValue(CombatSource.sourceGUID) or Private:SecretValue(CombatSource.sourceCreatureID) then Drilldown:Hide() return end
             if not CombatSource.sourceGUID and not CombatSource.sourceCreatureID then Drilldown:Hide() return end
             if not C_DamageMeter.IsDamageMeterAvailable() then Drilldown:Hide() return end
 
@@ -111,7 +111,7 @@ function Private:CreateDrilldown(Row)
                 local SpellID = CombatSpell.spellID
                 local UnitDetails = CombatSpell.combatSpellDetails
                 local UnitName = UnitDetails and UnitDetails.unitName
-                if DB.MeterType == Enum.DamageMeterType.EnemyDamageTaken and (issecretvalue(UnitName) or (UnitName and UnitName ~= "")) then
+                if DB.MeterType == Enum.DamageMeterType.EnemyDamageTaken and (Private:SecretValue(UnitName) or (UnitName and UnitName ~= "")) then
                     local SpecIconID = UnitDetails.specIconID
                     if SpecIconID and SpecIconID ~= 0 then
                         Entry.Icon:SetTexture(SpecIconID)
@@ -119,13 +119,13 @@ function Private:CreateDrilldown(Row)
                         Entry.Icon:SetTexture(135274)
                     end
                     Entry.Name_Text:SetText(Private:StripRealm(UnitName, UnitDetails.unitClassFilename))
-                elseif not issecretvalue(SpellID) and SpellID == 0 then
+                elseif not Private:SecretValue(SpellID) and SpellID == 0 then
                     Entry.Icon:SetTexture("Interface\\Icons\\INV_Sword_04")
                     Entry.Name_Text:SetText(ACTION_SWING)
                 else
                     local SpellName = C_Spell.GetSpellName(SpellID)
                     local SpellTexture = C_Spell.GetSpellTexture(SpellID)
-                    if not issecretvalue(SpellName) and not SpellName then SpellName = UNKNOWN end
+                    if not Private:SecretValue(SpellName) and not SpellName then SpellName = UNKNOWN end
                     Entry.Icon:SetTexture(SpellTexture)
                     Entry.Name_Text:SetText(SpellName)
                 end
@@ -133,7 +133,7 @@ function Private:CreateDrilldown(Row)
 
                 local NameWidth = Entry.Name_Text:GetUnboundedStringWidth()
                 local AmountWidth = Entry.Amount_Text:GetUnboundedStringWidth()
-                if issecretvalue(NameWidth) or issecretvalue(AmountWidth) then
+                if Private:SecretValue(NameWidth) or Private:SecretValue(AmountWidth) then
                     Width = math.max(Width, DB.Size[1] - INSET * 2)
                 else
                     Width = math.max(Width, BAR_HEIGHT + SPACING + TEXT_PADDING * 3 + NameWidth + AmountWidth)

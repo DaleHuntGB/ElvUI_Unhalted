@@ -16,7 +16,7 @@ local function FilterMessages()
 	if isFiltered then return end
 	UIErrorsFrameAddMessage = UIErrorsFrame.AddMessage
 	UIErrorsFrame.AddMessage = function(Frame, Message, ...)
-		if not (issecretvalue and issecretvalue(Message)) and FilteredMessages[Message] then return end
+		if not Private:SecretValue(Message) and FilteredMessages[Message] then return end
 		return UIErrorsFrameAddMessage(Frame, Message, ...)
 	end
 	isFiltered = true
