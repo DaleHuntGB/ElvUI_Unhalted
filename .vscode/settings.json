@@ -52,7 +52,8 @@
         "StaticPopup_Show",
         "CLOSE",
         "WeeklyRewardsUtil",
-        "RunNextFrame"
+        "RunNextFrame",
+        "CLASS_ICON_TCOORDS"
     ],
     "Lua.type.weakUnionCheck": true
 }

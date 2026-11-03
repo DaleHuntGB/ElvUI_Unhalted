@@ -69,10 +69,13 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
 
         local ClassColour = RAID_CLASS_COLORS[CombatSource.classFilename]
         local BarColour = ClassColour or Private.E.db.general.valuecolor
+        local SpecIconID = CombatSource.specIconID
 
         if Row.Icon then
-            if Private:SecretValue(CombatSource.specIconID) or CombatSource.specIconID then
-                Row.Icon:SetTexture(CombatSource.specIconID)
+            if Private:SecretValue(SpecIconID) or (SpecIconID and SpecIconID ~= 0) then
+                Row.Icon:SetTexture(SpecIconID)
+            elseif ClassColour then
+                Row.Icon:SetTexture("Interface\\Icons\\ClassIcon_" .. CombatSource.classFilename)
             else
                 Row.Icon:SetTexture(135274)
             end
