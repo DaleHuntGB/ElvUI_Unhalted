@@ -62,6 +62,7 @@ Modules/Profiles/SkironCooldownManager.lua
 Modules/Profiles/UnhaltedUI.lua
 
 Modules/Toggles/AutoDelete.lua
+Modules/Toggles/AutoQuest.lua
 Modules/Toggles/AutoSignUp.lua
 Modules/Toggles/BossBanner.lua
 Modules/Toggles/LossOfControl.lua

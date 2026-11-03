@@ -40,6 +40,7 @@ function AddOn:OnEnable()
     Private:SetupMythicPlusTimer()
     -- [[ Toggles ]]
     Private:SetupAutoDelete()
+    Private:SetupAutoQuest()
     Private:SetupAutoSignUp()
     Private:SetupBossBanner()
     Private:SetupLossOfControl()

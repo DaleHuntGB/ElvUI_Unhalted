@@ -363,6 +363,7 @@ local Defaults = {
         },
         Toggles = {
             AutoDelete = true,
+            AutoQuest = true,
             AutoSignUp = true,
             HideBossBanner = true,
             HideLossOfControl = true,

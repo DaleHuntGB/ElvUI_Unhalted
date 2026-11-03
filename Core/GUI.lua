@@ -650,16 +650,17 @@ function Private:SetupGUI()
     Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 8, "tab")
 
     local Toggles = {
-        [1] = { name = "Auto Delete", desc = "Auto populates |cFFFFCC00delete|r where required.", value = Private.DB.global.Toggles.AutoDelete, requiresReload = false, isRetail = false },
-        [2] = { name = "Auto Sign Up", desc = "Automatically accept |cFFFFCC00role|r popups.", value = Private.DB.global.Toggles.AutoSignUp, requiresReload = false, isRetail = true },
-        [3] = { name = "Hide Boss Banner", desc = "Hides the popup that appears when a boss is |cFFFFCC00defeated|r.", value = Private.DB.global.Toggles.HideBossBanner, requiresReload = true, isRetail = true },
-        [4] = { name = "Hide Loss of Control", desc = "Hides the popup that shows when you are |cFFFFCC00crowd-controlled|r.", value = Private.DB.global.Toggles.HideLossOfControl, requiresReload = true, isRetail = false },
-        [5] = { name = "Hide Talking Head", desc = nil, value = Private.DB.global.Toggles.HideTalkingHead, requiresReload = true, isRetail = true },
-        [6] = { name = "Skip Cinematics", desc = "Automatically skip |cFFFFCC00seen|r & |cFFFFCC00unseen|r cinematics.", value = Private.DB.global.Toggles.SkipCinematics, requiresReload = true, isRetail = false },
+        [1] = { name = "Auto Delete", desc = "Auto populates |cFFFFCC00delete|r where required.", key = "AutoDelete", requiresReload = false, isRetail = false },
+        [2] = { name = "Auto Quest", desc = "Automatically |cFFFFCC00accept|r and |cFFFFCC00turn-in|r quests. Hold |cFFFFCC00SHIFT|r to override.", key = "AutoQuest", requiresReload = false, isRetail = false },
+        [3] = { name = "Auto Sign Up", desc = "Automatically accept |cFFFFCC00role|r popups.", key = "AutoSignUp", requiresReload = false, isRetail = true },
+        [4] = { name = "Hide Boss Banner", desc = "Hides the popup that appears when a boss is |cFFFFCC00defeated|r.", key = "HideBossBanner", requiresReload = true, isRetail = true },
+        [5] = { name = "Hide Loss of Control", desc = "Hides the popup that shows when you are |cFFFFCC00crowd-controlled|r.", key = "HideLossOfControl", requiresReload = true, isRetail = false },
+        [6] = { name = "Hide Talking Head", desc = nil, key = "HideTalkingHead", requiresReload = true, isRetail = true },
+        [7] = { name = "Skip Cinematics", desc = "Automatically skip |cFFFFCC00seen|r & |cFFFFCC00unseen|r cinematics.", key = "SkipCinematics", requiresReload = true, isRetail = false },
     }
 
     for i, toggle in ipairs(Toggles) do
-        Private.GUI.args.Toggles.args[toggle.name] = ACH:Toggle(toggle.name, toggle.desc, i, nil, nil, "full", function() return toggle.value end, function(_, value) toggle.value = value if toggle.requiresReload then Private.E:StaticPopup_Show("CONFIG_RL") end end, nil, function() return toggle.isRetail and WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE end)
+        Private.GUI.args.Toggles.args[toggle.name] = ACH:Toggle(toggle.name, toggle.desc, i, nil, nil, "full", function() return Private.DB.global.Toggles[toggle.key] end, function(_, value) Private.DB.global.Toggles[toggle.key] = value if toggle.requiresReload then Private.E:StaticPopup_Show("CONFIG_RL") end end, nil, function() return toggle.isRetail and WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE end)
         Private.GUI.args.Toggles.args[toggle.name].descStyle = "inline"
     end
 
