@@ -5,7 +5,8 @@ local function CombatResurrection_OnUpdate(Frame, TimeElapsed)
     if Frame.TimeSinceLastUpdate < 1 then return end
     Frame.TimeSinceLastUpdate = Frame.TimeSinceLastUpdate % 1
 
-    local ChargeInfo = C_Spell.GetSpellCharges(20484)
+    local ChargeInfo;
+    if Frame.InEncounter or Frame.InChallenge then ChargeInfo = C_Spell.GetSpellCharges(20484) end
     local Charges, Remaining = 0, 0
     if ChargeInfo then
         Charges = ChargeInfo.currentCharges
@@ -16,7 +17,8 @@ local function CombatResurrection_OnUpdate(Frame, TimeElapsed)
     end
 
     local Time = string.format("%02d:%02d", math.floor(Remaining / 60), Remaining % 60)
-    Frame.Text:SetFormattedText(Frame.Format, Charges, Time)
+    local ChargeColour = Frame.ChargesCurve:Evaluate(Charges)
+    Frame.Text:SetFormattedText(Frame.Format, ChargeColour:GenerateHexColor(), Charges, Time)
 
     local Width, Height = Frame.Text:GetStringWidth(), Frame.Text:GetStringHeight()
     if not Private:SecretValue(Width) and not Private:SecretValue(Height) then Frame:SetSize(Width, Height) end
@@ -38,9 +40,10 @@ local function CombatResurrection_OnEvent(Frame, Event)
         Frame.InChallenge = not Private.isForever and C_ChallengeMode.IsChallengeModeActive()
     end
 
-    local Shown = Frame.InEncounter or Frame.InChallenge
+    local Active = Frame.InEncounter or Frame.InChallenge
+    local Shown = Private.CombatResurrectionPreview or Active
     Frame:SetShown(Shown)
-    Frame:SetScript("OnUpdate", Shown and CombatResurrection_OnUpdate or nil)
+    Frame:SetScript("OnUpdate", Active and CombatResurrection_OnUpdate or nil)
     Frame.TimeSinceLastUpdate = 0
     if Shown then CombatResurrection_OnUpdate(Frame, 1) end
 end
@@ -62,16 +65,21 @@ function Private:SetupCombatResurrection()
     Frame.InEncounter, Frame.InChallenge = false, false
 
     DB.Text.Format = DB.Text.Format:gsub("%%d", "%%s")
-    Frame.Format = DB.Text.Format
+    Frame.Format = DB.Text.Format:gsub("%%s", "|c%%s%%s|r", 1)
+    Frame.ChargesCurve = Frame.ChargesCurve or C_CurveUtil.CreateColorCurve()
+    Frame.ChargesCurve:SetType(Enum.LuaCurveType.Step)
+    Frame.ChargesCurve:ClearPoints()
+    Frame.ChargesCurve:AddPoint(0, CreateColor(unpack(DB.Text.Charges[2])))
+    Frame.ChargesCurve:AddPoint(1, CreateColor(unpack(DB.Text.Charges[1])))
     Frame:ClearAllPoints()
     Frame:SetPoint(DB.Layout[1], _G[DB.AnchorParent] or UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
 
     Private.E:SetFont(Frame.Text, Private:FetchFont(Private.E.db.general.font), DB.Text.FontSize, Private.E.db.general.fontStyle)
     Frame.Text:ClearAllPoints()
     Frame.Text:SetPoint(DB.Layout[1], Frame, DB.Layout[1], 0, 0)
-    Frame.Text:SetJustifyH(DB.Layout[1]:find("LEFT") and "LEFT" or DB.Layout[1]:find("RIGHT") and "RIGHT" or "CENTER")
+    Frame.Text:SetJustifyH(Private.JustificationH[DB.Layout[1]])
     Frame.Text:SetTextColor(DB.Text.Colour[1], DB.Text.Colour[2], DB.Text.Colour[3], DB.Text.Colour[4] or 1)
-    Frame.Text:SetFormattedText(Frame.Format, 0, "00:00")
+    Frame.Text:SetFormattedText(Frame.Format, Frame.ChargesCurve:Evaluate(0):GenerateHexColor(), 0, "00:00")
     Frame:SetSize(Frame.Text:GetStringWidth(), Frame.Text:GetStringHeight())
 
     if DB.Enable then
@@ -95,15 +103,27 @@ function Private:UpdateCombatResurrection()
     if not Frame then return end
 
     DB.Text.Format = DB.Text.Format:gsub("%%d", "%%s")
-    Frame.Format = DB.Text.Format
+    Frame.Format = DB.Text.Format:gsub("%%s", "|c%%s%%s|r", 1)
+    Frame.ChargesCurve = Frame.ChargesCurve or C_CurveUtil.CreateColorCurve()
+    Frame.ChargesCurve:SetType(Enum.LuaCurveType.Step)
+    Frame.ChargesCurve:ClearPoints()
+    Frame.ChargesCurve:AddPoint(0, CreateColor(unpack(DB.Text.Charges[2])))
+    Frame.ChargesCurve:AddPoint(1, CreateColor(unpack(DB.Text.Charges[1])))
     Frame:ClearAllPoints()
     Frame:SetPoint(DB.Layout[1], _G[DB.AnchorParent] or UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
 
     Private.E:SetFont(Frame.Text, Private:FetchFont(Private.E.db.general.font), DB.Text.FontSize, Private.E.db.general.fontStyle)
     Frame.Text:ClearAllPoints()
     Frame.Text:SetPoint(DB.Layout[1], Frame, DB.Layout[1], 0, 0)
-    Frame.Text:SetJustifyH(DB.Layout[1]:find("LEFT") and "LEFT" or DB.Layout[1]:find("RIGHT") and "RIGHT" or "CENTER")
+    Frame.Text:SetJustifyH(Private.JustificationH[DB.Layout[1]])
     Frame.Text:SetTextColor(DB.Text.Colour[1], DB.Text.Colour[2], DB.Text.Colour[3], DB.Text.Colour[4] or 1)
+
+    local Shown = DB.Enable and (Private.CombatResurrectionPreview or Frame.InEncounter or Frame.InChallenge)
+    Frame:SetShown(Shown)
+    if Shown then
+        Frame.TimeSinceLastUpdate = 0
+        CombatResurrection_OnUpdate(Frame, 1)
+    end
 
     if DB.Enable then
         Frame:RegisterEvent("ENCOUNTER_START")

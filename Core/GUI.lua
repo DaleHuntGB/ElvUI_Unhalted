@@ -473,9 +473,11 @@ function Private:SetupGUI()
 
     Private.GUI.args.Miscellaneous.args.CombatResurrection = ACH:Group("Combat Resurrection", nil, 2, "tab")
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Enable end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Enable = value Private:UpdateCombatResurrection() end, nil)
-    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Enable.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Format = ACH:Select("Format", nil, 2, Private.CombatResurrectionFormats, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Text.Format end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Text.Format = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
-    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Format.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Enable.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Preview = ACH:Toggle("Preview", nil, 2, nil, nil, "relative", function() return Private.CombatResurrectionPreview end, function(_, value) Private.CombatResurrectionPreview = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Preview.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Format = ACH:Select("Format", nil, 3, Private.CombatResurrectionFormats, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Text.Format end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Text.Format = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Format.relWidth = 0.33
 
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Layout = ACH:Group("Layout", nil, 3)
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Layout.inline = true
@@ -491,9 +493,13 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font = ACH:Group("Font", nil, 4)
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.inline = true
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.Colour = ACH:Color("Colour", nil, 1, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.CombatResurrection.Text.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.CombatResurrection.Text.Colour = {r, g, b, a} Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
-    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.Colour.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Text.FontSize = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
-    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.FontSize.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.Colour.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.AvailableCharges = ACH:Color("Charges (Available)", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.CombatResurrection.Text.Charges[1]) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.CombatResurrection.Text.Charges[1] = {r, g, b, a} Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.AvailableCharges.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.UnavailableCharges = ACH:Color("Charges (Unavailable)", nil, 3, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.CombatResurrection.Text.Charges[2]) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.CombatResurrection.Text.Charges[2] = {r, g, b, a} Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.UnavailableCharges.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.FontSize = ACH:Range("Font Size", nil, 4, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Text.FontSize = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
+    Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.FontSize.relWidth = 1
 
     Private.GUI.args.Miscellaneous.args.Crosshair = ACH:Group("Crosshair", nil, 3, "tab")
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Enable end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Enable = value Private:UpdateCrosshair() end, nil)

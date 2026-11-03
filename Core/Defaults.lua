@@ -302,6 +302,7 @@ local Defaults = {
                     FontSize = 12,
                     Colour = {255/255, 255/255, 255/255},
                     Format = "%s • %s",
+                    Charges ={{64/255, 204/255, 64/255}, {204/255, 64/255, 64/255}}
                 },
             },
             Crosshair = {
