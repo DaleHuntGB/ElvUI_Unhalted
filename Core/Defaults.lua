@@ -255,7 +255,6 @@ local Defaults = {
         MinimapStats = {
             Time = {
                 Enable = true,
-                ShowWeather = true,
                 UpdateInterval = 30,
                 Format = "24H",
                 Layout = { "BOTTOMLEFT", "BOTTOMLEFT", 1, 16 },
