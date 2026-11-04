@@ -10,7 +10,7 @@ local function DamageMeter_OnEvent(_, Event, MeterType, SessionID)
         local DB = Frame.DamageMeterDB
         if Event == "DAMAGE_METER_COMBAT_SESSION_UPDATED" then
             local SelectedSessionID = not Frame.ShowingCombatSessions and Frame.SessionID
-            if MeterType == DB.MeterType and (SelectedSessionID == SessionID or (not SelectedSessionID and SessionID == 0)) then
+            if not Frame.ShowingBookmarks and MeterType == DB.MeterType and (SelectedSessionID == SessionID or (not SelectedSessionID and SessionID == 0)) then
                 Frame:RefreshData()
             end
         elseif Event == "DAMAGE_METER_CURRENT_SESSION_UPDATED" then

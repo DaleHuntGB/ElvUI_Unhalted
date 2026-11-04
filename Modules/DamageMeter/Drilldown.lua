@@ -91,7 +91,6 @@ function Private:CreateDrilldown(Row)
 
             local ClassColour = RAID_CLASS_COLORS[CombatSource.classFilename]
             local BarColour = ClassColour or Private.E.db.general.valuecolor
-            local Width = 0
             local RowCount = math.min(#CombatSpells, 10)
 
             for i = 1, RowCount do
@@ -130,14 +129,6 @@ function Private:CreateDrilldown(Row)
                     Entry.Name_Text:SetText(SpellName)
                 end
                 Entry.Amount_Text:SetText(Private:AbbreviateValue(CombatSpell.totalAmount))
-
-                local NameWidth = Entry.Name_Text:GetUnboundedStringWidth()
-                local AmountWidth = Entry.Amount_Text:GetUnboundedStringWidth()
-                if Private:SecretValue(NameWidth) or Private:SecretValue(AmountWidth) then
-                    Width = math.max(Width, DB.Size[1] - INSET * 2)
-                else
-                    Width = math.max(Width, BAR_HEIGHT + SPACING + TEXT_PADDING * 3 + NameWidth + AmountWidth)
-                end
                 Entry:Show()
             end
             for i = RowCount + 1, #Drilldown.Rows do

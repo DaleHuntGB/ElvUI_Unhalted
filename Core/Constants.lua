@@ -216,10 +216,15 @@ function Private:StripRealm(Name, ClassFilename)
     return Ambiguate(Name, "short")
 end
 
+local AbbreviateOptions;
+
 function Private:AbbreviateValue(value)
-    local AbbreviationData = C_StringUtil.GetDefaultAbbreviationBreakpoints()
-    AbbreviationData[#AbbreviationData + 1] = {breakpoint = 1e-6, abbreviation = "", significandDivisor = 0.1, fractionDivisor = 10, abbreviationIsGlobal = false}
-    return AbbreviateNumbers(value, {config = CreateAbbreviateConfig(AbbreviationData)})
+    if not AbbreviateOptions then
+        local AbbreviationData = C_StringUtil.GetDefaultAbbreviationBreakpoints()
+        AbbreviationData[#AbbreviationData + 1] = {breakpoint = 1e-6, abbreviation = "", significandDivisor = 0.1, fractionDivisor = 10, abbreviationIsGlobal = false}
+        AbbreviateOptions = {config = CreateAbbreviateConfig(AbbreviationData)}
+    end
+    return AbbreviateNumbers(value, AbbreviateOptions)
 end
 
 function Private:IsAddOnLoaded(AddOnName)

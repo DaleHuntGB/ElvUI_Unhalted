@@ -1,5 +1,11 @@
 local Private = select(2, ...)
 
+local MeterTypes = {}
+for MeterType in pairs(Private.MeterTypes) do
+    MeterTypes[#MeterTypes + 1] = MeterType
+end
+table.sort(MeterTypes)
+
 function Private:CreateBookmarks(Frame)
     local DamageMeterFrame = Frame.DamageMeterFrame or Frame
     if not DamageMeterFrame.DamageMeterDB then DamageMeterFrame = Frame:GetParent() end
@@ -52,12 +58,6 @@ function Private:CreateBookmarks(Frame)
         end
 
         local function Bookmarks_Refresh(Window)
-            local MeterTypes = {}
-            for MeterType in pairs(Private.MeterTypes) do
-                MeterTypes[#MeterTypes + 1] = MeterType
-            end
-            table.sort(MeterTypes)
-
             for _, Row in ipairs(Window.Rows) do
                 Row.Highlight:Hide()
                 Row:Hide()
