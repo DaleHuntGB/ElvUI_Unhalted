@@ -21,8 +21,48 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
         local RowHeight = (DB.Size[2] - 2) / DB.Rows
         local Offset = math.max(0, math.min(Frame.ScrollRange, CurrentOffset - Delta * RowHeight))
         if Offset == CurrentOffset then return end
-        if Frame.Drilldown then Frame.Drilldown:Hide() end
         Frame.ScrollFrame:SetVerticalScroll(Offset)
+    end
+
+    local function Window_RefreshRows(Frame)
+        if not DB.Enable or not Frame:IsVisible() or Frame.ShowingCombatSessions or Frame.ShowingBookmarks then return end
+
+        local CombatSession = Frame.CombatSession
+        local CombatSources = CombatSession and CombatSession.combatSources
+        local SourceCount = CombatSources and #CombatSources or 0
+        local Height = DB.Size[2] - 2
+        local RowHeight = Height / DB.Rows
+        local Offset = Frame.ScrollFrame:GetVerticalScroll()
+        local FirstSource = math.floor(Offset / RowHeight) + 1
+        local LastSource = math.min(SourceCount, math.ceil((Offset + Height) / RowHeight))
+        local RowCount = math.max(0, LastSource - FirstSource + 1)
+
+        for i = 1, RowCount do
+            local SourceIndex = FirstSource + i - 1
+            local Row = Frame.Rows[i]
+            if not Row then
+                Row = Private:CreateRow(Frame, i, DB)
+                Frame.Rows[i] = Row
+            end
+            if Row.SourceIndex ~= SourceIndex then
+                if Row.Drilldown and Row.Drilldown.Row == Row then Row.Drilldown:Hide() end
+                Row.Highlight:Hide()
+                Row:ClearAllPoints()
+                Row:SetPoint("TOPLEFT", Frame.ScrollChild, "TOPLEFT", 0, -((SourceIndex - 1) * RowHeight))
+                Row:SetPoint("TOPRIGHT", Frame.ScrollChild, "TOPRIGHT", 0, -((SourceIndex - 1) * RowHeight))
+                Row.SourceIndex = SourceIndex
+            end
+            Row:Update(CombatSources[SourceIndex], CombatSession.maxAmount)
+        end
+        for i = RowCount + 1, #Frame.Rows do
+            Frame.Rows[i]:Clear()
+        end
+    end
+
+    local function Window_OnVerticalScroll(ScrollFrame)
+        local Frame = ScrollFrame:GetParent()
+        if Frame.Drilldown then Frame.Drilldown:Hide() end
+        Frame:RefreshRows()
     end
 
     local function Window_RefreshData(Frame, ResetScroll)
@@ -66,6 +106,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             end
         end
 
+        Frame.CombatSession = CombatSession
+
         local CombatSources = CombatSession and CombatSession.combatSources
         local SourceCount = CombatSources and #CombatSources or 0
         local Height = DB.Size[2] - 2
@@ -80,58 +122,20 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
         local SessionName = Frame.SessionID and Frame.SessionName or (DB.SessionType == Enum.DamageMeterSessionType.Current and "" or "Overall")
         Frame.TitleBar.Text:SetText(Private.MeterTypes[DB.MeterType] .. (SessionName ~= "" and " - " .. SessionName or ""))
 
-        for i = 1, SourceCount do
-            local Row = Frame.Rows[i]
-            if not Row then
-                Row = Private:CreateRow(Frame, i, DB)
-                Frame.Rows[i] = Row
-            end
-            Row:Update(CombatSources[i], CombatSession.maxAmount)
-        end
-        for i = SourceCount + 1, #Frame.Rows do
-            Frame.Rows[i]:Clear()
-        end
         Frame:ScrollRows(0)
-    end
-
-    local function Window_OnEvent(Frame, Event, MeterType, SessionID)
-        if Event == "DAMAGE_METER_COMBAT_SESSION_UPDATED" then
-            local SelectedSessionID = not Frame.ShowingCombatSessions and Frame.SessionID
-            if MeterType == DB.MeterType and (SelectedSessionID == SessionID or (not SelectedSessionID and SessionID == 0)) then
-                Frame:RefreshData()
-            end
-        elseif Event == "DAMAGE_METER_CURRENT_SESSION_UPDATED" then
-            if not Frame.SessionID and DB.SessionType == Enum.DamageMeterSessionType.Current then
-                Frame:RefreshData(true)
-            elseif Frame.ShowingCombatSessions or Frame.SessionID then
-                Frame:RefreshData()
-            end
-        elseif Event == "DAMAGE_METER_RESET" then
-            Frame.SessionID = nil
-            Frame.SessionName = nil
-            Frame:RefreshData(true)
-        elseif Event == "CHALLENGE_MODE_START" then
-            C_DamageMeter.ResetAllCombatSessions()
-            Frame:RefreshData(true)
-        elseif Event == "PLAYER_REGEN_ENABLED" then
-            Frame:RefreshData()
-        end
+        Frame:RefreshRows()
     end
 
     local function Window_UpdateEnabled(Frame)
+        Private:UpdateDamageMeterEvents(Frame)
         if DB.Enable then
-            Frame:RegisterEvent("DAMAGE_METER_COMBAT_SESSION_UPDATED")
-            Frame:RegisterEvent("DAMAGE_METER_CURRENT_SESSION_UPDATED")
-            Frame:RegisterEvent("DAMAGE_METER_RESET")
-            Frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-            Frame:RegisterEvent("CHALLENGE_MODE_START")
             if Frame:IsShown() then
                 Frame:RefreshData()
             else
                 Frame:Show()
             end
         else
-            Frame:UnregisterAllEvents()
+            Frame.CombatSession = nil
             if Frame.Drilldown then Frame.Drilldown:Hide() end
             if Frame.ShowingBookmarks then Frame:HideBookmarks() end
             if Frame.ShowingCombatSessions then Frame:HideCombatSessions() end
@@ -260,9 +264,10 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     Frame.RefreshData = Window_RefreshData
+    Frame.RefreshRows = Window_RefreshRows
     Frame.UpdateEnabled = Window_UpdateEnabled
-    Frame:SetScript("OnEvent", Window_OnEvent)
     Frame:SetScript("OnShow", Window_RefreshData)
+    Frame.ScrollFrame:SetScript("OnVerticalScroll", Window_OnVerticalScroll)
     Frame:UpdateEnabled()
 
     return Frame
@@ -300,9 +305,10 @@ function Private:UpdateWindow(DamageMeterFrame, DamageMeterDB)
             Row = Private:CreateRow(DamageMeterFrame, i, DB)
             DamageMeterFrame.Rows[i] = Row
         end
+        local SourceIndex = Row.SourceIndex or i
         Row:ClearAllPoints()
-        Row:SetPoint("TOPLEFT", DamageMeterFrame.ScrollChild, "TOPLEFT", 0, -((i - 1) * RowHeight))
-        Row:SetPoint("TOPRIGHT", DamageMeterFrame.ScrollChild, "TOPRIGHT", 0, -((i - 1) * RowHeight))
+        Row:SetPoint("TOPLEFT", DamageMeterFrame.ScrollChild, "TOPLEFT", 0, -((SourceIndex - 1) * RowHeight))
+        Row:SetPoint("TOPRIGHT", DamageMeterFrame.ScrollChild, "TOPRIGHT", 0, -((SourceIndex - 1) * RowHeight))
         Row:SetHeight(RowHeight)
 
         Row.StatusBar:SetStatusBarTexture(Texture)
