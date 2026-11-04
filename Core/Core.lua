@@ -35,6 +35,7 @@ function AddOn:OnEnable()
     Private:SetupCombatResurrection()
     Private:SetupCombatTimer()
     Private:SetupCrosshair()
+    Private:SyncCVars()
     Private:SetupMouseCursor()
     -- [[ Mythic+ Timer ]]
     Private:SetupMythicPlusTimer()

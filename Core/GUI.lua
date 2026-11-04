@@ -527,41 +527,45 @@ function Private:SetupGUI()
 
     Private.GUI.args.Miscellaneous.args.CVars = ACH:Group("CVars", nil, 4, "tab")
 
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles = ACH:Group("Toggles", nil, 1)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sync = ACH:Toggle("Sync CVars", "This will |cFFFFCC00sync|r all CVars with all characters on this account.", 1, nil, nil, "full", function() return Private.DB.global.Miscellaneous.CVars.Sync end, function(_, value) Private.DB.global.Miscellaneous.CVars.Sync = value Private:SyncCVars() end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sync.descStyle = "inline"
+
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles = ACH:Group("Toggles", nil, 2)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.inline = true
 
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FCD = ACH:Toggle("Floating Combat Text: |cFFCC4040Damage|r", nil, 1, nil, nil, "full", function() return C_CVar.GetCVarBool("floatingCombatTextCombatDamage_v2") end, function(_, value) return C_CVar.SetCVar("floatingCombatTextCombatDamage_v2", value and "1" or "0") end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FCH = ACH:Toggle("Floating Combat Text: |cFF40CC40Healing|r", nil, 2, nil, nil, "full", function() return C_CVar.GetCVarBool("floatingCombatTextCombatHealing_v2") end, function(_, value) return C_CVar.SetCVar("floatingCombatTextCombatHealing_v2", value and "1" or "0") end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.AlwaysSharpen = ACH:Toggle("Always Sharpen", nil, 3, nil, nil, "full", function() return C_CVar.GetCVarBool("ResampleAlwaysSharpen") end, function(_, value) return C_CVar.SetCVar("ResampleAlwaysSharpen", value and "1" or "0") end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.ShowTutorials = ACH:Toggle("Tutorials", nil, 4, nil, nil, "full", function() return C_CVar.GetCVarBool("showTutorials") end, function(_, value) return C_CVar.SetCVar("showTutorials", value and "1" or "0") end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.ShowNPETutorials = ACH:Toggle("New Player Tutorials", nil, 5, nil, nil, "full", function() return C_CVar.GetCVarBool("showNPETutorials") end, function(_, value) return C_CVar.SetCVar("showNPETutorials", value and "1" or "0") end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.ShowHousingTutorials = ACH:Toggle("Housing Tutorials", nil, 6, nil, nil, "full", function() return C_CVar.GetCVarBool("housingTutorialsEnabled") end, function(_, value) return C_CVar.SetCVar("housingTutorialsEnabled", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FCD = ACH:Toggle("Floating Combat Text: |cFFCC4040Damage|r", nil, 1, nil, nil, "full", function() return C_CVar.GetCVarBool("floatingCombatTextCombatDamage_v2") end, function(_, value) return Private:SetCVar("floatingCombatTextCombatDamage_v2", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FCH = ACH:Toggle("Floating Combat Text: |cFF40CC40Healing|r", nil, 2, nil, nil, "full", function() return C_CVar.GetCVarBool("floatingCombatTextCombatHealing_v2") end, function(_, value) return Private:SetCVar("floatingCombatTextCombatHealing_v2", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.AlwaysSharpen = ACH:Toggle("Always Sharpen", nil, 3, nil, nil, "full", function() return C_CVar.GetCVarBool("ResampleAlwaysSharpen") end, function(_, value) return Private:SetCVar("ResampleAlwaysSharpen", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.ShowTutorials = ACH:Toggle("Tutorials", nil, 4, nil, nil, "full", function() return C_CVar.GetCVarBool("showTutorials") end, function(_, value) return Private:SetCVar("showTutorials", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.ShowNPETutorials = ACH:Toggle("New Player Tutorials", nil, 5, nil, nil, "full", function() return C_CVar.GetCVarBool("showNPETutorials") end, function(_, value) return Private:SetCVar("showNPETutorials", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.ShowHousingTutorials = ACH:Toggle("Housing Tutorials", nil, 6, nil, nil, "full", function() return C_CVar.GetCVarBool("housingTutorialsEnabled") end, function(_, value) return Private:SetCVar("housingTutorialsEnabled", value and "1" or "0") end)
 
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group = ACH:Group("Visual Effects", nil, 7)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.inline = true
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Death = ACH:Toggle("|cFFCCCCCCDeath|r", nil, 1, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxDeath") end, function(_, value) return C_CVar.SetCVar("ffxDeath", value and "1" or "0") end)
+
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Death = ACH:Toggle("|cFFCCCCCCDeath|r", nil, 1, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxDeath") end, function(_, value) return Private:SetCVar("ffxDeath", value and "1" or "0") end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Death.relWidth = 0.2
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Glow = ACH:Toggle("|cFFFFCC00Glow|r", nil, 2, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxGlow") end, function(_, value) return C_CVar.SetCVar("ffxGlow", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Glow = ACH:Toggle("|cFFFFCC00Glow|r", nil, 2, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxGlow") end, function(_, value) return Private:SetCVar("ffxGlow", value and "1" or "0") end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Glow.relWidth = 0.2
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_LingeringVenari = ACH:Toggle("|cFF40CCFFLingering Venari|r", nil, 3, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxLingeringVenari") end, function(_, value) return C_CVar.SetCVar("ffxLingeringVenari", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_LingeringVenari = ACH:Toggle("|cFF40CCFFLingering Venari|r", nil, 3, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxLingeringVenari") end, function(_, value) return Private:SetCVar("ffxLingeringVenari", value and "1" or "0") end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_LingeringVenari.relWidth = 0.2
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Nether = ACH:Toggle("|cFF89FAFDNether|r", nil, 4, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxNether") end, function(_, value) return C_CVar.SetCVar("ffxNether", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Nether = ACH:Toggle("|cFF89FAFDNether|r", nil, 4, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxNether") end, function(_, value) return Private:SetCVar("ffxNether", value and "1" or "0") end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Nether.relWidth = 0.2
-    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Venari = ACH:Toggle("|cFF40CCFFVenari|r", nil, 5, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxVenari") end, function(_, value) return C_CVar.SetCVar("ffxVenari", value and "1" or "0") end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Venari = ACH:Toggle("|cFF40CCFFVenari|r", nil, 5, nil, nil, "relative", function() return C_CVar.GetCVarBool("ffxVenari") end, function(_, value) return Private:SetCVar("ffxVenari", value and "1" or "0") end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Toggles.args.FFX_Group.args.FFX_Venari.relWidth = 0.2
 
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders = ACH:Group("Sliders", nil, 2)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders = ACH:Group("Sliders", nil, 3)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.inline = true
 
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.WTS = ACH:Range("World Text: |cFFCCCCCCScale|r", nil, 1, {min = 0.1, max = 2, softMin = 0.33, softMax = 1, step = 0.01}, "relative", function() return tonumber(C_CVar.GetCVar("WorldTextScale_v2")) end, function(_, value) C_CVar.SetCVar("WorldTextScale_v2", value) end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.WTS = ACH:Range("World Text: |cFFCCCCCCScale|r", nil, 1, {min = 0.1, max = 2, softMin = 0.33, softMax = 1, step = 0.01}, "relative", function() return tonumber(C_CVar.GetCVar("WorldTextScale_v2")) end, function(_, value) Private:SetCVar("WorldTextScale_v2", value) end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.WTS.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WaterDetail = ACH:Range("Raid: |cFFCCCCCCWater Detail|r", nil, 2, {min = 0, max = 3, softMin = 0, softMax = 3, step = 1}, "relative", function() return tonumber(C_CVar.GetCVar("RAID_WaterDetail")) end, function(_, value) C_CVar.SetCVar("RAID_WaterDetail", value) end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WaterDetail = ACH:Range("Raid: |cFFCCCCCCWater Detail|r", nil, 2, {min = 0, max = 3, softMin = 0, softMax = 3, step = 1}, "relative", function() return tonumber(C_CVar.GetCVar("RAID_WaterDetail")) end, function(_, value) Private:SetCVar("RAID_WaterDetail", value) end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WaterDetail.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WeatherDensity = ACH:Range("Raid: |cFFCCCCCCWeather Density|r", nil, 3, {min = 0, max = 3, softMin = 0, softMax = 3, step = 1}, "relative", function() return tonumber(C_CVar.GetCVar("RAIDweatherDensity")) end, function(_, value) C_CVar.SetCVar("RAIDweatherDensity", value) end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WeatherDensity = ACH:Range("Raid: |cFFCCCCCCWeather Density|r", nil, 3, {min = 0, max = 3, softMin = 0, softMax = 3, step = 1}, "relative", function() return tonumber(C_CVar.GetCVar("RAIDweatherDensity")) end, function(_, value) Private:SetCVar("RAIDweatherDensity", value) end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WeatherDensity.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.AutoLootRate = ACH:Range("Auto Loot Rate", "Rate in milliseconds to tick auto loot.", 4, {min = 25, max = 300, softMin = 50, softMax = 150, step = 5}, "relative", function() return tonumber(C_CVar.GetCVar("autoLootRate")) end, function(_, value) C_CVar.SetCVar("autoLootRate", value) end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.AutoLootRate = ACH:Range("Auto Loot Rate", "Rate in milliseconds to tick auto loot.", 4, {min = 25, max = 300, softMin = 50, softMax = 150, step = 5}, "relative", function() return tonumber(C_CVar.GetCVar("autoLootRate")) end, function(_, value) Private:SetCVar("autoLootRate", value) end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.AutoLootRate.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.SpellQueueWindow = ACH:Range("Spell Queue Window", "Sets how early you can pre-activate/queue a spell in milliseconds.", 5, {min = 25, max = 300, softMin = 50, softMax = 150, step = 5}, "relative", function() return tonumber(C_CVar.GetCVar("spellQueueWindow")) end, function(_, value) C_CVar.SetCVar("spellQueueWindow", value) end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.SpellQueueWindow = ACH:Range("Spell Queue Window", "Sets how early you can pre-activate/queue a spell in milliseconds.", 5, {min = 25, max = 300, softMin = 50, softMax = 150, step = 5}, "relative", function() return tonumber(C_CVar.GetCVar("SpellQueueWindow")) end, function(_, value) Private:SetCVar("SpellQueueWindow", value) end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.SpellQueueWindow.relWidth = 0.5
 
     Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 5, "tab")

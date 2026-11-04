@@ -312,6 +312,11 @@ local Defaults = {
                 Colour = {1, 1, 1, 1},
                 Texture = "CROSSHAIR_02",
             },
+            CVars = {
+                Sync = false,
+                Toggles = {},
+                Sliders = {},
+            },
             MouseCursor = {
                 Enable = false,
                 Size = {24, 24},
