@@ -45,7 +45,7 @@ function Private:SetupBugSackSkin()
     if Button then
         SkinButton(DB, Button)
     else
-        Private.LibDBIcon.RegisterCallback("ElvUI_Unhalted_BugSackSkin", "LibPrivate.LibDBIcon_IconCreated", function(_, CreatedButton, Name) if Name ~= "BugSack" then return end SkinButton(DB, CreatedButton) Private.LibDBIcon.UnregisterCallback(Private, "LibPrivate.LibDBIcon_IconCreated") end)
+        Private.LibDBIcon.RegisterCallback("ElvUI_Unhalted_BugSackSkin", "LibDBIcon_IconCreated", function(_, CreatedButton, Name) if Name ~= "BugSack" then return end SkinButton(DB, CreatedButton) Private.LibDBIcon.UnregisterCallback("ElvUI_Unhalted_BugSackSkin", "LibDBIcon_IconCreated") end)
     end
 
 end
