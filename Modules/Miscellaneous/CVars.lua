@@ -17,6 +17,7 @@ local CVars = {
     RAIDweatherDensity = "Sliders",
     autoLootRate = "Sliders",
     SpellQueueWindow = "Sliders",
+    cameraDistanceMaxZoomFactor = "Sliders"
 }
 
 function Private:SyncCVars()

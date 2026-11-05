@@ -564,9 +564,11 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WeatherDensity = ACH:Range("Raid: |cFFCCCCCCWeather Density|r", nil, 3, {min = 0, max = 3, softMin = 0, softMax = 3, step = 1}, "relative", function() return tonumber(C_CVar.GetCVar("RAIDweatherDensity")) end, function(_, value) Private:SetCVar("RAIDweatherDensity", value) end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.RAID_WeatherDensity.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.AutoLootRate = ACH:Range("Auto Loot Rate", "Rate in milliseconds to tick auto loot.", 4, {min = 25, max = 300, softMin = 50, softMax = 150, step = 5}, "relative", function() return tonumber(C_CVar.GetCVar("autoLootRate")) end, function(_, value) Private:SetCVar("autoLootRate", value) end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.AutoLootRate.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.AutoLootRate.relWidth = Private.isForever and 0.33 or 0.5
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.SpellQueueWindow = ACH:Range("Spell Queue Window", "Sets how early you can pre-activate/queue a spell in milliseconds.", 5, {min = 25, max = 300, softMin = 50, softMax = 150, step = 5}, "relative", function() return tonumber(C_CVar.GetCVar("SpellQueueWindow")) end, function(_, value) Private:SetCVar("SpellQueueWindow", value) end)
-    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.SpellQueueWindow.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.SpellQueueWindow.relWidth = Private.isForever and 0.33 or 0.5
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.CameraDistanceMaxZoomFactor = ACH:Range("Camera Distance", nil, 6, {min = 0.5, max = 4, softMin = 0.5, softMax = 2, step = 0.01}, "relative", function() return tonumber(C_CVar.GetCVar("cameraDistanceMaxZoomFactor")) end, function(_, value) Private:SetCVar("cameraDistanceMaxZoomFactor", value) end, nil, function() return not Private.isForever end)
+    Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.CameraDistanceMaxZoomFactor.relWidth = 0.33
 
     Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 5, "tab")
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.MouseCursor.Enable end, function(_, value) Private.DB.global.Miscellaneous.MouseCursor.Enable = value Private:UpdateMouseCursor() end, nil)
