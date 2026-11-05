@@ -3,5 +3,5 @@ local M = Private.E:GetModule("Misc")
 
 function Private:SetupLootRollFix()
     if not Private.DB.global.ElvUI.LootRollFix then return end
-    hooksecurefunc(M, "START_LOOT_ROLL", function(_, _, rollID) for _, bar in next, M.RollBars do if bar.rollID == rollID then local r, g, b = unpack(Private.E.media.backdropfadecolor) bar.status.backdroPrivate:SetBackdropColor(r, g, b, 1) break end end end)
+    hooksecurefunc(M, "START_LOOT_ROLL", function(_, _, rollID) for _, bar in next, M.RollBars do if bar.rollID == rollID then local r, g, b = unpack(Private.E.media.backdropfadecolor) bar.status.backdrop = Private:SetBackdropColor(r, g, b, 1) break end end end)
 end
