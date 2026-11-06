@@ -32,6 +32,7 @@ function AddOn:OnEnable()
     Private:SetupSystemStats()
     Private:SetupTime()
     -- [[ Miscellaneous ]]
+    Private:SetupBeastLore()
     Private:SetupCombatResurrection()
     Private:SetupCombatTimer()
     Private:SetupCrosshair()

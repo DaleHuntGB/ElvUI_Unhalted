@@ -53,7 +53,8 @@
         "CLOSE",
         "WeeklyRewardsUtil",
         "RunNextFrame",
-        "CLASS_ICON_TCOORDS"
+        "CLASS_ICON_TCOORDS",
+        "TooltipDataProcessor"
     ],
     "Lua.type.weakUnionCheck": true
 }
