@@ -54,7 +54,8 @@
         "WeeklyRewardsUtil",
         "RunNextFrame",
         "CLASS_ICON_TCOORDS",
-        "TooltipDataProcessor"
+        "TooltipDataProcessor",
+        "INVSLOT_AMMO"
     ],
     "Lua.type.weakUnionCheck": true
 }
