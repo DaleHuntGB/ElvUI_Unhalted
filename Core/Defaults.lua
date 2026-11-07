@@ -283,6 +283,17 @@ local Defaults = {
             }
         },
         Miscellaneous = {
+            AmmoCounter = {
+                Enable = true,
+                Layout = {"LEFT", "TOPLEFT", 3.1, 0.1},
+                AnchorParent = "ElvUF_Player",
+                Text = {
+                    FontSize = 12,
+                    Colour = {255/255, 255/255, 255/255},
+                    BelowThresholdColour = {204/255, 64/255, 64/255},
+                    Threshold = 200,
+                },
+            },
             CombatTimer = {
                 Enable = true,
                 OOCOpacity = 0.33,

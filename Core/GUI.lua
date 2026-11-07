@@ -447,6 +447,34 @@ function Private:SetupGUI()
 
     Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 6, "tab")
 
+    Private.GUI.args.Miscellaneous.args.AmmoCounter = ACH:Group("Ammo Counter", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever or Private.E.myclass ~= "HUNTER" end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Enable end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Enable = value Private:UpdateAmmoCounter() end, nil)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Enable.relWidth = 1
+
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout = ACH:Group("Layout", nil, 2)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.inline = true
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[1] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[1] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorFrom.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorParent = ACH:Input("Anchor Parent", nil, 2, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.AnchorParent end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.AnchorParent = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorParent.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 3, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorTo.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 4, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 5, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset.relWidth = 0.5
+
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font = ACH:Group("Font", nil, 3)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.inline = true
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Colour = ACH:Color("Colour", nil, 1, false, "relative", function() return unpack(Private.DB.global.Miscellaneous.AmmoCounter.Text.Colour) end, function(_, r, g, b) Private.DB.global.Miscellaneous.AmmoCounter.Text.Colour = {r, g, b} Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Colour.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.FontSize = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.FontSize.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.BelowThresholdColour = ACH:Color("Below Threshold Colour", nil, 3, false, "relative", function() return unpack(Private.DB.global.Miscellaneous.AmmoCounter.Text.BelowThresholdColour) end, function(_, r, g, b) Private.DB.global.Miscellaneous.AmmoCounter.Text.BelowThresholdColour = {r, g, b} Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.BelowThresholdColour.relWidth = 0.5
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold = ACH:Range("Threshold", "The ammo count below which the |cFFFFCC00Below Threshold Colour|r is used.", 4, {min = 0, max = 5000, softMin = 0, softMax = 1000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
+
     Private.GUI.args.Miscellaneous.args.CombatTimer = ACH:Group("Combat Timer", nil, 1, "tab")
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Enable end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Enable = value Private:UpdateCombatTimer() end, nil)
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable.relWidth = 0.5
