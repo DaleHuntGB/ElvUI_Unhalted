@@ -59,7 +59,18 @@
         "BACKPACK_CONTAINER",
         "NUM_BAG_SLOTS",
         "YES",
-        "NO"
+        "NO",
+        "HandleModifiedItemClick",
+        "RETRIEVING_ITEM_INFO",
+        "GameTooltip_Hide",
+        "ScrollUtil",
+        "ALL_CLASSES",
+        "UISpecialFrames",
+        "CreateScrollBoxListLinearView",
+        "CreateDataProvider",
+        "SOUNDKIT",
+        "ScrollBoxConstants",
+        "CreateAnchor"
     ],
     "Lua.type.weakUnionCheck": true
 }

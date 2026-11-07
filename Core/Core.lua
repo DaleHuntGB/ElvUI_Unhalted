@@ -22,6 +22,8 @@ function AddOn:OnEnable()
     Private:SetupUIErrorsFrame()
     -- [[ Damage Meter ]]
     Private:SetupDamageMeters()
+    -- [[ Dungeon Journal ]]
+    Private:SetupDungeonJournal()
     -- [[ ElvUI]]
     Private:SetupEnhancedMovers()
     Private:SetupInterruptOnCooldown()

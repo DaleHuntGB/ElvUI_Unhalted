@@ -1,0 +1,5 @@
+<Bindings>
+    <Binding name="UNHALTEDUI_DUNGEONJOURNAL" header="UNHALTEDUI" category="ADDONS">
+        if UnhaltedDungeonJournal then UnhaltedDungeonJournal:SetShown(not UnhaltedDungeonJournal:IsShown()) end
+    </Binding>
+</Bindings>

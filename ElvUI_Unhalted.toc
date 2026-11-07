@@ -34,6 +34,11 @@ Modules/DamageMeter/Drilldown.lua
 Modules/DamageMeter/Rows.lua
 Modules/DamageMeter/Window.lua
 
+Modules/DungeonJournal/Data.lua
+Modules/DungeonJournal/Core.lua
+Modules/DungeonJournal/Rows.lua
+Modules/DungeonJournal/Window.lua
+
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua
