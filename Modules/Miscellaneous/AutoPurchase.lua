@@ -1,14 +1,7 @@
 local Private = select(2, ...)
 
--- Gives other vendor automation (auto repair, selling junk) time to settle before buying.
 local PURCHASE_DELAY = 0.5
-local PurchaseTimer
 
-local function SortByCount(A, B)
-    return A.Count < B.Count
-end
-
--- Deletes Amount of ItemID from the bags, starting with the smallest stacks.
 local function DeleteItems(ItemID, Amount)
     local Stacks = {}
     for Bag = Enum.BagIndex.Backpack, NUM_BAG_SLOTS do
@@ -19,7 +12,7 @@ local function DeleteItems(ItemID, Amount)
             end
         end
     end
-    table.sort(Stacks, SortByCount)
+    table.sort(Stacks, function(A, B) return A.Count < B.Count end)
 
     for _, Stack in ipairs(Stacks) do
         if Amount <= 0 then return end
@@ -39,16 +32,13 @@ local function PurchaseItem(Index, ItemID, Target, Info, Money)
     if Owned >= Target then return Money end
 
     local BundleSize = math.max(Info.stackCount, 1)
-    -- Deleting this many first lets whole bundles land exactly on the target.
     local Excess = (Owned - Target) % BundleSize
-    -- Picking up a stack while the cursor holds something would delete the wrong item, so stay under the target instead.
     if Excess > Owned or CursorHasItem() then Excess = 0 end
 
     local Bundles = math.floor((Target - Owned + Excess) / BundleSize)
     local Affordable = Bundles
     if Info.numAvailable >= 0 then Affordable = math.min(Affordable, Info.numAvailable) end
     if Info.price > 0 then Affordable = math.min(Affordable, math.floor(Money / Info.price)) end
-    -- When the target can't be reached, keep the partial stacks rather than deleting them for nothing.
     if Affordable < Bundles then
         Bundles = Affordable
         Excess = 0
@@ -70,7 +60,6 @@ local function PurchaseItem(Index, ItemID, Target, Info, Money)
 end
 
 local function PurchaseItems()
-    PurchaseTimer = nil
     local Items = Private.DB.global.Miscellaneous.AutoPurchase.Items
     if not next(Items) then return end
 
@@ -85,17 +74,10 @@ local function PurchaseItems()
     end
 end
 
-local function CancelPurchase()
-    if PurchaseTimer then
-        PurchaseTimer:Cancel()
-        PurchaseTimer = nil
-    end
-end
-
-local function AutoPurchase_OnEvent(_, Event)
-    CancelPurchase()
+local function AutoPurchase_OnEvent(APF, Event)
+    if APF.PurchaseTimer then APF.PurchaseTimer:Cancel() end
     if Event == "MERCHANT_SHOW" then
-        PurchaseTimer = C_Timer.NewTimer(PURCHASE_DELAY, PurchaseItems)
+        APF.PurchaseTimer = C_Timer.NewTimer(PURCHASE_DELAY, PurchaseItems)
     end
 end
 
@@ -117,7 +99,7 @@ function Private:UpdateAutoPurchase()
         AutoPurchaseFrame:RegisterEvent("MERCHANT_SHOW")
         AutoPurchaseFrame:RegisterEvent("MERCHANT_CLOSED")
     else
-        CancelPurchase()
+        if AutoPurchaseFrame.PurchaseTimer then AutoPurchaseFrame.PurchaseTimer:Cancel() end
         AutoPurchaseFrame:UnregisterAllEvents()
     end
 end
