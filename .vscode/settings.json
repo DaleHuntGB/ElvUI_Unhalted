@@ -70,7 +70,14 @@
         "CreateDataProvider",
         "SOUNDKIT",
         "ScrollBoxConstants",
-        "CreateAnchor"
+        "CreateAnchor",
+        "NavBar_Reset",
+        "NavBar_AddButton",
+        "NavBar_Initialize",
+        "CreateScrollBoxListGridView",
+        "HOME",
+        "BACK",
+        "SquareButton_SetIcon"
     ],
     "Lua.type.weakUnionCheck": true
 }

@@ -115,6 +115,14 @@ function Private:GetDungeonJournalLoot(Dungeon, Boss, ClassFile, Slot)
     return Loot, Total
 end
 
+function Private:CreateDungeonJournalText(Parent, Template)
+    local Text = Parent:CreateFontString(nil, "OVERLAY", Template)
+    local Path, Size = Text:GetFont()
+    Text:SetFont(Path, Size, "OUTLINE, SLUG")
+    Text:SetShadowOffset(0, 0)
+    return Text
+end
+
 function Private:SetupDungeonJournal()
     if not Private.isForever then return end
     Private:CreateDungeonJournal()

@@ -1,141 +1,136 @@
 local Private = select(2, ...)
 
+local JOURNAL_TEXTURES = "Interface\\EncounterJournal\\UI-EncounterJournalTextures"
 local ALL_BOSSES = { Name = "All Bosses", All = true }
 local ALL_CLASSES_KEY = "ALL"
 local ALL_LEVELS_KEY = 0
 local ALL_SLOTS_KEY = "ALL"
 local LEVEL_BRACKETS = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
 
-local function CreateList(Inset, ElementHeight, Initializer)
-    local ScrollBox = CreateFrame("Frame", nil, Inset, "WowScrollBoxList")
-    local ScrollBar = CreateFrame("EventFrame", nil, Inset, "MinimalScrollBar")
-    ScrollBar:SetPoint("TOPRIGHT", Inset, "TOPRIGHT", -6, -6)
-    ScrollBar:SetPoint("BOTTOMRIGHT", Inset, "BOTTOMRIGHT", -6, 6)
-
-    local View = CreateScrollBoxListLinearView(2, 2, 2, 2)
-    View:SetElementExtent(ElementHeight)
-    View:SetElementInitializer("Button", Initializer)
-    ScrollUtil.InitScrollBoxListWithScrollBar(ScrollBox, ScrollBar, View)
-
-    local AnchorsWithBar = { CreateAnchor("TOPLEFT", Inset, "TOPLEFT", 4, -4), CreateAnchor("BOTTOMRIGHT", Inset, "BOTTOMRIGHT", -22, 4) }
-    local AnchorsWithoutBar = { CreateAnchor("TOPLEFT", Inset, "TOPLEFT", 4, -4), CreateAnchor("BOTTOMRIGHT", Inset, "BOTTOMRIGHT", -4, 4) }
-    ScrollUtil.AddManagedScrollBarVisibilityBehavior(ScrollBox, ScrollBar, AnchorsWithBar, AnchorsWithoutBar)
-
-    return ScrollBox
-end
-
-local function UpdateDungeonSelection(Row)
-    Row.Selected:SetShown(Row.Dungeon == Private.DungeonJournal.Dungeon)
-end
-
-local function UpdateBossSelection(Row)
-    Row.Selected:SetShown(Row.Boss == Private.DungeonJournal.Boss)
+local function GetDungeonButtonSize()
+    return 174, 96
 end
 
 local function RefreshReceivedLootRow(Row)
     if Row.ItemID == Private.DungeonJournal.ReceivedItemID then Private.UpdateDungeonJournalLootRow(Row) end
 end
 
+local function Journal_RefreshDungeons(Journal)
+    local Dungeons = Private:GetDungeonJournalDungeons(LEVEL_BRACKETS[Journal.LevelBracket], Journal.ClassFilter, Journal.SlotFilter)
+    Journal.DungeonGrid:SetDataProvider(CreateDataProvider(Dungeons))
+    Journal.DungeonsEmpty:SetShown(#Dungeons == 0)
+end
+
 local function Journal_RefreshLoot(Journal)
     local Loot, Total = Private:GetDungeonJournalLoot(Journal.Dungeon, Journal.Boss, Journal.ClassFilter, Journal.SlotFilter)
     Journal.LootList:SetDataProvider(CreateDataProvider(Loot))
+    Journal.BossTitle:SetText(Journal.Boss.Name)
 
     if #Journal.Dungeon.Bosses == 0 then
-        Journal.EmptyText:SetText("The bosses for this dungeon haven't been published yet.")
+        Journal.LootEmpty:SetText("The bosses for this dungeon haven't been published yet.")
     elseif Total == 0 then
-        Journal.EmptyText:SetText(Journal.Boss.All and "The loot for this dungeon hasn't been published yet." or "The loot for this boss hasn't been published yet.")
+        Journal.LootEmpty:SetText(Journal.Boss.All and "The loot for this dungeon hasn't been published yet." or "The loot for this boss hasn't been published yet.")
     else
-        Journal.EmptyText:SetText("No loot matches the current filters.")
+        Journal.LootEmpty:SetText("No loot matches the current filters.")
     end
-    Journal.EmptyText:SetShown(#Loot == 0)
+    Journal.LootEmpty:SetShown(#Loot == 0)
+end
+
+local function Journal_RefreshBosses(Journal)
+    local Bosses = Private:GetDungeonJournalBosses(Journal.Dungeon, Journal.ClassFilter, Journal.SlotFilter)
+    if not tContains(Bosses, Journal.Boss) then Journal.Boss = ALL_BOSSES end
+
+    local Provider = CreateDataProvider()
+    if #Bosses > 0 then
+        Provider:Insert(ALL_BOSSES)
+        Provider:InsertTable(Bosses)
+    end
+    Journal.BossList:SetDataProvider(Provider)
+    Journal_RefreshLoot(Journal)
+end
+
+local function Journal_ShowDungeons(Journal)
+    Journal.Dungeon = nil
+    Journal.Encounter:Hide()
+    Journal.BackButton:Hide()
+    Journal.DungeonSelect:Show()
+end
+
+local function BackButton_OnClick()
+    Journal_ShowDungeons(Private.DungeonJournal)
+end
+
+local function BackButton_OnEnter(Button)
+    GameTooltip:SetOwner(Button, "ANCHOR_RIGHT")
+    GameTooltip:SetText(BACK)
+    GameTooltip:Show()
+end
+
+local function Journal_SelectDungeon(Journal, Dungeon)
+    Journal.Dungeon = Dungeon
+    Journal.Boss = ALL_BOSSES
+    Journal.DungeonTitle:SetText(Dungeon.Name)
+    Journal.DungeonLevels:SetFormattedText("Level %d-%d", Dungeon.Levels[1], Dungeon.Levels[2])
+    Journal.DungeonSelect:Hide()
+    Journal.Encounter:Show()
+    Journal.BackButton:Show()
+    Journal_RefreshBosses(Journal)
 end
 
 local function Journal_SelectBoss(Journal, Boss)
     Journal.Boss = Boss
-    Journal.BossList:ForEachFrame(UpdateBossSelection)
+    Journal.BossList:ForEachFrame(Private.UpdateDungeonJournalBossSelection)
     Journal_RefreshLoot(Journal)
 end
 
-local function Journal_SelectDungeon(Journal, Dungeon)
-    local Bosses = Private:GetDungeonJournalBosses(Dungeon, Journal.ClassFilter, Journal.SlotFilter)
-    if Journal.Dungeon ~= Dungeon or not tContains(Bosses, Journal.Boss) then Journal.Boss = ALL_BOSSES end
-    Journal.Dungeon = Dungeon
-    Journal.DungeonName:SetText(Dungeon.Name)
-    Journal.DungeonInfo:SetFormattedText("Level %d-%d  |cFFAAAAAA%s|r", Dungeon.Levels[1], Dungeon.Levels[2], Dungeon.Zone)
-    Journal.DungeonList:ForEachFrame(UpdateDungeonSelection)
-
-    local BossProvider = CreateDataProvider()
-    if #Bosses > 0 then
-        BossProvider:Insert(ALL_BOSSES)
-        BossProvider:InsertTable(Bosses)
-    end
-    Journal.BossList:SetDataProvider(BossProvider)
-    Journal_RefreshLoot(Journal)
-end
-
-local function Journal_RefreshDungeons(Journal)
-    local Dungeons = Private:GetDungeonJournalDungeons(LEVEL_BRACKETS[Journal.LevelBracket], Journal.ClassFilter, Journal.SlotFilter)
-    Journal.DungeonList:SetDataProvider(CreateDataProvider(Dungeons))
-
-    local Dungeon = tContains(Dungeons, Journal.Dungeon) and Journal.Dungeon or Dungeons[1]
-    if Dungeon then
-        Journal_SelectDungeon(Journal, Dungeon)
-        Journal.DungeonList:ScrollToElementData(Dungeon, ScrollBoxConstants.AlignCenter, 0, ScrollBoxConstants.NoScrollInterpolation)
-        return
-    end
-
-    Journal.Dungeon = nil
-    Journal.DungeonName:SetText("")
-    Journal.DungeonInfo:SetText("")
-    Journal.BossList:SetDataProvider(CreateDataProvider())
-    Journal.LootList:SetDataProvider(CreateDataProvider())
-    Journal.EmptyText:SetText("No dungeons match the current filters.")
-    Journal.EmptyText:Show()
+local function Journal_RefreshFilters(Journal)
+    Journal_RefreshDungeons(Journal)
+    if Journal.Dungeon then Journal_RefreshBosses(Journal) end
 end
 
 local function Journal_SetClassFilter(Journal, ClassFile)
     Journal.ClassFilter = ClassFile
-    Journal_RefreshDungeons(Journal)
+    Journal_RefreshFilters(Journal)
 end
 
 local function Journal_SetSlotFilter(Journal, Slot)
     Journal.SlotFilter = Slot
-    Journal_RefreshDungeons(Journal)
+    Journal_RefreshFilters(Journal)
 end
 
 local function Journal_SetLevelBracket(Journal, Index)
     Journal.LevelBracket = Index
     Journal_RefreshDungeons(Journal)
+    Journal_ShowDungeons(Journal)
 end
 
-local function GetDefaultDungeon()
+local function GetInstanceDungeon()
     local InstanceName, InstanceType = GetInstanceInfo()
-    local Level = UnitLevel("player")
-    local Default
+    if InstanceType ~= "party" then return end
     for _, Dungeon in ipairs(Private.DungeonJournalData) do
-        if InstanceType == "party" and Dungeon.Name == InstanceName then return Dungeon end
-        if not Default and Level >= Dungeon.Levels[1] and Level <= Dungeon.Levels[2] then Default = Dungeon end
+        if Dungeon.Name == InstanceName then return Dungeon end
     end
-    return Default or Private.DungeonJournalData[1]
 end
 
 local function Journal_OnShow(Journal)
-    Journal:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+    Journal:RegisterEvent("ITEM_DATA_LOAD_RESULT")
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
-    if Journal.Initialised then return end
+    if not Journal.Initialised then
+        Journal.Initialised = true
+        Journal_RefreshDungeons(Journal)
+    end
 
-    Journal.Initialised = true
-    Journal.Dungeon = GetDefaultDungeon()
-    Journal_RefreshDungeons(Journal)
+    local Dungeon = GetInstanceDungeon()
+    if Dungeon and Dungeon ~= Journal.Dungeon then Journal_SelectDungeon(Journal, Dungeon) end
 end
 
 local function Journal_OnHide(Journal)
-    Journal:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
+    Journal:UnregisterEvent("ITEM_DATA_LOAD_RESULT")
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
 end
 
 local function Journal_OnEvent(Journal, _, ItemID, Success)
-    if not Success then return end
+    if not Success or not Journal.Dungeon then return end
     Journal.ReceivedItemID = ItemID
     Journal.LootList:ForEachFrame(RefreshReceivedLootRow)
 end
@@ -188,9 +183,98 @@ local function SlotDropdown_SetupMenu(_, RootDescription)
     end
 end
 
+local function CreateDropdown(Journal, Width, SetupMenu)
+    local Dropdown = CreateFrame("DropdownButton", nil, Journal, "WowStyle1DropdownTemplate")
+    Dropdown:SetWidth(Width)
+    Dropdown:SetupMenu(SetupMenu)
+    return Dropdown
+end
+
+local function CreateScrollList(Parent, View)
+    local ScrollBox = CreateFrame("Frame", nil, Parent, "WowScrollBoxList")
+    local ScrollBar = CreateFrame("EventFrame", nil, Parent, "MinimalScrollBar")
+    ScrollBar:SetPoint("TOPLEFT", ScrollBox, "TOPRIGHT", 5, -5)
+    ScrollBar:SetPoint("BOTTOMLEFT", ScrollBox, "BOTTOMRIGHT", 5, 5)
+    ScrollUtil.InitScrollBoxListWithScrollBar(ScrollBox, ScrollBar, View)
+    return ScrollBox
+end
+
+local function CreateDungeonSelect(Journal)
+    local DungeonSelect = CreateFrame("Frame", nil, Journal)
+    DungeonSelect:SetPoint("TOPLEFT", Journal.Inset, "TOPLEFT", 0, -2)
+    DungeonSelect:SetPoint("BOTTOMRIGHT", Journal.Inset, "BOTTOMRIGHT", -3, 0)
+
+    local Background = DungeonSelect:CreateTexture(nil, "BACKGROUND")
+    Background:SetPoint("TOPLEFT", DungeonSelect, "TOPLEFT", 3, -1)
+    if C_Texture.GetAtlasInfo("UI-EJ-Classic") then
+        Background:SetAtlas("UI-EJ-Classic", true)
+    else
+        Background:SetPoint("BOTTOMRIGHT", DungeonSelect, "BOTTOMRIGHT", 0, 0)
+        Background:SetTexture("Interface\\EncounterJournal\\UI-EJ-Classic")
+    end
+
+    local View = CreateScrollBoxListGridView(4, 5, 0, 0, 0, 15, 15)
+    View:SetElementInitializer("Button", Private.InitDungeonJournalDungeonButton)
+    View:SetElementSizeCalculator(GetDungeonButtonSize)
+    Journal.DungeonGrid = CreateScrollList(DungeonSelect, View)
+    Journal.DungeonGrid:SetPoint("TOPLEFT", DungeonSelect, "TOPLEFT", 18, -14)
+    Journal.DungeonGrid:SetPoint("BOTTOMRIGHT", DungeonSelect, "BOTTOMRIGHT", -26, 6)
+
+    Journal.DungeonsEmpty = Private:CreateDungeonJournalText(DungeonSelect, "GameFontHighlightLarge")
+    Journal.DungeonsEmpty:SetPoint("CENTER", DungeonSelect, "CENTER", 0, 0)
+    Journal.DungeonsEmpty:SetText("No dungeons match the current filters.")
+    Journal.DungeonSelect = DungeonSelect
+end
+
+local function CreateEncounter(Journal)
+    local Encounter = CreateFrame("Frame", nil, Journal)
+    Encounter:SetSize(785, 425)
+    Encounter:SetPoint("BOTTOMRIGHT", Journal.Inset, "BOTTOMRIGHT", -4, 2)
+    Encounter:Hide()
+
+    local Background = Encounter:CreateTexture(nil, "BACKGROUND")
+    Background:SetAllPoints(Encounter)
+    Background:SetTexture("Interface\\EncounterJournal\\UI-EJ-JournalBG")
+    Background:SetTexCoord(0, 0.7666015625, 0, 0.830078125)
+
+    local Header = Encounter:CreateTexture(nil, "BORDER")
+    Header:SetSize(386, 39)
+    Header:SetPoint("TOPLEFT", Encounter, "TOPLEFT", 0, -11)
+    Header:SetTexture(JOURNAL_TEXTURES)
+    Header:SetTexCoord(0, 0.755859375, 0.9599609375, 1)
+
+    Journal.DungeonTitle = Private:CreateDungeonJournalText(Encounter, "GameFontNormalLarge")
+    Journal.DungeonTitle:SetPoint("TOPLEFT", Encounter, "TOPLEFT", 28, -24)
+    Journal.DungeonTitle:SetTextColor(0.902, 0.788, 0.671)
+    Journal.DungeonLevels = Private:CreateDungeonJournalText(Encounter, "GameFontHighlightSmall")
+    Journal.DungeonLevels:SetPoint("BOTTOMLEFT", Journal.DungeonTitle, "BOTTOMRIGHT", 8, 1)
+
+    local BossView = CreateScrollBoxListLinearView(15, 0, 0, 20, 15)
+    BossView:SetElementExtent(55)
+    BossView:SetElementInitializer("Button", Private.InitDungeonJournalBossButton)
+    Journal.BossList = CreateScrollList(Encounter, BossView)
+    Journal.BossList:SetSize(338, 372)
+    Journal.BossList:SetPoint("BOTTOMLEFT", Encounter, "BOTTOMLEFT", 25, 1)
+
+    local LootView = CreateScrollBoxListLinearView(0, 0, 0, 0, 3)
+    LootView:SetElementExtent(46)
+    LootView:SetElementInitializer("Button", Private.InitDungeonJournalLootRow)
+    Journal.LootList = CreateScrollList(Encounter, LootView)
+    Journal.LootList:SetSize(330, 372)
+    Journal.LootList:SetPoint("BOTTOMRIGHT", Encounter, "BOTTOMRIGHT", -20, 1)
+
+    Journal.BossTitle = Private:CreateDungeonJournalText(Encounter, "GameFontNormalLarge")
+    Journal.BossTitle:SetPoint("BOTTOMLEFT", Journal.LootList, "TOPLEFT", 4, 16)
+
+    Journal.LootEmpty = Private:CreateDungeonJournalText(Encounter, "GameFontHighlight")
+    Journal.LootEmpty:SetPoint("CENTER", Journal.LootList, "CENTER", 0, 0)
+    Journal.LootEmpty:SetWidth(300)
+    Journal.Encounter = Encounter
+end
+
 function Private:CreateDungeonJournal()
     local Journal = CreateFrame("Frame", "UnhaltedDungeonJournal", UIParent, "PortraitFrameTemplate")
-    Journal:SetSize(900, 560)
+    Journal:SetSize(800, 496)
     Journal:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     Journal:SetFrameStrata("HIGH")
     Journal:SetToplevel(true)
@@ -214,47 +298,30 @@ function Private:CreateDungeonJournal()
     Journal.LevelBracket = ALL_LEVELS_KEY
     Private.DungeonJournal = Journal
 
-    Journal.DungeonName = Journal:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    Journal.DungeonName:SetPoint("TOPLEFT", Journal, "TOPLEFT", 64, -30)
-    Journal.DungeonInfo = Journal:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    Journal.DungeonInfo:SetPoint("TOPLEFT", Journal.DungeonName, "BOTTOMLEFT", 0, -3)
+    Journal.Inset = CreateFrame("Frame", nil, Journal, "InsetFrameTemplate")
+    Journal.Inset:SetPoint("TOPLEFT", Journal, "TOPLEFT", 4, -60)
+    Journal.Inset:SetPoint("BOTTOMRIGHT", Journal, "BOTTOMRIGHT", -6, 5)
 
-    Journal.ClassDropdown = CreateFrame("DropdownButton", nil, Journal, "WowStyle1DropdownTemplate")
-    Journal.ClassDropdown:SetWidth(170)
-    Journal.ClassDropdown:SetPoint("TOPRIGHT", Journal, "TOPRIGHT", -12, -32)
-    Journal.ClassDropdown:SetupMenu(ClassDropdown_SetupMenu)
+    Journal.BackButton = CreateFrame("Button", nil, Journal, "UIPanelSquareButton")
+    Journal.BackButton:SetSize(22, 22)
+    Journal.BackButton:SetPoint("RIGHT", Journal.CloseButton, "LEFT", -2, 0)
+    Journal.BackButton:SetFrameLevel(Journal.CloseButton:GetFrameLevel())
+    SquareButton_SetIcon(Journal.BackButton, "LEFT")
+    Journal.BackButton:SetScript("OnClick", BackButton_OnClick)
+    Journal.BackButton:SetScript("OnEnter", BackButton_OnEnter)
+    Journal.BackButton:SetScript("OnLeave", GameTooltip_Hide)
+    Journal.BackButton:Hide()
 
-    Journal.LevelDropdown = CreateFrame("DropdownButton", nil, Journal, "WowStyle1DropdownTemplate")
-    Journal.LevelDropdown:SetWidth(130)
-    Journal.LevelDropdown:SetPoint("RIGHT", Journal.ClassDropdown, "LEFT", -8, 0)
-    Journal.LevelDropdown:SetupMenu(LevelDropdown_SetupMenu)
+    local DropdownWidth = (Journal:GetWidth() - 62 - 10 - 2 * 10) / 3
+    Journal.SlotDropdown = CreateDropdown(Journal, DropdownWidth, SlotDropdown_SetupMenu)
+    Journal.SlotDropdown:SetPoint("TOPLEFT", Journal, "TOPLEFT", 62, -29)
+    Journal.LevelDropdown = CreateDropdown(Journal, DropdownWidth, LevelDropdown_SetupMenu)
+    Journal.LevelDropdown:SetPoint("LEFT", Journal.SlotDropdown, "RIGHT", 10, 0)
+    Journal.ClassDropdown = CreateDropdown(Journal, DropdownWidth, ClassDropdown_SetupMenu)
+    Journal.ClassDropdown:SetPoint("LEFT", Journal.LevelDropdown, "RIGHT", 10, 0)
 
-    Journal.SlotDropdown = CreateFrame("DropdownButton", nil, Journal, "WowStyle1DropdownTemplate")
-    Journal.SlotDropdown:SetWidth(120)
-    Journal.SlotDropdown:SetPoint("RIGHT", Journal.LevelDropdown, "LEFT", -8, 0)
-    Journal.SlotDropdown:SetupMenu(SlotDropdown_SetupMenu)
-
-    local DungeonInset = CreateFrame("Frame", nil, Journal, "InsetFrameTemplate")
-    DungeonInset:SetPoint("TOPLEFT", Journal, "TOPLEFT", 6, -66)
-    DungeonInset:SetPoint("BOTTOMLEFT", Journal, "BOTTOMLEFT", 6, 6)
-    DungeonInset:SetWidth(250)
-
-    local BossInset = CreateFrame("Frame", nil, Journal, "InsetFrameTemplate")
-    BossInset:SetPoint("TOPLEFT", DungeonInset, "TOPRIGHT", 4, 0)
-    BossInset:SetPoint("BOTTOMLEFT", DungeonInset, "BOTTOMRIGHT", 4, 0)
-    BossInset:SetWidth(210)
-
-    local LootInset = CreateFrame("Frame", nil, Journal, "InsetFrameTemplate")
-    LootInset:SetPoint("TOPLEFT", BossInset, "TOPRIGHT", 4, 0)
-    LootInset:SetPoint("BOTTOMRIGHT", Journal, "BOTTOMRIGHT", -6, 6)
-
-    Journal.DungeonList = CreateList(DungeonInset, 40, Private.InitDungeonJournalDungeonRow)
-    Journal.BossList = CreateList(BossInset, 30, Private.InitDungeonJournalBossRow)
-    Journal.LootList = CreateList(LootInset, 44, Private.InitDungeonJournalLootRow)
-
-    Journal.EmptyText = LootInset:CreateFontString(nil, "OVERLAY", "GameFontDisable")
-    Journal.EmptyText:SetPoint("CENTER", LootInset, "CENTER", 0, 0)
-    Journal.EmptyText:SetWidth(360)
+    CreateDungeonSelect(Journal)
+    CreateEncounter(Journal)
 
     Journal:SetScript("OnShow", Journal_OnShow)
     Journal:SetScript("OnHide", Journal_OnHide)
