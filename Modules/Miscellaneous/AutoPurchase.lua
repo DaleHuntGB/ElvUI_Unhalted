@@ -26,7 +26,7 @@ local function PurchaseItem(Index, ItemID, Target, Info, Money)
     if Owned >= Target then return Money end
 
     local BundleSize = math.max(Info.stackCount, 1)
-    local Bundles = math.ceil((Target - Owned) / BundleSize)
+    local Bundles = math.floor((Target - Owned) / BundleSize)
     local Capacity = GetQuiverCapacity(ItemID)
     if Capacity then Bundles = math.min(Bundles, math.floor((Capacity - Owned) / BundleSize)) end
     if Info.numAvailable >= 0 then Bundles = math.min(Bundles, Info.numAvailable) end

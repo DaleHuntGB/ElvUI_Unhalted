@@ -287,6 +287,7 @@ local Defaults = {
                 Enable = true,
                 Layout = {"LEFT", "TOPLEFT", 3.1, 0.1},
                 AnchorParent = "ElvUF_Player",
+                Size = {24, 24},
                 Text = {
                     FontSize = 12,
                     Colour = {255/255, 255/255, 255/255},
