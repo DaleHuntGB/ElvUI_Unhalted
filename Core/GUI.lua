@@ -521,7 +521,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
 
     Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever end)
-    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags. For items sold in bundles, the smallest stacks are deleted first so the bundles land exactly on the quantity.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags. Items sold in bundles are bought in whole bundles, so you may end up slightly over. Ammo is capped to what your |cFFFFCC00quiver|r or |cFFFFCC00ammo pouch|r can hold, and is not bought without one.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.relWidth = 1
 

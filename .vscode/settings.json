@@ -57,7 +57,9 @@
         "TooltipDataProcessor",
         "INVSLOT_AMMO",
         "BACKPACK_CONTAINER",
-        "NUM_BAG_SLOTS"
+        "NUM_BAG_SLOTS",
+        "YES",
+        "NO"
     ],
     "Lua.type.weakUnionCheck": true
 }
