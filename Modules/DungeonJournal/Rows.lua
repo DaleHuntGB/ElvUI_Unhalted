@@ -21,10 +21,6 @@ local function SetButtonArt(Button, Coords, Pushed, Highlight)
     Button:GetHighlightTexture():SetTexCoord(Highlight[1], Highlight[2], Highlight[3], Highlight[4])
 end
 
-local function SetArtOrDefault(Texture, FileID, Default)
-    if not (FileID and Texture:SetTexture(FileID)) then Texture:SetTexture(Default) end
-end
-
 local function DungeonButton_OnClick(Button)
     Private.DungeonJournal:SelectDungeon(Button.Dungeon)
 end
@@ -57,7 +53,7 @@ function Private.InitDungeonJournalDungeonButton(Button, Dungeon)
     end
 
     Button.Dungeon = Dungeon
-    SetArtOrDefault(Button.Art, Dungeon.Button, DEFAULT_DUNGEON_ART)
+    if not (Dungeon.Button and Button.Art:SetTexture(Dungeon.Button)) then Button.Art:SetTexture(DEFAULT_DUNGEON_ART) end
     Button.Art:SetTexCoord(0, 0.68359375, 0, 0.7421875)
     Button.Name:SetText(Dungeon.Name)
     Button.Levels:SetFormattedText("%d-%d", Dungeon.Levels[1], Dungeon.Levels[2])
@@ -91,16 +87,9 @@ function Private.InitDungeonJournalBossButton(Button, Boss)
     end
 
     Button.Boss = Boss
-    SetArtOrDefault(Button.Portrait, Boss.Portrait, DEFAULT_PORTRAIT)
+    if not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then Button.Portrait:SetTexture(DEFAULT_PORTRAIT) end
     Button.Name:SetText(Boss.Rare and Boss.Name .. "\n|cFF9D9D9D(Rare)|r" or Boss.Name)
     Private.UpdateDungeonJournalBossSelection(Button)
-end
-
-local function GetSlotText(ItemType, ItemSubType, EquipLoc, ClassID, SubClassID)
-    local Slot = EquipLoc and _G[EquipLoc]
-    if not Slot or Slot == "" then return ItemType or "" end
-    if ClassID == Enum.ItemClass.Armor and (SubClassID == Enum.ItemArmorSubclass.Generic or EquipLoc == "INVTYPE_CLOAK") then return Slot end
-    return Slot .. ", " .. ItemSubType
 end
 
 function Private.UpdateDungeonJournalLootRow(Row)
@@ -165,9 +154,15 @@ function Private.InitDungeonJournalLootRow(Row, Loot)
     end
 
     local _, ItemType, ItemSubType, EquipLoc, Icon, ClassID, SubClassID = C_Item.GetItemInfoInstant(Loot.ItemID)
+    local Slot = EquipLoc and _G[EquipLoc]
+    if not Slot or Slot == "" then
+        Slot = ItemType or ""
+    elseif ClassID ~= Enum.ItemClass.Armor or (SubClassID ~= Enum.ItemArmorSubclass.Generic and EquipLoc ~= "INVTYPE_CLOAK") then
+        Slot = Slot .. ", " .. ItemSubType
+    end
     Row.ItemID = Loot.ItemID
     Row.Icon:SetTexture(Icon or MISSING_ICON)
-    Row.Slot:SetText(GetSlotText(ItemType, ItemSubType, EquipLoc, ClassID, SubClassID))
+    Row.Slot:SetText(Slot)
     Row.Source:SetText(Loot.Boss or "")
     Private.UpdateDungeonJournalLootRow(Row)
 end

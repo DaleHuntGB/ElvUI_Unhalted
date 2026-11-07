@@ -2,23 +2,10 @@ local Private = select(2, ...)
 
 local JOURNAL_TEXTURES = "Interface\\EncounterJournal\\UI-EncounterJournalTextures"
 local ALL_BOSSES = { Name = "All Bosses", All = true }
-local ALL_CLASSES_KEY = "ALL"
-local ALL_LEVELS_KEY = 0
-local ALL_SLOTS_KEY = "ALL"
 local LEVEL_BRACKETS = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
-
-local function GetDungeonButtonSize()
-    return 174, 96
-end
 
 local function RefreshReceivedLootRow(Row)
     if Row.ItemID == Private.DungeonJournal.ReceivedItemID then Private.UpdateDungeonJournalLootRow(Row) end
-end
-
-local function Journal_RefreshDungeons(Journal)
-    local Dungeons = Private:GetDungeonJournalDungeons(LEVEL_BRACKETS[Journal.LevelBracket], Journal.ClassFilter, Journal.SlotFilter)
-    Journal.DungeonGrid:SetDataProvider(CreateDataProvider(Dungeons))
-    Journal.DungeonsEmpty:SetShown(#Dungeons == 0)
 end
 
 local function Journal_RefreshLoot(Journal)
@@ -56,16 +43,6 @@ local function Journal_ShowDungeons(Journal)
     Journal.DungeonSelect:Show()
 end
 
-local function BackButton_OnClick()
-    Journal_ShowDungeons(Private.DungeonJournal)
-end
-
-local function BackButton_OnEnter(Button)
-    GameTooltip:SetOwner(Button, "ANCHOR_RIGHT")
-    GameTooltip:SetText(BACK)
-    GameTooltip:Show()
-end
-
 local function Journal_SelectDungeon(Journal, Dungeon)
     Journal.Dungeon = Dungeon
     Journal.Boss = ALL_BOSSES
@@ -83,45 +60,27 @@ local function Journal_SelectBoss(Journal, Boss)
     Journal_RefreshLoot(Journal)
 end
 
-local function Journal_RefreshFilters(Journal)
-    Journal_RefreshDungeons(Journal)
-    if Journal.Dungeon then Journal_RefreshBosses(Journal) end
-end
+local function Journal_Refresh(Journal)
+    local Dungeons = Private:GetDungeonJournalDungeons(Journal.LevelFilter, Journal.ClassFilter, Journal.SlotFilter)
+    Journal.DungeonGrid:SetDataProvider(CreateDataProvider(Dungeons))
+    Journal.DungeonsEmpty:SetShown(#Dungeons == 0)
 
-local function Journal_SetClassFilter(Journal, ClassFile)
-    Journal.ClassFilter = ClassFile
-    Journal_RefreshFilters(Journal)
-end
-
-local function Journal_SetSlotFilter(Journal, Slot)
-    Journal.SlotFilter = Slot
-    Journal_RefreshFilters(Journal)
-end
-
-local function Journal_SetLevelBracket(Journal, Index)
-    Journal.LevelBracket = Index
-    Journal_RefreshDungeons(Journal)
-    Journal_ShowDungeons(Journal)
-end
-
-local function GetInstanceDungeon()
-    local InstanceName, InstanceType = GetInstanceInfo()
-    if InstanceType ~= "party" then return end
-    for _, Dungeon in ipairs(Private.DungeonJournalData) do
-        if Dungeon.Name == InstanceName then return Dungeon end
+    if tContains(Dungeons, Journal.Dungeon) then
+        Journal_RefreshBosses(Journal)
+    else
+        Journal_ShowDungeons(Journal)
     end
 end
 
 local function Journal_OnShow(Journal)
     Journal:RegisterEvent("ITEM_DATA_LOAD_RESULT")
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
-    if not Journal.Initialised then
-        Journal.Initialised = true
-        Journal_RefreshDungeons(Journal)
-    end
 
-    local Dungeon = GetInstanceDungeon()
-    if Dungeon and Dungeon ~= Journal.Dungeon then Journal_SelectDungeon(Journal, Dungeon) end
+    local InstanceName, InstanceType = GetInstanceInfo()
+    if InstanceType ~= "party" then return end
+    for _, Dungeon in ipairs(Private.DungeonJournalData) do
+        if Dungeon.Name == InstanceName and Dungeon ~= Journal.Dungeon then Journal_SelectDungeon(Journal, Dungeon) end
+    end
 end
 
 local function Journal_OnHide(Journal)
@@ -135,58 +94,33 @@ local function Journal_OnEvent(Journal, _, ItemID, Success)
     Journal.LootList:ForEachFrame(RefreshReceivedLootRow)
 end
 
-local function ClassDropdown_IsSelected(ClassFile)
-    return (Private.DungeonJournal.ClassFilter or ALL_CLASSES_KEY) == ClassFile
+local function BackButton_OnClick()
+    Journal_ShowDungeons(Private.DungeonJournal)
 end
 
-local function ClassDropdown_SetSelected(ClassFile)
-    Private.DungeonJournal:SetClassFilter(ClassFile ~= ALL_CLASSES_KEY and ClassFile or nil)
+local function BackButton_OnEnter(Button)
+    GameTooltip:SetOwner(Button, "ANCHOR_RIGHT")
+    GameTooltip:SetText(BACK)
+    GameTooltip:Show()
 end
 
-local function ClassDropdown_SetupMenu(_, RootDescription)
-    RootDescription:CreateRadio(ALL_CLASSES, ClassDropdown_IsSelected, ClassDropdown_SetSelected, ALL_CLASSES_KEY)
-    for ClassID = 1, GetNumClasses() do
-        local ClassName, ClassFile = GetClassInfo(ClassID)
-        if ClassFile and Private.DungeonJournalClasses[ClassFile] then
-            RootDescription:CreateRadio(RAID_CLASS_COLORS[ClassFile]:WrapTextInColorCode(ClassName), ClassDropdown_IsSelected, ClassDropdown_SetSelected, ClassFile)
-        end
-    end
+local function Filter_IsSelected(Option)
+    return Private.DungeonJournal[Option.Key] == Option.Value
 end
 
-local function LevelDropdown_IsSelected(Index)
-    return Private.DungeonJournal.LevelBracket == Index
+local function Filter_SetSelected(Option)
+    Private.DungeonJournal[Option.Key] = Option.Value
+    Journal_Refresh(Private.DungeonJournal)
 end
 
-local function LevelDropdown_SetSelected(Index)
-    Private.DungeonJournal:SetLevelBracket(Index)
-end
-
-local function LevelDropdown_SetupMenu(_, RootDescription)
-    RootDescription:CreateRadio("All Levels", LevelDropdown_IsSelected, LevelDropdown_SetSelected, ALL_LEVELS_KEY)
-    for Index, Bracket in ipairs(LEVEL_BRACKETS) do
-        RootDescription:CreateRadio(string.format("Level %d-%d", Bracket[1], Bracket[2]), LevelDropdown_IsSelected, LevelDropdown_SetSelected, Index)
-    end
-end
-
-local function SlotDropdown_IsSelected(Slot)
-    return (Private.DungeonJournal.SlotFilter or ALL_SLOTS_KEY) == Slot
-end
-
-local function SlotDropdown_SetSelected(Slot)
-    Private.DungeonJournal:SetSlotFilter(Slot ~= ALL_SLOTS_KEY and Slot or nil)
-end
-
-local function SlotDropdown_SetupMenu(_, RootDescription)
-    RootDescription:CreateRadio("All Slots", SlotDropdown_IsSelected, SlotDropdown_SetSelected, ALL_SLOTS_KEY)
-    for _, Slot in ipairs(Private.DungeonJournalSlots) do
-        RootDescription:CreateRadio(Slot, SlotDropdown_IsSelected, SlotDropdown_SetSelected, Slot)
-    end
-end
-
-local function CreateDropdown(Journal, Width, SetupMenu)
+local function CreateFilterDropdown(Journal, Width, Options)
     local Dropdown = CreateFrame("DropdownButton", nil, Journal, "WowStyle1DropdownTemplate")
     Dropdown:SetWidth(Width)
-    Dropdown:SetupMenu(SetupMenu)
+    Dropdown:SetupMenu(function(_, RootDescription)
+        for _, Option in ipairs(Options) do
+            RootDescription:CreateRadio(Option.Text, Filter_IsSelected, Filter_SetSelected, Option)
+        end
+    end)
     return Dropdown
 end
 
@@ -215,7 +149,7 @@ local function CreateDungeonSelect(Journal)
 
     local View = CreateScrollBoxListGridView(4, 5, 0, 0, 0, 15, 15)
     View:SetElementInitializer("Button", Private.InitDungeonJournalDungeonButton)
-    View:SetElementSizeCalculator(GetDungeonButtonSize)
+    View:SetElementSizeCalculator(function() return 174, 96 end)
     Journal.DungeonGrid = CreateScrollList(DungeonSelect, View)
     Journal.DungeonGrid:SetPoint("TOPLEFT", DungeonSelect, "TOPLEFT", 18, -14)
     Journal.DungeonGrid:SetPoint("BOTTOMRIGHT", DungeonSelect, "BOTTOMRIGHT", -26, 6)
@@ -291,11 +225,11 @@ function Private:CreateDungeonJournal()
 
     Journal.SelectDungeon = Journal_SelectDungeon
     Journal.SelectBoss = Journal_SelectBoss
-    Journal.SetClassFilter = Journal_SetClassFilter
-    Journal.SetSlotFilter = Journal_SetSlotFilter
-    Journal.SetLevelBracket = Journal_SetLevelBracket
     Journal.ClassFilter = select(2, UnitClass("player"))
-    Journal.LevelBracket = ALL_LEVELS_KEY
+    local Level = UnitLevel("player")
+    for _, Bracket in ipairs(LEVEL_BRACKETS) do
+        if not Journal.LevelFilter and Level <= Bracket[2] then Journal.LevelFilter = Bracket end
+    end
     Private.DungeonJournal = Journal
 
     Journal.Inset = CreateFrame("Frame", nil, Journal, "InsetFrameTemplate")
@@ -310,18 +244,34 @@ function Private:CreateDungeonJournal()
     Journal.BackButton:SetScript("OnClick", BackButton_OnClick)
     Journal.BackButton:SetScript("OnEnter", BackButton_OnEnter)
     Journal.BackButton:SetScript("OnLeave", GameTooltip_Hide)
-    Journal.BackButton:Hide()
+
+    local SlotOptions = { { Key = "SlotFilter", Text = "All Slots" } }
+    for _, Slot in ipairs(Private.DungeonJournalSlots) do
+        SlotOptions[#SlotOptions + 1] = { Key = "SlotFilter", Text = Slot, Value = Slot }
+    end
+    local LevelOptions = { { Key = "LevelFilter", Text = "All Levels" } }
+    for _, Bracket in ipairs(LEVEL_BRACKETS) do
+        LevelOptions[#LevelOptions + 1] = { Key = "LevelFilter", Text = string.format("Level %d-%d", Bracket[1], Bracket[2]), Value = Bracket }
+    end
+    local ClassOptions = { { Key = "ClassFilter", Text = ALL_CLASSES } }
+    for ClassID = 1, GetNumClasses() do
+        local ClassName, ClassFile = GetClassInfo(ClassID)
+        if ClassFile and Private.DungeonJournalClasses[ClassFile] then
+            ClassOptions[#ClassOptions + 1] = { Key = "ClassFilter", Text = RAID_CLASS_COLORS[ClassFile]:WrapTextInColorCode(ClassName), Value = ClassFile }
+        end
+    end
 
     local DropdownWidth = (Journal:GetWidth() - 62 - 10 - 2 * 10) / 3
-    Journal.SlotDropdown = CreateDropdown(Journal, DropdownWidth, SlotDropdown_SetupMenu)
+    Journal.SlotDropdown = CreateFilterDropdown(Journal, DropdownWidth, SlotOptions)
     Journal.SlotDropdown:SetPoint("TOPLEFT", Journal, "TOPLEFT", 62, -29)
-    Journal.LevelDropdown = CreateDropdown(Journal, DropdownWidth, LevelDropdown_SetupMenu)
+    Journal.LevelDropdown = CreateFilterDropdown(Journal, DropdownWidth, LevelOptions)
     Journal.LevelDropdown:SetPoint("LEFT", Journal.SlotDropdown, "RIGHT", 10, 0)
-    Journal.ClassDropdown = CreateDropdown(Journal, DropdownWidth, ClassDropdown_SetupMenu)
+    Journal.ClassDropdown = CreateFilterDropdown(Journal, DropdownWidth, ClassOptions)
     Journal.ClassDropdown:SetPoint("LEFT", Journal.LevelDropdown, "RIGHT", 10, 0)
 
     CreateDungeonSelect(Journal)
     CreateEncounter(Journal)
+    Journal_Refresh(Journal)
 
     Journal:SetScript("OnShow", Journal_OnShow)
     Journal:SetScript("OnHide", Journal_OnHide)

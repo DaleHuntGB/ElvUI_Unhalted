@@ -46,42 +46,14 @@ local EQUIP_LOC_SLOTS = {
 Private.DungeonJournalClasses = CLASS_ARMOUR
 Private.DungeonJournalSlots = LOOT_SLOTS
 
-local function IsLootForClass(ClassFile, EquipLoc, ClassID, SubClassID)
+local function IsLootShown(ItemID, ClassFile, Slot)
+    local _, _, _, EquipLoc, _, ClassID, SubClassID = C_Item.GetItemInfoInstant(ItemID)
+    if Slot and (EQUIP_LOC_SLOTS[EquipLoc] or "Other") ~= Slot then return false end
     if not ClassFile or not CLASS_ARMOUR[ClassFile] then return true end
     if ClassID == Enum.ItemClass.Weapon then return CLASS_WEAPONS[ClassFile][SubClassID] == true end
     if ClassID ~= Enum.ItemClass.Armor or EquipLoc == "INVTYPE_CLOAK" then return true end
     if EquipLoc == "INVTYPE_HOLDABLE" then return not NO_HOLDABLE[ClassFile] end
-    if SubClassID == ARMOUR.Generic then return true end
-    return CLASS_ARMOUR[ClassFile][SubClassID] == true
-end
-
-local function IsLootShown(ItemID, ClassFile, Slot)
-    local _, _, _, EquipLoc, _, ClassID, SubClassID = C_Item.GetItemInfoInstant(ItemID)
-    if Slot and (EQUIP_LOC_SLOTS[EquipLoc] or "Other") ~= Slot then return false end
-    return IsLootForClass(ClassFile, EquipLoc, ClassID, SubClassID)
-end
-
-local function BossHasLoot(Boss, ClassFile, Slot)
-    for _, ItemID in ipairs(Boss.Loot) do
-        if IsLootShown(ItemID, ClassFile, Slot) then return true end
-    end
-    return false
-end
-
-local function DungeonHasLoot(Dungeon, ClassFile, Slot)
-    for _, Boss in ipairs(Dungeon.Bosses) do
-        if BossHasLoot(Boss, ClassFile, Slot) then return true end
-    end
-    return false
-end
-
-function Private:GetDungeonJournalDungeons(Bracket, ClassFile, Slot)
-    local Dungeons = {}
-    for _, Dungeon in ipairs(Private.DungeonJournalData) do
-        local InBracket = not Bracket or (Dungeon.Levels[1] <= Bracket[2] and Dungeon.Levels[2] >= Bracket[1])
-        if InBracket and (not Slot or DungeonHasLoot(Dungeon, ClassFile, Slot)) then Dungeons[#Dungeons + 1] = Dungeon end
-    end
-    return Dungeons
+    return SubClassID == ARMOUR.Generic or CLASS_ARMOUR[ClassFile][SubClassID] == true
 end
 
 function Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot)
@@ -89,9 +61,23 @@ function Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot)
 
     local Bosses = {}
     for _, Boss in ipairs(Dungeon.Bosses) do
-        if BossHasLoot(Boss, ClassFile, Slot) then Bosses[#Bosses + 1] = Boss end
+        for _, ItemID in ipairs(Boss.Loot) do
+            if IsLootShown(ItemID, ClassFile, Slot) then
+                Bosses[#Bosses + 1] = Boss
+                break
+            end
+        end
     end
     return Bosses
+end
+
+function Private:GetDungeonJournalDungeons(Bracket, ClassFile, Slot)
+    local Dungeons = {}
+    for _, Dungeon in ipairs(Private.DungeonJournalData) do
+        local InBracket = not Bracket or (Dungeon.Levels[1] <= Bracket[2] and Dungeon.Levels[2] >= Bracket[1])
+        if InBracket and (not Slot or #Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot) > 0) then Dungeons[#Dungeons + 1] = Dungeon end
+    end
+    return Dungeons
 end
 
 function Private:GetDungeonJournalLoot(Dungeon, Boss, ClassFile, Slot)
