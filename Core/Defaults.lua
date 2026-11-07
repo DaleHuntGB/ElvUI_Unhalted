@@ -294,6 +294,10 @@ local Defaults = {
                     Threshold = 200,
                 },
             },
+            AutoPurchase = {
+                Enable = true,
+                Items = {},
+            },
             CombatTimer = {
                 Enable = true,
                 OOCOpacity = 0.33,

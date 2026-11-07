@@ -33,6 +33,7 @@ function AddOn:OnEnable()
     Private:SetupTime()
     -- [[ Miscellaneous ]]
     Private:SetupAmmoCounter()
+    Private:SetupAutoPurchase()
     Private:SetupBeastLore()
     Private:SetupCombatResurrection()
     Private:SetupCombatTimer()

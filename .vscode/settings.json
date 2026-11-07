@@ -55,7 +55,9 @@
         "RunNextFrame",
         "CLASS_ICON_TCOORDS",
         "TooltipDataProcessor",
-        "INVSLOT_AMMO"
+        "INVSLOT_AMMO",
+        "BACKPACK_CONTAINER",
+        "NUM_BAG_SLOTS"
     ],
     "Lua.type.weakUnionCheck": true
 }

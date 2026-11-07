@@ -21,6 +21,51 @@ local ACH = Private.ACH
     ACH:Toggle(name, desc, order, tristate, confirm, width, get, set, disabled, hidden)
 ]]
 
+local AutoPurchaseInput = { Item = "", Quantity = 200 }
+
+local function GetAutoPurchaseItemName(Item)
+    if type(Item) ~= "number" then return Item end
+    return string.format("|T%s:16:16|t %s", C_Item.GetItemIconByID(Item) or 134400, C_Item.GetItemNameByID(Item) or Item)
+end
+
+local function ValidateAutoPurchaseItem(_, Value)
+    local ItemID = tonumber(strtrim(Value))
+    if ItemID and not C_Item.DoesItemExistByID(ItemID) then return "|cFFCC4040Unknown item ID.|r" end
+    return true
+end
+
+local function RefreshAutoPurchaseItems()
+    local ItemsGroup = Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Items
+    local SortedItems = {}
+    for Item in pairs(Private.DB.global.Miscellaneous.AutoPurchase.Items) do SortedItems[#SortedItems + 1] = Item end
+    table.sort(SortedItems, function(A, B) return tostring(A) < tostring(B) end)
+
+    wipe(ItemsGroup.args)
+    if #SortedItems == 0 then
+        ItemsGroup.args.Empty = ACH:Description("No Items Yet.", 1)
+        return
+    end
+
+    for Index, Item in ipairs(SortedItems) do
+        local Key = tostring(Item)
+        ItemsGroup.args[Key .. "Item"] = ACH:Description(function() return GetAutoPurchaseItemName(Item) end, Index * 3 - 2, "medium", nil, nil, nil, nil, "relative")
+        ItemsGroup.args[Key .. "Item"].relWidth = 0.33
+        ItemsGroup.args[Key .. "Quantity"] = ACH:Range("Quantity", nil, Index * 3 - 1, {min = 1, max = 10000, softMin = 1, softMax = 2000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
+        ItemsGroup.args[Key .. "Quantity"].relWidth = 0.33
+        ItemsGroup.args[Key .. "Remove"] = ACH:Execute("X", nil, Index * 3, function() Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] = nil RefreshAutoPurchaseItems() Private.E:RefreshGUI() end, nil, nil, "relative", nil, nil, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
+        ItemsGroup.args[Key .. "Remove"].relWidth = 0.33
+    end
+end
+
+local function AddAutoPurchaseItem()
+    local Input = strtrim(AutoPurchaseInput.Item)
+    local Item = C_Item.GetItemInfoInstant(tonumber(Input) or Input) or strlower(Input)
+    Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] = AutoPurchaseInput.Quantity
+    AutoPurchaseInput.Item = ""
+    RefreshAutoPurchaseItems()
+    Private.E:RefreshGUI()
+end
+
 function Private:SetupGUI()
     Private.GUI = ACH:Group("|cFF6080FFUnhalted|r|cFF808080UI|r", nil, 999, "tree")
 
@@ -474,6 +519,25 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.BelowThresholdColour.relWidth = 0.5
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold = ACH:Range("Threshold", "The ammo count below which the |cFFFFCC00Below Threshold Colour|r is used.", 4, {min = 0, max = 5000, softMin = 0, softMax = 1000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
+
+    Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags. Excess from items sold in bundles is sold back.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.descStyle = "inline"
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.relWidth = 1
+
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem = ACH:Group("Add Item", nil, 2)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.inline = true
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item = ACH:Input("Item", "Item ID or name. You can also drag an item here.", 1, nil, "relative", function() return AutoPurchaseInput.Item end, function(_, value) AutoPurchaseInput.Item = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end, nil, ValidateAutoPurchaseItem)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item.relWidth = 0.4
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Quantity = ACH:Range("Quantity", nil, 2, {min = 1, max = 10000, softMin = 1, softMax = 2000, step = 1, bigStep = 10}, "relative", function() return AutoPurchaseInput.Quantity end, function(_, value) AutoPurchaseInput.Quantity = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Quantity.relWidth = 0.4
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Add = ACH:Execute("Add", nil, 3, AddAutoPurchaseItem, nil, nil, "relative", nil, nil, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable or strtrim(AutoPurchaseInput.Item) == "" end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Add.relWidth = 0.2
+
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Items = ACH:Group("Items", nil, 3)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Items.inline = true
+
+    RefreshAutoPurchaseItems()
 
     Private.GUI.args.Miscellaneous.args.CombatTimer = ACH:Group("Combat Timer", nil, 1, "tab")
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Enable end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Enable = value Private:UpdateCombatTimer() end, nil)
