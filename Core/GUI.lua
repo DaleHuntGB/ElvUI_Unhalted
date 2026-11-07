@@ -49,11 +49,11 @@ local function RefreshAutoPurchaseItems()
     for Index, Item in ipairs(SortedItems) do
         local Key = tostring(Item)
         ItemsGroup.args[Key .. "Item"] = ACH:Description(function() return GetAutoPurchaseItemName(Item) end, Index * 3 - 2, "medium", nil, nil, nil, nil, "relative")
-        ItemsGroup.args[Key .. "Item"].relWidth = 0.33
+        ItemsGroup.args[Key .. "Item"].relWidth = 0.5
         ItemsGroup.args[Key .. "Quantity"] = ACH:Range("Quantity", nil, Index * 3 - 1, {min = 1, max = 10000, softMin = 1, softMax = 2000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
-        ItemsGroup.args[Key .. "Quantity"].relWidth = 0.33
+        ItemsGroup.args[Key .. "Quantity"].relWidth = 0.4
         ItemsGroup.args[Key .. "Remove"] = ACH:Execute("X", nil, Index * 3, function() Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] = nil RefreshAutoPurchaseItems() Private.E:RefreshGUI() end, nil, nil, "relative", nil, nil, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
-        ItemsGroup.args[Key .. "Remove"].relWidth = 0.33
+        ItemsGroup.args[Key .. "Remove"].relWidth = 0.1
     end
 end
 
@@ -521,7 +521,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
 
     Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever end)
-    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags. Excess from items sold in bundles is sold back.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags. For items sold in bundles, the smallest stacks are deleted first so the bundles land exactly on the quantity.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.relWidth = 1
 
