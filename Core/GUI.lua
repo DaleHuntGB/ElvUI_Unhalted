@@ -555,13 +555,13 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
 
     Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever end)
-    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags. Items sold in bundles are bought in whole bundles without going over, so you may end up slightly under. Ammo is capped to what your |cFFFFCC00quiver|r or |cFFFFCC00ammo pouch|r can hold, and is not bought without one.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.relWidth = 1
 
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem = ACH:Group("Add Item", nil, 2)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.inline = true
-    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item = ACH:Input("Item", "Item ID or name. You can also drag an item here.", 1, nil, "relative", function() return AutoPurchaseInput.Item end, function(_, value) AutoPurchaseInput.Item = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end, nil, ValidateAutoPurchaseItem)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item = ACH:Input("Item", nil, 1, nil, "relative", function() return AutoPurchaseInput.Item end, function(_, value) AutoPurchaseInput.Item = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end, nil, ValidateAutoPurchaseItem)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item.relWidth = 0.4
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Quantity = ACH:Range("Quantity", nil, 2, {min = 1, max = 10000, softMin = 1, softMax = 2000, step = 1, bigStep = 10}, "relative", function() return AutoPurchaseInput.Quantity end, function(_, value) AutoPurchaseInput.Quantity = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Quantity.relWidth = 0.4
