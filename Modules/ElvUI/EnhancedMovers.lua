@@ -17,5 +17,7 @@ function Private:SetupEnhancedMovers()
     Private:SetMover(Private.DB.global.ElvUI.Movers.ElvAB_5.Enable, "ElvAB_5", table.concat(Private.DB.global.ElvUI.Movers.ElvAB_5.Layout, ","))
     Private:SetMover(Private.DB.global.ElvUI.Movers.ElvAB_6.Enable, "ElvAB_6", table.concat(Private.DB.global.ElvUI.Movers.ElvAB_6.Layout, ","))
 
+    Private:SetMover(Private.DB.global.ElvUI.Movers.TotemTrackerMover.Enable, "TotemTrackerMover", table.concat(Private.DB.global.ElvUI.Movers.TotemTrackerMover.Layout, ","))
+
     Private.E:LoadMovers()
 end

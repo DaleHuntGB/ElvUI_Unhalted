@@ -389,6 +389,35 @@ function Private:SetupGUI()
         Private.GUI.args.ElvUI.args.EnhancedAnchors.args.UnitFrames.args["ElvUF_"..unitFrame.."Mover"].args.LayoutGroup.args.YOffset.relWidth = 0.5
     end
 
+    Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 3, "tab")
+
+    local MiscellaneousMovers = {
+        [1] = "TotemTrackerMover",
+    }
+
+    local PrettifyMiscellaneousMovers = {
+        ["TotemTrackerMover"] = "Totem Tracker",
+    }
+
+    for i, moverName in ipairs(MiscellaneousMovers) do
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName] = ACH:Group(PrettifyMiscellaneousMovers[moverName], nil, i, "tab")
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "full", function() return Private.DB.global.ElvUI.Movers[moverName].Enable end, function(_, value) Private.DB.global.ElvUI.Movers[moverName].Enable = value Private:UpdateMover(value, moverName, table.concat(Private.DB.global.ElvUI.Movers[moverName].Layout, ",")) end)
+
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup = ACH:Group("Layout", nil, 2)
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.inline = true
+
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.AnchorFrom = ACH:Select("Anchor From", nil, 2, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.ElvUI.Movers[moverName].Layout[1] end, function(_, value) Private.DB.global.ElvUI.Movers[moverName].Layout[1] = value Private:UpdateMover(Private.DB.global.ElvUI.Movers[moverName].Enable, moverName, table.concat(Private.DB.global.ElvUI.Movers[moverName].Layout, ",")) end, function() return not Private.DB.global.ElvUI.Movers[moverName].Enable end)
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.AnchorFrom.relWidth = 0.33
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.AnchorParent = ACH:Input("Anchor Parent", nil, 3, nil, "relative", function() return Private.DB.global.ElvUI.Movers[moverName].Layout[2] end, function(_, value) Private.DB.global.ElvUI.Movers[moverName].Layout[2] = value Private:UpdateMover(Private.DB.global.ElvUI.Movers[moverName].Enable, moverName, table.concat(Private.DB.global.ElvUI.Movers[moverName].Layout, ",")) end, function() return not Private.DB.global.ElvUI.Movers[moverName].Enable end)
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.AnchorParent.relWidth = 0.33
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.AnchorTo = ACH:Select("Anchor To", nil, 4, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.ElvUI.Movers[moverName].Layout[3] end, function(_, value) Private.DB.global.ElvUI.Movers[moverName].Layout[3] = value Private:UpdateMover(Private.DB.global.ElvUI.Movers[moverName].Enable, moverName, table.concat(Private.DB.global.ElvUI.Movers[moverName].Layout, ",")) end, function() return not Private.DB.global.ElvUI.Movers[moverName].Enable end)
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.AnchorTo.relWidth = 0.33
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.XOffset = ACH:Range("X Offset", nil, 5, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 0.1}, "relative", function() return Private.DB.global.ElvUI.Movers[moverName].Layout[4] end, function(_, value) Private.DB.global.ElvUI.Movers[moverName].Layout[4] = value Private:UpdateMover(Private.DB.global.ElvUI.Movers[moverName].Enable, moverName, table.concat(Private.DB.global.ElvUI.Movers[moverName].Layout, ",")) end, function() return not Private.DB.global.ElvUI.Movers[moverName].Enable end)
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.XOffset.relWidth = 0.5
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.YOffset = ACH:Range("Y Offset", nil, 6, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 0.1}, "relative", function() return Private.DB.global.ElvUI.Movers[moverName].Layout[5] end, function(_, value) Private.DB.global.ElvUI.Movers[moverName].Layout[5] = value Private:UpdateMover(Private.DB.global.ElvUI.Movers[moverName].Enable, moverName, table.concat(Private.DB.global.ElvUI.Movers[moverName].Layout, ",")) end, function() return not Private.DB.global.ElvUI.Movers[moverName].Enable end)
+        Private.GUI.args.ElvUI.args.EnhancedAnchors.args.Miscellaneous.args[moverName].args.LayoutGroup.args.YOffset.relWidth = 0.5
+    end
+
     Private.GUI.args.ElvUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 2)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.InterruptOnCooldown = ACH:Toggle("Interrupt on Cooldown", "Colours the castbar |cFF808080grey|r when your |cFFFFCC00interrupt|r is on cooldown.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.InterruptOnCooldown end, function(_, value) Private.DB.global.ElvUI.InterruptOnCooldown = value Private.E:StaticPopup_Show("CONFIG_RL") end, nil, function() return Private.isForever end)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.InterruptOnCooldown.descStyle = "inline"

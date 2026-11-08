@@ -250,6 +250,10 @@ local Defaults = {
                     Enable = false,
                     Layout = {"BOTTOMRIGHT", "UIParent", "TOPLEFT", -1.1, 1.1},
                 },
+                TotemTrackerMover = {
+                    Enable = false,
+                    Layout = {"BOTTOMLEFT", "ElvUIParent", "BOTTOMLEFT", 491, 4},
+                },
             }
         },
         MinimapStats = {
