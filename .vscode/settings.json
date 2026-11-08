@@ -77,7 +77,12 @@
         "CreateScrollBoxListGridView",
         "HOME",
         "BACK",
-        "SquareButton_SetIcon"
+        "SquareButton_SetIcon",
+        "MAP_AREA_LABEL_TYPE",
+        "WorldMapFrame",
+        "AreaLabelDataProviderMixin",
+        "QuestDifficultyColors",
+        "GetQuestDifficultyColor"
     ],
     "Lua.type.weakUnionCheck": true
 }

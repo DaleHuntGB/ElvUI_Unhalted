@@ -50,6 +50,7 @@ local Defaults = {
         },
         Blizzard = {
             CleanObjectiveTrackerBanner = true,
+            WorldMapZoneLevels = true,
             UIErrorsFrame = {
                 Enable = false,
                 Hide = false,

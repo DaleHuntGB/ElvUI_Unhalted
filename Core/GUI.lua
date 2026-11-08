@@ -218,6 +218,9 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.Miscellaneous.args.CleanObjectiveTrackerBanner = ACH:Toggle("Clean-up Point of Interest Banner", "This will position & tidy up the banner that appears when entering a |cFFFFCC00point of interest|r.", 0, nil, nil, "relative", function() return Private.DB.global.Blizzard.CleanObjectiveTrackerBanner end, function(_, value) Private.DB.global.Blizzard.CleanObjectiveTrackerBanner = value Private.E:StaticPopup_Show("CONFIG_RL") end)
     Private.GUI.args.Blizzard.args.Miscellaneous.args.CleanObjectiveTrackerBanner.descStyle = "inline"
     Private.GUI.args.Blizzard.args.Miscellaneous.args.CleanObjectiveTrackerBanner.relWidth = 1
+    Private.GUI.args.Blizzard.args.Miscellaneous.args.WorldMapZoneLevels = ACH:Toggle("World Map Zone Levels", "Shows each zone's |cFFFFCC00level range|r below its name on the world map.", 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.WorldMapZoneLevels end, function(_, value) Private.DB.global.Blizzard.WorldMapZoneLevels = value Private.E:StaticPopup_Show("CONFIG_RL") end, nil, function() return not Private.isForever end)
+    Private.GUI.args.Blizzard.args.Miscellaneous.args.WorldMapZoneLevels.descStyle = "inline"
+    Private.GUI.args.Blizzard.args.Miscellaneous.args.WorldMapZoneLevels.relWidth = 1
 
     Private.GUI.args.Blizzard.args.UIErrorsFrame = ACH:Group("UIErrorsFrame", nil, 1)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Enable end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end)

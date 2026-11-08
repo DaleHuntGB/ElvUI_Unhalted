@@ -25,6 +25,7 @@ Modules/Alerts/TimeSpiral.lua [AllowLoadGameType standard][ExcludeLoadGameType c
 
 Modules/Blizzard/ObjectiveTrackerBanner.lua
 Modules/Blizzard/UIErrorsFrame.lua
+Modules/Blizzard/WorldMapZoneLevels.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/DamageMeter/Core.lua
 Modules/DamageMeter/Bookmarks.lua
