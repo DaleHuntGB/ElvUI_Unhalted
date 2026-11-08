@@ -206,7 +206,7 @@ local function CreateEncounter(Journal)
     Journal.Encounter = Encounter
 end
 
-function Private:CreateDungeonJournal()
+function Private:SetupDungeonJournal()
     local Journal = CreateFrame("Frame", "UnhaltedDungeonJournal", UIParent, "PortraitFrameTemplate")
     Journal:SetSize(800, 496)
     Journal:SetPoint("CENTER", UIParent, "CENTER", 0, 0)

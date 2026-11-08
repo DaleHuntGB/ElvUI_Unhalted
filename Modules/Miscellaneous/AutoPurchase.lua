@@ -68,8 +68,6 @@ local function AutoPurchase_OnEvent(APF, Event)
 end
 
 function Private:SetupAutoPurchase()
-    if not Private.isForever then return end
-
     local AutoPurchaseFrame = CreateFrame("Frame")
     AutoPurchaseFrame:SetScript("OnEvent", AutoPurchase_OnEvent)
     Private.AutoPurchaseFrame = AutoPurchaseFrame

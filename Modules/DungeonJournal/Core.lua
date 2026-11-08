@@ -108,8 +108,3 @@ function Private:CreateDungeonJournalText(Parent, Template)
     Text:SetShadowOffset(0, 0)
     return Text
 end
-
-function Private:SetupDungeonJournal()
-    if not Private.isForever then return end
-    Private:CreateDungeonJournal()
-end

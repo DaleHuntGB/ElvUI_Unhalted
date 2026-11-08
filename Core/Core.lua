@@ -14,16 +14,11 @@ function AddOn:OnEnable()
     Private:SetupBugSackSkin()
     -- [[ Alerts ]]
     Private:SetupCombatAlert()
-    Private:SetupInnervateAlert()
-    Private:SetupPowerInfusionAlert()
-    Private:SetupTimeSpiralAlert()
     -- [[ Blizzard ]]
     Private:SetupObjectiveTrackerBanner()
     Private:SetupUIErrorsFrame()
     -- [[ Damage Meter ]]
     Private:SetupDamageMeters()
-    -- [[ Dungeon Journal ]]
-    Private:SetupDungeonJournal()
     -- [[ ElvUI]]
     Private:SetupEnhancedMovers()
     Private:SetupInterruptOnCooldown()
@@ -34,22 +29,31 @@ function AddOn:OnEnable()
     Private:SetupSystemStats()
     Private:SetupTime()
     -- [[ Miscellaneous ]]
-    Private:SetupAmmoCounter()
-    Private:SetupAutoPurchase()
-    Private:SetupBeastLore()
     Private:SetupCombatResurrection()
     Private:SetupCombatTimer()
     Private:SetupCrosshair()
     Private:SyncCVars()
     Private:SetupMouseCursor()
-    -- [[ Mythic+ Timer ]]
-    Private:SetupMythicPlusTimer()
     -- [[ Toggles ]]
     Private:SetupAutoDelete()
     Private:SetupAutoQuest()
-    Private:SetupAutoSignUp()
-    Private:SetupBossBanner()
     Private:SetupLossOfControl()
-    Private:SetupTalkingHead()
     Private:SkipCinematics()
+
+    if Private.isForever then
+        -- [[ Forever ]]
+        Private:SetupAmmoCounter()
+        Private:SetupAutoPurchase()
+        Private:SetupBeastLore()
+        Private:SetupDungeonJournal()
+    else
+        -- [[ Retail ]]
+        Private:SetupInnervateAlert()
+        Private:SetupPowerInfusionAlert()
+        Private:SetupTimeSpiralAlert()
+        Private:SetupMythicPlusTimer()
+        Private:SetupAutoSignUp()
+        Private:SetupBossBanner()
+        Private:SetupTalkingHead()
+    end
 end

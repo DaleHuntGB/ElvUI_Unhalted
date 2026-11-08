@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 
 function Private:SetupBeastLore()
-    if not Private.isForever or Private.E.myclass ~= "HUNTER" then return end
+    if Private.E.myclass ~= "HUNTER" then return end
 
     local Abilities = {
         -- Bite

@@ -19,9 +19,9 @@ Modules/AddOnSkins/BigWigs.lua
 Modules/AddOnSkins/BugSack.lua
 
 Modules/Alerts/Combat.lua
-Modules/Alerts/Innervate.lua
-Modules/Alerts/PowerInfusion.lua
-Modules/Alerts/TimeSpiral.lua
+Modules/Alerts/Innervate.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/Alerts/PowerInfusion.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/Alerts/TimeSpiral.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
 
 Modules/Blizzard/ObjectiveTrackerBanner.lua
 Modules/Blizzard/UIErrorsFrame.lua
@@ -34,10 +34,10 @@ Modules/DamageMeter/Drilldown.lua
 Modules/DamageMeter/Rows.lua
 Modules/DamageMeter/Window.lua
 
-Modules/DungeonJournal/Data.lua
-Modules/DungeonJournal/Core.lua
-Modules/DungeonJournal/Rows.lua
-Modules/DungeonJournal/Window.lua
+Modules/DungeonJournal/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/DungeonJournal/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/DungeonJournal/Rows.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/DungeonJournal/Window.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
@@ -48,21 +48,21 @@ Modules/MinimapStats/Location.lua
 Modules/MinimapStats/SystemStats.lua
 Modules/MinimapStats/Time.lua
 
-Modules/Miscellaneous/AmmoCounter.lua
-Modules/Miscellaneous/AutoPurchase.lua
-Modules/Miscellaneous/BeastLore.lua
+Modules/Miscellaneous/AmmoCounter.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Miscellaneous/AutoPurchase.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Miscellaneous/BeastLore.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/CombatResurrection.lua
 Modules/Miscellaneous/CombatTimer.lua
 Modules/Miscellaneous/Crosshair.lua
 Modules/Miscellaneous/CVars.lua
 Modules/Miscellaneous/MouseCursor.lua
 
-Modules/MythicPlusTimer/Core.lua
-Modules/MythicPlusTimer/Rows.lua
-Modules/MythicPlusTimer/Objectives.lua
-Modules/MythicPlusTimer/Timer.lua
-Modules/MythicPlusTimer/Tracker.lua
-Modules/MythicPlusTimer/Window.lua
+Modules/MythicPlusTimer/Core.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/MythicPlusTimer/Rows.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/MythicPlusTimer/Objectives.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/MythicPlusTimer/Timer.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/MythicPlusTimer/Tracker.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/MythicPlusTimer/Window.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
 
 Modules/Profiles/BigWigs.lua
 Modules/Profiles/ElvUI.lua
@@ -72,8 +72,8 @@ Modules/Profiles/UnhaltedUI.lua
 
 Modules/Toggles/AutoDelete.lua
 Modules/Toggles/AutoQuest.lua
-Modules/Toggles/AutoSignUp.lua
-Modules/Toggles/BossBanner.lua
+Modules/Toggles/AutoSignUp.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/Toggles/BossBanner.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
 Modules/Toggles/LossOfControl.lua
 Modules/Toggles/SkipCinematics.lua
-Modules/Toggles/TalkingHead.lua
+Modules/Toggles/TalkingHead.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]

@@ -11,7 +11,7 @@ local function AmmoCounter_OnEvent(ACF, Event, Unit)
 end
 
 function Private:SetupAmmoCounter()
-    if not Private.isForever or Private.E.myclass ~= "HUNTER" then return end
+    if Private.E.myclass ~= "HUNTER" then return end
     local DB = Private.DB.global.Miscellaneous.AmmoCounter
 
     local AmmoCounterFrame = CreateFrame("Frame", "AmmoCounterFrame", UIParent)

@@ -1,7 +1,6 @@
 local Private = select(2, ...)
 
 function Private:SetupInnervateAlert()
-    if Private.isForever then return end
     local DB = Private.DB.global.Alerts.Innervate
 
     if not Private.InnervateAlertContainer then
