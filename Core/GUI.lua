@@ -21,17 +21,11 @@ local ACH = Private.ACH
     ACH:Toggle(name, desc, order, tristate, confirm, width, get, set, disabled, hidden)
 ]]
 
-local AutoPurchaseInput = { Item = "", Quantity = 200 }
+local AutoPurchaseInput = { Item = "", Quantity = 100 }
 
 local function GetAutoPurchaseItemName(Item)
     if type(Item) ~= "number" then return Item end
     return string.format("|T%s:16:16|t %s", C_Item.GetItemIconByID(Item) or 134400, C_Item.GetItemNameByID(Item) or Item)
-end
-
-local function ValidateAutoPurchaseItem(_, Value)
-    local ItemID = tonumber(strtrim(Value))
-    if ItemID and not C_Item.DoesItemExistByID(ItemID) then return "|cFFCC4040Unknown item ID.|r" end
-    return true
 end
 
 local function RefreshAutoPurchaseItems()
@@ -561,7 +555,7 @@ function Private:SetupGUI()
 
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem = ACH:Group("Add Item", nil, 2)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.inline = true
-    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item = ACH:Input("Item", nil, 1, nil, "relative", function() return AutoPurchaseInput.Item end, function(_, value) AutoPurchaseInput.Item = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end, nil, ValidateAutoPurchaseItem)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item = ACH:Input("Item", nil, 1, nil, "relative", function() return AutoPurchaseInput.Item end, function(_, value) AutoPurchaseInput.Item = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Item.relWidth = 0.4
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Quantity = ACH:Range("Quantity", nil, 2, {min = 1, max = 10000, softMin = 1, softMax = 2000, step = 1, bigStep = 10}, "relative", function() return AutoPurchaseInput.Quantity end, function(_, value) AutoPurchaseInput.Quantity = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.AddItem.args.Quantity.relWidth = 0.4
