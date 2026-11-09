@@ -3,6 +3,9 @@ local Private = select(2, ...)
 local PURCHASE_DELAY = 0.5
 local AMMO_BAG_FAMILY = 0x3
 
+local PendingItems = {}
+local PendingCost = 0
+
 local function GetQuiverCapacity(ItemID)
     local ItemFamily = bit.band(C_Item.GetItemFamily(ItemID) or 0, AMMO_BAG_FAMILY)
     if ItemFamily == 0 then return end
@@ -42,6 +45,7 @@ local function PurchaseItem(Index, ItemID, Target, Info, Money)
         Remaining = Remaining - Quantity
     end
 
+    PendingItems[ItemID] = Owned + Bundles * BundleSize
     return Money - Bundles * Info.price
 end
 
@@ -49,7 +53,9 @@ local function PurchaseItems()
     local Items = Private.DB.global.Miscellaneous.AutoPurchase.Items
     if not next(Items) then return end
 
-    local Money = GetMoney()
+    wipe(PendingItems)
+    local StartingMoney = GetMoney()
+    local Money = StartingMoney
     for Index = 1, GetMerchantNumItems() do
         local ItemID = GetMerchantItemID(Index)
         local Info = C_MerchantFrame.GetItemInfo(Index)
@@ -58,10 +64,29 @@ local function PurchaseItems()
             Money = PurchaseItem(Index, ItemID, Target, Info, Money)
         end
     end
+
+    PendingCost = StartingMoney - Money
+    if PendingCost > 0 then Private.AutoPurchaseFrame:RegisterEvent("BAG_UPDATE_DELAYED") end
+end
+
+local function ArePurchasesComplete()
+    for ItemID, Expected in pairs(PendingItems) do
+        if C_Item.GetItemCount(ItemID) < Expected then return false end
+    end
+    return true
 end
 
 local function AutoPurchase_OnEvent(APF, Event)
+    if Event == "BAG_UPDATE_DELAYED" then
+        if not ArePurchasesComplete() then return end
+        APF:UnregisterEvent("BAG_UPDATE_DELAYED")
+        local BagsDB = Private.E.db.bags
+        print(string.format("|c%sAutoPurchase|r Cost: %s", Private.E.AccentColour, Private.E:FormatMoney(PendingCost, BagsDB.moneyFormat, not BagsDB.moneyCoins)))
+        return
+    end
+
     if APF.PurchaseTimer then APF.PurchaseTimer:Cancel() end
+    APF:UnregisterEvent("BAG_UPDATE_DELAYED")
     if Event == "MERCHANT_SHOW" then
         APF.PurchaseTimer = C_Timer.NewTimer(PURCHASE_DELAY, PurchaseItems)
     end
