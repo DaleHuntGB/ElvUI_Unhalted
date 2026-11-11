@@ -1,6 +1,8 @@
 local Private = select(2, ...)
 
 local JOURNAL_TEXTURES = "Interface\\EncounterJournal\\UI-EncounterJournalTextures"
+local PARCHMENT_ATLAS = "spellbook-Page-Right-C60"
+local PARCHMENT_TOP_CROP = 46 / 682 -- trims the dark band the spellbook's tabs sit on
 local ALL_BOSSES = { Name = "All Bosses", All = true }
 local LEVEL_BRACKETS = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
 
@@ -138,14 +140,11 @@ local function CreateDungeonSelect(Journal)
     DungeonSelect:SetPoint("TOPLEFT", Journal.Inset, "TOPLEFT", 0, -2)
     DungeonSelect:SetPoint("BOTTOMRIGHT", Journal.Inset, "BOTTOMRIGHT", -3, 0)
 
+    local Parchment = C_Texture.GetAtlasInfo(PARCHMENT_ATLAS)
     local Background = DungeonSelect:CreateTexture(nil, "BACKGROUND")
-    Background:SetPoint("TOPLEFT", DungeonSelect, "TOPLEFT", 3, -1)
-    if C_Texture.GetAtlasInfo("UI-EJ-Classic") then
-        Background:SetAtlas("UI-EJ-Classic", true)
-    else
-        Background:SetPoint("BOTTOMRIGHT", DungeonSelect, "BOTTOMRIGHT", 0, 0)
-        Background:SetTexture("Interface\\EncounterJournal\\UI-EJ-Classic")
-    end
+    Background:SetAllPoints(DungeonSelect)
+    Background:SetTexture(Parchment.file)
+    Background:SetTexCoord(Parchment.leftTexCoord, Parchment.rightTexCoord, Parchment.topTexCoord + (Parchment.bottomTexCoord - Parchment.topTexCoord) * PARCHMENT_TOP_CROP, Parchment.bottomTexCoord)
 
     local View = CreateScrollBoxListGridView(4, 5, 0, 0, 0, 15, 15)
     View:SetElementInitializer("Button", Private.InitDungeonJournalDungeonButton)
