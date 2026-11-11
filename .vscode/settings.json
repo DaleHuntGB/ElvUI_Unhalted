@@ -82,7 +82,9 @@
         "WorldMapFrame",
         "AreaLabelDataProviderMixin",
         "QuestDifficultyColors",
-        "GetQuestDifficultyColor"
+        "GetQuestDifficultyColor",
+        "CreateTexturePool",
+        "CreateUnsecuredTexturePool"
     ],
     "Lua.type.weakUnionCheck": true
 }

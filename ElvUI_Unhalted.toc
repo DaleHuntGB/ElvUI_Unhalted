@@ -43,6 +43,8 @@ Modules/DungeonJournal/Window.lua [AllowLoadGameType camelot][ExcludeLoadGameTyp
 Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua
+Modules/ElvUI/RemoveFogOfWar/Data.lua
+Modules/ElvUI/RemoveFogOfWar/Core.lua
 
 Modules/MinimapStats/InstanceDifficulty.lua
 Modules/MinimapStats/Location.lua

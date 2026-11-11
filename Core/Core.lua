@@ -23,6 +23,7 @@ function AddOn:OnEnable()
     Private:SetupEnhancedMovers()
     Private:SetupInterruptOnCooldown()
     Private:SetupLootRollFix()
+    Private:SetupRemoveFogOfWar()
     -- [[ Minimap Stats ]]
     Private:SetupInstanceDifficulty()
     Private:SetupLocation()

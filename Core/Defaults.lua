@@ -206,6 +206,7 @@ local Defaults = {
         ElvUI = {
             LootRollFix = true,
             InterruptOnCooldown = true,
+            RemoveFogOfWar = true,
             Movers = {
                 ElvAB_1 = {
                     Enable = false,

@@ -420,6 +420,8 @@ function Private:SetupGUI()
     Private.GUI.args.ElvUI.args.Miscellaneous.args.InterruptOnCooldown.descStyle = "inline"
     Private.GUI.args.ElvUI.args.Miscellaneous.args.LootRollFix = ACH:Toggle( "Fix Loot Roll Alpha", "Correctly applies the alpha to the |cFFFFCC00loot roll|r windows.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.LootRollFix end, function(_, value) Private.DB.global.ElvUI.LootRollFix = value Private.E:StaticPopup_Show("CONFIG_RL") end )
     Private.GUI.args.ElvUI.args.Miscellaneous.args.LootRollFix.descStyle = "inline"
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar = ACH:Toggle("Remove Fog of War", "Reveals |cFFFFCC00unexplored areas|r on the world map, desaturated.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.RemoveFogOfWar end, function(_, value) Private.DB.global.ElvUI.RemoveFogOfWar = value Private.E:StaticPopup_Show("CONFIG_RL") end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar.descStyle = "inline"
 
     Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 5, "tab")
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
