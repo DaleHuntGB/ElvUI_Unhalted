@@ -128,10 +128,7 @@ end
 
 local function CreateScrollList(Parent, View)
     local ScrollBox = CreateFrame("Frame", nil, Parent, "WowScrollBoxList")
-    local ScrollBar = CreateFrame("EventFrame", nil, Parent, "MinimalScrollBar")
-    ScrollBar:SetPoint("TOPLEFT", ScrollBox, "TOPRIGHT", 5, -5)
-    ScrollBar:SetPoint("BOTTOMLEFT", ScrollBox, "BOTTOMRIGHT", 5, 5)
-    ScrollUtil.InitScrollBoxListWithScrollBar(ScrollBox, ScrollBar, View)
+    ScrollBox:Init(View)
     return ScrollBox
 end
 
@@ -153,7 +150,7 @@ local function CreateDungeonSelect(Journal)
     Journal.DungeonGrid:SetPoint("TOPLEFT", DungeonSelect, "TOPLEFT", 18, -14)
     Journal.DungeonGrid:SetPoint("BOTTOMRIGHT", DungeonSelect, "BOTTOMRIGHT", -26, 6)
 
-    Journal.DungeonsEmpty = Private:CreateDungeonJournalText(DungeonSelect, "GameFontHighlightLarge")
+    Journal.DungeonsEmpty = Private:CreateDungeonJournalText(DungeonSelect, "GameFontHighlightLarge", true)
     Journal.DungeonsEmpty:SetPoint("CENTER", DungeonSelect, "CENTER", 0, 0)
     Journal.DungeonsEmpty:SetText("No dungeons match the current filters.")
     Journal.DungeonSelect = DungeonSelect
@@ -190,16 +187,16 @@ local function CreateEncounter(Journal)
     Journal.BossList:SetPoint("BOTTOMLEFT", Encounter, "BOTTOMLEFT", 25, 1)
 
     local LootView = CreateScrollBoxListLinearView(0, 0, 0, 0, 3)
-    LootView:SetElementExtent(46)
+    LootView:SetElementExtent(45)
     LootView:SetElementInitializer("Button", Private.InitDungeonJournalLootRow)
     Journal.LootList = CreateScrollList(Encounter, LootView)
     Journal.LootList:SetSize(330, 372)
     Journal.LootList:SetPoint("BOTTOMRIGHT", Encounter, "BOTTOMRIGHT", -20, 1)
 
-    Journal.BossTitle = Private:CreateDungeonJournalText(Encounter, "GameFontNormalLarge")
+    Journal.BossTitle = Private:CreateDungeonJournalText(Encounter, "GameFontNormalLarge", true)
     Journal.BossTitle:SetPoint("BOTTOMLEFT", Journal.LootList, "TOPLEFT", 4, 16)
 
-    Journal.LootEmpty = Private:CreateDungeonJournalText(Encounter, "GameFontHighlight")
+    Journal.LootEmpty = Private:CreateDungeonJournalText(Encounter, "GameFontHighlight", true)
     Journal.LootEmpty:SetPoint("CENTER", Journal.LootList, "CENTER", 0, 0)
     Journal.LootEmpty:SetWidth(300)
     Journal.Encounter = Encounter

@@ -101,10 +101,11 @@ function Private:GetDungeonJournalLoot(Dungeon, Boss, ClassFile, Slot)
     return Loot, Total
 end
 
-function Private:CreateDungeonJournalText(Parent, Template)
+function Private:CreateDungeonJournalText(Parent, Template, OnParchment)
     local Text = Parent:CreateFontString(nil, "OVERLAY", Template)
     local Path, Size = Text:GetFont()
-    Text:SetFont(Path, Size, "OUTLINE, SLUG")
+    Text:SetFont(Path, Size, OnParchment and "SLUG" or "OUTLINE, SLUG")
     Text:SetShadowOffset(0, 0)
+    if OnParchment then Text:SetTextColor(0.25, 0.1484375, 0.02) end
     return Text
 end

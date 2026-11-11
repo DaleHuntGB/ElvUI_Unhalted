@@ -4,6 +4,7 @@ local JOURNAL_TEXTURES = "Interface\\EncounterJournal\\UI-EncounterJournalTextur
 local DEFAULT_DUNGEON_ART = "Interface\\EncounterJournal\\UI-EJ-DUNGEONBUTTON-Default"
 local DEFAULT_PORTRAIT = "Interface\\EncounterJournal\\UI-EJ-BOSS-Default"
 local PORTRAIT_MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
+local ICON_BORDER = "Interface\\Common\\WhiteIconFrame"
 local MISSING_ICON = 134400
 
 local DUNGEON_BUTTON_UP = { 0.00195313, 0.34179688, 0.42871094, 0.52246094 }
@@ -12,6 +13,7 @@ local DUNGEON_BUTTON_HIGHLIGHT = { 0.34570313, 0.68554688, 0.33300781, 0.4267578
 local BOSS_BUTTON_UP = { 0.00195313, 0.63671875, 0.21386719, 0.26757813 }
 local BOSS_BUTTON_DOWN = { 0.00195313, 0.63671875, 0.10253906, 0.15625000 }
 local BOSS_BUTTON_HIGHLIGHT = { 0.00195313, 0.63671875, 0.15820313, 0.21191406 }
+local LOOT_FRAME = { 0.00195313, 0.62890625, 0.61816406, 0.66210938 }
 
 local function SetButtonArt(Button, Coords, Pushed, Highlight)
     Button:SetNormalTexture(JOURNAL_TEXTURES)
@@ -133,31 +135,27 @@ end
 
 function Private.InitDungeonJournalLootRow(Row, Loot)
     if not Row.Icon then
-        Row.Background = Row:CreateTexture(nil, "BACKGROUND")
-        Row.Background:SetAllPoints(Row)
-        Row.Background:SetColorTexture(0, 0, 0, 0.25)
-        Row.Highlight = Row:CreateTexture(nil, "HIGHLIGHT")
-        Row.Highlight:SetAllPoints(Row)
-        Row.Highlight:SetColorTexture(0.45, 0.3, 0.1, 0.15)
-        Row.Icon = Row:CreateTexture(nil, "ARTWORK")
-        Row.Icon:SetSize(38, 38)
-        Row.Icon:SetPoint("LEFT", Row, "LEFT", 4, 0)
-        Row.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-        Row.IconBorder = Row:CreateTexture(nil, "BORDER")
-        Row.IconBorder:SetPoint("TOPLEFT", Row.Icon, "TOPLEFT", -1, 1)
-        Row.IconBorder:SetPoint("BOTTOMRIGHT", Row.Icon, "BOTTOMRIGHT", 1, -1)
-        Row.IconBorder:SetColorTexture(1, 1, 1)
-        Row.Name = Private:CreateDungeonJournalText(Row, "GameFontNormalMed3")
-        Row.Name:SetPoint("TOPLEFT", Row.Icon, "TOPRIGHT", 8, -3)
-        Row.Name:SetPoint("RIGHT", Row, "RIGHT", -8, 0)
+        Row.Icon = Row:CreateTexture(nil, "BACKGROUND")
+        Row.Icon:SetSize(42, 42)
+        Row.Icon:SetPoint("TOPLEFT", Row, "TOPLEFT", 2, -2)
+        Row.Frame = Row:CreateTexture(nil, "BORDER")
+        Row.Frame:SetSize(321, 45)
+        Row.Frame:SetPoint("LEFT", Row, "LEFT", 0, 0)
+        Row.Frame:SetTexture(JOURNAL_TEXTURES)
+        Row.Frame:SetTexCoord(LOOT_FRAME[1], LOOT_FRAME[2], LOOT_FRAME[3], LOOT_FRAME[4])
+        Row.IconBorder = Row:CreateTexture(nil, "OVERLAY", nil, 1)
+        Row.IconBorder:SetAllPoints(Row.Icon)
+        Row.IconBorder:SetTexture(ICON_BORDER)
+        Row.Name = Private:CreateDungeonJournalText(Row, "GameFontNormalMed3", true)
+        Row.Name:SetWidth(250)
+        Row.Name:SetPoint("TOPLEFT", Row.Icon, "TOPRIGHT", 7, -7)
         Row.Name:SetJustifyH("LEFT")
         Row.Name:SetWordWrap(false)
-        Row.Source = Private:CreateDungeonJournalText(Row, "GameFontNormalSmall")
+        Row.Source = Private:CreateDungeonJournalText(Row, "GameFontBlack", true)
         Row.Source:SetPoint("BOTTOMRIGHT", Row, "BOTTOMRIGHT", -8, 7)
         Row.Source:SetJustifyH("RIGHT")
-        Row.Source:SetTextColor(0.827, 0.659, 0.463)
-        Row.Slot = Private:CreateDungeonJournalText(Row, "GameFontHighlightSmall")
-        Row.Slot:SetPoint("BOTTOMLEFT", Row.Icon, "BOTTOMRIGHT", 8, 3)
+        Row.Slot = Private:CreateDungeonJournalText(Row, "GameFontBlack", true)
+        Row.Slot:SetPoint("BOTTOMLEFT", Row.Icon, "BOTTOMRIGHT", 7, 5)
         Row.Slot:SetPoint("RIGHT", Row.Source, "LEFT", -8, 0)
         Row.Slot:SetJustifyH("LEFT")
         Row.Slot:SetWordWrap(false)
