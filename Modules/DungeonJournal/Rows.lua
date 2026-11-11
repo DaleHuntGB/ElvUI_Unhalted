@@ -3,6 +3,7 @@ local Private = select(2, ...)
 local JOURNAL_TEXTURES = "Interface\\EncounterJournal\\UI-EncounterJournalTextures"
 local DEFAULT_DUNGEON_ART = "Interface\\EncounterJournal\\UI-EJ-DUNGEONBUTTON-Default"
 local DEFAULT_PORTRAIT = "Interface\\EncounterJournal\\UI-EJ-BOSS-Default"
+local PORTRAIT_MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local MISSING_ICON = 134400
 
 local DUNGEON_BUTTON_UP = { 0.00195313, 0.34179688, 0.42871094, 0.52246094 }
@@ -19,10 +20,6 @@ local function SetButtonArt(Button, Coords, Pushed, Highlight)
     Button:GetPushedTexture():SetTexCoord(Pushed[1], Pushed[2], Pushed[3], Pushed[4])
     Button:SetHighlightTexture(JOURNAL_TEXTURES)
     Button:GetHighlightTexture():SetTexCoord(Highlight[1], Highlight[2], Highlight[3], Highlight[4])
-end
-
-local function DungeonButton_OnClick(Button)
-    Private.DungeonJournal:SelectDungeon(Button.Dungeon)
 end
 
 local function DungeonButton_OnEnter(Button)
@@ -47,7 +44,7 @@ function Private.InitDungeonJournalDungeonButton(Button, Dungeon)
         Button.New = Private:CreateDungeonJournalText(Button, "GameFontGreen")
         Button.New:SetPoint("BOTTOMRIGHT", Button, "BOTTOMRIGHT", -7, 7)
         Button.New:SetText("New")
-        Button:SetScript("OnClick", DungeonButton_OnClick)
+        Button:SetScript("OnClick", function() Private.DungeonJournal:SelectDungeon(Button.Dungeon) end)
         Button:SetScript("OnEnter", DungeonButton_OnEnter)
         Button:SetScript("OnLeave", GameTooltip_Hide)
     end
@@ -78,6 +75,14 @@ function Private.InitDungeonJournalBossButton(Button, Boss)
         Button.Portrait = Button:CreateTexture(nil, "OVERLAY")
         Button.Portrait:SetSize(128, 64)
         Button.Portrait:SetPoint("TOPLEFT", Button, "TOPLEFT", -4, 13)
+        Button.DungeonArt = Button:CreateTexture(nil, "OVERLAY")
+        Button.DungeonArt:SetSize(58, 43)
+        Button.DungeonArt:SetPoint("TOP", Button, "TOPLEFT", 35, -7)
+        local DungeonArtMask = Button:CreateMaskTexture()
+        DungeonArtMask:SetSize(58, 58)
+        DungeonArtMask:SetPoint("TOP", Button.DungeonArt, "TOP")
+        DungeonArtMask:SetTexture(PORTRAIT_MASK, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        Button.DungeonArt:AddMaskTexture(DungeonArtMask)
         Button.Name = Private:CreateDungeonJournalText(Button, "GameFontNormalMed3")
         Button.Name:SetSize(160, 40)
         Button.Name:SetPoint("LEFT", Button, "LEFT", 105, -3)
@@ -87,7 +92,15 @@ function Private.InitDungeonJournalBossButton(Button, Boss)
     end
 
     Button.Boss = Boss
-    if not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then Button.Portrait:SetTexture(DEFAULT_PORTRAIT) end
+    Button.Portrait:SetShown(not Boss.All)
+    Button.DungeonArt:SetShown(Boss.All == true)
+    if Boss.All then
+        local Dungeon = Private.DungeonJournal.Dungeon
+        if not (Dungeon.Button and Button.DungeonArt:SetTexture(Dungeon.Button)) then Button.DungeonArt:SetTexture(DEFAULT_DUNGEON_ART) end
+        Button.DungeonArt:SetTexCoord(0.18359375, 0.5, 0.13671875, 0.60546875)
+    elseif not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then
+        Button.Portrait:SetTexture(DEFAULT_PORTRAIT)
+    end
     Button.Name:SetText(Boss.Rare and Boss.Name .. "\n|cFF9D9D9D(Rare)|r" or Boss.Name)
     Private.UpdateDungeonJournalBossSelection(Button)
 end
