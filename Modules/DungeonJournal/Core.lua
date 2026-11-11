@@ -1,6 +1,6 @@
 local Private = select(2, ...)
 
-_G.BINDING_HEADER_UNHALTEDUI = "|cFF6080FFUnhalted|r|cFF808080UI|r"
+_G.BINDING_HEADER_UNHALTEDUI = "|cFF1784D1ElvUI|r: |cFF6080FFUnhalted|r"
 _G.BINDING_NAME_UNHALTEDUI_DUNGEONJOURNAL = "Toggle Dungeon Journal"
 
 local ARMOUR = Enum.ItemArmorSubclass
