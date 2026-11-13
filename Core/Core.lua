@@ -47,6 +47,7 @@ function AddOn:OnEnable()
         Private:SetupAutoPurchase()
         Private:SetupBeastLore()
         Private:SetupDungeonJournal()
+        Private:SetupNavigation()
         Private:SetupWorldMapZoneLevels()
     else
         -- [[ Retail ]]

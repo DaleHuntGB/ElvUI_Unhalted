@@ -84,7 +84,9 @@
         "QuestDifficultyColors",
         "GetQuestDifficultyColor",
         "CreateTexturePool",
-        "CreateUnsecuredTexturePool"
+        "CreateUnsecuredTexturePool",
+        "MAP_PIN",
+        "QUESTS_LABEL"
     ],
     "Lua.type.weakUnionCheck": true
 }

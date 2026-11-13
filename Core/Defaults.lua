@@ -346,6 +346,20 @@ local Defaults = {
                 Colour = {1, 1, 1, 1},
                 Texture = "CURSOR_01",
             },
+            Navigation = {
+                Enable = true,
+                WorldMapLine = true,
+                MinimapLine = true,
+                FlightPaths = true,
+                FlightTimer = true,
+                ArrowTexture = "ARROW_01",
+                DotTexture = "DOT_01",
+                Size = 40,
+                Layout = {"CENTER", "CENTER", 0, 180},
+                Text = {
+                    FontSize = 12,
+                },
+            },
         },
         MythicPlusTimer = {
             Enable = true,
@@ -397,7 +411,17 @@ local Defaults = {
             HideTalkingHead = true,
             SkipCinematics = true,
         }
-    }
+    },
+    char = {
+        Navigation = {
+            KnownTaxiNodes = {},
+        },
+    },
+    faction = {
+        Navigation = {
+            FlightTimes = {},
+        },
+    },
 }
 
 function Private:GetDefaults()
