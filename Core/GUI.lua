@@ -607,7 +607,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Text.FontSize = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Font.args.FontSize.relWidth = 0.5
 
-    Private.GUI.args.Miscellaneous.args.CombatResurrection = ACH:Group("Combat Resurrection", nil, 2, "tab")
+    Private.GUI.args.Miscellaneous.args.CombatResurrection = ACH:Group("Combat Resurrection", nil, 2, "tab", nil, nil, nil, function() return Private.isForever end)
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Enable end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Enable = value Private:UpdateCombatResurrection() end, nil)
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Enable.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Preview = ACH:Toggle("Preview", nil, 2, nil, nil, "relative", function() return Private.CombatResurrectionPreview end, function(_, value) Private.CombatResurrectionPreview = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)

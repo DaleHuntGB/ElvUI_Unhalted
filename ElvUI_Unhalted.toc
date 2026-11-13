@@ -53,7 +53,7 @@ Modules/MinimapStats/Time.lua
 
 Modules/Miscellaneous/AutoPurchase.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/BeastLore.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Miscellaneous/CombatResurrection.lua
+Modules/Miscellaneous/CombatResurrection.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
 Modules/Miscellaneous/CombatTimer.lua
 Modules/Miscellaneous/Crosshair.lua
 Modules/Miscellaneous/CVars.lua
