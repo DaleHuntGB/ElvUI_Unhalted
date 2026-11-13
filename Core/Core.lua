@@ -44,6 +44,7 @@ function AddOn:OnEnable()
     if Private.isForever then
         -- [[ Forever ]]
         Private:SetupAmmoCounter()
+        Private:SetupFeedPet()
         Private:SetupAutoPurchase()
         Private:SetupBeastLore()
         Private:SetupDungeonJournal()

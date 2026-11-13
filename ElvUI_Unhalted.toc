@@ -51,7 +51,6 @@ Modules/MinimapStats/Location.lua
 Modules/MinimapStats/SystemStats.lua
 Modules/MinimapStats/Time.lua
 
-Modules/Miscellaneous/AmmoCounter.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/AutoPurchase.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/BeastLore.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/CombatResurrection.lua
@@ -59,6 +58,8 @@ Modules/Miscellaneous/CombatTimer.lua
 Modules/Miscellaneous/Crosshair.lua
 Modules/Miscellaneous/CVars.lua
 Modules/Miscellaneous/MouseCursor.lua
+Modules/Miscellaneous/Hunter/AmmoCounter.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Miscellaneous/Hunter/FeedPet.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/Navigation/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Planner.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]

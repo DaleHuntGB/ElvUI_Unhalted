@@ -356,6 +356,9 @@ local Defaults = {
                     FontSize = 12,
                 },
             },
+            Hunter = {
+                UseBestFood = true,
+            },
         },
         MythicPlusTimer = {
             Enable = true,

@@ -206,7 +206,7 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.TimeSpiral.args.SoundGroup.args.SoundChannel = ACH:Select("Sound Channel", nil, 2, {["Master"] = "Master", ["SFX"] = "SFX", ["Music"] = "Music", ["Ambience"] = "Ambience"}, nil, "relative", function() return Private.DB.global.Alerts.TimeSpiral.SoundChannel end, function(_, value) Private.DB.global.Alerts.TimeSpiral.SoundChannel = value Private:UpdateTimeSpiralAlert() end, function() return not Private.DB.global.Alerts.TimeSpiral.Enable end)
     Private.GUI.args.Alerts.args.TimeSpiral.args.SoundGroup.args.SoundChannel.relWidth = 0.5
 
-    Private.GUI.args.Blizzard = ACH:Group("Blizzard", nil, 2, "tab")
+    Private.GUI.args.Blizzard = ACH:Group("Blizzard", nil, 3, "tab")
     Private.GUI.args.Blizzard.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 0)
     Private.GUI.args.Blizzard.args.Miscellaneous.inline = true
     Private.GUI.args.Blizzard.args.Miscellaneous.args.CleanObjectiveTrackerBanner = ACH:Toggle("Clean-up Point of Interest Banner", "This will position & tidy up the banner that appears when entering a |cFFFFCC00point of interest|r.", 0, nil, nil, "relative", function() return Private.DB.global.Blizzard.CleanObjectiveTrackerBanner end, function(_, value) Private.DB.global.Blizzard.CleanObjectiveTrackerBanner = value Private.E:StaticPopup_Show("CONFIG_RL") end)
@@ -234,7 +234,51 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.LayoutGroup.args.YOffset = ACH:Range("Y Offset", nil, 4, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Layout[4] end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Layout[4] = value Private:UpdateUIErrorsFrame() end, function() return not Private.DB.global.Blizzard.UIErrorsFrame.Enable end)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.LayoutGroup.args.YOffset.relWidth = 0.5
 
-    Private.GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 3, "tab")
+    local HunterColour = RAID_CLASS_COLORS.HUNTER
+    Private.GUI.args.Classes = ACH:Group("Classes", nil, 4, "tab", nil, nil, nil, function()
+        for _, ClassGroup in pairs(Private.GUI.args.Classes.args) do
+            if not (ClassGroup.hidden and ClassGroup.hidden()) then return false end
+        end
+        return true
+    end)
+
+    Private.GUI.args.Classes.args.Hunter = ACH:Group("|TInterface\\Icons\\ClassIcon_Hunter:16:16:0:0:64:64:5:59:5:59|t " .. HunterColour:WrapTextInColorCode("Hunter"), nil, 1, nil, nil, nil, nil, function() return not Private.isForever or Private.E.myclass ~= "HUNTER" end)
+
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter = ACH:Group("Ammo Counter", nil, 1)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.inline = true
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Enable end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Enable = value Private:UpdateAmmoCounter() end, nil)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Enable.relWidth = 1
+
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout = ACH:Group("Layout", nil, 2)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.inline = true
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[1] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[1] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.AnchorFrom.relWidth = 0.33
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.AnchorParent = ACH:Input("Anchor Parent", nil, 2, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.AnchorParent end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.AnchorParent = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.AnchorParent.relWidth = 0.33
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 3, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.AnchorTo.relWidth = 0.33
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 4, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.XOffset.relWidth = 0.5
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 5, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Layout.args.YOffset.relWidth = 0.5
+
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font = ACH:Group("Font", nil, 3)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.inline = true
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.Colour = ACH:Color("Colour", nil, 1, false, "relative", function() return unpack(Private.DB.global.Miscellaneous.AmmoCounter.Text.Colour) end, function(_, r, g, b) Private.DB.global.Miscellaneous.AmmoCounter.Text.Colour = {r, g, b} Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.Colour.relWidth = 0.5
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.FontSize = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.FontSize.relWidth = 0.5
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.BelowThresholdColour = ACH:Color("Below Threshold Colour", nil, 3, false, "relative", function() return unpack(Private.DB.global.Miscellaneous.AmmoCounter.Text.BelowThresholdColour) end, function(_, r, g, b) Private.DB.global.Miscellaneous.AmmoCounter.Text.BelowThresholdColour = {r, g, b} Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.BelowThresholdColour.relWidth = 0.5
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.Threshold = ACH:Range("Threshold", "The ammo count below which the |cFFFFCC00Below Threshold Colour|r is used.", 4, {min = 0, max = 5000, softMin = 0, softMax = 1000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
+    Private.GUI.args.Classes.args.Hunter.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
+
+    Private.GUI.args.Classes.args.Hunter.args.Toggles = ACH:Group("Toggles", nil, 2)
+    Private.GUI.args.Classes.args.Hunter.args.Toggles.inline = true
+    Private.GUI.args.Classes.args.Hunter.args.Toggles.args.UseBestFood = ACH:Toggle("Use Best Food for Hunter", "Feeds your pet the best food in your bags when you press a macro with |cFFFFCC00/click FeedPet|r.", 1, nil, nil, "full", function() return Private.DB.global.Miscellaneous.Hunter.UseBestFood end, function(_, value) Private.DB.global.Miscellaneous.Hunter.UseBestFood = value end)
+    Private.GUI.args.Classes.args.Hunter.args.Toggles.args.UseBestFood.descStyle = "inline"
+
+    Private.GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 5, "tab")
 
     for i in pairs(Private.DB.global.DamageMeter) do
         Private.GUI.args.DamageMeter.args["Window" .. i] = ACH:Group("Window "..i, nil, i, "tab")
@@ -325,7 +369,7 @@ function Private:SetupGUI()
         Private.GUI.args.DamageMeter.args["Window" .. i].args.TitleBar.args.TextGroup.args.LayoutGroup.args.FontSize.relWidth = 0.33
     end
 
-    Private.GUI.args.ElvUI = ACH:Group("ElvUI", nil, 4, "tab")
+    Private.GUI.args.ElvUI = ACH:Group("ElvUI", nil, 6, "tab")
     Private.GUI.args.ElvUI.args.EnhancedAnchors = ACH:Group("Enhanced Anchors", nil, 1)
     Private.GUI.args.ElvUI.args.EnhancedAnchors.args.ActionBars = ACH:Group("Action Bars", nil, 1, "tab")
 
@@ -423,7 +467,7 @@ function Private:SetupGUI()
     Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar = ACH:Toggle("Remove Fog of War", "Reveals |cFFFFCC00unexplored areas|r on the world map, desaturated.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.RemoveFogOfWar end, function(_, value) Private.DB.global.ElvUI.RemoveFogOfWar = value Private.E:StaticPopup_Show("CONFIG_RL") end)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar.descStyle = "inline"
 
-    Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 5, "tab")
+    Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 7, "tab")
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
 
     Private.GUI.args.MinimapStats.args.Time.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Enable end, function(_, value) Private.DB.global.MinimapStats.Time.Enable = value Private:UpdateTime() end)
@@ -518,37 +562,9 @@ function Private:SetupGUI()
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.MinimapStats.InstanceDifficulty.FontSize end, function(_, value) Private.DB.global.MinimapStats.InstanceDifficulty.FontSize = value Private:UpdateInstanceDifficulty() end, function() return not Private.DB.global.MinimapStats.InstanceDifficulty.Enable end)
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 6, "tab")
+    Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 8, "tab")
 
-    Private.GUI.args.Miscellaneous.args.AmmoCounter = ACH:Group("Ammo Counter", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever or Private.E.myclass ~= "HUNTER" end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Enable end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Enable = value Private:UpdateAmmoCounter() end, nil)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Enable.relWidth = 1
-
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout = ACH:Group("Layout", nil, 2)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.inline = true
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[1] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[1] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorFrom.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorParent = ACH:Input("Anchor Parent", nil, 2, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.AnchorParent end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.AnchorParent = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorParent.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 3, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorTo.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 4, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 5, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset.relWidth = 0.5
-
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font = ACH:Group("Font", nil, 3)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.inline = true
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Colour = ACH:Color("Colour", nil, 1, false, "relative", function() return unpack(Private.DB.global.Miscellaneous.AmmoCounter.Text.Colour) end, function(_, r, g, b) Private.DB.global.Miscellaneous.AmmoCounter.Text.Colour = {r, g, b} Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Colour.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.FontSize = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.FontSize.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.BelowThresholdColour = ACH:Color("Below Threshold Colour", nil, 3, false, "relative", function() return unpack(Private.DB.global.Miscellaneous.AmmoCounter.Text.BelowThresholdColour) end, function(_, r, g, b) Private.DB.global.Miscellaneous.AmmoCounter.Text.BelowThresholdColour = {r, g, b} Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.BelowThresholdColour.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold = ACH:Range("Threshold", "The ammo count below which the |cFFFFCC00Below Threshold Colour|r is used.", 4, {min = 0, max = 5000, softMin = 0, softMax = 1000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Text.Threshold = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.args.Threshold.relWidth = 0.5
-
-    Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 0, "tab", nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 1, "tab", nil, nil, nil, function() return not Private.isForever end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable.relWidth = 1
@@ -567,7 +583,7 @@ function Private:SetupGUI()
 
     RefreshAutoPurchaseItems()
 
-    Private.GUI.args.Miscellaneous.args.CombatTimer = ACH:Group("Combat Timer", nil, 1, "tab")
+    Private.GUI.args.Miscellaneous.args.CombatTimer = ACH:Group("Combat Timer", nil, 3, "tab")
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.Enable end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.Enable = value Private:UpdateCombatTimer() end, nil)
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.Enable.relWidth = 0.5
     Private.GUI.args.Miscellaneous.args.CombatTimer.args.OOCOpacity = ACH:Range("Opacity (Out of Combat)", nil, 2, { min = 0, max = 1, step = 0.01 }, "relative", function() return Private.DB.global.Miscellaneous.CombatTimer.OOCOpacity end, function(_, value) Private.DB.global.Miscellaneous.CombatTimer.OOCOpacity = value Private:UpdateCombatTimer() end, function() return not Private.DB.global.Miscellaneous.CombatTimer.Enable end)
@@ -621,7 +637,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.FontSize = ACH:Range("Font Size", nil, 4, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.CombatResurrection.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.CombatResurrection.Text.FontSize = value Private:UpdateCombatResurrection() end, function() return not Private.DB.global.Miscellaneous.CombatResurrection.Enable end)
     Private.GUI.args.Miscellaneous.args.CombatResurrection.args.Font.args.FontSize.relWidth = 1
 
-    Private.GUI.args.Miscellaneous.args.Crosshair = ACH:Group("Crosshair", nil, 3, "tab")
+    Private.GUI.args.Miscellaneous.args.Crosshair = ACH:Group("Crosshair", nil, 4, "tab")
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Enable end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Enable = value Private:UpdateCrosshair() end, nil)
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Enable.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Colour = ACH:Color("Colour", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.Crosshair.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.Crosshair.Colour = {r, g, b, a} Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
@@ -645,7 +661,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size = ACH:Range("Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Crosshair.Size[1] end, function(_, value) Private.DB.global.Miscellaneous.Crosshair.Size[1] = value Private.DB.global.Miscellaneous.Crosshair.Size[2] = value Private:UpdateCrosshair() end, function() return not Private.DB.global.Miscellaneous.Crosshair.Enable end)
     Private.GUI.args.Miscellaneous.args.Crosshair.args.Layout.args.Size.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous.args.CVars = ACH:Group("CVars", nil, 4, "tab")
+    Private.GUI.args.Miscellaneous.args.CVars = ACH:Group("CVars", nil, 5, "tab")
 
     Private.GUI.args.Miscellaneous.args.CVars.args.Sync = ACH:Toggle("Sync CVars", "This will |cFFFFCC00sync|r all CVars with all characters on this account.", 1, nil, nil, "full", function() return Private.DB.global.Miscellaneous.CVars.Sync end, function(_, value) Private.DB.global.Miscellaneous.CVars.Sync = value Private:SyncCVars() end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sync.descStyle = "inline"
@@ -690,7 +706,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.CameraDistanceMaxZoomFactor = ACH:Range("Camera Distance", nil, 6, {min = 0.5, max = 4, softMin = 0.5, softMax = 2, step = 0.01}, "relative", function() return tonumber(C_CVar.GetCVar("cameraDistanceMaxZoomFactor")) end, function(_, value) Private:SetCVar("cameraDistanceMaxZoomFactor", value) end, nil, function() return not Private.isForever end)
     Private.GUI.args.Miscellaneous.args.CVars.args.Sliders.args.CameraDistanceMaxZoomFactor.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 5, "tab")
+    Private.GUI.args.Miscellaneous.args.MouseCursor = ACH:Group("Mouse Cursor", nil, 6, "tab")
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.MouseCursor.Enable end, function(_, value) Private.DB.global.Miscellaneous.MouseCursor.Enable = value Private:UpdateMouseCursor() end, nil)
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Enable.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Colour = ACH:Color("Colour", nil, 2, true, "relative", function() return unpack(Private.DB.global.Miscellaneous.MouseCursor.Colour) end, function(_, r, g, b, a) Private.DB.global.Miscellaneous.MouseCursor.Colour = {r, g, b, a} Private:UpdateMouseCursor() end, function() return not Private.DB.global.Miscellaneous.MouseCursor.Enable end)
@@ -716,7 +732,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Layout.args.Size = ACH:Range("Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.MouseCursor.Size[1] end, function(_, value) Private.DB.global.Miscellaneous.MouseCursor.Size[1] = value Private.DB.global.Miscellaneous.MouseCursor.Size[2] = value Private:UpdateMouseCursor() end, function() return not Private.DB.global.Miscellaneous.MouseCursor.Enable or Private.MouseCursors[Private.DB.global.Miscellaneous.MouseCursor.Texture].isAtlas end)
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Layout.args.Size.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous.args.Navigation = ACH:Group("Navigation", nil, 6, "tab", nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.Miscellaneous.args.Navigation = ACH:Group("Navigation", nil, 7, "tab", nil, nil, nil, function() return not Private.isForever end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable = ACH:Toggle("Enable", "Guides you to your |cFFFFCC00tracked quest|r or |cFFFFCC00map pin|r with an arrow, its distance and the steps to get there.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Enable = value Private:UpdateNavigation() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable.relWidth = 1
@@ -745,7 +761,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 6, {min = 8, max = 128, softMin = 8, softMax = 32, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Text.FontSize = value Private:UpdateNavigationArrow() Private:UpdateNavigationFlightTimer() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize.relWidth = 0.5
 
-    Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 7, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 9, "tab", nil, nil, nil, function() return Private.isForever end)
     Private.GUI.args.MythicPlusTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.Enable end, function(_, value) Private.DB.global.MythicPlusTimer.Enable = value Private:UpdateMythicPlusTimer() end, nil)
     Private.GUI.args.MythicPlusTimer.args.Enable.relWidth = 0.5
     Private.GUI.args.MythicPlusTimer.args.Preview = ACH:Toggle("Preview", nil, 2, nil, nil, "relative", function() return Private.MythicPlusTimerPreview end, function(_, value) Private.MythicPlusTimerPreview = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
@@ -841,7 +857,7 @@ function Private:SetupGUI()
     Private.GUI.args.MythicPlusTimer.args.Colours.args.Expired = ACH:Color("Over Time", nil, 5, false, "relative", function() return unpack(Private.DB.global.MythicPlusTimer.Colours.Expired) end, function(_, r, g, b) Private.DB.global.MythicPlusTimer.Colours.Expired = {r, g, b} Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
     Private.GUI.args.MythicPlusTimer.args.Colours.args.Expired.relWidth = 0.5
 
-    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 8, "tab")
+    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 11, "tab")
 
     local Toggles = {
         [1] = { name = "Auto Delete", desc = "Auto populates |cFFFFCC00delete|r where required.", key = "AutoDelete", requiresReload = false, isRetail = false },
@@ -858,7 +874,7 @@ function Private:SetupGUI()
         Private.GUI.args.Toggles.args[toggle.name].descStyle = "inline"
     end
 
-    Private.GUI.args.Profiles = ACH:Group("Profiles", nil, 8, "tab")
+    Private.GUI.args.Profiles = ACH:Group("Profiles", nil, 10, "tab")
     Private.GUI.args.Profiles.args.BigWigs = ACH:Execute("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|t BigWigs", nil, 1, function() Private:ImportBigWigs() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("BigWigs") end)
     Private.GUI.args.Profiles.args.BigWigs.relWidth = 1
     Private.GUI.args.Profiles.args.ElvUI = ACH:Execute("|TInterface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon:16:16|t |cFF1784d1ElvUI|r", nil, 2, function() Private:ImportElvUI() end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("ElvUI") end)
