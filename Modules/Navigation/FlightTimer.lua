@@ -44,6 +44,7 @@ local function FlightTimer_OnUpdate(FlightTimer)
     local Remaining = math.max(0, math.ceil(State.StartTime + State.Seconds - GetTime()))
     if Remaining == State.Remaining then return end
     State.Remaining = Remaining
+    FlightTimer.Time:SetShown(Remaining > 0)
     FlightTimer.Time:SetFormattedText(State.isEstimate and "~%d:%02d" or "%d:%02d", math.floor(Remaining / 60), Remaining % 60)
 end
 

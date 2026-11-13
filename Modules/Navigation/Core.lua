@@ -5,10 +5,10 @@ local MaxSteps = 5
 
 local GoalVector = CreateVector2D(0, 0)
 local State = {
-    GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "",
+    GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0,
     PlanContinent = -1, PlanX = 0, PlanY = 0,
     Elapsed = 0, Distance = -1,
-    isDirty = false, isOnTaxi = false, hasDirection = false, hasHinted = false,
+    isDirty = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false, hasHinted = false,
 }
 
 local function GetGoalMapPosition()
@@ -19,11 +19,11 @@ local function GetGoalMapPosition()
         local Quests = MapID and MapID > 0 and C_QuestLog.GetQuestsOnMap(MapID)
         if Quests then
             for _, Quest in ipairs(Quests) do
-                if Quest.questID == QuestID then return MapID, Quest.x, Quest.y, Name end
+                if Quest.questID == QuestID then return MapID, Quest.x, Quest.y, Name, QuestID end
             end
         end
         local WaypointMapID, X, Y = C_QuestLog.GetNextWaypoint(QuestID)
-        return WaypointMapID, X, Y, Name
+        return WaypointMapID, X, Y, Name, QuestID
     end
 
     local Waypoint = C_SuperTrack.IsSuperTrackingUserWaypoint() and C_Map.GetUserWaypoint()
@@ -31,13 +31,19 @@ local function GetGoalMapPosition()
 end
 
 local function GetGoalWorldPosition()
-    local MapID, X, Y, Name = GetGoalMapPosition()
+    local MapID, X, Y, Name, QuestID = GetGoalMapPosition()
     if not MapID or not X then return end
     GoalVector:SetXY(X, Y)
     local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
     if not Position then return end
     local WorldX, WorldY = Position:GetXY()
-    return Continent, WorldX, WorldY, Name
+    return Continent, WorldX, WorldY, Name, QuestID
+end
+
+local function IsInHotSpot()
+    if State.GoalQuestID == 0 then return false end
+    local isInside = C_Minimap.IsInsideQuestBlob(State.GoalQuestID)
+    return not issecretvalue(isInside) and isInside
 end
 
 local function SetDirectionShown(isShown)
@@ -72,7 +78,7 @@ local function CheckRoute(Continent, X, Y)
 
     Private.NavigationRoute = Route
     Private.NavigationArrow.Steps:SetText(table.concat(Steps, "\n"))
-    Private.NavigationArrow:Show()
+    Private.NavigationArrow:SetShown(not State.isInHotSpot)
 
     if not State.hasHinted and not next(KnownTaxiNodes) then
         State.hasHinted = true
@@ -90,11 +96,16 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     State.Elapsed = State.Elapsed + TimeElapsed
     if State.Elapsed >= CheckInterval then
         State.Elapsed = 0
+        local isInHotSpot = IsInHotSpot()
+        if isInHotSpot ~= State.isInHotSpot then
+            State.isInHotSpot = isInHotSpot
+            if Private.NavigationRoute then Private.NavigationArrow:SetShown(not isInHotSpot) end
+        end
         CheckRoute(Continent, X, Y)
     end
 
     local Route = Private.NavigationRoute
-    if not Route then return end
+    if not Route or State.isInHotSpot then return end
 
     local Points = Route[1].Points
     local Target = Points[#Points]
@@ -112,14 +123,14 @@ local function Navigation_OnUpdate(_, TimeElapsed)
 end
 
 local function UpdateGoal()
-    local Continent, X, Y, Name = GetGoalWorldPosition()
+    local Continent, X, Y, Name, QuestID = GetGoalWorldPosition()
     if not Continent then
         Private.NavigationFrame:SetScript("OnUpdate", nil)
         ClearRoute()
         return
     end
 
-    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName = Continent, X, Y, Name
+    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID = Continent, X, Y, Name, QuestID or 0
     State.isDirty, State.Elapsed = true, CheckInterval
     Private.NavigationFrame:SetScript("OnUpdate", Navigation_OnUpdate)
 end
