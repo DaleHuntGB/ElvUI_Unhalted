@@ -149,13 +149,15 @@ Private.GVaultLevels = {
 }
 
 Private.JustificationH = {
-    ["TOPLEFT"] = "TOPLEFT",
-    ["TOPRIGHT"] = "TOPRIGHT",
+    ["TOPLEFT"] = "LEFT",
+    ["TOP"] = "CENTER",
+    ["TOPRIGHT"] = "RIGHT",
     ["LEFT"] = "LEFT",
     ["CENTER"] = "CENTER",
     ["RIGHT"] = "RIGHT",
-    ["BOTTOMLEFT"] = "BOTTOMLEFT",
-    ["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+    ["BOTTOMLEFT"] = "LEFT",
+    ["BOTTOM"] = "CENTER",
+    ["BOTTOMRIGHT"] = "RIGHT",
 }
 
 function Private:SecretValue(Value)

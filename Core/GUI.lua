@@ -533,11 +533,9 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 3, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[2] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.AnchorTo.relWidth = 0.33
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 4, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[3] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.XOffset.relWidth = 0.5
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 5, { min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1 }, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Layout[4] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset.relWidth = 0.33
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.Size = ACH:Range("Size", nil, 6, {min = 8, max = 64, softMin = 8, softMax = 48, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.AmmoCounter.Size[1] end, function(_, value) Private.DB.global.Miscellaneous.AmmoCounter.Size[1] = value Private.DB.global.Miscellaneous.AmmoCounter.Size[2] = value Private:UpdateAmmoCounter() end, function() return not Private.DB.global.Miscellaneous.AmmoCounter.Enable end)
-    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.Size.relWidth = 0.33
+    Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Layout.args.YOffset.relWidth = 0.5
 
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font = ACH:Group("Font", nil, 3)
     Private.GUI.args.Miscellaneous.args.AmmoCounter.args.Font.inline = true
