@@ -44,6 +44,7 @@ function AddOn:OnEnable()
         -- [[ Forever ]]
         Private:SetupAmmoCounter()
         Private:SetupFeedPet()
+        Private:SetupOptimalRanks()
         Private:SetupAutoPurchase()
         Private:SetupBeastLore()
         Private:SetupDungeonJournal()

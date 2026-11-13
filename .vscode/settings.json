@@ -86,7 +86,9 @@
         "CreateTexturePool",
         "CreateUnsecuredTexturePool",
         "MAP_PIN",
-        "QUESTS_LABEL"
+        "QUESTS_LABEL",
+        "EventUtil",
+        "PlayerSpellsFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }

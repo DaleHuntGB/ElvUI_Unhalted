@@ -8,7 +8,7 @@ local State = {
     GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0,
     PlanContinent = -1, PlanX = 0, PlanY = 0,
     Elapsed = 0, Distance = -1,
-    isDirty = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false, hasHinted = false, hasGoalObjectives = false,
+    isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false, hasHinted = false, hasGoalObjectives = false,
 }
 
 local function HasObjectives(QuestID)
@@ -137,13 +137,24 @@ local function UpdateGoal()
     local Continent, X, Y, Name, QuestID = GetGoalWorldPosition()
     if not Continent then StopNavigation() return end
 
-    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID = Continent, X, Y, Name, QuestID or 0
-    State.hasGoalObjectives = QuestID ~= nil and HasObjectives(QuestID)
+    QuestID = QuestID or 0
+    local isNavigating = Private.NavigationFrame:GetScript("OnUpdate") ~= nil
+    if isNavigating and Continent == State.GoalContinent and X == State.GoalX and Y == State.GoalY and QuestID == State.GoalQuestID then return end
+
+    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID = Continent, X, Y, Name, QuestID
+    State.hasGoalObjectives = QuestID > 0 and HasObjectives(QuestID)
     State.isDirty, State.Elapsed = true, CheckInterval
     Private.NavigationFrame:SetScript("OnUpdate", Navigation_OnUpdate)
 end
 
 local function Navigation_OnEvent(_, Event)
+    if Event == "UNIT_QUEST_LOG_CHANGED" then
+        State.isGoalStale = true
+        return
+    elseif Event == "QUEST_LOG_UPDATE" then
+        if not State.isGoalStale then return end
+        State.isGoalStale = false
+    end
     if Event ~= "TAXIMAP_OPENED" then UpdateGoal() return end
 
     local KnownTaxiNodes = Private.DB.char.Navigation.KnownTaxiNodes
@@ -171,6 +182,8 @@ function Private:UpdateNavigation()
         NavigationFrame:RegisterEvent("SUPER_TRACKING_CHANGED")
         NavigationFrame:RegisterEvent("USER_WAYPOINT_UPDATED")
         NavigationFrame:RegisterEvent("QUEST_POI_UPDATE")
+        NavigationFrame:RegisterEvent("QUEST_LOG_UPDATE")
+        NavigationFrame:RegisterUnitEvent("UNIT_QUEST_LOG_CHANGED", "player")
         NavigationFrame:RegisterEvent("TAXIMAP_OPENED")
         NavigationFrame:SetScript("OnEvent", Navigation_OnEvent)
         UpdateGoal()

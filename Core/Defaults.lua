@@ -357,6 +357,7 @@ local Defaults = {
                 },
             },
             Hunter = {
+                HighlightOptimalRanks = true,
                 UseBestFood = true,
             },
         },
