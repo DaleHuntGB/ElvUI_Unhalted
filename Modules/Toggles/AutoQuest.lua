@@ -11,7 +11,7 @@ local function AutoQuestFrame_OnEvent(_, event)
             end
         end
         for _, Quest in ipairs(C_GossipInfo.GetAvailableQuests()) do
-            if not Quest.isIgnored then
+            if not Quest.isIgnored and not Quest.isTrivial then
                 C_GossipInfo.SelectAvailableQuest(Quest.questID)
                 return
             end
@@ -25,8 +25,8 @@ local function AutoQuestFrame_OnEvent(_, event)
             end
         end
         for Index = 1, GetNumAvailableQuests() do
-            local _, _, _, IsIgnored = GetAvailableQuestInfo(Index)
-            if not IsIgnored then
+            local IsTrivial = GetAvailableQuestInfo(Index)
+            if not IsTrivial then
                 SelectAvailableQuest(Index)
                 return
             end
@@ -34,7 +34,7 @@ local function AutoQuestFrame_OnEvent(_, event)
     elseif event == "QUEST_DETAIL" then
         if QuestGetAutoAccept() then
             AcknowledgeAutoAcceptQuest()
-        else
+        elseif not C_QuestLog.IsQuestTrivial(GetQuestID()) then
             AcceptQuest()
         end
     elseif event == "QUEST_PROGRESS" then
