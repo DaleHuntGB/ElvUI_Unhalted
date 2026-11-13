@@ -348,12 +348,9 @@ local Defaults = {
             },
             Navigation = {
                 Enable = true,
-                WorldMapLine = true,
-                MinimapLine = true,
                 FlightPaths = true,
                 FlightTimer = true,
                 ArrowTexture = "ARROW_01",
-                DotTexture = "DOT_01",
                 Size = 40,
                 Layout = {"CENTER", "CENTER", 0, 180},
                 Text = {

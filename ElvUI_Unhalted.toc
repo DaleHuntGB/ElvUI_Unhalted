@@ -61,10 +61,9 @@ Modules/Miscellaneous/CVars.lua
 Modules/Miscellaneous/MouseCursor.lua
 
 Modules/Navigation/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/Roads.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Planner.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Arrow.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/Lines.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/Map.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/FlightTimer.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 

@@ -3,16 +3,13 @@ local Private = select(2, ...)
 -- Yards the player moves before the route is planned again, and seconds between those checks.
 local ReplanDistance, CheckInterval = 25, 0.5
 local MaxSteps = 5
--- A walk's next turn is reached within TurnDistance yards, or passed once the player is beyond it within PassDistance.
-local TurnDistance, PassDistance = 15, 30
 
 local GoalVector = CreateVector2D(0, 0)
 local State = {
     GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "",
     PlanContinent = -1, PlanX = 0, PlanY = 0,
-    Elapsed = 0, Distance = -1, PathIndex = 1,
-    isDirty = false, isOnTaxi = false, isMinimapRotating = false, showMinimapLine = false,
-    hasDirection = false, hasMinimapLine = false, hasHinted = false,
+    Elapsed = 0, Distance = -1,
+    isDirty = false, isOnTaxi = false, hasDirection = false, hasHinted = false,
 }
 
 -- The super tracked quest, or the map pin when that is tracked instead. A quest's own marker comes before its waypoint.
@@ -50,19 +47,15 @@ local function SetDirectionShown(isShown)
     State.hasDirection = isShown
     Private.NavigationArrow.Arrow:SetShown(isShown)
     Private.NavigationArrow.Distance:SetShown(isShown)
-    if not isShown then Private:HideNavigationMinimapLine() end
 end
 
 local function ClearRoute()
     Private.NavigationRoute = nil
     Private.NavigationArrow:Hide()
-    Private:HideNavigationMinimapLine()
-    Private:DrawNavigationMap()
 end
 
 -- Plans the route again once the goal has changed or the player has moved far enough.
 local function CheckRoute(Continent, X, Y)
-    State.isMinimapRotating = GetCVarBool("rotateMinimap")
     State.isOnTaxi = UnitOnTaxi("player")
     if State.isOnTaxi then return end
 
@@ -82,10 +75,8 @@ local function CheckRoute(Continent, X, Y)
     end
 
     Private.NavigationRoute = Route
-    State.PathIndex = 1
     Private.NavigationArrow.Steps:SetText(table.concat(Steps, "\n"))
     Private.NavigationArrow:Show()
-    Private:DrawNavigationMap()
 
     if not State.hasHinted and not next(KnownTaxiNodes) then
         State.hasHinted = true
@@ -109,43 +100,20 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     local Route = Private.NavigationRoute
     if not Route then return end
 
-    local Leg = Route[1]
-    local Target = Leg.Points[#Leg.Points]
+    -- The arrow points straight at where the current step ends.
+    local Points = Route[1].Points
+    local Target = Points[#Points]
     local Facing = GetPlayerFacing()
     if State.isOnTaxi or Target[1] ~= Continent or not Facing or issecretvalue(Facing) then SetDirectionShown(false) return end
     SetDirectionShown(true)
 
-    -- A walk heads for the next turn of its path.
-    local Path, Index = Leg.Path, State.PathIndex
-    local TargetX, TargetY, Left = Target[2], Target[3], 0
-    if Path then
-        while Index < #Path - 1 do
-            local TurnX, TurnY = Path[Index] - X, Path[Index + 1] - Y
-            local TurnDistanceSquared = TurnX * TurnX + TurnY * TurnY
-            local isPast = (Path[Index + 2] - Path[Index]) * TurnX + (Path[Index + 3] - Path[Index + 1]) * TurnY < 0
-            if TurnDistanceSquared >= TurnDistance * TurnDistance and not (isPast and TurnDistanceSquared < PassDistance * PassDistance) then break end
-            Index = Index + 2
-        end
-        State.PathIndex = Index
-        TargetX, TargetY, Left = Path[Index], Path[Index + 1], Leg.PathLeft[Index]
-    end
-
-    local DeltaX, DeltaY = TargetX - X, TargetY - Y
-    local Distance = math.sqrt(DeltaX * DeltaX + DeltaY * DeltaY) + Left
-    local Yards = math.floor(Distance + 0.5)
+    local DeltaX, DeltaY = Target[2] - X, Target[3] - Y
+    local Yards = math.floor(math.sqrt(DeltaX * DeltaX + DeltaY * DeltaY) + 0.5)
     if Yards ~= State.Distance then
         State.Distance = Yards
         Private.NavigationArrow.Distance:SetFormattedText("%d yd", Yards)
     end
     Private.NavigationArrow.Arrow:SetRotation(math.atan2(DeltaY, DeltaX) - Facing)
-
-    local hasMinimapLine = State.showMinimapLine and Path ~= nil
-    if hasMinimapLine then
-        Private:UpdateNavigationMinimapLine(X, Y, Path, Index, Distance, State.isMinimapRotating and Facing or 0)
-    elseif State.hasMinimapLine then
-        Private:HideNavigationMinimapLine()
-    end
-    State.hasMinimapLine = hasMinimapLine
 end
 
 local function UpdateGoal()
@@ -183,7 +151,7 @@ function Private:UpdateNavigation()
 
     Private:UpdateNavigationArrow()
     Private:UpdateNavigationFlightTimer()
-    State.showMinimapLine = DB.MinimapLine
+    Private:DrawNavigationMap()
 
     if DB.Enable then
         NavigationFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -204,7 +172,7 @@ end
 function Private:SetupNavigation()
     Private.NavigationFrame = CreateFrame("Frame")
     Private:CreateNavigationArrow()
-    Private:CreateNavigationLines()
+    Private:CreateNavigationMap()
     Private:CreateNavigationFlightTimer()
     Private:UpdateNavigation()
 end

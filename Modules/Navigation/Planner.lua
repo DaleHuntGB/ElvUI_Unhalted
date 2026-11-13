@@ -31,7 +31,6 @@ local function Relax(From, To, Seconds, TravelMode)
 end
 
 -- Returns the legs from the player to the goal, each { Mode, Name, Points }, or nil when there is no way there.
--- A walk also has Path, the turns it takes along the roads, and PathLeft, the yards from each turn to its end.
 function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, GoalY, GoalName, KnownTaxiNodes)
     if #Points == 2 then
         local Faction = UnitFactionGroup("player") == "Horde" and 2 or 1
@@ -110,12 +109,5 @@ function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, Goal
     local FirstLeg = Legs[1]
     local DeltaX, DeltaY = FirstLeg.Points[2][2] - X, FirstLeg.Points[2][3] - Y
     if #Legs > 1 and FirstLeg.Mode == "Run" and DeltaX * DeltaX + DeltaY * DeltaY < SkipRunDistance * SkipRunDistance then table.remove(Legs, 1) end
-
-    for _, Leg in ipairs(Legs) do
-        if Leg.Mode == "Run" then
-            local From, To = Leg.Points[1], Leg.Points[2]
-            Leg.Path, Leg.PathLeft = Private:FindNavigationRoadPath(From[1], From[2], From[3], To[2], To[3])
-        end
-    end
     return Legs
 end
