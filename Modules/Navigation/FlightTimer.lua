@@ -1,6 +1,5 @@
 local Private = select(2, ...)
 
--- Seconds a flight master may take to answer. A loss of control later than this is not the flight taking off.
 local RequestTimeout = 5
 
 local TaxiNodeBySlot, RouteNodes = {}, {}
@@ -14,8 +13,6 @@ local function StopFlight()
     Private.NavigationFlightTimer:Hide()
 end
 
--- Reads the hops of the flight being asked for while the flight master's map is still open.
--- A route flown before uses the time it took; a new one adds up Data.lua's estimate for each hop.
 local function FlightTimer_OnTakeTaxiNode(Slot)
     State.RequestTime = 0
     if not State.isEnabled then return end
@@ -54,7 +51,6 @@ local function FlightTimer_OnEvent(FlightTimer, Event)
     if Event == "PLAYER_CONTROL_LOST" then
         if GetTime() - State.RequestTime > RequestTimeout then return end
         State.RequestTime, State.StartTime, State.Remaining = 0, GetTime(), -1
-        -- A route with no time yet is flown without a countdown, and has one from then on.
         if State.Seconds > 0 then
             FlightTimer.Name:SetText(State.Name)
             FlightTimer_OnUpdate(FlightTimer)
@@ -86,7 +82,6 @@ function Private:UpdateNavigationFlightTimer()
     end
 end
 
--- Sits where the arrow does, which is hidden for the length of a flight.
 function Private:CreateNavigationFlightTimer()
     local Colour = Private.E.db.general.valuecolor
     local FlightTimer = CreateFrame("Frame", nil, UIParent)
@@ -102,7 +97,6 @@ function Private:CreateNavigationFlightTimer()
 
     FlightTimer:SetScript("OnEvent", FlightTimer_OnEvent)
     FlightTimer:SetScript("OnUpdate", FlightTimer_OnUpdate)
-    -- An early landing ends the flight at the next flight master, so its time is neither shown nor kept.
     hooksecurefunc("TakeTaxiNode", FlightTimer_OnTakeTaxiNode)
     hooksecurefunc("TaxiRequestEarlyLanding", StopFlight)
 

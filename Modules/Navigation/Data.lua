@@ -1,10 +1,5 @@
 local Private = select(2, ...)
 
--- Generated from wago.tools DB2 exports (TaxiNodes, TaxiPath, TaxiPathNode, AreaTrigger), Forever build 1.60.1.70888.
--- World positions are in yards: X runs north, Y runs west, as UnitPosition returns them.
--- Faction: 1 = Alliance, 2 = Horde, 3 = both.
-
--- [TaxiNodeID] = { Continent, X, Y, Name, Faction }
 Private.NavigationTaxiNodes = {
     [2] = { 0, -8833, 479, "Stormwind", 1 },
     [4] = { 0, -10629, 1037, "Sentinel Hill", 1 },
@@ -73,7 +68,6 @@ Private.NavigationTaxiNodes = {
     [3276] = { 0, -9104, -4830, "Farholde Keep", 1 },
 }
 
--- [FromTaxiNodeID] = { [ToTaxiNodeID] = Seconds }, flown at 32 yards a second along the path.
 Private.NavigationTaxiPaths = {
     [2] = { [4] = 72, [5] = 104, [6] = 238, [12] = 108, [19] = 227, [45] = 164, [71] = 146 },
     [4] = { [2] = 76, [5] = 121, [12] = 90, [19] = 173 },
@@ -142,7 +136,6 @@ Private.NavigationTaxiPaths = {
     [3276] = { [5] = 121, [8] = 160, [71] = 114 },
 }
 
--- { Kind, Faction, { Continent, X, Y, Name }, { Continent, X, Y, Name }, Seconds }, one way. Seconds include the average wait.
 Private.NavigationLinks = {
     { "Boat", 1, { 1, 6406, 823, "Auberdine" }, { 0, -3709, -575, "Menethil Harbor" }, 184 },
     { "Boat", 1, { 1, 6594, 760, "Auberdine" }, { 1, 8532, 1024, "Rut'theran Village" }, 212 },

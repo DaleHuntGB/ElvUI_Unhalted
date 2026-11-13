@@ -2,7 +2,6 @@ local Private = select(2, ...)
 
 local KnownFlightTexture = "Interface\\TaxiFrame\\UI-Taxi-Icon-Green"
 local UnknownFlightTexture = "Interface\\TaxiFrame\\UI-Taxi-Icon-White"
--- Flight path icons, in screen pixels.
 local MapFlightSize = 16
 
 local MapVector = CreateVector2D(0, 0)
@@ -14,7 +13,6 @@ local function GetMapPosition(MapID, Continent, X, Y)
     return Position:GetXY()
 end
 
--- Draws the faction's flight paths on the world map.
 function Private:DrawNavigationMap()
     local Pool = Private.NavigationMapIcons
     Pool:ReleaseAll()
@@ -22,7 +20,6 @@ function Private:DrawNavigationMap()
     local DB = Private.DB.global.Miscellaneous.Navigation
     if not DB.Enable or not DB.FlightPaths or not WorldMapFrame:IsShown() then return end
     local MapID = WorldMapFrame:GetMapID()
-    -- The whole-world map is too small to hold every flight path.
     if not MapID or C_Map.GetMapInfo(MapID).mapType < Enum.UIMapType.Continent then return end
 
     local Overlay = Private.NavigationMapOverlay

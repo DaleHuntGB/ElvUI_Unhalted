@@ -1,18 +1,14 @@
 local Private = select(2, ...)
 
--- Points are { Continent, X, Y, Name }, matching the rows in Data.lua.
 local PlayerPoint = { 0, 0, 0, "" }
 local GoalPoint = { 0, 0, 0, "" }
 local Points = { PlayerPoint, GoalPoint }
 local PointByTaxiNode = {}
 local Cost, Previous, Mode, Visited = {}, {}, {}, {}
 
--- Runs are straight lines, so they are costed slower than the 7 yards a second a player runs at.
 local RunSpeed = 5.5
--- A run this short at the start of a route is left out, so standing beside a flight master reads as "fly".
 local SkipRunDistance = 15
 
--- Teldrassil and Rut'theran Village are cut off from each other and from the rest of Kalimdor.
 local function GetLand(Continent, X, Y)
     if Continent ~= 1 or X < 8400 or Y < 0 then return Continent end
     return X > 9000 and "Teldrassil" or "Rut'theran"
@@ -30,7 +26,6 @@ local function Relax(From, To, Seconds, TravelMode)
     Cost[To], Previous[To], Mode[To] = NewCost, From, TravelMode
 end
 
--- Returns the legs from the player to the goal, each { Mode, Name, Points }, or nil when there is no way there.
 function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, GoalY, GoalName, KnownTaxiNodes)
     if #Points == 2 then
         local Faction = UnitFactionGroup("player") == "Horde" and 2 or 1
@@ -56,7 +51,6 @@ function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, Goal
     PlayerPoint[1], PlayerPoint[2], PlayerPoint[3], PlayerPoint.Land = Continent, X, Y, GetLand(Continent, X, Y)
     GoalPoint[1], GoalPoint[2], GoalPoint[3], GoalPoint[4], GoalPoint.Land = GoalContinent, GoalX, GoalY, GoalName, GetLand(GoalContinent, GoalX, GoalY)
 
-    -- Shortest path from the player (1) to the goal (2).
     for Index = 1, #Points do Cost[Index], Visited[Index] = math.huge, false end
     Cost[1] = 0
 
@@ -90,7 +84,6 @@ function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, Goal
         end
     end
 
-    -- Walk back from the goal, giving the legs in travel order. Connected flights become one leg.
     local Legs = {}
     local Index = 2
     while Index ~= 1 do
@@ -99,7 +92,6 @@ function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, Goal
         if NextLeg and NextLeg.Mode == TravelMode and TravelMode == "Flight Path" then
             table.insert(NextLeg.Points, 1, Points[From])
         else
-            -- A run that ends where the next leg starts is named after what is boarded there.
             local Boarding = TravelMode == "Run" and NextLeg and (NextLeg.Mode == "Flight Path" and " Flight Master" or " " .. NextLeg.Mode) or ""
             table.insert(Legs, 1, { Mode = TravelMode, Name = Points[Index][4] .. Boarding, Points = { Points[From], Points[Index] } })
         end

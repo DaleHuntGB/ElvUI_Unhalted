@@ -1,6 +1,5 @@
 local Private = select(2, ...)
 
--- Yards the player moves before the route is planned again, and seconds between those checks.
 local ReplanDistance, CheckInterval = 25, 0.5
 local MaxSteps = 5
 
@@ -12,7 +11,6 @@ local State = {
     isDirty = false, isOnTaxi = false, hasDirection = false, hasHinted = false,
 }
 
--- The super tracked quest, or the map pin when that is tracked instead. A quest's own marker comes before its waypoint.
 local function GetGoalMapPosition()
     local QuestID = C_SuperTrack.GetSuperTrackedQuestID()
     if QuestID and QuestID > 0 then
@@ -54,7 +52,6 @@ local function ClearRoute()
     Private.NavigationArrow:Hide()
 end
 
--- Plans the route again once the goal has changed or the player has moved far enough.
 local function CheckRoute(Continent, X, Y)
     State.isOnTaxi = UnitOnTaxi("player")
     if State.isOnTaxi then return end
@@ -68,7 +65,6 @@ local function CheckRoute(Continent, X, Y)
     local Route = Private:PlanNavigationRoute(Continent, X, Y, State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, KnownTaxiNodes)
     if not Route then ClearRoute() return end
 
-    -- The current step in white, the ones after it in grey.
     local Steps = {}
     for Index = 1, math.min(#Route, MaxSteps) do
         Steps[Index] = (Index == 1 and "|cFFFFFFFF" or "|cFF808080") .. Route[Index].Mode .. ": " .. Route[Index].Name .. "|r"
@@ -100,7 +96,6 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     local Route = Private.NavigationRoute
     if not Route then return end
 
-    -- The arrow points straight at where the current step ends.
     local Points = Route[1].Points
     local Target = Points[#Points]
     local Facing = GetPlayerFacing()
@@ -132,7 +127,6 @@ end
 local function Navigation_OnEvent(_, Event)
     if Event ~= "TAXIMAP_OPENED" then UpdateGoal() return end
 
-    -- A flight master lists the nodes on its continent; the ones the character has are CURRENT or REACHABLE.
     local KnownTaxiNodes = Private.DB.char.Navigation.KnownTaxiNodes
     for _, TaxiNode in ipairs(C_TaxiMap.GetAllTaxiNodes(GetTaxiMapID())) do
         if TaxiNode.slotIndex and Private.NavigationTaxiNodes[TaxiNode.nodeID] then
