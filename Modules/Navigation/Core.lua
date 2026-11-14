@@ -8,17 +8,12 @@ local State = {
     GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0,
     PlanContinent = -1, PlanX = 0, PlanY = 0,
     Elapsed = 0, Distance = -1,
-    isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false, hasHinted = false, hasGoalObjectives = false,
+    isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false, hasHinted = false,
 }
-
-local function HasObjectives(QuestID)
-    return #C_QuestLog.GetQuestObjectives(QuestID) > 0
-end
 
 local function GetGoalMapPosition()
     local QuestID = C_SuperTrack.GetSuperTrackedQuestID()
     if QuestID and QuestID > 0 then
-        if C_QuestLog.IsComplete(QuestID) and HasObjectives(QuestID) then return end
         local Name = C_QuestLog.GetTitleForQuestID(QuestID) or "Quest"
         local MapID = GetQuestUiMapID(QuestID, true)
         local Quests = MapID and MapID > 0 and C_QuestLog.GetQuestsOnMap(MapID)
@@ -106,7 +101,6 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     State.Elapsed = State.Elapsed + TimeElapsed
     if State.Elapsed >= CheckInterval then
         State.Elapsed = 0
-        if State.hasGoalObjectives and C_QuestLog.IsComplete(State.GoalQuestID) then StopNavigation() return end
         local isInHotSpot = IsInHotSpot()
         if isInHotSpot ~= State.isInHotSpot then
             State.isInHotSpot = isInHotSpot
@@ -142,7 +136,6 @@ local function UpdateGoal()
     if isNavigating and Continent == State.GoalContinent and X == State.GoalX and Y == State.GoalY and QuestID == State.GoalQuestID then return end
 
     State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID = Continent, X, Y, Name, QuestID
-    State.hasGoalObjectives = QuestID > 0 and HasObjectives(QuestID)
     State.isDirty, State.Elapsed = true, CheckInterval
     Private.NavigationFrame:SetScript("OnUpdate", Navigation_OnUpdate)
 end
