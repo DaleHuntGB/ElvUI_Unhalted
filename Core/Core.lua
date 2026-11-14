@@ -21,6 +21,7 @@ function AddOn:OnEnable()
     Private:SetupDamageMeters()
     -- [[ ElvUI]]
     Private:SetupEnhancedMovers()
+    Private:SetupFocusTexture()
     Private:SetupInterruptOnCooldown()
     Private:SetupLootRollFix()
     Private:SetupRemoveFogOfWar()

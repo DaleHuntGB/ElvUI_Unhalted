@@ -207,6 +207,11 @@ local Defaults = {
             LootRollFix = true,
             InterruptOnCooldown = true,
             RemoveFogOfWar = true,
+            FocusTexture = {
+                Enable = true,
+                Texture = "|cFF6080FFUnhalted|rUI: Thick Stripes (Angled)",
+                Colour = {1, 1, 1, 0.5},
+            },
             Movers = {
                 ElvAB_1 = {
                     Enable = false,

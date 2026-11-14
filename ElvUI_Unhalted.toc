@@ -41,6 +41,7 @@ Modules/DungeonJournal/Rows.lua [AllowLoadGameType camelot][ExcludeLoadGameType 
 Modules/DungeonJournal/Window.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/ElvUI/EnhancedMovers.lua
+Modules/ElvUI/FocusTexture.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua
 Modules/ElvUI/RemoveFogOfWar/Data.lua

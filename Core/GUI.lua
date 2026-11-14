@@ -469,6 +469,15 @@ function Private:SetupGUI()
     Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar = ACH:Toggle("Remove Fog of War", "Reveals |cFFFFCC00unexplored areas|r on the world map, desaturated.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.RemoveFogOfWar end, function(_, value) Private.DB.global.ElvUI.RemoveFogOfWar = value Private.E:StaticPopup_Show("CONFIG_RL") end)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar.descStyle = "inline"
 
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture = ACH:Group("Focus Texture", nil, 2, nil, nil, nil, nil, function() return not Private.E.private.nameplates.enable end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.inline = true
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Enable = ACH:Toggle("Enable", "Overlays a texture on your |cFFFFCC00focus|r nameplate's health bar.", 1, nil, nil, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Enable end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Enable = value Private:UpdateFocusTexture() end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Enable.relWidth = 0.33
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Texture = ACH:SharedMediaStatusbar("Texture", nil, 2, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Texture end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Texture = value Private:UpdateFocusTexture() end, function() return not Private.DB.global.ElvUI.FocusTexture.Enable end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Texture.relWidth = 0.33
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Colour = ACH:Color("Colour", nil, 3, true, "relative", function() return unpack(Private.DB.global.ElvUI.FocusTexture.Colour) end, function(_, r, g, b, a) Private.DB.global.ElvUI.FocusTexture.Colour = {r, g, b, a} Private:UpdateFocusTexture() end, function() return not Private.DB.global.ElvUI.FocusTexture.Enable end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Colour.relWidth = 0.33
+
     Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 7, "tab")
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
 
