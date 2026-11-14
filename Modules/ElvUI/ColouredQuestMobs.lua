@@ -1,8 +1,10 @@
 local Private = select(2, ...)
 local NP = Private.E:GetModule("NamePlates")
 local LineType = Enum.TooltipDataLineType
+local RescanDelay = 0.2
 local QuestMobs = {}
 local HookedHealth = {}
+local isRescanQueued = false
 
 local function ScanQuestMob(Unit)
     if IsInInstance() or UnitIsPlayer(Unit) or C_Secrets.ShouldUnitIdentityBeSecret(Unit) then return false end
@@ -54,11 +56,28 @@ local function RefreshQuestMobs()
     end
 end
 
+local function RescanQuestMobs()
+    isRescanQueued = false
+    for Plate in pairs(NP.Plates) do
+        local Unit = Plate.__unit
+        if Unit then
+            if Plate:IsVisible() and Plate:IsElementEnabled("Health") then
+                local wasQuestMob = QuestMobs[Unit] == true
+                QuestMobs[Unit] = ScanQuestMob(Unit)
+                if QuestMobs[Unit] ~= wasQuestMob then Plate.Health:ForceUpdate() end
+            else
+                QuestMobs[Unit] = nil
+            end
+        end
+    end
+end
+
 local function OnEvent(_, Event, Unit)
     if Event == "NAME_PLATE_UNIT_REMOVED" then
         QuestMobs[Unit] = nil
-    else
-        RefreshQuestMobs()
+    elseif not isRescanQueued then
+        isRescanQueued = true
+        C_Timer.After(RescanDelay, RescanQuestMobs)
     end
 end
 

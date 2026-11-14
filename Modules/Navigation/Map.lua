@@ -42,6 +42,11 @@ function Private:DrawNavigationMap()
     end
 end
 
+local function ResizeNavigationMap()
+    local FlightSize = MapFlightSize / WorldMapFrame:GetCanvas():GetScale()
+    for Icon in Private.NavigationMapIcons:EnumerateActive() do Icon:SetSize(FlightSize, FlightSize) end
+end
+
 function Private:CreateNavigationMap()
     local Canvas = WorldMapFrame:GetCanvas()
     local Overlay = CreateFrame("Frame", nil, Canvas)
@@ -51,6 +56,6 @@ function Private:CreateNavigationMap()
     Private.NavigationMapIcons = CreateUnsecuredTexturePool(Overlay, "OVERLAY")
 
     hooksecurefunc(WorldMapFrame, "OnMapChanged", Private.DrawNavigationMap)
-    hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", Private.DrawNavigationMap)
+    hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ResizeNavigationMap)
     WorldMapFrame:HookScript("OnShow", Private.DrawNavigationMap)
 end

@@ -4,6 +4,7 @@ local AreaHotZones = {}
 local AreaNameLabelType = MAP_AREA_LABEL_TYPE.AREA_NAME
 local BorderThickness = 2
 local LastName = ""
+local DrawnArtID, DrawnLevel = 0, 0
 
 local function GetHotZoneColour(HotZone)
     return GetQuestDifficultyColor(math.min(math.max(UnitLevel("player"), HotZone[1]), HotZone[2]))
@@ -34,14 +35,18 @@ local function DrawLevel(Pin, HotZone, Colour, Opacity, Font, FontSize, FontStyl
 end
 
 local function DrawHotZones(Pin)
+    local MapID = Pin:GetMap():GetMapID()
+    local ArtID = MapID and not issecretvalue(MapID) and C_Map.GetMapArtID(MapID) or 0
+    local PlayerLevel = UnitLevel("player")
+    if ArtID == DrawnArtID and PlayerLevel == DrawnLevel then return end
+    DrawnArtID, DrawnLevel = ArtID, PlayerLevel
+
     Private.HotZonePool:ReleaseAll()
     Private.HotZoneLevelPool:ReleaseAll()
     wipe(AreaHotZones)
     LastName = ""
 
-    local MapID = Pin:GetMap():GetMapID()
-    if not MapID or issecretvalue(MapID) then return end
-    local HotZones = Private.HotZones[C_Map.GetMapArtID(MapID)]
+    local HotZones = Private.HotZones[ArtID]
     if not HotZones then return end
 
     local DB = Private.DB.global.HotZones
@@ -102,5 +107,6 @@ function Private:SetupHotZones()
 end
 
 function Private:UpdateHotZones()
+    DrawnArtID = 0
     if Private.HotZonePin then DrawHotZones(Private.HotZonePin) end
 end

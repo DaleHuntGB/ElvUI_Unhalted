@@ -1,7 +1,6 @@
 local Private = select(2, ...)
 
-local function AmmoCounter_OnEvent(ACF, Event, Unit)
-    if Event == "UNIT_INVENTORY_CHANGED" and Unit ~= "player" then return end
+local function AmmoCounter_OnEvent(ACF)
     local DB = Private.DB.global.Miscellaneous.AmmoCounter.Text
     local Count = GetInventoryItemID("player", INVSLOT_AMMO) and GetInventoryItemCount("player", INVSLOT_AMMO) or 0
     local Colour = Count < DB.Threshold and DB.BelowThresholdColour or DB.Colour
@@ -24,10 +23,12 @@ function Private:SetupAmmoCounter()
     AmmoCounterFrame.Text:SetPoint(DB.Layout[1], AmmoCounterFrame, DB.Layout[1], 0, 0)
     AmmoCounter_OnEvent(AmmoCounterFrame)
 
-    AmmoCounterFrame:RegisterEvent("UNIT_INVENTORY_CHANGED")
-    AmmoCounterFrame:RegisterEvent("BAG_UPDATE_DELAYED")
-    AmmoCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    AmmoCounterFrame:SetScript("OnEvent", AmmoCounter_OnEvent)
+    if DB.Enable then
+        AmmoCounterFrame:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
+        AmmoCounterFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+        AmmoCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        AmmoCounterFrame:SetScript("OnEvent", AmmoCounter_OnEvent)
+    end
 
     Private.AmmoCounterFrame = AmmoCounterFrame
 end
@@ -44,7 +45,7 @@ function Private:UpdateAmmoCounter()
     AmmoCounterFrame:SetPoint(DB.Layout[1], _G[DB.AnchorParent], DB.Layout[2], DB.Layout[3], DB.Layout[4])
 
     if DB.Enable then
-        AmmoCounterFrame:RegisterEvent("UNIT_INVENTORY_CHANGED")
+        AmmoCounterFrame:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
         AmmoCounterFrame:RegisterEvent("BAG_UPDATE_DELAYED")
         AmmoCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         AmmoCounterFrame:SetScript("OnEvent", AmmoCounter_OnEvent)

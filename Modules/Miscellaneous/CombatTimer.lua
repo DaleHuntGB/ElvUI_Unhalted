@@ -2,10 +2,10 @@ local Private = select(2, ...)
 
 local function CombatTimer_OnUpdate(CTFrame, TimeElapsed)
     CTFrame.TimeElapsed = CTFrame.TimeElapsed + TimeElapsed
-    local TotalDuration = CTFrame.LastDuration + CTFrame.TimeElapsed
-    local Minutes = math.floor(TotalDuration / 60)
-    local Seconds = math.floor(TotalDuration % 60)
-    CTFrame.Text:SetText(string.format((Private.DB.global.Miscellaneous.CombatTimer.Text.Format == "00:00" and "%02d:%02d") or "%d:%02d", Minutes, Seconds))
+    local TotalSeconds = math.floor(CTFrame.LastDuration + CTFrame.TimeElapsed)
+    if TotalSeconds == CTFrame.ShownSeconds then return end
+    CTFrame.ShownSeconds = TotalSeconds
+    CTFrame.Text:SetFormattedText((Private.DB.global.Miscellaneous.CombatTimer.Text.Format == "00:00" and "%02d:%02d") or "%d:%02d", math.floor(TotalSeconds / 60), TotalSeconds % 60)
     CTFrame:SetSize(CTFrame.Text:GetStringWidth(), CTFrame.Text:GetStringHeight())
 end
 
@@ -38,6 +38,7 @@ function Private:SetupCombatTimer()
 
     CombatTimerFrame.TimeElapsed = 0;
     CombatTimerFrame.LastDuration = 0;
+    CombatTimerFrame.ShownSeconds = 0
     CombatTimerFrame.InCombat = InCombatLockdown()
     CombatTimerFrame.InEncounter = false
 
@@ -56,6 +57,7 @@ function Private:SetupCombatTimer()
         CTFrame.CombatStartTime = GetTime()
         CTFrame.TimeElapsed = 0
         CTFrame.LastDuration = 0
+        CTFrame.ShownSeconds = 0
         CTFrame.Text:SetText(string.format((DB.Text.Format == "00:00" and "%02d:%02d") or "%d:%02d", 0, 0))
         CTFrame:SetSize(CTFrame.Text:GetStringWidth(), CTFrame.Text:GetStringHeight())
         CTFrame:SetAlphaFromBoolean(UnitAffectingCombat("player"), 1, DB.OOCOpacity)

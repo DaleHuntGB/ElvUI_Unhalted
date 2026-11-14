@@ -29,8 +29,11 @@ function Private:SetupMouseCursor()
     end
     MouseCursorFrame.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
 
+    MouseCursorFrame.CursorX, MouseCursorFrame.CursorY = -1, -1
     MouseCursorFrame.UpdatePosition = function(MCF)
         local MouseX, MouseY = GetCursorPosition()
+        if MouseX == MCF.CursorX and MouseY == MCF.CursorY then return end
+        MCF.CursorX, MCF.CursorY = MouseX, MouseY
         local UIScale = UIParent:GetEffectiveScale()
         if Private.MouseCursors[DB.Texture].isAtlas then
             MouseCursorFrame.Anchor:ClearAllPoints()
@@ -67,6 +70,7 @@ function Private:UpdateMouseCursor()
             Private.MouseCursorFrame.Texture:SetTexCoord(0, 1, 0, 1)
         end
         Private.MouseCursorFrame.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
+        Private.MouseCursorFrame.CursorX = -1
 
         if DB.Enable then
             Private.MouseCursorFrame:SetScript("OnUpdate", Private.MouseCursorFrame.UpdatePosition)
