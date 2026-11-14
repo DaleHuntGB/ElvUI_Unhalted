@@ -29,7 +29,7 @@ local function UpdateFocusTexture()
 end
 
 function Private:SetupFocusTexture()
-    if not Private.E.private.nameplates.enable then return end
+    if not NP.Initialized then return end
 
     local EventFrame = CreateFrame("Frame")
     EventFrame:SetScript("OnEvent", UpdateFocusTexture)

@@ -207,6 +207,10 @@ local Defaults = {
             LootRollFix = true,
             InterruptOnCooldown = true,
             RemoveFogOfWar = true,
+            ColouredQuestMobs = {
+                Enable = true,
+                Colour = {255/255, 185/255, 99/255},
+            },
             FocusTexture = {
                 Enable = true,
                 Texture = "|cFF6080FFUnhalted|rUI: Thick Stripes (Angled)",

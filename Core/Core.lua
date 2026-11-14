@@ -20,6 +20,7 @@ function AddOn:OnEnable()
     -- [[ Damage Meter ]]
     Private:SetupDamageMeters()
     -- [[ ElvUI]]
+    Private:SetupColouredQuestMobs()
     Private:SetupEnhancedMovers()
     Private:SetupFocusTexture()
     Private:SetupInterruptOnCooldown()
