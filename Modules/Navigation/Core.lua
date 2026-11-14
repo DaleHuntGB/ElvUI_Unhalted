@@ -169,6 +169,7 @@ function Private:UpdateNavigation()
     Private:UpdateNavigationArrow()
     Private:UpdateNavigationFlightTimer()
     Private:DrawNavigationMap()
+    Private:UpdateAvailableQuests()
 
     if DB.Enable then
         NavigationFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -192,6 +193,7 @@ function Private:SetupNavigation()
     Private.NavigationFrame = CreateFrame("Frame")
     Private:CreateNavigationArrow()
     Private:CreateNavigationMap()
+    Private:CreateAvailableQuests()
     Private:CreateNavigationFlightTimer()
     Private:UpdateNavigation()
 end

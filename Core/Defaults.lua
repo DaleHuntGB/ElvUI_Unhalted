@@ -369,6 +369,10 @@ local Defaults = {
                 Text = {
                     FontSize = 12,
                 },
+                AvailableQuests = {
+                    Enable = true,
+                    IconSize = 20,
+                },
             },
             Hunter = {
                 HighlightOptimalRanks = true,

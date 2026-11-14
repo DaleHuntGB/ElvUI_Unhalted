@@ -788,6 +788,14 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 6, {min = 8, max = 128, softMin = 8, softMax = 32, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Text.FontSize = value Private:UpdateNavigationArrow() Private:UpdateNavigationFlightTimer() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize.relWidth = 0.5
 
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests = ACH:Group("Available Quests", nil, 6)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.inline = true
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.Enable = ACH:Toggle("Enable", "Marks quest givers on the world map with the |cFFFFCC00quests|r you can accept. Hover to read them.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.Enable.descStyle = "inline"
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.Enable.relWidth = 1
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.IconSize = ACH:Range("Icon Size", nil, 2, {min = 12, max = 40, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize = value Private:UpdateAvailableQuests() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable end)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.IconSize.relWidth = 0.5
+
     Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 10, "tab", nil, nil, nil, function() return Private.isForever end)
     Private.GUI.args.MythicPlusTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.Enable end, function(_, value) Private.DB.global.MythicPlusTimer.Enable = value Private:UpdateMythicPlusTimer() end, nil)
     Private.GUI.args.MythicPlusTimer.args.Enable.relWidth = 0.5

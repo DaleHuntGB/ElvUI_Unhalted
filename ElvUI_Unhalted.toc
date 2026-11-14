@@ -68,9 +68,11 @@ Modules/Miscellaneous/Hunter/FeedPet.lua [AllowLoadGameType camelot][ExcludeLoad
 Modules/Miscellaneous/Hunter/OptimalRanks.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/Navigation/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/AvailableQuestsData.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Planner.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Arrow.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Map.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/AvailableQuests.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/FlightTimer.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 

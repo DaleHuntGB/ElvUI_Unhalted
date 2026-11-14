@@ -91,7 +91,11 @@
         "PlayerSpellsFrame",
         "CreateUnsecuredRegionPoolInstance",
         "CreateUnsecuredFontStringPool",
-        "CreateUnsecuredFramePool"
+        "CreateUnsecuredFramePool",
+        "GameTooltip_AddBlankLineToTooltip",
+        "GameTooltip_AddInstructionLine",
+        "UiMapPoint",
+        "MAP_PIN_INVALID_MAP"
     ],
     "Lua.type.weakUnionCheck": true
 }
