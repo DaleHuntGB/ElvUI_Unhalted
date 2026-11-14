@@ -45,12 +45,6 @@ local ZoneLevels = {
     ["Winterspring"] = {55, 60},
 }
 
-local function GetAreaLabel()
-    for DataProvider in pairs(WorldMapFrame.dataProviders) do
-        if DataProvider.OnSetAreaLabel == AreaLabelDataProviderMixin.OnSetAreaLabel then return DataProvider.Label end
-    end
-end
-
 local function GetLevelColour(MinLevel, MaxLevel)
     local PlayerLevel = UnitLevel("player")
     if PlayerLevel < MinLevel then return GetQuestDifficultyColor(MinLevel) end
@@ -61,7 +55,7 @@ end
 function Private:SetupWorldMapZoneLevels()
     if not Private.DB.global.Blizzard.WorldMapZoneLevels then return end
 
-    local AreaLabel = GetAreaLabel()
+    local AreaLabel = Private:GetWorldMapAreaLabel()
     if not AreaLabel then return end
 
     for _, Levels in pairs(ZoneLevels) do

@@ -48,6 +48,9 @@ Modules/ElvUI/LootRollFix.lua
 Modules/ElvUI/RemoveFogOfWar/Data.lua
 Modules/ElvUI/RemoveFogOfWar/Core.lua
 
+Modules/HotZones/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/HotZones/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+
 Modules/MinimapStats/InstanceDifficulty.lua
 Modules/MinimapStats/Location.lua
 Modules/MinimapStats/SystemStats.lua

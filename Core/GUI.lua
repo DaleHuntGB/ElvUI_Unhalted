@@ -485,7 +485,16 @@ function Private:SetupGUI()
     Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureTexture = ACH:SharedMediaStatusbar("Texture", nil, 8, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Texture end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Texture = value Private:UpdateFocusTexture() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.FocusTexture.Enable end)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureTexture.relWidth = 0.5
 
-    Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 7, "tab")
+    Private.GUI.args.HotZones = ACH:Group("Hot Zones", nil, 7, "tab", nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.HotZones.args.Enable = ACH:Toggle("Enable", "Borders each area of a zone's world map and shows its |cFFFFCC00level|r.", 1, nil, nil, "relative", function() return Private.DB.global.HotZones.Enable end, function(_, value) Private.DB.global.HotZones.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end)
+    Private.GUI.args.HotZones.args.Enable.descStyle = "inline"
+    Private.GUI.args.HotZones.args.Enable.relWidth = 1
+    Private.GUI.args.HotZones.args.Opacity = ACH:Range("Opacity", nil, 2, {min = 0.1, max = 1, step = 0.01}, "relative", function() return Private.DB.global.HotZones.Opacity end, function(_, value) Private.DB.global.HotZones.Opacity = value Private:UpdateHotZones() end, function() return not Private.DB.global.HotZones.Enable end)
+    Private.GUI.args.HotZones.args.Opacity.relWidth = 0.5
+    Private.GUI.args.HotZones.args.FontSize = ACH:Range("Font Size", nil, 3, {min = 8, max = 64, softMin = 10, softMax = 32, step = 1}, "relative", function() return Private.DB.global.HotZones.FontSize end, function(_, value) Private.DB.global.HotZones.FontSize = value Private:UpdateHotZones() end, function() return not Private.DB.global.HotZones.Enable end)
+    Private.GUI.args.HotZones.args.FontSize.relWidth = 0.5
+
+    Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 8, "tab")
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
 
     Private.GUI.args.MinimapStats.args.Time.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MinimapStats.Time.Enable end, function(_, value) Private.DB.global.MinimapStats.Time.Enable = value Private:UpdateTime() end)
@@ -580,7 +589,7 @@ function Private:SetupGUI()
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.MinimapStats.InstanceDifficulty.FontSize end, function(_, value) Private.DB.global.MinimapStats.InstanceDifficulty.FontSize = value Private:UpdateInstanceDifficulty() end, function() return not Private.DB.global.MinimapStats.InstanceDifficulty.Enable end)
     Private.GUI.args.MinimapStats.args.InstanceDifficulty.args.Layout.args.FontSize.relWidth = 0.33
 
-    Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 8, "tab")
+    Private.GUI.args.Miscellaneous = ACH:Group("Miscellaneous", nil, 9, "tab")
 
     Private.GUI.args.Miscellaneous.args.AutoPurchase = ACH:Group("Auto Purchase", nil, 1, "tab", nil, nil, nil, function() return not Private.isForever end)
     Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Enable = ACH:Toggle("Enable", "Buys items from vendors until you have the set |cFFFFCC00quantity|r in your bags.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Enable end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Enable = value Private:UpdateAutoPurchase() end)
@@ -779,7 +788,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 6, {min = 8, max = 128, softMin = 8, softMax = 32, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Text.FontSize = value Private:UpdateNavigationArrow() Private:UpdateNavigationFlightTimer() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize.relWidth = 0.5
 
-    Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 9, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.MythicPlusTimer = ACH:Group("Mythic+ Timer", nil, 10, "tab", nil, nil, nil, function() return Private.isForever end)
     Private.GUI.args.MythicPlusTimer.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.MythicPlusTimer.Enable end, function(_, value) Private.DB.global.MythicPlusTimer.Enable = value Private:UpdateMythicPlusTimer() end, nil)
     Private.GUI.args.MythicPlusTimer.args.Enable.relWidth = 0.5
     Private.GUI.args.MythicPlusTimer.args.Preview = ACH:Toggle("Preview", nil, 2, nil, nil, "relative", function() return Private.MythicPlusTimerPreview end, function(_, value) Private.MythicPlusTimerPreview = value Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
@@ -875,7 +884,7 @@ function Private:SetupGUI()
     Private.GUI.args.MythicPlusTimer.args.Colours.args.Expired = ACH:Color("Over Time", nil, 5, false, "relative", function() return unpack(Private.DB.global.MythicPlusTimer.Colours.Expired) end, function(_, r, g, b) Private.DB.global.MythicPlusTimer.Colours.Expired = {r, g, b} Private:UpdateMythicPlusTimer() end, function() return not Private.DB.global.MythicPlusTimer.Enable end)
     Private.GUI.args.MythicPlusTimer.args.Colours.args.Expired.relWidth = 0.5
 
-    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 11, "tab")
+    Private.GUI.args.Toggles = ACH:Group("Toggles", nil, 12, "tab")
 
     local Toggles = {
         [1] = { name = "Auto Delete", desc = "Auto populates |cFFFFCC00delete|r where required.", key = "AutoDelete", requiresReload = false, isRetail = false },
@@ -892,7 +901,7 @@ function Private:SetupGUI()
         Private.GUI.args.Toggles.args[toggle.name].descStyle = "inline"
     end
 
-    Private.GUI.args.Profiles = ACH:Group("Profiles", nil, 10, "tab")
+    Private.GUI.args.Profiles = ACH:Group("Profiles", nil, 11, "tab")
     Private.GUI.args.Profiles.args.BigWigs = ACH:Execute("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid.tga:16:16|t BigWigs", nil, 1, function() Private:ImportBigWigs() Private.E:StaticPopup_Show("CONFIG_RL") end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("BigWigs") end)
     Private.GUI.args.Profiles.args.BigWigs.relWidth = 1
     Private.GUI.args.Profiles.args.ElvUI = ACH:Execute("|TInterface\\AddOns\\ElvUI\\Game\\Shared\\Media\\Textures\\LogoAddon:16:16|t |cFF1784d1ElvUI|r", nil, 2, function() Private:ImportElvUI() end, nil, nil, "relative", nil, nil, nil, function() return not Private:IsAddOnLoaded("ElvUI") end)

@@ -267,6 +267,11 @@ local Defaults = {
                 },
             }
         },
+        HotZones = {
+            Enable = true,
+            Opacity = 1,
+            FontSize = 18,
+        },
         MinimapStats = {
             Time = {
                 Enable = true,

@@ -238,6 +238,12 @@ function Private:AbbreviateValue(value)
     return AbbreviateNumbers(value, AbbreviateOptions)
 end
 
+function Private:GetWorldMapAreaLabel()
+    for DataProvider in pairs(WorldMapFrame.dataProviders) do
+        if DataProvider.OnSetAreaLabel == AreaLabelDataProviderMixin.OnSetAreaLabel then return DataProvider.Label end
+    end
+end
+
 function Private:IsAddOnLoaded(AddOnName)
     return C_AddOns.IsAddOnLoaded(AddOnName)
 end
