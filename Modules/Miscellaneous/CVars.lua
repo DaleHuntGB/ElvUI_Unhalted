@@ -17,8 +17,16 @@ local CVars = {
     RAIDweatherDensity = "Sliders",
     autoLootRate = "Sliders",
     SpellQueueWindow = "Sliders",
-    cameraDistanceMaxZoomFactor = "Sliders"
+    cameraDistanceMaxZoomFactor = "Sliders",
+    nameplateMaxDistance = "Sliders"
 }
+
+local FallbackMaxNameplateDistance = 41
+
+function Private:GetMaxNameplateDistance()
+    local MaxDistance = C_GameRules.GetGameRuleAsFloat(Enum.GameRule.MaxNameplateDistance)
+    return MaxDistance > 0 and MaxDistance or FallbackMaxNameplateDistance
+end
 
 function Private:SyncCVars()
     local DB = Private.DB.global.Miscellaneous.CVars
