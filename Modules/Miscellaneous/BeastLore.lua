@@ -66,6 +66,10 @@ function Private:SetupBeastLore()
         {SpellID = 24587, Rank = 4, NPCs = {9698, 11736, 11737, 14476}},
         -- Shell Shield
         {SpellID = 26064, Rank = 1, NPCs = {2408, 3653, 4824, 4825, 4887, 8213, 14223}},
+        -- Swipe
+        {SpellID = 1264494, Rank = 1, NPCs = {1188, 1797, 259388}},
+        {SpellID = 1264497, Rank = 2, NPCs = {2356, 271334}},
+        {SpellID = 1264498, Rank = 3, NPCs = {5268, 5272}},
         -- Thunderstomp
         {SpellID = 26090, Rank = 1, NPCs = {1108, 1114}},
         {SpellID = 26187, Rank = 2, NPCs = {1557, 5262}},
