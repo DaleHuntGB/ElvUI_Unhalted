@@ -30,7 +30,7 @@ local function FeedPet_PreClick(Button)
     Button:SetAttribute("target-bag", Bag)
     Button:SetAttribute("target-slot", Slot)
     if Bag then return end
-    print(string.format("|c%sFeed Pet|r %s", Private.E.AccentColour, UnitExists("pet") and "There is no food in your bags that your pet will eat." or "You have no pet out."))
+    print(string.format("|c%sFeed Pet|r: %s", Private.E.AccentColour, UnitExists("pet") and "You have no food for your pet." or "You have no pet."))
 end
 
 function Private:SetupFeedPet()
