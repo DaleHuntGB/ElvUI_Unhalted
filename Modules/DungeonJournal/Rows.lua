@@ -14,6 +14,10 @@ local BOSS_BUTTON_UP = { 0.00195313, 0.63671875, 0.21386719, 0.26757813 }
 local BOSS_BUTTON_DOWN = { 0.00195313, 0.63671875, 0.10253906, 0.15625000 }
 local BOSS_BUTTON_HIGHLIGHT = { 0.00195313, 0.63671875, 0.15820313, 0.21191406 }
 local LOOT_FRAME = { 0.00195313, 0.62890625, 0.61816406, 0.66210938 }
+local DUNGEON_CARD = { 0, 0.68359375, 0, 0.7421875 }
+local DUNGEON_THUMBNAIL = { 0.18359375, 0.5, 0.13671875, 0.60546875 }
+local LOADING_SCREEN_CARD = { 0.1534, 0.8466, 0.1603, 0.8397 }
+local LOADING_SCREEN_THUMBNAIL = { 0.2421, 0.7579, 0.1603, 0.8397 }
 
 local function SetButtonArt(Button, Coords, Pushed, Highlight)
     Button:SetNormalTexture(JOURNAL_TEXTURES)
@@ -22,6 +26,15 @@ local function SetButtonArt(Button, Coords, Pushed, Highlight)
     Button:GetPushedTexture():SetTexCoord(Pushed[1], Pushed[2], Pushed[3], Pushed[4])
     Button:SetHighlightTexture(JOURNAL_TEXTURES)
     Button:GetHighlightTexture():SetTexCoord(Highlight[1], Highlight[2], Highlight[3], Highlight[4])
+end
+
+local function SetDungeonArt(Texture, Dungeon, Coords, LoadingScreenCoords)
+    if Dungeon.LoadingScreen and Texture:SetTexture(Dungeon.LoadingScreen) then
+        Texture:SetTexCoord(LoadingScreenCoords[1], LoadingScreenCoords[2], LoadingScreenCoords[3], LoadingScreenCoords[4])
+        return
+    end
+    if not (Dungeon.Button and Texture:SetTexture(Dungeon.Button)) then Texture:SetTexture(DEFAULT_DUNGEON_ART) end
+    Texture:SetTexCoord(Coords[1], Coords[2], Coords[3], Coords[4])
 end
 
 local function DungeonButton_OnEnter(Button)
@@ -52,8 +65,7 @@ function Private.InitDungeonJournalDungeonButton(Button, Dungeon)
     end
 
     Button.Dungeon = Dungeon
-    if not (Dungeon.Button and Button.Art:SetTexture(Dungeon.Button)) then Button.Art:SetTexture(DEFAULT_DUNGEON_ART) end
-    Button.Art:SetTexCoord(0, 0.68359375, 0, 0.7421875)
+    SetDungeonArt(Button.Art, Dungeon, DUNGEON_CARD, LOADING_SCREEN_CARD)
     Button.Name:SetText(Dungeon.Name)
     Button.Levels:SetFormattedText("%d-%d", Dungeon.Levels[1], Dungeon.Levels[2])
     Button.New:SetShown(Dungeon.New == true)
@@ -97,9 +109,7 @@ function Private.InitDungeonJournalBossButton(Button, Boss)
     Button.Portrait:SetShown(not Boss.All)
     Button.DungeonArt:SetShown(Boss.All == true)
     if Boss.All then
-        local Dungeon = Private.DungeonJournal.Dungeon
-        if not (Dungeon.Button and Button.DungeonArt:SetTexture(Dungeon.Button)) then Button.DungeonArt:SetTexture(DEFAULT_DUNGEON_ART) end
-        Button.DungeonArt:SetTexCoord(0.18359375, 0.5, 0.13671875, 0.60546875)
+        SetDungeonArt(Button.DungeonArt, Private.DungeonJournal.Dungeon, DUNGEON_THUMBNAIL, LOADING_SCREEN_THUMBNAIL)
     elseif not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then
         Button.Portrait:SetTexture(DEFAULT_PORTRAIT)
     end

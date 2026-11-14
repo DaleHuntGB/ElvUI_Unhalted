@@ -2,7 +2,7 @@ local Private = select(2, ...)
 
 Private.DungeonJournalData = {
     {
-        Name = "Hall of Thanes", Zone = "Dun Morogh", Levels = { 13, 18 }, New = true,
+        Name = "Hall of Thanes", Zone = "Dun Morogh", Levels = { 13, 18 }, New = true, LoadingScreen = 7963781,
         Bosses = {
             { Name = "Faldrim Anvilmar", Loot = { 270227, 271096, 271097 } },
             { Name = "Magmatus", Loot = { 270230, 270231, 271095 } },
@@ -20,7 +20,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "Ruins of Lordaeron", Zone = "Tirisfal Glades", Levels = { 15, 20 }, New = true,
+        Name = "Ruins of Lordaeron", Zone = "Tirisfal Glades", Levels = { 15, 20 }, New = true, LoadingScreen = 7963782,
         Bosses = {
             { Name = "The Baron", Loot = { 271204, 271205, 271206 } },
             { Name = "Witherfang", Loot = { 271201, 271202, 271203 } },
@@ -100,7 +100,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "Excavation Site: Wetlands", Zone = "Wetlands", Levels = { 26, 31 }, New = true,
+        Name = "Excavation Site: Wetlands", Zone = "Wetlands", Levels = { 26, 31 }, New = true, LoadingScreen = 7963777,
         Bosses = {
             { Name = "Saltspine", Loot = { 273022, 273023, 273024 } },
             { Name = "Shadetooth", Loot = { 273025, 273026, 273027, 273106 } },
@@ -109,7 +109,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "City of Dalaran", Zone = "Alterac Mountains", Levels = { 28, 33 }, New = true,
+        Name = "City of Dalaran", Zone = "Alterac Mountains", Levels = { 28, 33 }, New = true, LoadingScreen = 7963775,
         Bosses = {
             { Name = "Atrexis the Grave Knight", Loot = { 273036, 273032, 273033 } },
             { Name = "Lyn the Ignored", Loot = { 273054, 273053, 273055 } },
@@ -165,7 +165,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "The Drowned City", Zone = "Stranglethorn Vale", Levels = { 35, 40 }, New = true,
+        Name = "The Drowned City", Zone = "Stranglethorn Vale", Levels = { 35, 40 }, New = true, LoadingScreen = 7963741,
         Bosses = {
             { Name = "Zul'Alai", Loot = { 274598, 274599, 274600 } },
             { Name = "Gill", Loot = { 286646, 286649 } },
@@ -203,7 +203,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "Krol'dok Stronghold", Zone = "Riverglades", Levels = { 40, 45 }, New = true,
+        Name = "Krol'dok Stronghold", Zone = "Riverglades", Levels = { 40, 45 }, New = true, LoadingScreen = 7963780,
         Bosses = {
             { Name = "Slavecrusher Grox", Loot = { 274995, 274996, 274997 } },
             { Name = "Twilight Commander Zarmok", Loot = { 274998, 274999, 275000 } },
@@ -257,7 +257,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "Alcaz Prison", Zone = "Dustwallow Marsh", Levels = { 48, 53 }, New = true,
+        Name = "Alcaz Prison", Zone = "Dustwallow Marsh", Levels = { 48, 53 }, New = true, LoadingScreen = 7963734,
         Bosses = {
             { Name = "Overseer Wrex", Loot = { 276732, 276733, 276734 } },
             { Name = "Tidemistress Ca'zass", Loot = { 276735, 276736, 276737 } },
@@ -325,16 +325,16 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "Blackmaw Hold", Zone = "Azshara", Levels = { 55, 60 }, New = true,
+        Name = "Blackmaw Hold", Zone = "Azshara", Levels = { 55, 60 }, New = true, LoadingScreen = 7963784,
         Bosses = {
-            { Name = "Withermaw", Loot = { 280062, 280064 } },
-            { Name = "Impaan the Imprisoner", Loot = { 280057, 280058 } },
-            { Name = "Elder Shaman Bloodmane", Loot = { 280068, 280070 } },
-            { Name = "Bonesnout the Unbroken", Loot = { 280059, 280060 } },
+            { Name = "Withermaw", Loot = { 280062, 280063, 280064 } },
+            { Name = "Impaan the Imprisoner", Loot = { 280056, 280057, 280058 } },
+            { Name = "Elder Shaman Bloodmane", Loot = { 280068, 280069, 280070 } },
+            { Name = "Bonesnout the Unbroken", Loot = { 280059, 280060, 280061 } },
             { Name = "Varrox Bleakhoof", Loot = { 280074, 280075, 280076 } },
-            { Name = "Blackmaw Behemoth", Loot = { 280065, 280066 } },
+            { Name = "Blackmaw Behemoth", Loot = { 280065, 280066, 280067 } },
             { Name = "Unbound Spirit", Loot = { 280071, 280072, 280073 } },
-            { Name = "Moontouched Wanderer", Loot = { 280080 } },
+            { Name = "Moontouched Wanderer", Loot = { 280079, 280080 } },
         },
     },
     {
@@ -402,7 +402,7 @@ Private.DungeonJournalData = {
         },
     },
     {
-        Name = "Shaper's Terrace", Zone = "Un'Goro Crater", Levels = { 58, 60 }, New = true,
+        Name = "Shaper's Terrace", Zone = "Un'Goro Crater", Levels = { 58, 60 }, New = true, LoadingScreen = 7963783,
         Bosses = {
             { Name = "Titanosaur", Loot = {} },
             { Name = "Ravasaur Hunters", Loot = {} },
