@@ -90,7 +90,8 @@
         "EventUtil",
         "PlayerSpellsFrame",
         "CreateUnsecuredRegionPoolInstance",
-        "CreateUnsecuredFontStringPool"
+        "CreateUnsecuredFontStringPool",
+        "CreateUnsecuredFramePool"
     ],
     "Lua.type.weakUnionCheck": true
 }

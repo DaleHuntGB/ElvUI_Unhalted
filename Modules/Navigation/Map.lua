@@ -13,6 +13,12 @@ local function GetMapPosition(MapID, Continent, X, Y)
     return Position:GetXY()
 end
 
+local function FlightIcon_OnEnter(Icon)
+    GameTooltip:SetOwner(Icon, "ANCHOR_RIGHT")
+    GameTooltip:SetText(Icon.Name, 1, 1, 1)
+    GameTooltip:Show()
+end
+
 function Private:DrawNavigationMap()
     local Pool = Private.NavigationMapIcons
     Pool:ReleaseAll()
@@ -33,9 +39,17 @@ function Private:DrawNavigationMap()
         if X and bit.band(TaxiNode[5], Faction) ~= 0 and X >= 0 and X <= 1 and Y >= 0 and Y <= 1 then
             local isKnown = KnownTaxiNodes[TaxiNodeID]
             local Icon = Pool:Acquire()
-            Icon:SetTexture(isKnown and KnownFlightTexture or UnknownFlightTexture)
+            if not Icon.Texture then
+                Icon.Texture = Icon:CreateTexture(nil, "OVERLAY")
+                Icon.Texture:SetAllPoints(Icon)
+                Icon:EnableMouseMotion(true)
+                Icon:SetScript("OnEnter", FlightIcon_OnEnter)
+                Icon:SetScript("OnLeave", GameTooltip_Hide)
+            end
+            Icon.Name = TaxiNode[4]
+            Icon.Texture:SetTexture(isKnown and KnownFlightTexture or UnknownFlightTexture)
+            Icon.Texture:SetVertexColor(1, 1, 1, isKnown and 1 or 0.6)
             Icon:SetSize(FlightSize, FlightSize)
-            Icon:SetVertexColor(1, 1, 1, isKnown and 1 or 0.6)
             Icon:SetPoint("CENTER", Overlay, "TOPLEFT", X * Width, -Y * Height)
             Icon:Show()
         end
@@ -53,7 +67,7 @@ function Private:CreateNavigationMap()
     Overlay:SetAllPoints(Canvas)
     Overlay:SetFrameLevel(WorldMapFrame:GetPinFrameLevelsManager():GetValidFrameLevel("PIN_FRAME_LEVEL_WAYPOINT_LOCATION"))
     Private.NavigationMapOverlay = Overlay
-    Private.NavigationMapIcons = CreateUnsecuredTexturePool(Overlay, "OVERLAY")
+    Private.NavigationMapIcons = CreateUnsecuredFramePool("Frame", Overlay)
 
     hooksecurefunc(WorldMapFrame, "OnMapChanged", Private.DrawNavigationMap)
     hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ResizeNavigationMap)
