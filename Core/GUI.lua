@@ -470,21 +470,20 @@ function Private:SetupGUI()
     Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar = ACH:Toggle("Remove Fog of War", "Reveals |cFFFFCC00unexplored areas|r on the world map, desaturated.", 1, nil, nil, "full", function() return Private.DB.global.ElvUI.RemoveFogOfWar end, function(_, value) Private.DB.global.ElvUI.RemoveFogOfWar = value Private.E:StaticPopup_Show("CONFIG_RL") end)
     Private.GUI.args.ElvUI.args.Miscellaneous.args.RemoveFogOfWar.descStyle = "inline"
 
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobs = ACH:Group("Coloured Quest Mobs", nil, 2)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobs.inline = true
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobs.args.Enable = ACH:Toggle("Enable", "Colours the nameplate health bar of mobs that are part of an |cFFFFCC00active quest|r.", 1, nil, nil, "relative", function() return Private.DB.global.ElvUI.ColouredQuestMobs.Enable end, function(_, value) Private.DB.global.ElvUI.ColouredQuestMobs.Enable = value Private:UpdateColouredQuestMobs() end, function() return not NP.Initialized end)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobs.args.Enable.relWidth = 0.5
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobs.args.Colour = ACH:Color("Colour", nil, 2, false, "relative", function() return unpack(Private.DB.global.ElvUI.ColouredQuestMobs.Colour) end, function(_, r, g, b) Private.DB.global.ElvUI.ColouredQuestMobs.Colour = {r, g, b} Private:UpdateColouredQuestMobs() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.ColouredQuestMobs.Enable end)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobs.args.Colour.relWidth = 0.5
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobsHeader = ACH:Header("Coloured Quest Mobs", 2)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobsEnable = ACH:Toggle("Enable", "Colours the nameplate health bar of mobs that are part of an |cFFFFCC00active quest|r.", 3, nil, nil, "relative", function() return Private.DB.global.ElvUI.ColouredQuestMobs.Enable end, function(_, value) Private.DB.global.ElvUI.ColouredQuestMobs.Enable = value Private:UpdateColouredQuestMobs() end, function() return not NP.Initialized end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobsEnable.relWidth = 0.5
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobsColour = ACH:Color("Colour", nil, 4, false, "relative", function() return unpack(Private.DB.global.ElvUI.ColouredQuestMobs.Colour) end, function(_, r, g, b) Private.DB.global.ElvUI.ColouredQuestMobs.Colour = {r, g, b} Private:UpdateColouredQuestMobs() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.ColouredQuestMobs.Enable end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.ColouredQuestMobsColour.relWidth = 0.5
 
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture = ACH:Group("Focus Texture", nil, 3)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.inline = true
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Enable = ACH:Toggle("Enable", "Overlays a texture on your |cFFFFCC00focus|r nameplate's health bar.", 1, nil, nil, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Enable end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Enable = value Private:UpdateFocusTexture() end, function() return not NP.Initialized end)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Enable.relWidth = 0.33
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Texture = ACH:SharedMediaStatusbar("Texture", nil, 2, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Texture end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Texture = value Private:UpdateFocusTexture() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.FocusTexture.Enable end)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Texture.relWidth = 0.33
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Colour = ACH:Color("Colour", nil, 3, true, "relative", function() return unpack(Private.DB.global.ElvUI.FocusTexture.Colour) end, function(_, r, g, b, a) Private.DB.global.ElvUI.FocusTexture.Colour = {r, g, b, a} Private:UpdateFocusTexture() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.FocusTexture.Enable end)
-    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTexture.args.Colour.relWidth = 0.33
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureHeader = ACH:Header("Focus Texture", 5)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureEnable = ACH:Toggle("Enable", "Overlays a texture on your |cFFFFCC00focus|r nameplate's health bar.", 6, nil, nil, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Enable end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Enable = value Private:UpdateFocusTexture() end, function() return not NP.Initialized end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureEnable.descStyle = "inline"
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureEnable.relWidth = 1
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureColour = ACH:Color("Colour", nil, 7, true, "relative", function() return unpack(Private.DB.global.ElvUI.FocusTexture.Colour) end, function(_, r, g, b, a) Private.DB.global.ElvUI.FocusTexture.Colour = {r, g, b, a} Private:UpdateFocusTexture() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.FocusTexture.Enable end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureColour.relWidth = 0.5
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureTexture = ACH:SharedMediaStatusbar("Texture", nil, 8, "relative", function() return Private.DB.global.ElvUI.FocusTexture.Texture end, function(_, value) Private.DB.global.ElvUI.FocusTexture.Texture = value Private:UpdateFocusTexture() end, function() return not NP.Initialized or not Private.DB.global.ElvUI.FocusTexture.Enable end)
+    Private.GUI.args.ElvUI.args.Miscellaneous.args.FocusTextureTexture.relWidth = 0.5
 
     Private.GUI.args.MinimapStats = ACH:Group("Minimap Stats", nil, 7, "tab")
     Private.GUI.args.MinimapStats.args.Time = ACH:Group("Time", nil, 1)
