@@ -60,6 +60,7 @@ Modules/Miscellaneous/CombatResurrection.lua [AllowLoadGameType standard][Exclud
 Modules/Miscellaneous/CombatTimer.lua
 Modules/Miscellaneous/Crosshair.lua
 Modules/Miscellaneous/CVars.lua
+Modules/Miscellaneous/MergeIcons.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/MouseCursor.lua
 Modules/Miscellaneous/Hunter/AmmoCounter.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/Hunter/FeedPet.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]

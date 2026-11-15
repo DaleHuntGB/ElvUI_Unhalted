@@ -387,6 +387,7 @@ local Defaults = {
             },
             Hunter = {
                 HighlightOptimalRanks = true,
+                MergeIcons = true,
                 UseBestFood = true,
             },
         },

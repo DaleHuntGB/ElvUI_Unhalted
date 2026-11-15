@@ -297,7 +297,9 @@ function Private:SetupGUI()
     Private.GUI.args.Classes.args.Hunter.args.Toggles.inline = true
     Private.GUI.args.Classes.args.Hunter.args.Toggles.args.HighlightOptimalRanks = ACH:Toggle("Highlight Optimal Ranks", "Makes the most mana-efficient rank of each ranked Hunter spell glow in the spellbook.", 1, nil, nil, "full", function() return Private.DB.global.Miscellaneous.Hunter.HighlightOptimalRanks end, function(_, value) Private.DB.global.Miscellaneous.Hunter.HighlightOptimalRanks = value Private:UpdateOptimalRanks() end)
     Private.GUI.args.Classes.args.Hunter.args.Toggles.args.HighlightOptimalRanks.descStyle = "inline"
-    Private.GUI.args.Classes.args.Hunter.args.Toggles.args.UseBestFood = ACH:Toggle("Use Best Food when Using |T132165:16:16|t|cFFFFCC00Feed Pet|r", "Feeds your pet the best food in your bags when you press a macro with |cFFFFCC00/click FeedPet|r.", 2, nil, nil, "full", function() return Private.DB.global.Miscellaneous.Hunter.UseBestFood end, function(_, value) Private.DB.global.Miscellaneous.Hunter.UseBestFood = value end)
+    Private.GUI.args.Classes.args.Hunter.args.Toggles.args.MergeIcons = ACH:Toggle("Merge Icons", "If this is |cFF40CC40enabled|r, it will automatically merge the textures of abilities that share a cooldown", 2, nil, nil, "full", function() return Private.DB.global.Miscellaneous.Hunter.MergeIcons end, function(_, value) Private.DB.global.Miscellaneous.Hunter.MergeIcons = value Private:UpdateMergeIcons() end)
+    Private.GUI.args.Classes.args.Hunter.args.Toggles.args.MergeIcons.descStyle = "inline"
+    Private.GUI.args.Classes.args.Hunter.args.Toggles.args.UseBestFood = ACH:Toggle("Use Best Food when Using |T132165:16:16|t|cFFFFCC00Feed Pet|r", "Feeds your pet the best food in your bags when you press a macro with |cFFFFCC00/click FeedPet|r.", 3, nil, nil, "full", function() return Private.DB.global.Miscellaneous.Hunter.UseBestFood end, function(_, value) Private.DB.global.Miscellaneous.Hunter.UseBestFood = value end)
     Private.GUI.args.Classes.args.Hunter.args.Toggles.args.UseBestFood.descStyle = "inline"
 
     Private.GUI.args.DamageMeter = ACH:Group("Damage Meter", nil, 5, "tab")
