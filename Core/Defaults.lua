@@ -376,7 +376,7 @@ local Defaults = {
                     Enable = true,
                     IconSize = 20,
                 },
-                HotZones = {
+                LevelZones = {
                     Enable = true,
                     Opacity = 1,
                     FontSize = 18,

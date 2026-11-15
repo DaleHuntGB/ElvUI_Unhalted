@@ -68,12 +68,12 @@ Modules/Miscellaneous/Hunter/OptimalRanks.lua [AllowLoadGameType camelot][Exclud
 
 Modules/Navigation/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/AvailableQuestsData.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/HotZonesData.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/LevelZonesData.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Planner.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Arrow.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Map.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/AvailableQuests.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/HotZones.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/LevelZones.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/FlightTimer.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 

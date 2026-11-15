@@ -1,6 +1,6 @@
 local Private = select(2, ...)
 
-local ReplanDistance, CheckInterval = 25, 0.5
+local ReplanDistance, ArrivalDistance, CheckInterval = 25, 15, 0.5
 local MaxSteps = 5
 
 local GoalVector = CreateVector2D(0, 0)
@@ -76,6 +76,10 @@ local function CheckRoute(Continent, X, Y)
     local Route = Private:PlanNavigationRoute(Continent, X, Y, State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, KnownTaxiNodes)
     if not Route then ClearRoute() return end
 
+    local Target = Route[1].Points[2]
+    local TargetX, TargetY = Target[2] - X, Target[3] - Y
+    if #Route > 1 and Route[1].Mode == "Run" and TargetX * TargetX + TargetY * TargetY < ArrivalDistance * ArrivalDistance then table.remove(Route, 1) end
+
     local Steps = {}
     for Index = 1, math.min(#Route, MaxSteps) do
         Steps[Index] = (Index == 1 and "|cFFFFFFFF" or "|cFF808080") .. Route[Index].Mode .. ": " .. Route[Index].Name .. "|r"
@@ -118,6 +122,7 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     if Yards ~= State.Distance then
         State.Distance = Yards
         Private.NavigationArrow.Distance:SetFormattedText("%d yd", Yards)
+        if Yards < ArrivalDistance and #Route > 1 and Route[1].Mode == "Run" then State.isDirty = true end
     end
     Private.NavigationArrow.Arrow:SetRotation(math.atan2(DeltaY, DeltaX) - Facing)
 end
@@ -165,7 +170,7 @@ function Private:UpdateNavigation()
     Private:UpdateNavigationFlightTimer()
     Private:DrawNavigationMap()
     Private:UpdateAvailableQuests()
-    Private:UpdateHotZones()
+    Private:UpdateLevelZones()
 
     if DB.Enable then
         NavigationFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -190,7 +195,7 @@ function Private:SetupNavigation()
     Private:CreateNavigationArrow()
     Private:CreateNavigationMap()
     Private:CreateAvailableQuests()
-    Private:CreateHotZones()
+    Private:CreateLevelZones()
     Private:CreateNavigationFlightTimer()
     Private:UpdateNavigation()
 end
