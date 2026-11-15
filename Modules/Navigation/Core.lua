@@ -8,7 +8,7 @@ local State = {
     GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0,
     PlanContinent = -1, PlanX = 0, PlanY = 0,
     Elapsed = 0, Distance = -1,
-    isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false, hasHinted = false,
+    isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false,
 }
 
 local function GetGoalMapPosition()
@@ -84,11 +84,6 @@ local function CheckRoute(Continent, X, Y)
     Private.NavigationRoute = Route
     Private.NavigationArrow.Steps:SetText(table.concat(Steps, "\n"))
     Private.NavigationArrow:SetShown(not State.isInHotSpot)
-
-    if not State.hasHinted and not next(KnownTaxiNodes) then
-        State.hasHinted = true
-        print(string.format("|c%sNavigation|r Open a flight master's map to add your flight paths to routes.", Private.E.AccentColour))
-    end
 end
 
 local function Navigation_OnUpdate(_, TimeElapsed)
