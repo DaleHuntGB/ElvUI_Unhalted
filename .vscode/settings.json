@@ -95,7 +95,8 @@
         "GameTooltip_AddBlankLineToTooltip",
         "GameTooltip_AddInstructionLine",
         "UiMapPoint",
-        "MAP_PIN_INVALID_MAP"
+        "MAP_PIN_INVALID_MAP",
+        "QuestObjectiveTracker"
     ],
     "Lua.type.weakUnionCheck": true
 }

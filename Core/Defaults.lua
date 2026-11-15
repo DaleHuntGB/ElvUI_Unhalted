@@ -51,6 +51,13 @@ local Defaults = {
         Blizzard = {
             CleanObjectiveTrackerBanner = true,
             WorldMapZoneLevels = true,
+            ObjectiveTracker = {
+                Sorting = {
+                    Enable = true,
+                    SortBy = "LEVEL",
+                    Order = "ASCENDING",
+                },
+            },
             UIErrorsFrame = {
                 Enable = false,
                 Hide = false,
