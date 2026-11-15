@@ -236,7 +236,7 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Order = ACH:Select("Order", nil, 4, function() return ObjectiveTrackerOrders[Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy] end, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Order end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Order = value Private:UpdateObjectiveTracker() end, function() return not Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Order.relWidth = 0.5
 
-    Private.GUI.args.Blizzard.args.UIErrorsFrame = ACH:Group("UIErrorsFrame", nil, 2)
+    Private.GUI.args.Blizzard.args.UIErrorsFrame = ACH:Group("UI Errors", nil, 2)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.UIErrorsFrame.Enable end, function(_, value) Private.DB.global.Blizzard.UIErrorsFrame.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end)
     Private.GUI.args.Blizzard.args.UIErrorsFrame.args.Enable.relWidth = 0.5
 
