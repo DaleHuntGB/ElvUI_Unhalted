@@ -36,7 +36,7 @@ end
 
 local function DrawHotZones(Pin)
     local MapID = Pin:GetMap():GetMapID()
-    local ArtID = MapID and not issecretvalue(MapID) and C_Map.GetMapArtID(MapID) or 0
+    local ArtID = Private.DB.global.Miscellaneous.Navigation.Enable and MapID and not issecretvalue(MapID) and C_Map.GetMapArtID(MapID) or 0
     local PlayerLevel = UnitLevel("player")
     if ArtID == DrawnArtID and PlayerLevel == DrawnLevel then return end
     DrawnArtID, DrawnLevel = ArtID, PlayerLevel
@@ -49,7 +49,7 @@ local function DrawHotZones(Pin)
     local HotZones = Private.HotZones[ArtID]
     if not HotZones then return end
 
-    local DB = Private.DB.global.HotZones
+    local DB = Private.DB.global.Miscellaneous.Navigation.HotZones
     local Font, FontStyle = Private:FetchFont(Private.E.db.general.font), Private.E.db.general.fontStyle
     for _, HotZone in ipairs(HotZones) do
         local Colour = GetHotZoneColour(HotZone)
@@ -62,8 +62,8 @@ local function DrawHotZones(Pin)
     end
 end
 
-function Private:SetupHotZones()
-    if not Private.DB.global.HotZones.Enable then return end
+function Private:CreateHotZones()
+    if not Private.DB.global.Miscellaneous.Navigation.HotZones.Enable then return end
 
     for _, Zones in pairs(Private.HotZones) do
         for _, HotZone in ipairs(Zones) do
@@ -107,6 +107,6 @@ function Private:SetupHotZones()
 end
 
 function Private:UpdateHotZones()
-    DrawnArtID = 0
+    DrawnArtID = -1
     if Private.HotZonePin then DrawHotZones(Private.HotZonePin) end
 end

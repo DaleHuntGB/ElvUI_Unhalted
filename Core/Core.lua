@@ -50,7 +50,6 @@ function AddOn:OnEnable()
         Private:SetupAutoPurchase()
         Private:SetupBeastLore()
         Private:SetupDungeonJournal()
-        Private:SetupHotZones()
         Private:SetupNavigation()
         Private:SetupWorldMapZoneLevels()
     else

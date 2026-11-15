@@ -70,7 +70,7 @@ local function CheckRoute(Continent, X, Y)
     local DeltaX, DeltaY = X - State.PlanX, Y - State.PlanY
     if not State.isDirty and Continent == State.PlanContinent and DeltaX * DeltaX + DeltaY * DeltaY <= ReplanDistance * ReplanDistance then return end
 
-    local KnownTaxiNodes = Private.DB.char.Navigation.KnownTaxiNodes
+    local KnownTaxiNodes = Private.DB.global.Miscellaneous.Navigation.TaxiNodes[Private.DB.keys.char]
     State.isDirty, State.PlanContinent, State.PlanX, State.PlanY = false, Continent, X, Y
 
     local Route = Private:PlanNavigationRoute(Continent, X, Y, State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, KnownTaxiNodes)
@@ -150,7 +150,7 @@ local function Navigation_OnEvent(_, Event)
     end
     if Event ~= "TAXIMAP_OPENED" then UpdateGoal() return end
 
-    local KnownTaxiNodes = Private.DB.char.Navigation.KnownTaxiNodes
+    local KnownTaxiNodes = Private.DB.global.Miscellaneous.Navigation.TaxiNodes[Private.DB.keys.char]
     for _, TaxiNode in ipairs(C_TaxiMap.GetAllTaxiNodes(GetTaxiMapID())) do
         if TaxiNode.slotIndex and Private.NavigationTaxiNodes[TaxiNode.nodeID] then
             local NodeType = TaxiNodeGetType(TaxiNode.slotIndex)
@@ -170,6 +170,7 @@ function Private:UpdateNavigation()
     Private:UpdateNavigationFlightTimer()
     Private:DrawNavigationMap()
     Private:UpdateAvailableQuests()
+    Private:UpdateHotZones()
 
     if DB.Enable then
         NavigationFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -194,6 +195,7 @@ function Private:SetupNavigation()
     Private:CreateNavigationArrow()
     Private:CreateNavigationMap()
     Private:CreateAvailableQuests()
+    Private:CreateHotZones()
     Private:CreateNavigationFlightTimer()
     Private:UpdateNavigation()
 end

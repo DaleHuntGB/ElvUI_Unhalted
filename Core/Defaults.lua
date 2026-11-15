@@ -267,11 +267,6 @@ local Defaults = {
                 },
             }
         },
-        HotZones = {
-            Enable = true,
-            Opacity = 1,
-            FontSize = 18,
-        },
         MinimapStats = {
             Time = {
                 Enable = true,
@@ -373,6 +368,14 @@ local Defaults = {
                     Enable = true,
                     IconSize = 20,
                 },
+                HotZones = {
+                    Enable = true,
+                    Opacity = 1,
+                    FontSize = 18,
+                },
+                TaxiNodes = {
+                    ["*"] = {},
+                },
             },
             Hunter = {
                 HighlightOptimalRanks = true,
@@ -429,16 +432,6 @@ local Defaults = {
             HideTalkingHead = true,
             SkipCinematics = true,
         }
-    },
-    char = {
-        Navigation = {
-            KnownTaxiNodes = {},
-        },
-    },
-    faction = {
-        Navigation = {
-            FlightTimes = {},
-        },
     },
 }
 

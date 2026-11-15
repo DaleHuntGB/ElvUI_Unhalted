@@ -33,7 +33,7 @@ function Private:DrawNavigationMap()
     local Width, Height = Canvas:GetWidth(), Canvas:GetHeight()
     local FlightSize = MapFlightSize / Canvas:GetScale()
     local Faction = UnitFactionGroup("player") == "Horde" and 2 or 1
-    local KnownTaxiNodes = Private.DB.char.Navigation.KnownTaxiNodes
+    local KnownTaxiNodes = DB.TaxiNodes[Private.DB.keys.char]
     for TaxiNodeID, TaxiNode in pairs(Private.NavigationTaxiNodes) do
         local X, Y = GetMapPosition(MapID, TaxiNode[1], TaxiNode[2], TaxiNode[3])
         if X and bit.band(TaxiNode[5], Faction) ~= 0 and X >= 0 and X <= 1 and Y >= 0 and Y <= 1 then

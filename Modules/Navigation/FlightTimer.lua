@@ -2,10 +2,10 @@ local Private = select(2, ...)
 
 local RequestTimeout = 5
 
-local TaxiNodeBySlot, RouteNodes = {}, {}
+local TaxiNodeBySlot = {}
 local State = {
-    Route = "", Name = "", Seconds = 0, RequestTime = 0, StartTime = 0, Remaining = -1,
-    isEnabled = false, isEstimate = false,
+    Name = "", Seconds = 0, RequestTime = 0, StartTime = 0, Remaining = -1,
+    isEnabled = false,
 }
 
 local function StopFlight()
@@ -22,21 +22,16 @@ local function FlightTimer_OnTakeTaxiNode(Slot)
         TaxiNodeBySlot[TaxiNode.slotIndex] = TaxiNode.nodeID
     end
 
-    local Estimate = 0
-    wipe(RouteNodes)
+    local Seconds = 0
     for Hop = 1, GetNumRoutes(Slot) do
         local From, To = TaxiNodeBySlot[TaxiGetNodeSlot(Slot, Hop, true)], TaxiNodeBySlot[TaxiGetNodeSlot(Slot, Hop, false)]
-        if not From or not To then return end
-        local HopSeconds = Private.NavigationTaxiPaths[From] and Private.NavigationTaxiPaths[From][To]
-        Estimate = Estimate and HopSeconds and Estimate + HopSeconds
-        RouteNodes[Hop], RouteNodes[Hop + 1] = From, To
+        local HopSeconds = From and To and Private.NavigationTaxiPaths[From] and Private.NavigationTaxiPaths[From][To]
+        if not HopSeconds then return end
+        Seconds = Seconds + HopSeconds
     end
-    if #RouteNodes == 0 then return end
+    if Seconds == 0 then return end
 
-    local Route = table.concat(RouteNodes, ":")
-    local Measured = Private.DB.faction.Navigation.FlightTimes[Route]
-    State.Route, State.Name = Route, TaxiNodeName(Slot):match("^[^,]+")
-    State.Seconds, State.isEstimate = Measured or Estimate or 0, not Measured
+    State.Name, State.Seconds = TaxiNodeName(Slot):match("^[^,]+"), Seconds
     State.RequestTime = GetTime()
 end
 
@@ -45,7 +40,7 @@ local function FlightTimer_OnUpdate(FlightTimer)
     if Remaining == State.Remaining then return end
     State.Remaining = Remaining
     FlightTimer.Time:SetShown(Remaining > 0)
-    FlightTimer.Time:SetFormattedText(State.isEstimate and "~%d:%02d" or "%d:%02d", math.floor(Remaining / 60), Remaining % 60)
+    FlightTimer.Time:SetFormattedText("%d:%02d", math.floor(Remaining / 60), Remaining % 60)
 end
 
 local function FlightTimer_OnEvent(FlightTimer, Event)
@@ -61,7 +56,6 @@ local function FlightTimer_OnEvent(FlightTimer, Event)
     end
 
     if State.StartTime == 0 then return end
-    Private.DB.faction.Navigation.FlightTimes[State.Route] = math.floor(GetTime() - State.StartTime + 0.5)
     StopFlight()
 end
 
