@@ -220,17 +220,20 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.ObjectiveTracker = ACH:Group("Objective Tracker", nil, 1, nil, nil, nil, nil, function() return not Private.isForever end)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting = ACH:Group("Sorting", nil, 1)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.inline = true
-    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Enable = ACH:Toggle("Enable", "Orders your tracked quests by their |cFFFFCC00level|r or |cFFFFCC00proximity|r. Quests that tie keep their usual order.", 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable = value Private:UpdateObjectiveTracker() end)
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Enable = ACH:Toggle("Enable", "Orders your tracked quests by their |cFFFFCC00level|r or |cFFFFCC00proximity|r.", 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable = value Private:UpdateObjectiveTracker() end)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Enable.descStyle = "inline"
-    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Enable.relWidth = 1
-    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.SortBy = ACH:Select("Sort By", nil, 2, {["LEVEL"] = "Level", ["PROXIMITY"] = "Proximity"}, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy = value Private:UpdateObjectiveTracker() end, function() return not Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end)
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Enable.relWidth = 0.5
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.CompletedLast = ACH:Toggle("Sort |cFF40CC40Completed|r Quest Last", nil, 2, nil, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.CompletedLast end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.CompletedLast = value Private:UpdateObjectiveTracker() end, function() return not Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end)
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.CompletedLast.descStyle = "inline"
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.CompletedLast.relWidth = 0.5
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.SortBy = ACH:Select("Sort By", nil, 3, {["LEVEL"] = "Level", ["PROXIMITY"] = "Proximity"}, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy = value Private:UpdateObjectiveTracker() end, function() return not Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.SortBy.relWidth = 0.5
 
     local ObjectiveTrackerOrders = {
         LEVEL = {["ASCENDING"] = "Lowest First", ["DESCENDING"] = "Highest First"},
         PROXIMITY = {["ASCENDING"] = "Nearest First", ["DESCENDING"] = "Farthest First"},
     }
-    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Order = ACH:Select("Order", nil, 3, function() return ObjectiveTrackerOrders[Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy] end, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Order end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Order = value Private:UpdateObjectiveTracker() end, function() return not Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end)
+    Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Order = ACH:Select("Order", nil, 4, function() return ObjectiveTrackerOrders[Private.DB.global.Blizzard.ObjectiveTracker.Sorting.SortBy] end, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Order end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Order = value Private:UpdateObjectiveTracker() end, function() return not Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Order.relWidth = 0.5
 
     Private.GUI.args.Blizzard.args.UIErrorsFrame = ACH:Group("UIErrorsFrame", nil, 2)

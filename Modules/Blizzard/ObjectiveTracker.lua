@@ -3,7 +3,7 @@ local Private = select(2, ...)
 local ProximityInterval = 1
 
 local Blocks, QuestBlocks, Placement, Applied = {}, {}, {}, {}
-local BlockIndex, BlockValue, QuestLevels = {}, {}, {}
+local BlockIndex, BlockValue, BlockComplete, QuestLevels = {}, {}, {}, {}
 local State = { isHooked = false, isDescending = false, Ticker = false }
 
 local function GetQuestLevel(QuestID)
@@ -18,7 +18,14 @@ local function GetQuestDistance(QuestID)
     return DistanceSq
 end
 
+local function IsQuestBlockComplete(Block)
+    if Block.cached then return BlockComplete[Block] or false end
+    return C_QuestLog.IsComplete(Block.id)
+end
+
 local function CompareQuestBlocks(BlockA, BlockB)
+    local CompleteA, CompleteB = BlockComplete[BlockA], BlockComplete[BlockB]
+    if CompleteA ~= CompleteB then return CompleteB end
     local ValueA, ValueB = BlockValue[BlockA], BlockValue[BlockB]
     if ValueA == ValueB then return BlockIndex[BlockA] < BlockIndex[BlockB] end
     if not ValueA then return false end
@@ -47,6 +54,7 @@ local function AnchorQuestBlocks(Module, isForced)
         if type(Block.id) == "number" then
             QuestBlocks[#QuestBlocks + 1] = Block
             BlockIndex[Block], BlockValue[Block] = #Blocks, DB.Enable and GetValue(Block.id)
+            BlockComplete[Block] = DB.Enable and DB.CompletedLast and IsQuestBlockComplete(Block) or false
         end
         Block = Block.nextBlock
     end

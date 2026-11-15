@@ -56,6 +56,7 @@ local Defaults = {
                     Enable = true,
                     SortBy = "LEVEL",
                     Order = "ASCENDING",
+                    CompletedLast = true,
                 },
             },
             UIErrorsFrame = {
