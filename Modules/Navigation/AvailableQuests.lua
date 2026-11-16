@@ -3,6 +3,7 @@ local Private = select(2, ...)
 local IconAtlas, RepeatableIconAtlas = "QuestNormal", "QuestDaily"
 local RefreshDelay = 0.2
 local RaceBits = { [95] = 2 ^ 32, [96] = 2 ^ 33 }
+local UndiscoveredStandings = { [87] = -36000, [576] = -36000, [910] = -36000 }
 local RefreshEvents = { "QUEST_LOG_UPDATE", "PLAYER_LEVEL_UP", "SKILL_LINES_CHANGED", "UPDATE_FACTION" }
 
 local Player = { Level = 0, TrivialRange = 0, RaceBit = 1, ClassBit = 1 }
@@ -55,7 +56,8 @@ end
 
 local function GetStanding(FactionID)
     local FactionData = C_Reputation.GetFactionDataByID(FactionID)
-    return FactionData and FactionData.currentStanding or -math.huge
+    if FactionData then return FactionData.currentStanding end
+    return UndiscoveredStandings[FactionID] or 0
 end
 
 local function HasSkill(Skill)
@@ -93,9 +95,13 @@ local function GetQuestLevel(Quest)
     return Quest[2] > 0 and Quest[2] or Player.Level
 end
 
+local function GetRequiredLevel(Quest)
+    return Quest[3] > 0 and Quest[3] or GetQuestLevel(Quest)
+end
+
 local function CheckQuest(QuestID)
     local Quest = Private.AvailableQuests[QuestID]
-    if not Quest or Quest[3] > Player.Level then return false end
+    if not Quest or GetRequiredLevel(Quest) > Player.Level then return false end
     if Player.Level - GetQuestLevel(Quest) > Player.TrivialRange then return false end
     if not HasBit(Quest[4], Player.RaceBit) or not HasBit(Quest[5], Player.ClassBit) then return false end
     if IsTaken(QuestID) then return false end
@@ -123,7 +129,7 @@ end
 
 local function RefreshPlayer()
     Player.Level = UnitLevel("player")
-    Player.TrivialRange = UnitQuestTrivialLevelRange("player")
+    Player.TrivialRange = C_QuestLog.GetTrivialRange()
     wipe(Available)
     wipe(Skills)
     AddSkills(GetProfessions())
@@ -142,10 +148,15 @@ local function GetHubIcon(Hub)
     return isRepeatableOnly and RepeatableIconAtlas
 end
 
+local function GetQuestColour(Level)
+    local Colour = GetQuestDifficultyColor(Level)
+    return Colour == QuestDifficultyColors.trivial and QuestDifficultyColors.standard or Colour
+end
+
 local function AddQuestLines(QuestID)
     local Quest = Private.AvailableQuests[QuestID]
     local Level = GetQuestLevel(Quest)
-    local Colour = GetQuestDifficultyColor(Level)
+    local Colour = GetQuestColour(Level)
     GameTooltip:AddLine("[" .. Level .. "] " .. Quest[1], Colour.r, Colour.g, Colour.b)
     if Quest[6] then GameTooltip:AddLine(Quest[6], 1, 1, 1, true) end
 end

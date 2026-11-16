@@ -92,7 +92,7 @@ end
 
 local function Navigation_OnUpdate(_, TimeElapsed)
     local X, Y, _, Continent = UnitPosition("player")
-    if not X or issecretvalue(X) then
+    if issecretvalue(X) or not X then
         if Private.NavigationRoute then ClearRoute() State.isDirty = true end
         return
     end
@@ -114,7 +114,7 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     local Points = Route[1].Points
     local Target = Points[#Points]
     local Facing = GetPlayerFacing()
-    if State.isOnTaxi or Target[1] ~= Continent or not Facing or issecretvalue(Facing) then SetDirectionShown(false) return end
+    if State.isOnTaxi or Target[1] ~= Continent or issecretvalue(Facing) or not Facing then SetDirectionShown(false) return end
     SetDirectionShown(true)
 
     local DeltaX, DeltaY = Target[2] - X, Target[3] - Y

@@ -36,7 +36,7 @@ end
 
 local function DrawLevelZones(Pin)
     local MapID = Pin:GetMap():GetMapID()
-    local ArtID = Private.DB.global.Miscellaneous.Navigation.Enable and MapID and not issecretvalue(MapID) and C_Map.GetMapArtID(MapID) or 0
+    local ArtID = Private.DB.global.Miscellaneous.Navigation.Enable and not issecretvalue(MapID) and MapID and C_Map.GetMapArtID(MapID) or 0
     local PlayerLevel = UnitLevel("player")
     if ArtID == DrawnArtID and PlayerLevel == DrawnLevel then return end
     DrawnArtID, DrawnLevel = ArtID, PlayerLevel

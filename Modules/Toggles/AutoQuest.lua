@@ -38,7 +38,7 @@ local function AutoQuestFrame_OnEvent(_, event)
             AcceptQuest()
         end
     elseif event == "QUEST_PROGRESS" then
-        if IsQuestCompletable() then CompleteQuest() end
+        if IsQuestCompletable() and GetQuestMoneyToGet() == 0 then CompleteQuest() end
     elseif event == "QUEST_COMPLETE" then
         if GetNumQuestRewards() > 0 then return end
         local Choices = GetNumQuestChoices()
