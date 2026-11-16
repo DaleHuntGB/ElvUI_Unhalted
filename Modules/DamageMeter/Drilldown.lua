@@ -1,10 +1,10 @@
 local Private = select(2, ...)
-local BAR_HEIGHT = 24
-local SEPARATOR_HEIGHT = 18
-local SPACING = 0
-local INSET = 1
-local TEXT_PADDING = 3
-local MAX_ROWS_PER_SECTION = 10
+local BarHeight = 24
+local SeparatorHeight = 18
+local Spacing = 0
+local Inset = 1
+local TextPadding = 3
+local MaxRowsPerSection = 10
 
 local PetSectionMeterTypes = {
     [Enum.DamageMeterType.DamageDone] = true,
@@ -15,7 +15,7 @@ local SeenCreatures = {}
 
 local function GetCreatureName(CombatSpell)
     local CreatureName = CombatSpell.creatureName
-    if Private:SecretValue(CreatureName) or CreatureName == "" then return end
+    if Private:IsSecret(CreatureName) or CreatureName == "" then return end
     return CreatureName
 end
 
@@ -26,30 +26,7 @@ local function AddSection(Layout, CombatSpells, CreatureName)
         if GetCreatureName(CombatSpell) == CreatureName then
             Layout[#Layout + 1] = CombatSpell
             RowCount = RowCount + 1
-            if RowCount == MAX_ROWS_PER_SECTION then return end
-        end
-    end
-end
-
-local function BuildLayout(Layout, CombatSpells, ShowPetSections)
-    wipe(Layout)
-
-    if not ShowPetSections then
-        for i = 1, math.min(#CombatSpells, MAX_ROWS_PER_SECTION) do
-            Layout[i] = CombatSpells[i]
-        end
-        return
-    end
-
-    AddSection(Layout, CombatSpells)
-
-    wipe(SeenCreatures)
-    for i = 1, #CombatSpells do
-        local CreatureName = GetCreatureName(CombatSpells[i])
-        if CreatureName and not SeenCreatures[CreatureName] then
-            SeenCreatures[CreatureName] = true
-            Layout[#Layout + 1] = CreatureName
-            AddSection(Layout, CombatSpells, CreatureName)
+            if RowCount == MaxRowsPerSection then return end
         end
     end
 end
@@ -74,7 +51,7 @@ function Private:CreateDrilldown(Row)
             Private.E:SetFont(Entry.Name_Text, Font, TextDB.Name_FontSize, Private.E.db.general.fontStyle)
             Entry.Name_Text:ClearAllPoints()
             Entry.Name_Text:SetPoint("LEFT", Entry.StatusBar, "LEFT", TextDB.Name_XOffset, TextDB.Name_YOffset)
-            Entry.Name_Text:SetPoint("RIGHT", Entry.Amount_Text, "LEFT", -TEXT_PADDING, TextDB.Name_YOffset - TextDB.Amount_YOffset)
+            Entry.Name_Text:SetPoint("RIGHT", Entry.Amount_Text, "LEFT", -TextPadding, TextDB.Name_YOffset - TextDB.Amount_YOffset)
             Entry.Name_Text:SetTextColor(unpack(TextDB.Name_Colour))
         end
 
@@ -95,42 +72,17 @@ function Private:CreateDrilldown(Row)
             end
         end
 
-        local function CreateSeparator(Drilldown, DB)
-            local Separator = CreateFrame("Frame", nil, Drilldown)
-            Separator:SetHeight(SEPARATOR_HEIGHT)
-
-            Separator.Name_Text = Separator:CreateFontString(nil, "OVERLAY")
-            Separator.Name_Text:SetPoint("CENTER", Separator, "CENTER", 0, 0)
-            Separator.Name_Text:SetJustifyH("CENTER")
-            Separator.Name_Text:SetWordWrap(false)
-
-            Separator.Left_Line = Separator:CreateTexture(nil, "OVERLAY")
-            Separator.Left_Line:SetHeight(1)
-            Separator.Left_Line:SetPoint("LEFT", Separator, "LEFT", TEXT_PADDING, 0)
-            Separator.Left_Line:SetPoint("RIGHT", Separator.Name_Text, "LEFT", -TEXT_PADDING, 0)
-
-            Separator.Right_Line = Separator:CreateTexture(nil, "OVERLAY")
-            Separator.Right_Line:SetHeight(1)
-            Separator.Right_Line:SetPoint("LEFT", Separator.Name_Text, "RIGHT", TEXT_PADDING, 0)
-            Separator.Right_Line:SetPoint("RIGHT", Separator, "RIGHT", -TEXT_PADDING, 0)
-
-            Separator.UpdateSettings = Separator_UpdateSettings
-            Separator:UpdateSettings(DB)
-
-            return Separator
-        end
-
         local function CreateSpellRow(Drilldown, DB)
             local Entry = CreateFrame("Frame", nil, Drilldown)
-            Entry:SetHeight(BAR_HEIGHT)
+            Entry:SetHeight(BarHeight)
 
             Entry.Icon = Entry:CreateTexture(nil, "OVERLAY")
             Entry.Icon:SetPoint("TOPLEFT", Entry, "TOPLEFT", 0, 0)
-            Entry.Icon:SetSize(BAR_HEIGHT, BAR_HEIGHT)
+            Entry.Icon:SetSize(BarHeight, BarHeight)
             Entry.Icon:SetTexCoord(unpack(Private.E.TexCoords))
 
             Entry.StatusBar = CreateFrame("StatusBar", nil, Entry)
-            Entry.StatusBar:SetPoint("TOPLEFT", Entry.Icon, "TOPRIGHT", SPACING, 0)
+            Entry.StatusBar:SetPoint("TOPLEFT", Entry.Icon, "TOPRIGHT", Spacing, 0)
             Entry.StatusBar:SetPoint("BOTTOMRIGHT", Entry, "BOTTOMRIGHT", 0, 0)
             Entry.StatusBar:EnableMouse(false)
 
@@ -167,16 +119,12 @@ function Private:CreateDrilldown(Row)
                 return Private:RefreshDeathRecap(Drilldown, SourceRow, CreateSpellRow)
             end
 
-            if Private:SecretValue(CombatSource.sourceGUID) or Private:SecretValue(CombatSource.sourceCreatureID) then Drilldown:Hide() return end
+            if Private:IsSecret(CombatSource.sourceGUID) or Private:IsSecret(CombatSource.sourceCreatureID) then Drilldown:Hide() return end
             if not CombatSource.sourceGUID and not CombatSource.sourceCreatureID then Drilldown:Hide() return end
             if not C_DamageMeter.IsDamageMeterAvailable() then Drilldown:Hide() return end
 
-            local SessionSource;
-            if DamageMeterFrame.SessionID then
-                SessionSource = C_DamageMeter.GetCombatSessionSourceFromID(DamageMeterFrame.SessionID, DB.MeterType, CombatSource.sourceGUID, CombatSource.sourceCreatureID)
-            else
-                SessionSource = C_DamageMeter.GetCombatSessionSourceFromType(DB.SessionType, DB.MeterType, CombatSource.sourceGUID, CombatSource.sourceCreatureID)
-            end
+            local GetSessionSource = DamageMeterFrame.SessionID and C_DamageMeter.GetCombatSessionSourceFromID or C_DamageMeter.GetCombatSessionSourceFromType
+            local SessionSource = GetSessionSource(DamageMeterFrame.SessionID or DB.SessionType, DB.MeterType, CombatSource.sourceGUID, CombatSource.sourceCreatureID)
             local CombatSpells = SessionSource and SessionSource.combatSpells
             if not CombatSpells or #CombatSpells == 0 then Drilldown:Hide() return end
 
@@ -185,9 +133,25 @@ function Private:CreateDrilldown(Row)
             local Layout = Drilldown.Layout
             local RowCount = 0
             local SeparatorCount = 0
-            local OffsetY = INSET
+            local OffsetY = Inset
 
-            BuildLayout(Layout, CombatSpells, PetSectionMeterTypes[DB.MeterType])
+            wipe(Layout)
+            if PetSectionMeterTypes[DB.MeterType] then
+                AddSection(Layout, CombatSpells)
+                wipe(SeenCreatures)
+                for i = 1, #CombatSpells do
+                    local CreatureName = GetCreatureName(CombatSpells[i])
+                    if CreatureName and not SeenCreatures[CreatureName] then
+                        SeenCreatures[CreatureName] = true
+                        Layout[#Layout + 1] = CreatureName
+                        AddSection(Layout, CombatSpells, CreatureName)
+                    end
+                end
+            else
+                for i = 1, math.min(#CombatSpells, MaxRowsPerSection) do
+                    Layout[i] = CombatSpells[i]
+                end
+            end
 
             for i = 1, #Layout do
                 local LayoutItem = Layout[i]
@@ -195,16 +159,35 @@ function Private:CreateDrilldown(Row)
                     SeparatorCount = SeparatorCount + 1
                     local Separator = Drilldown.Separators[SeparatorCount]
                     if not Separator then
-                        Separator = CreateSeparator(Drilldown, DB)
+                        Separator = CreateFrame("Frame", nil, Drilldown)
+                        Separator:SetHeight(SeparatorHeight)
+
+                        Separator.Name_Text = Separator:CreateFontString(nil, "OVERLAY")
+                        Separator.Name_Text:SetPoint("CENTER", Separator, "CENTER", 0, 0)
+                        Separator.Name_Text:SetJustifyH("CENTER")
+                        Separator.Name_Text:SetWordWrap(false)
+
+                        Separator.Left_Line = Separator:CreateTexture(nil, "OVERLAY")
+                        Separator.Left_Line:SetHeight(1)
+                        Separator.Left_Line:SetPoint("LEFT", Separator, "LEFT", TextPadding, 0)
+                        Separator.Left_Line:SetPoint("RIGHT", Separator.Name_Text, "LEFT", -TextPadding, 0)
+
+                        Separator.Right_Line = Separator:CreateTexture(nil, "OVERLAY")
+                        Separator.Right_Line:SetHeight(1)
+                        Separator.Right_Line:SetPoint("LEFT", Separator.Name_Text, "RIGHT", TextPadding, 0)
+                        Separator.Right_Line:SetPoint("RIGHT", Separator, "RIGHT", -TextPadding, 0)
+
+                        Separator.UpdateSettings = Separator_UpdateSettings
+                        Separator:UpdateSettings(DB)
                         Drilldown.Separators[SeparatorCount] = Separator
                     end
                     Separator:ClearAllPoints()
-                    Separator:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", INSET, -OffsetY)
-                    Separator:SetPoint("TOPRIGHT", Drilldown, "TOPRIGHT", -INSET, -OffsetY)
+                    Separator:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", Inset, -OffsetY)
+                    Separator:SetPoint("TOPRIGHT", Drilldown, "TOPRIGHT", -Inset, -OffsetY)
                     Separator.Name_Text:SetText(LayoutItem)
                     Separator.Name_Text:SetTextColor(BarColour.r, BarColour.g, BarColour.b)
                     Separator:Show()
-                    OffsetY = OffsetY + SEPARATOR_HEIGHT + SPACING
+                    OffsetY = OffsetY + SeparatorHeight + Spacing
                 else
                     RowCount = RowCount + 1
                     local CombatSpell = LayoutItem
@@ -214,8 +197,8 @@ function Private:CreateDrilldown(Row)
                         Drilldown.Rows[RowCount] = Entry
                     end
                     Entry:ClearAllPoints()
-                    Entry:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", INSET, -OffsetY)
-                    Entry:SetPoint("TOPRIGHT", Drilldown, "TOPRIGHT", -INSET, -OffsetY)
+                    Entry:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", Inset, -OffsetY)
+                    Entry:SetPoint("TOPRIGHT", Drilldown, "TOPRIGHT", -Inset, -OffsetY)
                     Entry.StatusBar:SetMinMaxValues(0, SessionSource.maxAmount)
                     Entry.StatusBar:SetValue(CombatSpell.totalAmount)
                     Entry.StatusBar:SetStatusBarColor(BarColour.r, BarColour.g, BarColour.b, BarColour.a or 1)
@@ -223,34 +206,34 @@ function Private:CreateDrilldown(Row)
                     local SpellID = CombatSpell.spellID
                     local UnitDetails = CombatSpell.combatSpellDetails
                     local UnitName = UnitDetails and UnitDetails.unitName
-                    if DB.MeterType == Enum.DamageMeterType.EnemyDamageTaken and (Private:SecretValue(UnitName) or (UnitName and UnitName ~= "")) then
+                    if DB.MeterType == Enum.DamageMeterType.EnemyDamageTaken and (Private:IsSecret(UnitName) or (UnitName and UnitName ~= "")) then
                         local SpecIconID = UnitDetails.specIconID
-                        if Private:SecretValue(SpecIconID) or SpecIconID then
+                        if Private:IsSecret(SpecIconID) or SpecIconID then
                             Entry.Icon:SetTexture(SpecIconID)
                         else
                             Entry.Icon:SetTexture(135274)
                         end
                         Entry.Name_Text:SetText(Private:StripRealm(UnitName, UnitDetails.unitClassFilename))
-                    elseif not Private:SecretValue(SpellID) and SpellID == 0 then
+                    elseif not Private:IsSecret(SpellID) and SpellID == 0 then
                         Entry.Icon:SetTexture("Interface\\Icons\\INV_Sword_04")
                         Entry.Name_Text:SetText(ACTION_SWING)
                     else
                         local SpellName = C_Spell.GetSpellName(SpellID)
                         local SpellTexture = C_Spell.GetSpellTexture(SpellID)
-                        if not Private:SecretValue(SpellName) and not SpellName then SpellName = UNKNOWN end
+                        if not Private:IsSecret(SpellName) and not SpellName then SpellName = UNKNOWN end
                         Entry.Icon:SetTexture(SpellTexture)
                         Entry.Name_Text:SetText(SpellName)
                     end
                     Entry.Amount_Text:SetText(Private:AbbreviateValue(CombatSpell.totalAmount))
                     Entry:Show()
-                    OffsetY = OffsetY + BAR_HEIGHT + SPACING
+                    OffsetY = OffsetY + BarHeight + Spacing
                 end
             end
             for i = RowCount + 1, #Drilldown.Rows do
                 Drilldown.Rows[i]:Hide()
             end
 
-            Drilldown:SetSize(DB.Size[1], OffsetY - SPACING + INSET)
+            Drilldown:SetSize(DB.Size[1], OffsetY - Spacing + Inset)
 
             return true
         end

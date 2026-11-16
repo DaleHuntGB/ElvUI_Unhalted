@@ -71,7 +71,19 @@ local function HasAnySkill(Ranks)
     return false
 end
 
-local function MeetsRequirements(Requirements)
+local function GetQuestLevel(Quest)
+    return Quest[2] > 0 and Quest[2] or Player.Level
+end
+
+local function CheckQuest(QuestID)
+    local Quest = Private.AvailableQuests[QuestID]
+    if not Quest or (Quest[3] > 0 and Quest[3] or GetQuestLevel(Quest)) > Player.Level then return false end
+    if Player.Level - GetQuestLevel(Quest) > Player.TrivialRange then return false end
+    if not HasBit(Quest[4], Player.RaceBit) or not HasBit(Quest[5], Player.ClassBit) then return false end
+    if IsTaken(QuestID) then return false end
+
+    local Requirements = Quest[7]
+    if not Requirements then return true end
     if Requirements.MaxLevel and Player.Level > Requirements.MaxLevel then return false end
     if Requirements.Single and not AnyDone(Requirements.Single) then return false end
     if Requirements.Group and not GroupDone(Requirements.Group) then return false end
@@ -89,23 +101,6 @@ local function MeetsRequirements(Requirements)
     if Requirements.MinRep and GetStanding(Requirements.MinRep[1]) < Requirements.MinRep[2] then return false end
     if Requirements.MaxRep and GetStanding(Requirements.MaxRep[1]) >= Requirements.MaxRep[2] then return false end
     return true
-end
-
-local function GetQuestLevel(Quest)
-    return Quest[2] > 0 and Quest[2] or Player.Level
-end
-
-local function GetRequiredLevel(Quest)
-    return Quest[3] > 0 and Quest[3] or GetQuestLevel(Quest)
-end
-
-local function CheckQuest(QuestID)
-    local Quest = Private.AvailableQuests[QuestID]
-    if not Quest or GetRequiredLevel(Quest) > Player.Level then return false end
-    if Player.Level - GetQuestLevel(Quest) > Player.TrivialRange then return false end
-    if not HasBit(Quest[4], Player.RaceBit) or not HasBit(Quest[5], Player.ClassBit) then return false end
-    if IsTaken(QuestID) then return false end
-    return not Quest[7] or MeetsRequirements(Quest[7])
 end
 
 local function IsAvailable(QuestID)
@@ -127,14 +122,6 @@ local function AddSkills(...)
     end
 end
 
-local function RefreshPlayer()
-    Player.Level = UnitLevel("player")
-    Player.TrivialRange = C_QuestLog.GetTrivialRange()
-    wipe(Available)
-    wipe(Skills)
-    AddSkills(GetProfessions())
-end
-
 local function GetHubIcon(Hub)
     local isRepeatableOnly = false
     for Index = 3, #Hub do
@@ -146,19 +133,6 @@ local function GetHubIcon(Hub)
         end
     end
     return isRepeatableOnly and RepeatableIconAtlas
-end
-
-local function GetQuestColour(Level)
-    local Colour = GetQuestDifficultyColor(Level)
-    return Colour == QuestDifficultyColors.trivial and QuestDifficultyColors.standard or Colour
-end
-
-local function AddQuestLines(QuestID)
-    local Quest = Private.AvailableQuests[QuestID]
-    local Level = GetQuestLevel(Quest)
-    local Colour = GetQuestColour(Level)
-    GameTooltip:AddLine("[" .. Level .. "] " .. Quest[1], Colour.r, Colour.g, Colour.b)
-    if Quest[6] then GameTooltip:AddLine(Quest[6], 1, 1, 1, true) end
 end
 
 local function QuestIcon_OnEnter(Icon)
@@ -175,7 +149,12 @@ local function QuestIcon_OnEnter(Icon)
                 GameTooltip:AddLine(GiverName, NORMAL_FONT_COLOR:GetRGB())
                 GiverName, hasLines = "", true
             end
-            AddQuestLines(Value)
+            local Quest = Private.AvailableQuests[Value]
+            local Level = GetQuestLevel(Quest)
+            local Colour = GetQuestDifficultyColor(Level)
+            if Colour == QuestDifficultyColors.trivial then Colour = QuestDifficultyColors.standard end
+            GameTooltip:AddLine("[" .. Level .. "] " .. Quest[1], Colour.r, Colour.g, Colour.b)
+            if Quest[6] then GameTooltip:AddLine(Quest[6], 1, 1, 1, true) end
         end
     end
     GameTooltip:Show()
@@ -194,7 +173,11 @@ function Private:DrawAvailableQuests()
     local Hubs = MapID and Private.AvailableQuestGivers[MapID]
     if not Hubs then return end
 
-    RefreshPlayer()
+    Player.Level = UnitLevel("player")
+    Player.TrivialRange = C_QuestLog.GetTrivialRange()
+    wipe(Available)
+    wipe(Skills)
+    AddSkills(GetProfessions())
     local Overlay = Private.AvailableQuestOverlay
     local Width, Height = Overlay:GetWidth(), Overlay:GetHeight()
     local IconSize = GetIconSize()

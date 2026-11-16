@@ -9,26 +9,6 @@ local GarrisonInstanceIDs = {
     [1160] = true,
 }
 
-local function HideInstanceDifficulty()
-    local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
-    local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
-    local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
-    local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
-    if InstanceDifficultyIndicator then InstanceDifficultyIndicator:SetAlpha(0) end
-    if InstanceIndicator then InstanceIndicator:SetAlpha(0) end
-    if GuildIndicator then GuildIndicator:SetAlpha(0) end
-    if ChallengeIndicator then ChallengeIndicator:SetAlpha(0) end
-end
-
-local function FetchDelveTierDifficulty(WidgetID)
-    if not WidgetID then return "" end
-    local WidgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID)
-
-    if WidgetInfo and WidgetInfo.tierText then return string.format("%s", WidgetInfo.tierText) end
-
-    return ""
-end
-
 local function FetchInstanceDifficulty()
     local AccentColour = Private.E.AccentColour
     local _, _, DiffID, _, MaxPlayers, _, _, InstanceID, CurrentPlayers = GetInstanceInfo()
@@ -65,7 +45,8 @@ local function FetchInstanceDifficulty()
     elseif DiffID == 205 then
         InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. "F" .. "|r"
     elseif DiffID == 208 then
-        InstanceDifficulty = "|c" .. AccentColour .. "T" .. "|r" .. FetchDelveTierDifficulty(6183)
+        local WidgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(6183)
+        InstanceDifficulty = "|c" .. AccentColour .. "T" .. "|r" .. (WidgetInfo and WidgetInfo.tierText or "")
     elseif DiffID == 233 then
         InstanceDifficulty = CurrentPlayers .. "|c" .. AccentColour .. "M" .. "|r"
     end
@@ -100,7 +81,15 @@ function Private:SetupInstanceDifficulty()
             Private.InstanceDifficultyFrame:SetWidth(Private.InstanceDifficultyFrame.Text:GetUnboundedStringWidth())
             Private.InstanceDifficultyFrame:SetHeight(Private.InstanceDifficultyFrame.Text:GetStringHeight())
         end)
-        HideInstanceDifficulty()
+
+        local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
+        local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
+        local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
+        local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
+        if InstanceDifficultyIndicator then InstanceDifficultyIndicator:SetAlpha(0) end
+        if InstanceIndicator then InstanceIndicator:SetAlpha(0) end
+        if GuildIndicator then GuildIndicator:SetAlpha(0) end
+        if ChallengeIndicator then ChallengeIndicator:SetAlpha(0) end
     end
 
     Private.InstanceDifficultyFrame:SetShown(DB.Enable)

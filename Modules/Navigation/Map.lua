@@ -6,13 +6,6 @@ local MapFlightSize = 16
 
 local MapVector = CreateVector2D(0, 0)
 
-local function GetMapPosition(MapID, Continent, X, Y)
-    MapVector:SetXY(X, Y)
-    local _, Position = C_Map.GetMapPosFromWorldPos(Continent, MapVector, MapID)
-    if not Position then return end
-    return Position:GetXY()
-end
-
 local function FlightIcon_OnEnter(Icon)
     GameTooltip:SetOwner(Icon, "ANCHOR_RIGHT")
     GameTooltip:SetText(Icon.Name, 1, 1, 1)
@@ -35,8 +28,11 @@ function Private:DrawNavigationMap()
     local Faction = UnitFactionGroup("player") == "Horde" and 2 or 1
     local KnownTaxiNodes = DB.TaxiNodes[Private.DB.keys.char]
     for TaxiNodeID, TaxiNode in pairs(Private.NavigationTaxiNodes) do
-        local X, Y = GetMapPosition(MapID, TaxiNode[1], TaxiNode[2], TaxiNode[3])
-        if X and bit.band(TaxiNode[5], Faction) ~= 0 and X >= 0 and X <= 1 and Y >= 0 and Y <= 1 then
+        MapVector:SetXY(TaxiNode[2], TaxiNode[3])
+        local _, Position = C_Map.GetMapPosFromWorldPos(TaxiNode[1], MapVector, MapID)
+        local X, Y = -1, -1
+        if Position then X, Y = Position:GetXY() end
+        if bit.band(TaxiNode[5], Faction) ~= 0 and X >= 0 and X <= 1 and Y >= 0 and Y <= 1 then
             local isKnown = KnownTaxiNodes[TaxiNodeID]
             local Icon = Pool:Acquire()
             if not Icon.Texture then

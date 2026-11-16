@@ -4,7 +4,7 @@ local PlayerPoint = { 0, 0, 0, "", Zone = 0, Penalty = 0 }
 local GoalPoint = { 0, 0, 0, "", Zone = 0, Penalty = 0 }
 local Points = { PlayerPoint, GoalPoint }
 local GoalPoints = { GoalPoint }
-local PointByTaxiNode, ZonePoints, ZoneNames = {}, { [0] = {} }, {}
+local PointByTaxiNode, ZonePoints = {}, { [0] = {} }
 local Cost, Previous, Mode, Via, Visited = {}, {}, {}, {}, {}
 local MapVector = CreateVector2D(0, 0)
 
@@ -28,21 +28,12 @@ local function GetZone(Continent, X, Y)
     return CityZones[Info.mapID] or Info.mapID
 end
 
-local function GetMapZone(MapID)
-    local Info = MapID and C_Map.GetMapInfo(MapID)
-    while Info and Info.mapType > Enum.UIMapType.Zone do Info = C_Map.GetMapInfo(Info.parentMapID) end
-    if not Info or Info.mapType ~= Enum.UIMapType.Zone then return end
-    return CityZones[Info.mapID] or Info.mapID
-end
-
 local function GetPointZone(Continent, X, Y, MapID)
     if not ContinentMaps[Continent] then return 0 end
-    return GetMapZone(MapID) or GetZone(Continent, X, Y)
-end
-
-local function GetZoneName(Zone)
-    ZoneNames[Zone] = ZoneNames[Zone] or C_Map.GetMapInfo(Zone).name
-    return ZoneNames[Zone]
+    local Info = MapID and C_Map.GetMapInfo(MapID)
+    while Info and Info.mapType > Enum.UIMapType.Zone do Info = C_Map.GetMapInfo(Info.parentMapID) end
+    if Info and Info.mapType == Enum.UIMapType.Zone then return CityZones[Info.mapID] or Info.mapID end
+    return GetZone(Continent, X, Y)
 end
 
 local function AddToZone(Zone, Point)
@@ -155,7 +146,7 @@ function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, Goal
             table.insert(NextLeg.Points, 1, Points[From])
         else
             local Boarding = TravelMode == "Run" and NextLeg and (NextLeg.Mode == "Flight Path" and " Flight Master" or " " .. NextLeg.Mode) or ""
-            local Name = Point.isGateway and "Through " .. GetZoneName(Via[Index]) or Point[4] .. Boarding
+            local Name = Point.isGateway and "Through " .. C_Map.GetMapInfo(Via[Index]).name or Point[4] .. Boarding
             table.insert(Legs, 1, { Mode = TravelMode, Name = Name, Points = { Points[From], Point } })
         end
         Index = From

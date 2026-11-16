@@ -22,22 +22,20 @@ local SpellRanks = {
 local OptimalSpells, GlowingButtons = {}, {}
 local isHooked = false
 
-local function UpdateOptimalSpells()
-    wipe(OptimalSpells)
-    for _, Ranks in pairs(SpellRanks) do
-        for _, SpellID in ipairs(Ranks) do
-            if C_SpellBook.IsSpellKnown(SpellID) then
-                OptimalSpells[SpellID] = true
-                break
-            end
-        end
-    end
-end
-
 local function UpdateGlows()
     local CustomGlow = Private.E.Libs.CustomGlow
     local isEnabled = Private.DB.global.Miscellaneous.Hunter.HighlightOptimalRanks
-    if isEnabled then UpdateOptimalSpells() end
+    if isEnabled then
+        wipe(OptimalSpells)
+        for _, Ranks in pairs(SpellRanks) do
+            for _, SpellID in ipairs(Ranks) do
+                if C_SpellBook.IsSpellKnown(SpellID) then
+                    OptimalSpells[SpellID] = true
+                    break
+                end
+            end
+        end
+    end
 
     for _, Frame in PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame:EnumerateFrames() do
         if Frame.HasValidData and Frame.Button then

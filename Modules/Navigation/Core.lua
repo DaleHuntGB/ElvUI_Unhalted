@@ -30,22 +30,6 @@ local function GetGoalMapPosition()
     if Waypoint then return Waypoint.uiMapID, Waypoint.position.x, Waypoint.position.y, "Map Pin" end
 end
 
-local function GetGoalWorldPosition()
-    local MapID, X, Y, Name, QuestID = GetGoalMapPosition()
-    if not MapID or not X then return end
-    GoalVector:SetXY(X, Y)
-    local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
-    if not Position then return end
-    local WorldX, WorldY = Position:GetXY()
-    return Continent, WorldX, WorldY, Name, QuestID, MapID
-end
-
-local function IsInHotSpot()
-    if State.GoalQuestID == 0 then return false end
-    local isInside = C_Minimap.IsInsideQuestBlob(State.GoalQuestID)
-    return not issecretvalue(isInside) and isInside
-end
-
 local function SetDirectionShown(isShown)
     if State.hasDirection == isShown then return end
     State.hasDirection = isShown
@@ -92,7 +76,7 @@ end
 
 local function Navigation_OnUpdate(_, TimeElapsed)
     local X, Y, _, Continent = UnitPosition("player")
-    if issecretvalue(X) or not X then
+    if Private:IsSecret(X) or not X then
         if Private.NavigationRoute then ClearRoute() State.isDirty = true end
         return
     end
@@ -100,7 +84,8 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     State.Elapsed = State.Elapsed + TimeElapsed
     if State.Elapsed >= CheckInterval then
         State.Elapsed = 0
-        local isInHotSpot = IsInHotSpot()
+        local isInside = State.GoalQuestID ~= 0 and C_Minimap.IsInsideQuestBlob(State.GoalQuestID)
+        local isInHotSpot = not Private:IsSecret(isInside) and isInside or false
         if isInHotSpot ~= State.isInHotSpot then
             State.isInHotSpot = isInHotSpot
             if Private.NavigationRoute then Private.NavigationArrow:SetShown(not isInHotSpot) end
@@ -114,7 +99,7 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     local Points = Route[1].Points
     local Target = Points[#Points]
     local Facing = GetPlayerFacing()
-    if State.isOnTaxi or Target[1] ~= Continent or issecretvalue(Facing) or not Facing then SetDirectionShown(false) return end
+    if State.isOnTaxi or Target[1] ~= Continent or Private:IsSecret(Facing) or not Facing then SetDirectionShown(false) return end
     SetDirectionShown(true)
 
     local DeltaX, DeltaY = Target[2] - X, Target[3] - Y
@@ -128,9 +113,13 @@ local function Navigation_OnUpdate(_, TimeElapsed)
 end
 
 local function UpdateGoal()
-    local Continent, X, Y, Name, QuestID, MapID = GetGoalWorldPosition()
-    if not Continent then StopNavigation() return end
+    local MapID, MapX, MapY, Name, QuestID = GetGoalMapPosition()
+    if not MapID or not MapX then StopNavigation() return end
+    GoalVector:SetXY(MapX, MapY)
+    local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
+    if not Continent or not Position then StopNavigation() return end
 
+    local X, Y = Position:GetXY()
     QuestID = QuestID or 0
     local isNavigating = Private.NavigationFrame:GetScript("OnUpdate") ~= nil
     if isNavigating and Continent == State.GoalContinent and X == State.GoalX and Y == State.GoalY and QuestID == State.GoalQuestID and MapID == State.GoalMapID then return end

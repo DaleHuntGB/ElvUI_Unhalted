@@ -9,23 +9,16 @@ local function StyleFocusTexture(Texture)
     Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
 end
 
-local function CreateFocusTexture(Health)
-    local Texture = Health:CreateTexture(nil, "OVERLAY")
-    Texture:SetAllPoints()
-    StyleFocusTexture(Texture)
-    FocusTextures[Health] = Texture
-end
-
-local function GetFocusHealth()
-    if not Private.DB.global.ElvUI.FocusTexture.Enable then return end
-    local Plate = C_NamePlate.GetNamePlateForUnit("focus")
-    return Plate and Plate.unitFrame and Plate.unitFrame.Health
-end
-
 local function UpdateFocusTexture()
-    local FocusHealth = GetFocusHealth()
+    local Plate = Private.DB.global.ElvUI.FocusTexture.Enable and C_NamePlate.GetNamePlateForUnit("focus")
+    local FocusHealth = Plate and Plate.unitFrame and Plate.unitFrame.Health
     for Health, Texture in pairs(FocusTextures) do Texture:SetShown(Health == FocusHealth) end
-    if FocusHealth and not FocusTextures[FocusHealth] then CreateFocusTexture(FocusHealth) end
+    if FocusHealth and not FocusTextures[FocusHealth] then
+        local Texture = FocusHealth:CreateTexture(nil, "OVERLAY")
+        Texture:SetAllPoints()
+        StyleFocusTexture(Texture)
+        FocusTextures[FocusHealth] = Texture
+    end
 end
 
 function Private:SetupFocusTexture()

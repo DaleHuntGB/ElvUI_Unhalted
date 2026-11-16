@@ -139,7 +139,7 @@ function Private:SetupBeastLore()
 
     TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(Tooltip, Data)
         local GUID = Data.guid
-        if Tooltip ~= GameTooltip or Private:SecretValue(GUID) or not GUID then return end
+        if Tooltip ~= GameTooltip or Private:IsSecret(GUID) or not GUID then return end
 
         local UnitType, _, _, _, _, NPCID = strsplit("-", GUID)
         local Lines = UnitType == "Creature" and NPCLines[tonumber(NPCID)]

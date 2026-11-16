@@ -4,8 +4,8 @@ function Private:ReadMythicPlusTime(Frame)
     local Data = Frame.Run
     if Data and Data.TimerID and not Data.Completed then
         local _, Elapsed, TimerType = GetWorldElapsedTime(Data.TimerID)
-        if not Private:SecretValue(TimerType) and TimerType == Enum.WorldElapsedTimerTypes.ChallengeMode then
-            if Private:SecretValue(Elapsed) or Elapsed then Data.Elapsed = Elapsed end
+        if not Private:IsSecret(TimerType) and TimerType == Enum.WorldElapsedTimerTypes.ChallengeMode then
+            if Private:IsSecret(Elapsed) or Elapsed then Data.Elapsed = Elapsed end
         end
     end
 end
@@ -43,7 +43,7 @@ function Private:RefreshMythicPlusClock(Frame)
         Row.TickLimit, Row.TickBonus, Row.TickWidth = Limit, Bonus, DB.Width
     end
     local Elapsed = Data.Elapsed
-    local SecretElapsed = Private:SecretValue(Elapsed)
+    local SecretElapsed = Private:IsSecret(Elapsed)
     for Index, Text in ipairs(Row.TickTexts) do
         local TextColour = DB.Text.Amount_Colour
         if SecretElapsed then

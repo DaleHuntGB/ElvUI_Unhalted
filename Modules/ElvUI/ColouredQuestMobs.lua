@@ -17,8 +17,8 @@ local function ScanQuestMob(Unit)
         if Line.type == LineType.QuestTitle then
             IsOtherPlayer = false
         elseif Line.type == LineType.QuestPlayer then
-            IsOtherPlayer = issecretvalue(Line.leftText) or Line.leftText ~= Private.E.myname
-        elseif Line.type == LineType.QuestObjective and not IsOtherPlayer and not issecretvalue(Line.completed) and not Line.completed then
+            IsOtherPlayer = Private:IsSecret(Line.leftText) or Line.leftText ~= Private.E.myname
+        elseif Line.type == LineType.QuestObjective and not IsOtherPlayer and not Private:IsSecret(Line.completed) and not Line.completed then
             return true
         end
     end
@@ -26,18 +26,16 @@ local function ScanQuestMob(Unit)
     return false
 end
 
-local function IsQuestMob(Unit)
+local function ColourQuestMob(Frame, _, Unit)
+    local DB = Private.DB.global.ElvUI.ColouredQuestMobs
+    if not DB.Enable or Frame.__unit ~= Unit then return end
+
     local IsQuest = QuestMobs[Unit]
     if IsQuest == nil then
         IsQuest = ScanQuestMob(Unit)
         QuestMobs[Unit] = IsQuest
     end
-    return IsQuest
-end
-
-local function ColourQuestMob(Frame, _, Unit)
-    local DB = Private.DB.global.ElvUI.ColouredQuestMobs
-    if not DB.Enable or Frame.__unit ~= Unit or not IsQuestMob(Unit) or UnitIsTapDenied(Unit) then return end
+    if not IsQuest or UnitIsTapDenied(Unit) then return end
 
     NP:SetStatusBarColor(Frame.Health, DB.Colour[1], DB.Colour[2], DB.Colour[3])
 end
@@ -47,13 +45,6 @@ local function HookHealth(_, Nameplate)
     if not Health or HookedHealth[Health] then return end
     HookedHealth[Health] = true
     hooksecurefunc(Health, "UpdateColor", ColourQuestMob)
-end
-
-local function RefreshQuestMobs()
-    wipe(QuestMobs)
-    for Plate in pairs(NP.Plates) do
-        if Plate:IsVisible() and Plate:IsElementEnabled("Health") then Plate.Health:ForceUpdate() end
-    end
 end
 
 local function RescanQuestMobs()
@@ -105,5 +96,8 @@ function Private:UpdateColouredQuestMobs()
         EventFrame:UnregisterAllEvents()
     end
 
-    RefreshQuestMobs()
+    wipe(QuestMobs)
+    for Plate in pairs(NP.Plates) do
+        if Plate:IsVisible() and Plate:IsElementEnabled("Health") then Plate.Health:ForceUpdate() end
+    end
 end

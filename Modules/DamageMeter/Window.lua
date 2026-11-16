@@ -1,5 +1,5 @@
 local Private = select(2, ...)
-local LIGHTEN_FACTOR = 2
+local LightenFactor = 2
 
 function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     local DB = DamageMeterDB
@@ -78,9 +78,8 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
             return
         end
 
-        local CombatSession;
-
-        if C_DamageMeter.IsDamageMeterAvailable() then
+        local isAvailable = C_DamageMeter.IsDamageMeterAvailable()
+        if isAvailable then
             if Frame.SessionID then
                 local SessionFound = false
                 for _, Session in ipairs(C_DamageMeter.GetAvailableCombatSessions()) do
@@ -93,19 +92,16 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
                         break
                     end
                 end
-                if SessionFound then
-                    CombatSession = C_DamageMeter.GetCombatSessionFromID(Frame.SessionID, DB.MeterType)
-                else
+                if not SessionFound then
                     Frame.SessionID = nil
                     Frame.SessionName = nil
                     ResetScroll = true
                 end
             end
-            if not Frame.SessionID then
-                CombatSession = C_DamageMeter.GetCombatSessionFromType(DB.SessionType, DB.MeterType)
-            end
         end
 
+        local GetCombatSession = Frame.SessionID and C_DamageMeter.GetCombatSessionFromID or C_DamageMeter.GetCombatSessionFromType
+        local CombatSession = isAvailable and GetCombatSession(Frame.SessionID or DB.SessionType, DB.MeterType)
         Frame.CombatSession = CombatSession
 
         local CombatSources = CombatSession and CombatSession.combatSources
@@ -144,7 +140,7 @@ function Private:CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     local function TitleBar_OnEnter(TitleBar)
-        TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.g * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.b * LIGHTEN_FACTOR, Private.E.BackgroundFadeColour.a)
+        TitleBar:SetBackdropColor(Private.E.BackgroundFadeColour.r * LightenFactor, Private.E.BackgroundFadeColour.g * LightenFactor, Private.E.BackgroundFadeColour.b * LightenFactor, Private.E.BackgroundFadeColour.a)
         GameTooltip:SetOwner(TitleBar, "ANCHOR_NONE")
         GameTooltip:SetPoint("BOTTOMRIGHT", TitleBar, "TOPRIGHT", 0, 1)
         GameTooltip:AddDoubleLine("|cFFFFCC00Left Click|r", "Swap Sessions - Current or Overall", 1, 1, 1, 1, 1, 1)

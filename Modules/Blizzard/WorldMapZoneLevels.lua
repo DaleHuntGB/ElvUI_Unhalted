@@ -45,13 +45,6 @@ local ZoneLevels = {
     ["Winterspring"] = {55, 60},
 }
 
-local function GetLevelColour(MinLevel, MaxLevel)
-    local PlayerLevel = UnitLevel("player")
-    if PlayerLevel < MinLevel then return GetQuestDifficultyColor(MinLevel) end
-    if PlayerLevel > MaxLevel then return GetQuestDifficultyColor(MaxLevel - 2) end
-    return QuestDifficultyColors["difficult"]
-end
-
 function Private:SetupWorldMapZoneLevels()
     if not Private.DB.global.Blizzard.WorldMapZoneLevels then return end
 
@@ -81,7 +74,8 @@ function Private:SetupWorldMapZoneLevels()
             return
         end
 
-        local Colour = GetLevelColour(Levels[1], Levels[2])
+        local PlayerLevel = UnitLevel("player")
+        local Colour = PlayerLevel < Levels[1] and GetQuestDifficultyColor(Levels[1]) or PlayerLevel > Levels[2] and GetQuestDifficultyColor(Levels[2] - 2) or QuestDifficultyColors["difficult"]
         LevelText:SetText(Levels.Text)
         LevelText:SetTextColor(Colour.r, Colour.g, Colour.b)
         LevelText:Show()

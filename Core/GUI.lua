@@ -24,10 +24,6 @@ local NP = Private.E:GetModule("NamePlates")
 
 local AutoPurchaseInput = { Item = "", Quantity = 100 }
 
-local function GetAutoPurchaseItemName(Item)
-    if type(Item) ~= "number" then return Item end
-    return string.format("|T%s:16:16|t %s", C_Item.GetItemIconByID(Item) or 134400, C_Item.GetItemNameByID(Item) or Item)
-end
 
 local function RefreshAutoPurchaseItems()
     local ItemsGroup = Private.GUI.args.Miscellaneous.args.AutoPurchase.args.Items
@@ -43,7 +39,7 @@ local function RefreshAutoPurchaseItems()
 
     for Index, Item in ipairs(SortedItems) do
         local Key = tostring(Item)
-        ItemsGroup.args[Key .. "Item"] = ACH:Description(function() return GetAutoPurchaseItemName(Item) end, Index * 3 - 2, "medium", nil, nil, nil, nil, "relative")
+        ItemsGroup.args[Key .. "Item"] = ACH:Description(function() return type(Item) == "number" and string.format("|T%s:16:16|t %s", C_Item.GetItemIconByID(Item) or 134400, C_Item.GetItemNameByID(Item) or Item) or Item end, Index * 3 - 2, "medium", nil, nil, nil, nil, "relative")
         ItemsGroup.args[Key .. "Item"].relWidth = 0.5
         ItemsGroup.args[Key .. "Quantity"] = ACH:Range("Quantity", nil, Index * 3 - 1, {min = 1, max = 10000, softMin = 1, softMax = 2000, step = 1, bigStep = 10}, "relative", function() return Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] end, function(_, value) Private.DB.global.Miscellaneous.AutoPurchase.Items[Item] = value end, function() return not Private.DB.global.Miscellaneous.AutoPurchase.Enable end)
         ItemsGroup.args[Key .. "Quantity"].relWidth = 0.4

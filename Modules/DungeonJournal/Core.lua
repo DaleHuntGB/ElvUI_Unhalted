@@ -3,38 +3,38 @@ local Private = select(2, ...)
 _G.BINDING_HEADER_UNHALTEDUI = "|cFF1784D1ElvUI|r: |cFF6080FFUnhalted|r"
 _G.BINDING_NAME_UNHALTEDUI_DUNGEONJOURNAL = "Toggle Dungeon Journal"
 
-local ARMOUR = Enum.ItemArmorSubclass
-local WEAPON = Enum.ItemWeaponSubclass
+local Armour = Enum.ItemArmorSubclass
+local Weapon = Enum.ItemWeaponSubclass
 
-local CLASS_ARMOUR = {
-    WARRIOR = { [ARMOUR.Mail] = true, [ARMOUR.Plate] = true, [ARMOUR.Shield] = true },
-    PALADIN = { [ARMOUR.Mail] = true, [ARMOUR.Plate] = true, [ARMOUR.Shield] = true, [ARMOUR.Libram] = true },
-    HUNTER = { [ARMOUR.Leather] = true, [ARMOUR.Mail] = true },
-    ROGUE = { [ARMOUR.Leather] = true },
-    PRIEST = { [ARMOUR.Cloth] = true },
-    SHAMAN = { [ARMOUR.Leather] = true, [ARMOUR.Mail] = true, [ARMOUR.Shield] = true, [ARMOUR.Totem] = true },
-    MAGE = { [ARMOUR.Cloth] = true },
-    WARLOCK = { [ARMOUR.Cloth] = true },
-    DRUID = { [ARMOUR.Leather] = true, [ARMOUR.Idol] = true },
+local ClassArmour = {
+    WARRIOR = { [Armour.Mail] = true, [Armour.Plate] = true, [Armour.Shield] = true },
+    PALADIN = { [Armour.Mail] = true, [Armour.Plate] = true, [Armour.Shield] = true, [Armour.Libram] = true },
+    HUNTER = { [Armour.Leather] = true, [Armour.Mail] = true },
+    ROGUE = { [Armour.Leather] = true },
+    PRIEST = { [Armour.Cloth] = true },
+    SHAMAN = { [Armour.Leather] = true, [Armour.Mail] = true, [Armour.Shield] = true, [Armour.Totem] = true },
+    MAGE = { [Armour.Cloth] = true },
+    WARLOCK = { [Armour.Cloth] = true },
+    DRUID = { [Armour.Leather] = true, [Armour.Idol] = true },
 }
 
-local CLASS_WEAPONS = {
-    WARRIOR = { [WEAPON.Axe1H] = true, [WEAPON.Axe2H] = true, [WEAPON.Bows] = true, [WEAPON.Guns] = true, [WEAPON.Mace1H] = true, [WEAPON.Mace2H] = true, [WEAPON.Polearm] = true, [WEAPON.Sword1H] = true, [WEAPON.Sword2H] = true, [WEAPON.Staff] = true, [WEAPON.Unarmed] = true, [WEAPON.Dagger] = true, [WEAPON.Thrown] = true, [WEAPON.Crossbow] = true },
-    PALADIN = { [WEAPON.Axe1H] = true, [WEAPON.Axe2H] = true, [WEAPON.Mace1H] = true, [WEAPON.Mace2H] = true, [WEAPON.Polearm] = true, [WEAPON.Sword1H] = true, [WEAPON.Sword2H] = true },
-    HUNTER = { [WEAPON.Axe1H] = true, [WEAPON.Axe2H] = true, [WEAPON.Bows] = true, [WEAPON.Guns] = true, [WEAPON.Polearm] = true, [WEAPON.Sword1H] = true, [WEAPON.Sword2H] = true, [WEAPON.Staff] = true, [WEAPON.Unarmed] = true, [WEAPON.Dagger] = true, [WEAPON.Thrown] = true, [WEAPON.Crossbow] = true },
-    ROGUE = { [WEAPON.Bows] = true, [WEAPON.Guns] = true, [WEAPON.Mace1H] = true, [WEAPON.Sword1H] = true, [WEAPON.Unarmed] = true, [WEAPON.Dagger] = true, [WEAPON.Thrown] = true, [WEAPON.Crossbow] = true },
-    PRIEST = { [WEAPON.Mace1H] = true, [WEAPON.Staff] = true, [WEAPON.Dagger] = true, [WEAPON.Wand] = true },
-    SHAMAN = { [WEAPON.Axe1H] = true, [WEAPON.Axe2H] = true, [WEAPON.Mace1H] = true, [WEAPON.Mace2H] = true, [WEAPON.Staff] = true, [WEAPON.Unarmed] = true, [WEAPON.Dagger] = true },
-    MAGE = { [WEAPON.Sword1H] = true, [WEAPON.Staff] = true, [WEAPON.Dagger] = true, [WEAPON.Wand] = true },
-    WARLOCK = { [WEAPON.Sword1H] = true, [WEAPON.Staff] = true, [WEAPON.Dagger] = true, [WEAPON.Wand] = true },
-    DRUID = { [WEAPON.Mace1H] = true, [WEAPON.Mace2H] = true, [WEAPON.Staff] = true, [WEAPON.Unarmed] = true, [WEAPON.Dagger] = true },
+local ClassWeapons = {
+    WARRIOR = { [Weapon.Axe1H] = true, [Weapon.Axe2H] = true, [Weapon.Bows] = true, [Weapon.Guns] = true, [Weapon.Mace1H] = true, [Weapon.Mace2H] = true, [Weapon.Polearm] = true, [Weapon.Sword1H] = true, [Weapon.Sword2H] = true, [Weapon.Staff] = true, [Weapon.Unarmed] = true, [Weapon.Dagger] = true, [Weapon.Thrown] = true, [Weapon.Crossbow] = true },
+    PALADIN = { [Weapon.Axe1H] = true, [Weapon.Axe2H] = true, [Weapon.Mace1H] = true, [Weapon.Mace2H] = true, [Weapon.Polearm] = true, [Weapon.Sword1H] = true, [Weapon.Sword2H] = true },
+    HUNTER = { [Weapon.Axe1H] = true, [Weapon.Axe2H] = true, [Weapon.Bows] = true, [Weapon.Guns] = true, [Weapon.Polearm] = true, [Weapon.Sword1H] = true, [Weapon.Sword2H] = true, [Weapon.Staff] = true, [Weapon.Unarmed] = true, [Weapon.Dagger] = true, [Weapon.Thrown] = true, [Weapon.Crossbow] = true },
+    ROGUE = { [Weapon.Bows] = true, [Weapon.Guns] = true, [Weapon.Mace1H] = true, [Weapon.Sword1H] = true, [Weapon.Unarmed] = true, [Weapon.Dagger] = true, [Weapon.Thrown] = true, [Weapon.Crossbow] = true },
+    PRIEST = { [Weapon.Mace1H] = true, [Weapon.Staff] = true, [Weapon.Dagger] = true, [Weapon.Wand] = true },
+    SHAMAN = { [Weapon.Axe1H] = true, [Weapon.Axe2H] = true, [Weapon.Mace1H] = true, [Weapon.Mace2H] = true, [Weapon.Staff] = true, [Weapon.Unarmed] = true, [Weapon.Dagger] = true },
+    MAGE = { [Weapon.Sword1H] = true, [Weapon.Staff] = true, [Weapon.Dagger] = true, [Weapon.Wand] = true },
+    WARLOCK = { [Weapon.Sword1H] = true, [Weapon.Staff] = true, [Weapon.Dagger] = true, [Weapon.Wand] = true },
+    DRUID = { [Weapon.Mace1H] = true, [Weapon.Mace2H] = true, [Weapon.Staff] = true, [Weapon.Unarmed] = true, [Weapon.Dagger] = true },
 }
 
-local NO_HOLDABLE = { WARRIOR = true, HUNTER = true, ROGUE = true }
+local NoHoldable = { WARRIOR = true, HUNTER = true, ROGUE = true }
 
-local LOOT_SLOTS = { "Head", "Neck", "Shoulder", "Back", "Chest", "Wrist", "Hands", "Waist", "Legs", "Feet", "Finger", "Trinket", "Main Hand", "Off Hand", "Ranged", "Other" }
+local LootSlots = { "Head", "Neck", "Shoulder", "Back", "Chest", "Wrist", "Hands", "Waist", "Legs", "Feet", "Finger", "Trinket", "Main Hand", "Off Hand", "Ranged", "Other" }
 
-local EQUIP_LOC_SLOTS = {
+local EquipLocSlots = {
     INVTYPE_HEAD = "Head", INVTYPE_NECK = "Neck", INVTYPE_SHOULDER = "Shoulder", INVTYPE_CLOAK = "Back",
     INVTYPE_CHEST = "Chest", INVTYPE_ROBE = "Chest", INVTYPE_WRIST = "Wrist", INVTYPE_HAND = "Hands",
     INVTYPE_WAIST = "Waist", INVTYPE_LEGS = "Legs", INVTYPE_FEET = "Feet", INVTYPE_FINGER = "Finger", INVTYPE_TRINKET = "Trinket",
@@ -43,17 +43,17 @@ local EQUIP_LOC_SLOTS = {
     INVTYPE_RANGED = "Ranged", INVTYPE_RANGEDRIGHT = "Ranged", INVTYPE_THROWN = "Ranged", INVTYPE_RELIC = "Ranged",
 }
 
-Private.DungeonJournalClasses = CLASS_ARMOUR
-Private.DungeonJournalSlots = LOOT_SLOTS
+Private.DungeonJournalClasses = ClassArmour
+Private.DungeonJournalSlots = LootSlots
 
 local function IsLootShown(ItemID, ClassFile, Slot)
     local _, _, _, EquipLoc, _, ClassID, SubClassID = C_Item.GetItemInfoInstant(ItemID)
-    if Slot and (EQUIP_LOC_SLOTS[EquipLoc] or "Other") ~= Slot then return false end
-    if not ClassFile or not CLASS_ARMOUR[ClassFile] then return true end
-    if ClassID == Enum.ItemClass.Weapon then return CLASS_WEAPONS[ClassFile][SubClassID] == true end
+    if Slot and (EquipLocSlots[EquipLoc] or "Other") ~= Slot then return false end
+    if not ClassFile or not ClassArmour[ClassFile] then return true end
+    if ClassID == Enum.ItemClass.Weapon then return ClassWeapons[ClassFile][SubClassID] == true end
     if ClassID ~= Enum.ItemClass.Armor or EquipLoc == "INVTYPE_CLOAK" then return true end
-    if EquipLoc == "INVTYPE_HOLDABLE" then return not NO_HOLDABLE[ClassFile] end
-    return SubClassID == ARMOUR.Generic or CLASS_ARMOUR[ClassFile][SubClassID] == true
+    if EquipLoc == "INVTYPE_HOLDABLE" then return not NoHoldable[ClassFile] end
+    return SubClassID == Armour.Generic or ClassArmour[ClassFile][SubClassID] == true
 end
 
 function Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot)

@@ -15,13 +15,8 @@ end
 
 local function GetQuestDistance(QuestID)
     local DistanceSq, isOnContinent = C_QuestLog.GetDistanceSqToQuest(QuestID)
-    if issecretvalue(DistanceSq) or issecretvalue(isOnContinent) or not isOnContinent then return false end
+    if Private:IsSecret(DistanceSq) or Private:IsSecret(isOnContinent) or not isOnContinent then return false end
     return DistanceSq
-end
-
-local function IsQuestBlockComplete(Block)
-    if Block.cached then return BlockComplete[Block] or false end
-    return C_QuestLog.IsComplete(Block.id)
 end
 
 local function CompareQuestBlocks(BlockA, BlockB)
@@ -41,23 +36,6 @@ local function IsPlacementApplied()
         if Placement[Index] ~= Applied[Index] then return false end
     end
     return true
-end
-
-local function CollectQuestBlocks(Module)
-    local DB = Private.DB.global.Blizzard.ObjectiveTracker.Sorting
-    local isCompletedLast = DB.Enable and DB.CompletedLast
-    wipe(Blocks)
-    wipe(QuestBlocks)
-
-    local Block = Module.firstBlock
-    while Block do
-        Blocks[#Blocks + 1] = Block
-        if type(Block.id) == "number" then
-            QuestBlocks[#QuestBlocks + 1] = Block
-            BlockIndex[Block], BlockComplete[Block] = #Blocks, isCompletedLast and IsQuestBlockComplete(Block) or false
-        end
-        Block = Block.nextBlock
-    end
 end
 
 local function PlaceQuestBlocks(Module, isForced)
@@ -95,7 +73,25 @@ local function PlaceQuestBlocks(Module, isForced)
 end
 
 local function AnchorQuestBlocks(Module)
-    CollectQuestBlocks(Module)
+    local DB = Private.DB.global.Blizzard.ObjectiveTracker.Sorting
+    local isCompletedLast = DB.Enable and DB.CompletedLast
+    wipe(Blocks)
+    wipe(QuestBlocks)
+
+    local Block = Module.firstBlock
+    while Block do
+        Blocks[#Blocks + 1] = Block
+        if type(Block.id) == "number" then
+            QuestBlocks[#QuestBlocks + 1] = Block
+            BlockIndex[Block] = #Blocks
+            if isCompletedLast and Block.cached then
+                BlockComplete[Block] = BlockComplete[Block] or false
+            else
+                BlockComplete[Block] = isCompletedLast and C_QuestLog.IsComplete(Block.id) or false
+            end
+        end
+        Block = Block.nextBlock
+    end
     PlaceQuestBlocks(Module, true)
 end
 
@@ -107,22 +103,11 @@ end
 local function RefreshProximity()
     if not QuestObjectiveTracker:IsVisible() then return end
     local X, Y = UnitPosition("player")
-    if issecretvalue(X) or not X then return end
+    if Private:IsSecret(X) or not X then return end
     local DeltaX, DeltaY = X - State.SortX, Y - State.SortY
     if DeltaX * DeltaX + DeltaY * DeltaY < ResortDistance * ResortDistance then return end
     State.SortX, State.SortY = X, Y
     PlaceQuestBlocks(QuestObjectiveTracker, false)
-end
-
-local function UpdateProximityTicker()
-    local DB = Private.DB.global.Blizzard.ObjectiveTracker.Sorting
-    local isProximity = DB.Enable and DB.SortBy == "PROXIMITY"
-    if isProximity and not State.Ticker then
-        State.Ticker = C_Timer.NewTicker(ProximityInterval, RefreshProximity)
-    elseif not isProximity and State.Ticker then
-        State.Ticker:Cancel()
-        State.Ticker = false
-    end
 end
 
 function Private:SetupObjectiveTracker()
@@ -131,10 +116,18 @@ function Private:SetupObjectiveTracker()
 end
 
 function Private:UpdateObjectiveTracker()
-    if Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable and not State.isHooked then
+    local DB = Private.DB.global.Blizzard.ObjectiveTracker.Sorting
+    if DB.Enable and not State.isHooked then
         hooksecurefunc(QuestObjectiveTracker, "Update", SortQuestObjectiveTracker)
         State.isHooked = true
     end
-    UpdateProximityTicker()
+
+    local isProximity = DB.Enable and DB.SortBy == "PROXIMITY"
+    if isProximity and not State.Ticker then
+        State.Ticker = C_Timer.NewTicker(ProximityInterval, RefreshProximity)
+    elseif not isProximity and State.Ticker then
+        State.Ticker:Cancel()
+        State.Ticker = false
+    end
     AnchorQuestBlocks(QuestObjectiveTracker)
 end

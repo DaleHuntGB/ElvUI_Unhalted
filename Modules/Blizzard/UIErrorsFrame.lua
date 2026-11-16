@@ -1,5 +1,4 @@
 local Private = select(2, ...)
-local isFiltered = false
 
 local FilteredMessages = {
     ["There is nothing to attack."] = true,
@@ -12,16 +11,6 @@ local FilteredMessages = {
     ["You cannot attack that target."] = true,
 }
 
-local function FilterMessages()
-	if isFiltered then return end
-	UIErrorsFrameAddMessage = UIErrorsFrame.AddMessage
-	UIErrorsFrame.AddMessage = function(Frame, Message, ...)
-		if not Private:SecretValue(Message) and FilteredMessages[Message] then return end
-		return UIErrorsFrameAddMessage(Frame, Message, ...)
-	end
-	isFiltered = true
-end
-
 function Private:SetupUIErrorsFrame()
     local DB = Private.DB.global.Blizzard.UIErrorsFrame
     local UEF = _G["UIErrorsFrame"]
@@ -32,9 +21,13 @@ function Private:SetupUIErrorsFrame()
         UEF:SetShadowColor(0, 0, 0, 0)
         UEF:SetShadowOffset(0, 0)
         UEF:SetAlpha(DB.Hide and 0 or 1)
-        FilterMessages()
-    end
 
+        local AddMessage = UEF.AddMessage
+        UEF.AddMessage = function(Frame, Message, ...)
+            if not Private:IsSecret(Message) and FilteredMessages[Message] then return end
+            return AddMessage(Frame, Message, ...)
+        end
+    end
 end
 
 function Private:UpdateUIErrorsFrame()
@@ -50,5 +43,4 @@ function Private:UpdateUIErrorsFrame()
 
         UEF:AddMessage(C_AddOns.GetAddOnMetadata("ElvUI_Unhalted", "Title") .. ": " .. "Sample Text...", 1, 1, 1)
     end
-
 end

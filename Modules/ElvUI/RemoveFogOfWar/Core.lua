@@ -15,7 +15,7 @@ local function RevealOverlays(Pin)
 
     local Map = Pin:GetMap()
     local MapID = Map:GetMapID()
-    if not MapID or issecretvalue(MapID) then return end
+    if Private:IsSecret(MapID) or not MapID then return end
     local Overlays = Private.FogOfWarOverlays[C_Map.GetMapArtID(MapID)]
     if not Overlays then return end
 

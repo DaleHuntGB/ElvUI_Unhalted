@@ -36,8 +36,8 @@ function Private:SetupCombatTimer()
     CombatTimerFrame:SetAlphaFromBoolean(UnitAffectingCombat("player"), 1, DB.OOCOpacity)
     CombatTimerFrame:SetShown(DB.Enable)
 
-    CombatTimerFrame.TimeElapsed = 0;
-    CombatTimerFrame.LastDuration = 0;
+    CombatTimerFrame.TimeElapsed = 0
+    CombatTimerFrame.LastDuration = 0
     CombatTimerFrame.ShownSeconds = 0
     CombatTimerFrame.InCombat = InCombatLockdown()
     CombatTimerFrame.InEncounter = false
@@ -103,8 +103,8 @@ function Private:UpdateCombatTimer()
         Private.CombatTimerFrame:RegisterEvent("ENCOUNTER_END")
         Private.CombatTimerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Private.CombatTimerFrame:SetScript("OnEvent", CombatTimer_OnEvent)
-        Private.CombatTimerFrame.TimeElapsed = 0;
-        Private.CombatTimerFrame.LastDuration = 0;
+        Private.CombatTimerFrame.TimeElapsed = 0
+        Private.CombatTimerFrame.LastDuration = 0
         Private.CombatTimerFrame.InCombat = InCombatLockdown()
         Private.CombatTimerFrame.InEncounter = false
 

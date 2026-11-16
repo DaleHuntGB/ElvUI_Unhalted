@@ -5,8 +5,7 @@ local function CombatResurrection_OnUpdate(Frame, TimeElapsed)
     if Frame.TimeSinceLastUpdate < 1 then return end
     Frame.TimeSinceLastUpdate = Frame.TimeSinceLastUpdate % 1
 
-    local ChargeInfo;
-    if Frame.InEncounter or Frame.InChallenge then ChargeInfo = C_Spell.GetSpellCharges(20484) end
+    local ChargeInfo = (Frame.InEncounter or Frame.InChallenge) and C_Spell.GetSpellCharges(20484)
     local Charges, Remaining = 0, 0
     if ChargeInfo then
         Charges = ChargeInfo.currentCharges
@@ -21,7 +20,7 @@ local function CombatResurrection_OnUpdate(Frame, TimeElapsed)
     Frame.Text:SetFormattedText(Frame.Format, ChargeColour:GenerateHexColor(), Charges, Time)
 
     local Width, Height = Frame.Text:GetStringWidth(), Frame.Text:GetStringHeight()
-    if not Private:SecretValue(Width) and not Private:SecretValue(Height) then Frame:SetSize(Width, Height) end
+    if not Private:IsSecret(Width) and not Private:IsSecret(Height) then Frame:SetSize(Width, Height) end
 end
 
 local function CombatResurrection_OnEvent(Frame, Event)

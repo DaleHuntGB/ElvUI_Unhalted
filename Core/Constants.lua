@@ -160,7 +160,7 @@ Private.JustificationH = {
     ["BOTTOMRIGHT"] = "RIGHT",
 }
 
-function Private:SecretValue(Value)
+function Private:IsSecret(Value)
     return issecretvalue and issecretvalue(Value) or false
 end
 
@@ -190,25 +190,18 @@ function Private:UpdateMover(isEnabled, moverName, moverLayout)
     Private.E:LoadMovers()
 end
 
-function Private:FetchReactionColour()
-    local PVPZone = C_PvP.GetZonePVPInfo()
-    if PVPZone == "arena" then
-        ReactionColour = {r = 0.84, g = 0.03, b = 0.03}
-    elseif PVPZone == "friendly" then
-        ReactionColour = {r = 0.05, g = 0.85, b = 0.03}
-    elseif PVPZone == "contested" then
-        ReactionColour = {r = 0.9, g = 0.85, b = 0.05}
-    elseif PVPZone == "hostile" then
-        ReactionColour = {r = 0.84, g = 0.03, b = 0.03}
-    elseif PVPZone == "sanctuary" then
-        ReactionColour = {r = 0.035, g = 0.58, b = 0.84}
-    elseif PVPZone == "combat" then
-        ReactionColour = {r = 0.84, g = 0.03, b = 0.03}
-    else
-        ReactionColour = {r = 0.9, g = 0.85, b = 0.05}
-    end
+local ReactionColours = {
+    arena = {r = 0.84, g = 0.03, b = 0.03},
+    friendly = {r = 0.05, g = 0.85, b = 0.03},
+    contested = {r = 0.9, g = 0.85, b = 0.05},
+    hostile = {r = 0.84, g = 0.03, b = 0.03},
+    sanctuary = {r = 0.035, g = 0.58, b = 0.84},
+    combat = {r = 0.84, g = 0.03, b = 0.03},
+}
+local DefaultReactionColour = {r = 0.9, g = 0.85, b = 0.05}
 
-    return ReactionColour
+function Private:FetchReactionColour()
+    return ReactionColours[C_PvP.GetZonePVPInfo()] or DefaultReactionColour
 end
 
 function Private:SetVisibilityConditions(actionBar)
@@ -227,13 +220,13 @@ function Private:StripRealm(Name, ClassFilename)
     return Ambiguate(Name, "short")
 end
 
-local AbbreviateOptions;
+local AbbreviateOptions = {}
 
 function Private:AbbreviateValue(value)
-    if not AbbreviateOptions then
+    if not AbbreviateOptions.config then
         local AbbreviationData = C_StringUtil.GetDefaultAbbreviationBreakpoints()
         AbbreviationData[#AbbreviationData + 1] = {breakpoint = 1e-6, abbreviation = "", significandDivisor = 0.1, fractionDivisor = 10, abbreviationIsGlobal = false}
-        AbbreviateOptions = {config = CreateAbbreviateConfig(AbbreviationData)}
+        AbbreviateOptions.config = CreateAbbreviateConfig(AbbreviationData)
     end
     return AbbreviateNumbers(value, AbbreviateOptions)
 end
@@ -250,6 +243,5 @@ end
 
 function Private:IsDeveloper()
     local _, BTag = BNGetInfo()
-    local isDeveloper = BTag == "Unhalted#2639"
-    return isDeveloper
+    return BTag == "Unhalted#2639"
 end

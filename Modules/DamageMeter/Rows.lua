@@ -1,17 +1,17 @@
 local Private = select(2, ...)
 
 local SingleMeterTypes = {
-	[Enum.DamageMeterType.Absorbs] = true,
-	[Enum.DamageMeterType.Interrupts] = true,
-	[Enum.DamageMeterType.Dispels] = true,
-	[Enum.DamageMeterType.DamageTaken] = true,
-	[Enum.DamageMeterType.AvoidableDamageTaken] = true,
-	[Enum.DamageMeterType.EnemyDamageTaken] = true,
+    [Enum.DamageMeterType.Absorbs] = true,
+    [Enum.DamageMeterType.Interrupts] = true,
+    [Enum.DamageMeterType.Dispels] = true,
+    [Enum.DamageMeterType.DamageTaken] = true,
+    [Enum.DamageMeterType.AvoidableDamageTaken] = true,
+    [Enum.DamageMeterType.EnemyDamageTaken] = true,
 }
 
 local PerSecondMeterTypes = {
-	[Enum.DamageMeterType.Dps] = true,
-	[Enum.DamageMeterType.Hps] = true,
+    [Enum.DamageMeterType.Dps] = true,
+    [Enum.DamageMeterType.Hps] = true,
 }
 
 function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
@@ -72,7 +72,7 @@ function Private:CreateRow(DamageMeterFrame, RowCount, DamageMeterDB)
         local SpecIconID = CombatSource.specIconID
 
         if Row.Icon then
-            if Private:SecretValue(SpecIconID) or (SpecIconID and SpecIconID ~= 0) then
+            if Private:IsSecret(SpecIconID) or (SpecIconID and SpecIconID ~= 0) then
                 Row.Icon:SetTexture(SpecIconID)
             elseif ClassColour then
                 Row.Icon:SetTexture("Interface\\Icons\\ClassIcon_" .. CombatSource.classFilename)

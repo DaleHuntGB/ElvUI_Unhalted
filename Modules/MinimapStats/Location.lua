@@ -1,13 +1,9 @@
 local Private = select(2, ...)
 
 local function FetchLocation()
-    local DB = Private.DB.global.MinimapStats.Location
-    local ReactionColour = CreateColor(Private:FetchReactionColour().r, Private:FetchReactionColour().g, Private:FetchReactionColour().b, 1):GenerateHexColor()
-    if DB.ShowSubZone then
-        return string.format("|c%s%s|r", ReactionColour, GetSubZoneText() ~= "" and GetSubZoneText() or GetZoneText())
-    else
-        return string.format("|c%s%s|r", ReactionColour, GetZoneText())
-    end
+    local ReactionColour = Private:FetchReactionColour()
+    local Zone = Private.DB.global.MinimapStats.Location.ShowSubZone and GetSubZoneText() ~= "" and GetSubZoneText() or GetZoneText()
+    return string.format("|c%s%s|r", CreateColor(ReactionColour.r, ReactionColour.g, ReactionColour.b, 1):GenerateHexColor(), Zone)
 end
 
 function Private:SetupLocation()

@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 local UF = Private.E:GetModule("UnitFrames")
 local Castbars = {}
-local InterruptSpellID;
+local InterruptSpellID = 0
 local canInterrupt = false
 
 local function ColourInterruptCooldown(Castbar, Unit)
@@ -33,7 +33,7 @@ local function UpdateInterruptCooldown(_, Event, Unit)
     canInterrupt = false
     if Private.DB.global.ElvUI.InterruptOnCooldown then
         if Event ~= "SPELL_UPDATE_COOLDOWN" then
-            InterruptSpellID = nil
+            InterruptSpellID = 0
             local SpellIDs = Private.InterruptIDs[Private.E.myclass]
             if SpellIDs then
                 for _, SpellID in ipairs(SpellIDs) do
@@ -45,8 +45,8 @@ local function UpdateInterruptCooldown(_, Event, Unit)
             end
         end
 
-        canInterrupt = InterruptSpellID ~= nil
-        local Duration = InterruptSpellID and C_Spell.GetSpellCooldownDuration(InterruptSpellID)
+        canInterrupt = InterruptSpellID ~= 0
+        local Duration = canInterrupt and C_Spell.GetSpellCooldownDuration(InterruptSpellID)
         if Duration then canInterrupt = Duration:IsZero() end
     end
 
