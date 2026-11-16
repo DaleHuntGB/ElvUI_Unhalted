@@ -28,6 +28,18 @@ local function GetZone(Continent, X, Y)
     return CityZones[Info.mapID] or Info.mapID
 end
 
+local function GetMapZone(MapID)
+    local Info = MapID and C_Map.GetMapInfo(MapID)
+    while Info and Info.mapType > Enum.UIMapType.Zone do Info = C_Map.GetMapInfo(Info.parentMapID) end
+    if not Info or Info.mapType ~= Enum.UIMapType.Zone then return end
+    return CityZones[Info.mapID] or Info.mapID
+end
+
+local function GetPointZone(Continent, X, Y, MapID)
+    if not ContinentMaps[Continent] then return 0 end
+    return GetMapZone(MapID) or GetZone(Continent, X, Y)
+end
+
 local function GetZoneName(Zone)
     ZoneNames[Zone] = ZoneNames[Zone] or C_Map.GetMapInfo(Zone).name
     return ZoneNames[Zone]
@@ -103,7 +115,7 @@ local function Search(KnownTaxiNodes, isZoned)
     end
 end
 
-function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, GoalY, GoalName, KnownTaxiNodes)
+function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, GoalY, GoalName, GoalMapID, KnownTaxiNodes)
     if #Points == 2 then
         local Faction = UnitFactionGroup("player") == "Horde" and 2 or 1
 
@@ -129,8 +141,8 @@ function Private:PlanNavigationRoute(Continent, X, Y, GoalContinent, GoalX, Goal
         for Index, Point in ipairs(Points) do Point.Index = Index end
     end
 
-    PlayerPoint[1], PlayerPoint[2], PlayerPoint[3], PlayerPoint.Land, PlayerPoint.Zone = Continent, X, Y, GetLand(Continent, X, Y), GetZone(Continent, X, Y)
-    GoalPoint[1], GoalPoint[2], GoalPoint[3], GoalPoint[4], GoalPoint.Land, GoalPoint.Zone = GoalContinent, GoalX, GoalY, GoalName, GetLand(GoalContinent, GoalX, GoalY), GetZone(GoalContinent, GoalX, GoalY)
+    PlayerPoint[1], PlayerPoint[2], PlayerPoint[3], PlayerPoint.Land, PlayerPoint.Zone = Continent, X, Y, GetLand(Continent, X, Y), GetPointZone(Continent, X, Y, C_Map.GetBestMapForUnit("player"))
+    GoalPoint[1], GoalPoint[2], GoalPoint[3], GoalPoint[4], GoalPoint.Land, GoalPoint.Zone = GoalContinent, GoalX, GoalY, GoalName, GetLand(GoalContinent, GoalX, GoalY), GetPointZone(GoalContinent, GoalX, GoalY, GoalMapID)
 
     if not Search(KnownTaxiNodes, true) and not Search(KnownTaxiNodes, false) then return end
 

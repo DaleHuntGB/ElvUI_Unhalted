@@ -5,7 +5,7 @@ local MaxSteps = 5
 
 local GoalVector = CreateVector2D(0, 0)
 local State = {
-    GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0,
+    GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0, GoalMapID = 0,
     PlanContinent = -1, PlanX = 0, PlanY = 0,
     Elapsed = 0, Distance = -1,
     isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false,
@@ -37,7 +37,7 @@ local function GetGoalWorldPosition()
     local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
     if not Position then return end
     local WorldX, WorldY = Position:GetXY()
-    return Continent, WorldX, WorldY, Name, QuestID
+    return Continent, WorldX, WorldY, Name, QuestID, MapID
 end
 
 local function IsInHotSpot()
@@ -73,7 +73,7 @@ local function CheckRoute(Continent, X, Y)
     local KnownTaxiNodes = Private.DB.global.Miscellaneous.Navigation.TaxiNodes[Private.DB.keys.char]
     State.isDirty, State.PlanContinent, State.PlanX, State.PlanY = false, Continent, X, Y
 
-    local Route = Private:PlanNavigationRoute(Continent, X, Y, State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, KnownTaxiNodes)
+    local Route = Private:PlanNavigationRoute(Continent, X, Y, State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalMapID, KnownTaxiNodes)
     if not Route then ClearRoute() return end
 
     local Target = Route[1].Points[2]
@@ -128,14 +128,14 @@ local function Navigation_OnUpdate(_, TimeElapsed)
 end
 
 local function UpdateGoal()
-    local Continent, X, Y, Name, QuestID = GetGoalWorldPosition()
+    local Continent, X, Y, Name, QuestID, MapID = GetGoalWorldPosition()
     if not Continent then StopNavigation() return end
 
     QuestID = QuestID or 0
     local isNavigating = Private.NavigationFrame:GetScript("OnUpdate") ~= nil
-    if isNavigating and Continent == State.GoalContinent and X == State.GoalX and Y == State.GoalY and QuestID == State.GoalQuestID then return end
+    if isNavigating and Continent == State.GoalContinent and X == State.GoalX and Y == State.GoalY and QuestID == State.GoalQuestID and MapID == State.GoalMapID then return end
 
-    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID = Continent, X, Y, Name, QuestID
+    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID, State.GoalMapID = Continent, X, Y, Name, QuestID, MapID
     State.isDirty, State.Elapsed = true, CheckInterval
     Private.NavigationFrame:SetScript("OnUpdate", Navigation_OnUpdate)
 end
