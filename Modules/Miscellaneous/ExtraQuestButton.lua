@@ -2,11 +2,10 @@ local Private = select(2, ...)
 local AB = Private.E:GetModule("ActionBars")
 
 local ButtonSize = 52
-local RangeInterval = 0.2
 local StyleTexture = "Interface\\ExtraButton\\Default"
 local ExtraActionBinding = "EXTRAACTIONBUTTON1"
 local White = { r = 1, g = 1, b = 1 }
-local Events = { "QUEST_LOG_UPDATE", "SUPER_TRACKING_CHANGED", "BAG_UPDATE_COOLDOWN", "UPDATE_BINDINGS", "PLAYER_TARGET_CHANGED", "PLAYER_REGEN_ENABLED" }
+local Events = { "QUEST_LOG_UPDATE", "SUPER_TRACKING_CHANGED", "BAG_UPDATE_COOLDOWN", "SPELL_RANGE_CHECK_UPDATE", "UPDATE_BINDINGS", "PLAYER_REGEN_ENABLED" }
 local BossButtonUpdates = { "ExtraButtons_UpdateAlpha", "ExtraButtons_UpdateScale", "ExtraButtons_GlobalFade", "UpdateExtraBindings", "UpdateButtonSettings" }
 local VisibilitySnippet = [[
     self:ClearBindings()
@@ -21,7 +20,15 @@ local VisibilitySnippet = [[
     end
 ]]
 
-local RangeTimer = 0
+local function UpdateRange(Button)
+    local InRange = C_Spell.IsSpellInRange(Button.RangeSpellID)
+    if Private:IsSecret(InRange) then return end
+    local OutOfRange, isRangeOnText = InRange == false and AB.db.noRangeColor, AB.db.useRangeColorText
+    local IconColour = not isRangeOnText and OutOfRange or AB.db.usableColor
+    local TextColour = isRangeOnText and OutOfRange or White
+    Button.icon:SetVertexColor(IconColour.r, IconColour.g, IconColour.b)
+    Button.HotKey:SetVertexColor(TextColour.r, TextColour.g, TextColour.b)
+end
 
 local function UpdateLayout(Button)
     if InCombatLockdown() then return end
@@ -49,7 +56,7 @@ local function UpdateLayout(Button)
     Button.Count:ClearAllPoints()
     Button.Count:Point(CountAnchor, DB.countTextXOffset or 0, DB.countTextYOffset or 2)
     Button.Count:SetShown(DB.counttext ~= false)
-    RangeTimer = 0
+    UpdateRange(Button)
 
     if Key1 == Button:GetAttribute("key1") and Key2 == Button:GetAttribute("key2") then return end
     Button:SetAttribute("key1", Key1)
@@ -66,6 +73,12 @@ local function UpdateItem(Button)
         if InCombatLockdown() then return end
         Button:SetAttribute("item", ItemLink)
         Button:Execute(VisibilitySnippet)
+
+        if Button.RangeSpellID > 0 then C_Spell.EnableSpellRangeCheck(Button.RangeSpellID, false) end
+        local SpellID = ItemLink and select(2, C_Item.GetItemSpell(ItemLink)) or 0
+        Button.RangeSpellID = SpellID > 0 and C_Spell.SpellHasRange(SpellID) and SpellID or 0
+        if Button.RangeSpellID > 0 then C_Spell.EnableSpellRangeCheck(Button.RangeSpellID, true) end
+        UpdateRange(Button)
     end
     if not ItemLink then return end
 
@@ -77,9 +90,9 @@ local function UpdateItem(Button)
     CooldownFrame_Set(Button.cooldown, Start, Duration, Enable)
 end
 
-local function ExtraQuestButton_OnEvent(Button, Event)
-    if Event == "PLAYER_TARGET_CHANGED" then
-        RangeTimer = 0
+local function ExtraQuestButton_OnEvent(Button, Event, SpellID)
+    if Event == "SPELL_RANGE_CHECK_UPDATE" then
+        if not Private:IsSecret(SpellID) and SpellID == Button.RangeSpellID then UpdateRange(Button) end
     elseif Event == "UPDATE_BINDINGS" then
         UpdateLayout(Button)
     elseif Event == "PLAYER_REGEN_ENABLED" then
@@ -88,21 +101,6 @@ local function ExtraQuestButton_OnEvent(Button, Event)
     else
         UpdateItem(Button)
     end
-end
-
-local function ExtraQuestButton_OnUpdate(Button, Elapsed)
-    RangeTimer = RangeTimer - Elapsed
-    if RangeTimer > 0 then return end
-    RangeTimer = RangeInterval
-
-    local LogIndex = C_QuestLog.GetLogIndexForQuestID(Button.QuestID)
-    local InRange = LogIndex and IsQuestLogSpecialItemInRange(LogIndex)
-    if Private:IsSecret(InRange) then return end
-    local OutOfRange, isRangeOnText = InRange == 0 and AB.db.noRangeColor, AB.db.useRangeColorText
-    local IconColour = not isRangeOnText and OutOfRange or AB.db.usableColor
-    local TextColour = isRangeOnText and OutOfRange or White
-    Button.icon:SetVertexColor(IconColour.r, IconColour.g, IconColour.b)
-    Button.HotKey:SetVertexColor(TextColour.r, TextColour.g, TextColour.b)
 end
 
 local function ExtraQuestButton_OnEnter(Button)
@@ -136,6 +134,7 @@ function Private:SetupExtraQuestButton()
     Button:SetAttribute("_onstate-extrabar", VisibilitySnippet)
     Button:Hide()
     Button.QuestID = 0
+    Button.RangeSpellID = 0
     Button.commandName = ExtraActionBinding
 
     Button.icon = Button:CreateTexture()
@@ -155,7 +154,6 @@ function Private:SetupExtraQuestButton()
 
     Button:SetScript("OnEnter", ExtraQuestButton_OnEnter)
     Button:SetScript("OnLeave", ExtraQuestButton_OnLeave)
-    Button:SetScript("OnUpdate", ExtraQuestButton_OnUpdate)
     Button:SetScript("OnEvent", ExtraQuestButton_OnEvent)
     for _, Event in ipairs(Events) do Button:RegisterEvent(Event) end
     RegisterStateDriver(Button, "extrabar", "[extrabar] hide; show")
