@@ -4,6 +4,7 @@ local JournalTextures = "Interface\\EncounterJournal\\UI-EncounterJournalTexture
 local ParchmentAtlas = "spellbook-Page-Right-C60"
 local ParchmentTopCrop = 46 / 682
 local AllBosses = { Name = "All Bosses", All = true }
+local AllRecipes = { Name = "Recipes & Patterns", All = true, Recipes = true }
 local LevelBrackets = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
 
 local function RefreshReceivedLootRow(Row)
@@ -27,13 +28,15 @@ end
 
 local function Journal_RefreshBosses(Journal)
     local Bosses = Private:GetDungeonJournalBosses(Journal.Dungeon, Journal.ClassFilter, Journal.SlotFilter)
-    if not tContains(Bosses, Journal.Boss) then Journal.Boss = AllBosses end
+    local HasRecipes = Private:HasDungeonJournalRecipes(Journal.Dungeon, Journal.ClassFilter, Journal.SlotFilter)
 
     local Provider = CreateDataProvider()
-    if #Bosses > 0 then
+    if #Bosses > 0 or HasRecipes then
         Provider:Insert(AllBosses)
+        if HasRecipes then Provider:Insert(AllRecipes) end
         Provider:InsertTable(Bosses)
     end
+    if not Provider:FindIndex(Journal.Boss) then Journal.Boss = AllBosses end
     Journal.BossList:SetDataProvider(Provider)
     Journal_RefreshLoot(Journal)
 end

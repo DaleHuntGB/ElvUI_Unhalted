@@ -5,6 +5,7 @@ local DefaultDungeonArt = "Interface\\EncounterJournal\\UI-EJ-DUNGEONBUTTON-Defa
 local DefaultPortrait = "Interface\\EncounterJournal\\UI-EJ-BOSS-Default"
 local PortraitMask = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local IconBorder = "Interface\\Common\\WhiteIconFrame"
+local RecipeIcon = "Interface\\Icons\\INV_Scroll_03"
 local MissingIcon = 134400
 
 local DungeonButtonUp = { 0.00195313, 0.34179688, 0.42871094, 0.52246094 }
@@ -18,6 +19,7 @@ local DungeonCard = { 0, 0.68359375, 0, 0.7421875 }
 local DungeonThumbnail = { 0.18359375, 0.5, 0.13671875, 0.60546875 }
 local LoadingScreenCard = { 0.1534, 0.8466, 0.1603, 0.8397 }
 local LoadingScreenThumbnail = { 0.2421, 0.7579, 0.1603, 0.8397 }
+local RecipeThumbnail = { 0.08, 0.92, 0.1886, 0.8114 }
 
 local function SetButtonArt(Button, Coords, Pushed, Highlight)
     Button:SetNormalTexture(JournalTextures)
@@ -98,7 +100,7 @@ function Private.InitDungeonJournalBossButton(Button, Boss)
         DungeonArtMask:SetTexture(PortraitMask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         Button.DungeonArt:AddMaskTexture(DungeonArtMask)
         Button.Name = Private:CreateDungeonJournalText(Button, "GameFontNormalMed3")
-        Button.Name:SetSize(160, 40)
+        Button.Name:SetWidth(160)
         Button.Name:SetPoint("LEFT", Button, "LEFT", 105, -3)
         Button.Name:SetJustifyH("LEFT")
         Button.Name:SetTextColor(0.827, 0.659, 0.463)
@@ -108,12 +110,15 @@ function Private.InitDungeonJournalBossButton(Button, Boss)
     Button.Boss = Boss
     Button.Portrait:SetShown(not Boss.All)
     Button.DungeonArt:SetShown(Boss.All == true)
-    if Boss.All then
+    if Boss.Recipes then
+        Button.DungeonArt:SetTexture(RecipeIcon)
+        Button.DungeonArt:SetTexCoord(RecipeThumbnail[1], RecipeThumbnail[2], RecipeThumbnail[3], RecipeThumbnail[4])
+    elseif Boss.All then
         SetDungeonArt(Button.DungeonArt, Private.DungeonJournal.Dungeon, DungeonThumbnail, LoadingScreenThumbnail)
     elseif not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then
         Button.Portrait:SetTexture(DefaultPortrait)
     end
-    Button.Name:SetText(Boss.Rare and Boss.Name .. "\n|cFF9D9D9D(Rare)|r" or Boss.Name)
+    Button.Name:SetText(Boss.Rare and Boss.Name .. "\n|cFF9D9D9D(" .. (Boss.RareLabel or "Rare") .. ")|r" or Boss.Name)
     Private.UpdateDungeonJournalBossSelection(Button)
 end
 

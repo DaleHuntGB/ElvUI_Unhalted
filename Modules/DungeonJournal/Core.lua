@@ -56,13 +56,17 @@ local function IsLootShown(ItemID, ClassFile, Slot)
     return SubClassID == Armour.Generic or ClassArmour[ClassFile][SubClassID] == true
 end
 
+local function IsRecipe(ItemID)
+    return select(6, C_Item.GetItemInfoInstant(ItemID)) == Enum.ItemClass.Recipe
+end
+
 function Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot)
     if not Slot then return Dungeon.Bosses end
 
     local Bosses = {}
     for _, Boss in ipairs(Dungeon.Bosses) do
         for _, ItemID in ipairs(Boss.Loot) do
-            if IsLootShown(ItemID, ClassFile, Slot) then
+            if not IsRecipe(ItemID) and IsLootShown(ItemID, ClassFile, Slot) then
                 Bosses[#Bosses + 1] = Boss
                 break
             end
@@ -71,11 +75,21 @@ function Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot)
     return Bosses
 end
 
+function Private:HasDungeonJournalRecipes(Dungeon, ClassFile, Slot)
+    for _, Boss in ipairs(Dungeon.Bosses) do
+        for _, ItemID in ipairs(Boss.Loot) do
+            if IsRecipe(ItemID) and IsLootShown(ItemID, ClassFile, Slot) then return true end
+        end
+    end
+    return false
+end
+
 function Private:GetDungeonJournalDungeons(Bracket, ClassFile, Slot)
     local Dungeons = {}
     for _, Dungeon in ipairs(Private.DungeonJournalData) do
         local InBracket = not Bracket or (Dungeon.Levels[1] <= Bracket[2] and Dungeon.Levels[2] >= Bracket[1])
-        if InBracket and (not Slot or #Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot) > 0) then Dungeons[#Dungeons + 1] = Dungeon end
+        local HasLoot = not Slot or #Private:GetDungeonJournalBosses(Dungeon, ClassFile, Slot) > 0 or Private:HasDungeonJournalRecipes(Dungeon, ClassFile, Slot)
+        if InBracket and HasLoot then Dungeons[#Dungeons + 1] = Dungeon end
     end
     return Dungeons
 end
@@ -83,13 +97,14 @@ end
 function Private:GetDungeonJournalLoot(Dungeon, Boss, ClassFile, Slot)
     local Loot, Seen, Total = {}, {}, 0
     local Bosses = Boss.All and Dungeon.Bosses or { Boss }
+    local Recipes = Boss.Recipes == true
 
     for _, Source in ipairs(Bosses) do
         for _, ItemID in ipairs(Source.Loot) do
             local Entry = Seen[ItemID]
             if Entry then
                 if Boss.All and Entry.Boss ~= Source.Name then Entry.Boss = "Multiple Bosses" end
-            else
+            elseif IsRecipe(ItemID) == Recipes then
                 Total = Total + 1
                 Entry = { ItemID = ItemID, Boss = Boss.All and Source.Name or nil }
                 Seen[ItemID] = Entry
