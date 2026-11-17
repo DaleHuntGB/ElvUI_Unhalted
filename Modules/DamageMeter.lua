@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 local LightenFactor = 2
 local BarHeight = 24
-local SeparatorHeight = 22
+local SeparatorHeight = 18
 local Spacing = 0
 local Inset = 1
 local TextPadding = 3
