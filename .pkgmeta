@@ -3,6 +3,10 @@ enable-nolib-creation: no
 
 curse-id: 1692219
 
+manual-changelog:
+    filename: CHANGELOG.md
+    markup-type: markdown
+
 externals:
 
 ignore:
