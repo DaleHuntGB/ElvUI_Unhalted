@@ -7,7 +7,7 @@ local Inset = 1
 local TextPadding = 3
 local MaxRowsPerSection = 10
 local MeleeIcon = "Interface\\Icons\\INV_Sword_04"
-local AttackName = C_Spell.GetSpellName(88163)
+local MeleeSpellNames = { [C_Spell.GetSpellName(88163)] = true, [C_Spell.GetSpellName(6603)] = true }
 
 local SingleMeterTypes = {
     [Enum.DamageMeterType.Absorbs] = true,
@@ -106,7 +106,7 @@ local function RefreshDeathRecap(Drilldown, Row, CreateEntry)
         local SpellTexture = EnvironmentalType and "Interface\\Icons\\" .. (EnvironmentalIcons[EnvironmentalType] or "ability_creature_cursed_05") or EventType == "SWING_DAMAGE" and MeleeIcon or hasSpellID and C_Spell.GetSpellTexture(SpellID)
         if hasSpellID and not Private:IsSecret(SpellName) and not SpellName then SpellName = C_Spell.GetSpellName(SpellID) end
         if not Private:IsSecret(SpellName) and not SpellName then SpellName = UNKNOWN end
-        if not Private:IsSecret(SpellName) and SpellName == AttackName then SpellTexture = MeleeIcon end
+        if not Private:IsSecret(SpellName) and MeleeSpellNames[SpellName] then SpellTexture = MeleeIcon end
         if not Private:IsSecret(SpellTexture) and not SpellTexture then SpellTexture = 134400 end
         Entry.Icon:SetTexture(SpellTexture)
         Entry.Name_Text:SetText(SpellName)
@@ -343,7 +343,7 @@ local function CreateDrilldown(Row)
                         Entry.Name_Text:SetText(ACTION_SWING)
                     else
                         local SpellName = C_Spell.GetSpellName(SpellID)
-                        local SpellTexture = not Private:IsSecret(SpellName) and SpellName == AttackName and MeleeIcon or C_Spell.GetSpellTexture(SpellID)
+                        local SpellTexture = not Private:IsSecret(SpellName) and MeleeSpellNames[SpellName] and MeleeIcon or C_Spell.GetSpellTexture(SpellID)
                         if not Private:IsSecret(SpellName) and not SpellName then SpellName = UNKNOWN end
                         Entry.Icon:SetTexture(SpellTexture)
                         Entry.Name_Text:SetText(SpellName)
