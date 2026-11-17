@@ -181,7 +181,7 @@ local function BuildLevelRanges()
     Private:UpdateLevelZones()
 end
 
-function Private:CreateLevelZones()
+function Private:SetupLevelZones()
     if not Private.DB.global.Miscellaneous.Navigation.LevelZones.Enable or not QuestieDB then return end
 
     Private.LevelZones = Private:UnpackData("LevelZones")

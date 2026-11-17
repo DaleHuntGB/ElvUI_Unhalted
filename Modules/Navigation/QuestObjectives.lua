@@ -133,7 +133,7 @@ local function PlaceIcons(Points, Texture, QuestID, Index, Name, Rate)
     end
 end
 
-function Private:DrawQuestObjectives()
+local function DrawQuestObjectives()
     Private.QuestObjectiveIcons:ReleaseAll()
     Private.QuestObjectivePaths:ReleaseAll()
     wipe(DrawnPaths)
@@ -192,7 +192,7 @@ end
 
 local function RefreshQuestObjectives()
     isRefreshQueued = false
-    Private:DrawQuestObjectives()
+    DrawQuestObjectives()
 end
 
 local function OnEvent()
@@ -204,14 +204,14 @@ end
 local function WorldMap_OnShow()
     if not Private.DB.global.Miscellaneous.Navigation.Enable then return end
     for _, Event in ipairs(RefreshEvents) do Private.QuestObjectiveOverlay:RegisterEvent(Event) end
-    Private:DrawQuestObjectives()
+    DrawQuestObjectives()
 end
 
 local function WorldMap_OnHide()
     Private.QuestObjectiveOverlay:UnregisterAllEvents()
 end
 
-function Private:CreateQuestObjectives()
+function Private:SetupQuestObjectives()
     if not Private.DB.global.Miscellaneous.Navigation.QuestObjectives.Enable or not QuestieDB then return end
 
     local Canvas = WorldMapFrame:GetCanvas()
@@ -223,12 +223,12 @@ function Private:CreateQuestObjectives()
     Private.QuestObjectiveIcons = CreateUnsecuredFramePool("Frame", Overlay)
     Private.QuestObjectivePaths = CreateUnsecuredRegionPoolInstance(nil, function() return Overlay:CreateLine(nil, "ARTWORK") end)
 
-    hooksecurefunc(WorldMapFrame, "OnMapChanged", Private.DrawQuestObjectives)
+    hooksecurefunc(WorldMapFrame, "OnMapChanged", DrawQuestObjectives)
     hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ResizeQuestObjectives)
     WorldMapFrame:HookScript("OnShow", WorldMap_OnShow)
     WorldMapFrame:HookScript("OnHide", WorldMap_OnHide)
 end
 
 function Private:UpdateQuestObjectives()
-    if Private.QuestObjectiveIcons then Private:DrawQuestObjectives() end
+    if Private.QuestObjectiveIcons then DrawQuestObjectives() end
 end

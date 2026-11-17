@@ -177,11 +177,11 @@ end
 
 function Private:SetupNavigation()
     Private.NavigationFrame = CreateFrame("Frame")
-    Private:CreateNavigationArrow()
-    Private:CreateNavigationMap()
-    Private:CreateAvailableQuests()
-    Private:CreateLevelZones()
-    Private:CreateQuestObjectives()
-    Private:CreateNavigationFlightTimer()
+    Private:SetupNavigationArrow()
+    Private:SetupNavigationMap()
+    Private:SetupAvailableQuests()
+    Private:SetupLevelZones()
+    Private:SetupQuestObjectives()
+    Private:SetupNavigationFlightTimer()
     Private:UpdateNavigation()
 end

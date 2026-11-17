@@ -77,7 +77,7 @@ function Private:UpdateNavigationFlightTimer()
     end
 end
 
-function Private:CreateNavigationFlightTimer()
+function Private:SetupNavigationFlightTimer()
     local Colour = Private.E.db.general.valuecolor
     local FlightTimer = CreateFrame("Frame", nil, UIParent)
     FlightTimer:SetAllPoints(Private.NavigationArrow)

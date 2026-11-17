@@ -173,7 +173,7 @@ local function GetIconSize()
     return Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize / WorldMapFrame:GetCanvas():GetScale()
 end
 
-function Private:DrawAvailableQuests()
+local function DrawAvailableQuests()
     local Pool = Private.AvailableQuestIcons
     Pool:ReleaseAll()
     if not Private.DB.global.Miscellaneous.Navigation.Enable or not WorldMapFrame:IsShown() then return end
@@ -306,7 +306,7 @@ local function BuildAvailableQuests()
         coroutine.yield()
     end
 
-    Private:DrawAvailableQuests()
+    DrawAvailableQuests()
 end
 
 local function ResizeAvailableQuests()
@@ -316,7 +316,7 @@ end
 
 local function RefreshAvailableQuests()
     isRefreshQueued = false
-    Private:DrawAvailableQuests()
+    DrawAvailableQuests()
 end
 
 local function OnEvent()
@@ -328,14 +328,14 @@ end
 local function WorldMap_OnShow()
     if not Private.DB.global.Miscellaneous.Navigation.Enable then return end
     for _, Event in ipairs(RefreshEvents) do Private.AvailableQuestOverlay:RegisterEvent(Event) end
-    Private:DrawAvailableQuests()
+    DrawAvailableQuests()
 end
 
 local function WorldMap_OnHide()
     Private.AvailableQuestOverlay:UnregisterAllEvents()
 end
 
-function Private:CreateAvailableQuests()
+function Private:SetupAvailableQuests()
     if not Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable or not QuestieDB then return end
 
     local Canvas = WorldMapFrame:GetCanvas()
@@ -346,7 +346,7 @@ function Private:CreateAvailableQuests()
     Private.AvailableQuestOverlay = Overlay
     Private.AvailableQuestIcons = CreateUnsecuredFramePool("Frame", Overlay)
 
-    hooksecurefunc(WorldMapFrame, "OnMapChanged", Private.DrawAvailableQuests)
+    hooksecurefunc(WorldMapFrame, "OnMapChanged", DrawAvailableQuests)
     hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ResizeAvailableQuests)
     WorldMapFrame:HookScript("OnShow", WorldMap_OnShow)
     WorldMapFrame:HookScript("OnHide", WorldMap_OnHide)
@@ -354,5 +354,5 @@ function Private:CreateAvailableQuests()
 end
 
 function Private:UpdateAvailableQuests()
-    if Private.AvailableQuestIcons then Private:DrawAvailableQuests() end
+    if Private.AvailableQuestIcons then DrawAvailableQuests() end
 end

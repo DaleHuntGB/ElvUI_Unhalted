@@ -57,7 +57,7 @@ local function ResizeNavigationMap()
     for Icon in Private.NavigationMapIcons:EnumerateActive() do Icon:SetSize(FlightSize, FlightSize) end
 end
 
-function Private:CreateNavigationMap()
+function Private:SetupNavigationMap()
     local Canvas = WorldMapFrame:GetCanvas()
     local Overlay = CreateFrame("Frame", nil, Canvas)
     Overlay:SetAllPoints(Canvas)

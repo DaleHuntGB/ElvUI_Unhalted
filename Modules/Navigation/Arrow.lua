@@ -13,7 +13,7 @@ function Private:UpdateNavigationArrow()
     Private.E:SetFont(NavigationArrow.Distance, Font, DB.Text.FontSize, FontStyle)
 end
 
-function Private:CreateNavigationArrow()
+function Private:SetupNavigationArrow()
     local NavigationArrow = CreateFrame("Frame", "UnhaltedNavigationArrow", UIParent)
     NavigationArrow:Hide()
 
