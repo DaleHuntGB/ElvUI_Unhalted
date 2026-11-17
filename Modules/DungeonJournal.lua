@@ -69,6 +69,7 @@ local AllBosses = { Name = "All Bosses", All = true }
 local AllRecipes = { Name = "Recipes & Patterns", All = true, Recipes = true }
 local LevelBrackets = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
 
+-- [[ Filters ]]
 local function IsLootShown(ItemID, ClassFile, Slot)
     local _, _, _, EquipLoc, _, ClassID, SubClassID = C_Item.GetItemInfoInstant(ItemID)
     if Slot and (EquipLocSlots[EquipLoc] or "Other") ~= Slot then return false end
@@ -139,6 +140,7 @@ local function GetDungeonJournalLoot(Dungeon, Boss, ClassFile, Slot)
     return Loot, Total
 end
 
+-- [[ Rows ]]
 local function CreateDungeonJournalText(Parent, Template, OnParchment)
     local Text = Parent:CreateFontString(nil, "OVERLAY", Template)
     local Path, Size = Text:GetFont()
@@ -320,6 +322,7 @@ local function InitDungeonJournalLootRow(Row, Loot)
     UpdateDungeonJournalLootRow(Row)
 end
 
+-- [[ Window ]]
 local function RefreshReceivedLootRow(Row)
     if Row.ItemID == Private.DungeonJournal.ReceivedItemID then UpdateDungeonJournalLootRow(Row) end
 end
@@ -448,6 +451,7 @@ local function CreateScrollList(Parent, View)
     return ScrollBox
 end
 
+-- [[ Setup ]]
 function Private:SetupDungeonJournal()
     local Journal = CreateFrame("Frame", "UnhaltedDungeonJournal", UIParent, "PortraitFrameTemplate")
     Journal:SetSize(800, 496)

@@ -1,7 +1,7 @@
 local Private = select(2, ...)
 local LightenFactor = 2
 local BarHeight = 24
-local SeparatorHeight = 18
+local SeparatorHeight = 22
 local Spacing = 0
 local Inset = 1
 local TextPadding = 3
@@ -171,10 +171,14 @@ local function CreateDrilldown(Row)
 
         local function Separator_UpdateSettings(Separator, DB)
             local TextDB = DB.Text
+            local Accent = Private.E.db.general.valuecolor
 
+            Separator.Bar:SetTexture(Private.LSM:Fetch("statusbar", DB.Texture))
+            Separator.Bar:SetVertexColor(Accent.r, Accent.g, Accent.b)
+            Separator.Top_Border:SetColorTexture(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
+            Separator.Bottom_Border:SetColorTexture(Private.E.bordercolour.r, Private.E.bordercolour.g, Private.E.bordercolour.b, Private.E.bordercolour.a)
             Private.E:SetFont(Separator.Name_Text, Private:FetchFont(Private.E.db.general.font), TextDB.Name_FontSize, Private.E.db.general.fontStyle)
-            Separator.Left_Line:SetColorTexture(unpack(TextDB.Name_Colour))
-            Separator.Right_Line:SetColorTexture(unpack(TextDB.Name_Colour))
+            Separator.Name_Text:SetTextColor(unpack(TextDB.Name_Colour))
         end
 
         local function Drilldown_UpdateSettings(Drilldown, DB)
@@ -276,20 +280,24 @@ local function CreateDrilldown(Row)
                         Separator = CreateFrame("Frame", nil, Drilldown)
                         Separator:SetHeight(SeparatorHeight)
 
+                        Separator.Bar = Separator:CreateTexture(nil, "ARTWORK")
+                        Separator.Bar:SetAllPoints(Separator)
+
+                        Separator.Top_Border = Separator:CreateTexture(nil, "OVERLAY")
+                        Separator.Top_Border:SetHeight(1)
+                        Separator.Top_Border:SetPoint("TOPLEFT", Separator, "TOPLEFT", 0, 0)
+                        Separator.Top_Border:SetPoint("TOPRIGHT", Separator, "TOPRIGHT", 0, 0)
+
+                        Separator.Bottom_Border = Separator:CreateTexture(nil, "OVERLAY")
+                        Separator.Bottom_Border:SetHeight(1)
+                        Separator.Bottom_Border:SetPoint("BOTTOMLEFT", Separator, "BOTTOMLEFT", 0, 0)
+                        Separator.Bottom_Border:SetPoint("BOTTOMRIGHT", Separator, "BOTTOMRIGHT", 0, 0)
+
                         Separator.Name_Text = Separator:CreateFontString(nil, "OVERLAY")
-                        Separator.Name_Text:SetPoint("CENTER", Separator, "CENTER", 0, 0)
+                        Separator.Name_Text:SetPoint("LEFT", Separator, "LEFT", TextPadding, 0)
+                        Separator.Name_Text:SetPoint("RIGHT", Separator, "RIGHT", -TextPadding, 0)
                         Separator.Name_Text:SetJustifyH("CENTER")
                         Separator.Name_Text:SetWordWrap(false)
-
-                        Separator.Left_Line = Separator:CreateTexture(nil, "OVERLAY")
-                        Separator.Left_Line:SetHeight(1)
-                        Separator.Left_Line:SetPoint("LEFT", Separator, "LEFT", TextPadding, 0)
-                        Separator.Left_Line:SetPoint("RIGHT", Separator.Name_Text, "LEFT", -TextPadding, 0)
-
-                        Separator.Right_Line = Separator:CreateTexture(nil, "OVERLAY")
-                        Separator.Right_Line:SetHeight(1)
-                        Separator.Right_Line:SetPoint("LEFT", Separator.Name_Text, "RIGHT", TextPadding, 0)
-                        Separator.Right_Line:SetPoint("RIGHT", Separator, "RIGHT", -TextPadding, 0)
 
                         Separator.UpdateSettings = Separator_UpdateSettings
                         Separator:UpdateSettings(DB)
@@ -299,7 +307,6 @@ local function CreateDrilldown(Row)
                     Separator:SetPoint("TOPLEFT", Drilldown, "TOPLEFT", Inset, -OffsetY)
                     Separator:SetPoint("TOPRIGHT", Drilldown, "TOPRIGHT", -Inset, -OffsetY)
                     Separator.Name_Text:SetText(LayoutItem)
-                    Separator.Name_Text:SetTextColor(BarColour.r, BarColour.g, BarColour.b)
                     Separator:Show()
                     OffsetY = OffsetY + SeparatorHeight + Spacing
                 else

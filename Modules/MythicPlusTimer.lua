@@ -11,12 +11,14 @@ local Preview = {
     },
 }
 
+-- [[ Tracker ]]
 local function UpdateMythicPlusTracker(Frame, Hidden)
     if not ObjectiveTrackerFrame or Frame.TrackerHidden == Hidden then return end
     ObjectiveTrackerFrame:SetRolesets(Hidden and "alwaysBlocked" or "objectives")
     Frame.TrackerHidden = Hidden
 end
 
+-- [[ Rows ]]
 local function CreateMythicPlusRow(Window, Index, DB)
     local function Row_UpdateSettings(Row, Settings)
         local TextDB = Settings.Text
@@ -69,6 +71,7 @@ local function CreateMythicPlusRow(Window, Index, DB)
     return Row
 end
 
+-- [[ Timer ]]
 local function ReadMythicPlusTime(Frame)
     local Data = Frame.Run
     if Data and Data.TimerID and not Data.Completed then
@@ -148,6 +151,7 @@ local function RefreshMythicPlusClock(Frame)
     Row:Show()
 end
 
+-- [[ Objectives ]]
 local function RecordMythicPlusBoss(Frame, EncounterID, Name)
     local Run = Frame.Run
     if not Run or Run.Completed or Private:IsSecret(EncounterID) or not EncounterID then return end
@@ -239,6 +243,7 @@ local function RenderMythicPlusObjectives(Frame, Data, Index)
     return Index
 end
 
+-- [[ Window ]]
 local function UpdateMythicPlusWindow(Frame, DB)
     Frame:ClearAllPoints()
     Frame:SetPoint(DB.Layout[1], UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
@@ -449,6 +454,7 @@ local function CreateMythicPlusWindow(DB)
     return Frame
 end
 
+-- [[ Setup ]]
 function Private:SetupMythicPlusTimer()
     local DB = Private.DB.global.MythicPlusTimer
     if DB.Enable then
