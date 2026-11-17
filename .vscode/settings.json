@@ -98,7 +98,9 @@
         "MAP_PIN_INVALID_MAP",
         "QuestObjectiveTracker",
         "EssentialCooldownViewer",
-        "UtilityCooldownViewer"
+        "UtilityCooldownViewer",
+        "GetDifficultyColor",
+        "LibQuestieDB"
     ],
     "Lua.type.weakUnionCheck": true
 }

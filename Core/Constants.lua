@@ -164,6 +164,10 @@ function Private:IsSecret(Value)
     return issecretvalue and issecretvalue(Value) or false
 end
 
+function Private:UnpackData(Name)
+    return C_EncodingUtil.DeserializeCBOR(C_EncodingUtil.DecompressString(C_EncodingUtil.DecodeBase64(Private.PackedData[Name]), Enum.CompressionMethod.Deflate))
+end
+
 function Private:FetchFont(Font)
     return Private.LSM:Fetch("font", Font)
 end
@@ -239,6 +243,10 @@ end
 
 function Private:IsAddOnLoaded(AddOnName)
     return C_AddOns.IsAddOnLoaded(AddOnName)
+end
+
+function Private:GetQuestieDB()
+    return Private:IsAddOnLoaded("QuestieDB") and LibQuestieDB.RequireContract(4) and LibQuestieDB or nil
 end
 
 function Private:IsDeveloper()

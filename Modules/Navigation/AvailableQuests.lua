@@ -2,11 +2,14 @@ local Private = select(2, ...)
 
 local IconAtlas, RepeatableIconAtlas = "QuestNormal", "QuestDaily"
 local RefreshDelay = 0.2
-local RaceBits = { [95] = 2 ^ 32, [96] = 2 ^ 33 }
+local HubRadius = 1.5
 local UndiscoveredStandings = { [87] = -36000, [576] = -36000, [910] = -36000 }
+local ExcludedSorts = { [-1000] = true, [-641] = true, [-644] = true, [-404] = true, [-402] = true, [-378] = true, [-376] = true, [-375] = true, [-374] = true, [-370] = true, [-369] = true, [-368] = true, [-366] = true, [-365] = true, [-364] = true, [-41] = true, [-22] = true, [-21] = true }
 local RefreshEvents = { "QUEST_LOG_UPDATE", "PLAYER_LEVEL_UP", "SKILL_LINES_CHANGED", "UPDATE_FACTION" }
 
-local Player = { Level = 0, TrivialRange = 0, RaceBit = 1, ClassBit = 1 }
+local QuestieDB = Private:GetQuestieDB()
+local Player = { Level = 0, TrivialRange = 0 }
+local Quests, Givers, ZoneMaps = {}, {}, {}
 local Available, Skills = {}, {}
 local isRefreshQueued = false
 
@@ -72,23 +75,22 @@ local function HasAnySkill(Ranks)
 end
 
 local function GetQuestLevel(Quest)
-    return Quest[2] > 0 and Quest[2] or Player.Level
+    return Quest[1] > 0 and Quest[1] or Player.Level
 end
 
 local function CheckQuest(QuestID)
-    local Quest = Private.AvailableQuests[QuestID]
-    if not Quest or (Quest[3] > 0 and Quest[3] or GetQuestLevel(Quest)) > Player.Level then return false end
+    local Quest = Quests[QuestID]
+    if (Quest[2] > 0 and Quest[2] or GetQuestLevel(Quest)) > Player.Level then return false end
     if Player.Level - GetQuestLevel(Quest) > Player.TrivialRange then return false end
-    if not HasBit(Quest[4], Player.RaceBit) or not HasBit(Quest[5], Player.ClassBit) then return false end
-    if IsTaken(QuestID) then return false end
+    if IsTaken(QuestID) or C_QuestLog.IsQuestDisabledForSession(QuestID) then return false end
 
-    local Requirements = Quest[7]
+    local Requirements = Quest[3]
     if not Requirements then return true end
     if Requirements.MaxLevel and Player.Level > Requirements.MaxLevel then return false end
     if Requirements.Single and not AnyDone(Requirements.Single) then return false end
     if Requirements.Group and not GroupDone(Requirements.Group) then return false end
     if Requirements.Exclusive and AnyTaken(Requirements.Exclusive) then return false end
-    if Requirements.Next and AnyTaken(Requirements.Next) then return false end
+    if Requirements.Next and IsTaken(Requirements.Next) then return false end
     if Requirements.BreadcrumbFor and IsTaken(Requirements.BreadcrumbFor) then return false end
     if Requirements.Breadcrumbs and AnyOnQuest(Requirements.Breadcrumbs) then return false end
     if Requirements.Parent and not C_QuestLog.IsOnQuest(Requirements.Parent) then return false end
@@ -127,12 +129,19 @@ local function GetHubIcon(Hub)
     for Index = 3, #Hub do
         local QuestID = Hub[Index]
         if type(QuestID) == "number" and IsAvailable(QuestID) then
-            local Requirements = Private.AvailableQuests[QuestID][7]
+            local Requirements = Quests[QuestID][3]
             if not (Requirements and Requirements.Repeatable) then return IconAtlas end
             isRepeatableOnly = true
         end
     end
     return isRepeatableOnly and RepeatableIconAtlas
+end
+
+local function FindHub(Hubs, X, Y)
+    for _, Hub in ipairs(Hubs) do
+        local DeltaX, DeltaY = Hub[1] * 100 - X, Hub[2] * 100 - Y
+        if DeltaX * DeltaX + DeltaY * DeltaY <= HubRadius * HubRadius then return Hub end
+    end
 end
 
 local function QuestIcon_OnEnter(Icon)
@@ -149,12 +158,12 @@ local function QuestIcon_OnEnter(Icon)
                 GameTooltip:AddLine(GiverName, NORMAL_FONT_COLOR:GetRGB())
                 GiverName, hasLines = "", true
             end
-            local Quest = Private.AvailableQuests[Value]
-            local Level = GetQuestLevel(Quest)
+            local Level = GetQuestLevel(Quests[Value])
             local Colour = GetQuestDifficultyColor(Level)
             if Colour == QuestDifficultyColors.trivial then Colour = QuestDifficultyColors.standard end
-            GameTooltip:AddLine("[" .. Level .. "] " .. Quest[1], Colour.r, Colour.g, Colour.b)
-            if Quest[6] then GameTooltip:AddLine(Quest[6], 1, 1, 1, true) end
+            GameTooltip:AddLine("[" .. Level .. "] " .. QuestieDB.Quest.name(Value), Colour.r, Colour.g, Colour.b)
+            local Objectives = QuestieDB.Quest.objectivesText(Value)
+            if Objectives then GameTooltip:AddLine(table.concat(Objectives, " "), 1, 1, 1, true) end
         end
     end
     GameTooltip:Show()
@@ -170,7 +179,7 @@ function Private:DrawAvailableQuests()
     if not Private.DB.global.Miscellaneous.Navigation.Enable or not WorldMapFrame:IsShown() then return end
 
     local MapID = WorldMapFrame:GetMapID()
-    local Hubs = MapID and Private.AvailableQuestGivers[MapID]
+    local Hubs = MapID and Givers[MapID]
     if not Hubs then return end
 
     Player.Level = UnitLevel("player")
@@ -201,6 +210,105 @@ function Private:DrawAvailableQuests()
     end
 end
 
+local function BuildAvailableQuests()
+    local Quest = QuestieDB.Quest
+    local _, _, RaceID = UnitRace("player")
+    local _, _, ClassID = UnitClass("player")
+    local RaceBit, ClassBit = QuestieDB.Enum.raceMaskById[RaceID], 2 ^ (ClassID - 1)
+    local GiverQuests, GiverOrder = {}, {}
+
+    for _, QuestID in ipairs(Quest.GetAllIds()) do
+        if not Private.HiddenQuests[QuestID] and HasBit(Quest.requiredRaces(QuestID), RaceBit) and HasBit(Quest.requiredClasses(QuestID), ClassBit) and not ExcludedSorts[Quest.zoneOrSort(QuestID)] and Quest.requiredSpecialization(QuestID) == 0 then
+            local StartedBy = Quest.startedBy(QuestID)
+            if StartedBy[1] or StartedBy[2] then
+                local Single = Quest.preQuestSingle(QuestID)
+                local Group = not Single and Quest.preQuestGroup(QuestID) or nil
+                if Group then
+                    for Index, PreQuestID in ipairs(Group) do
+                        local Exclusive = PreQuestID > 0 and Quest.exclusiveTo(PreQuestID)
+                        if Exclusive then table.insert(Exclusive, 1, PreQuestID) end
+                        Group[Index] = Exclusive or math.abs(PreQuestID)
+                    end
+                end
+
+                local MaxLevel, Next, BreadcrumbFor = Quest.requiredMaxLevel(QuestID), Quest.nextQuestInChain(QuestID), Quest.breadcrumbForQuestId(QuestID)
+                local Parent, DisabledBy, UntilDone = Quest.parentQuest(QuestID), Quest.disabledByQuest(QuestID), Quest.availableUntilCompleted(QuestID)
+                local StartingWith, Spell = Quest.availableStartingWith(QuestID), Quest.requiredSpell(QuestID)
+                local Requirements = {
+                    MaxLevel = MaxLevel > 0 and MaxLevel or nil,
+                    Single = Single,
+                    Group = Group,
+                    Exclusive = Quest.exclusiveTo(QuestID),
+                    Next = Next > 0 and Next or nil,
+                    BreadcrumbFor = BreadcrumbFor > 0 and BreadcrumbFor or nil,
+                    Breadcrumbs = Quest.breadcrumbs(QuestID),
+                    Parent = Parent > 0 and Parent or nil,
+                    DisabledBy = DisabledBy > 0 and DisabledBy or nil,
+                    UntilDone = UntilDone > 0 and UntilDone or nil,
+                    StartingWith = StartingWith > 0 and StartingWith or nil,
+                    Spell = Spell ~= 0 and Spell or nil,
+                    Skill = Quest.requiredSkill(QuestID),
+                    Ranks = Quest.requiredRanks(QuestID),
+                    MinRep = Quest.requiredMinRep(QuestID),
+                    MaxRep = Quest.requiredMaxRep(QuestID),
+                    Repeatable = Quest.specialFlags(QuestID) % 2 == 1 or nil,
+                }
+                Quests[QuestID] = { Quest.questLevel(QuestID), Quest.requiredLevel(QuestID), next(Requirements) and Requirements or false }
+
+                for Kind = 1, 2 do
+                    for _, GiverID in ipairs(StartedBy[Kind] or {}) do
+                        local Key = Kind == 1 and GiverID or -GiverID
+                        local Giver = GiverQuests[Key]
+                        if not Giver then
+                            Giver = {}
+                            GiverQuests[Key] = Giver
+                            GiverOrder[#GiverOrder + 1] = Key
+                        end
+                        Giver[#Giver + 1] = QuestID
+                    end
+                end
+            end
+        end
+        coroutine.yield()
+    end
+
+    for _, Key in ipairs(GiverOrder) do
+        local Entity = Key > 0 and QuestieDB.Npc or QuestieDB.Object
+        local GiverID = math.abs(Key)
+        local Spawns = Entity.spawns(GiverID)
+        if Spawns then
+            local Name = Entity.name(GiverID) or ""
+            for MapID, Points in pairs(Private:GetQuestieSpawnPoints(Spawns)) do
+                local isZone = ZoneMaps[MapID]
+                if isZone == nil then
+                    local MapInfo = C_Map.GetMapInfo(MapID)
+                    isZone = MapInfo ~= nil and MapInfo.mapType >= Enum.UIMapType.Zone
+                    ZoneMaps[MapID] = isZone
+                end
+                if isZone then
+                    local Hubs = Givers[MapID] or {}
+                    Givers[MapID] = Hubs
+                    for Point = 1, #Points, 2 do
+                        local Hub = FindHub(Hubs, Points[Point], Points[Point + 1])
+                        if not Hub then
+                            Hub = { Points[Point] / 100, Points[Point + 1] / 100 }
+                            Hubs[#Hubs + 1] = Hub
+                        end
+                        if Hub.Giver ~= Key then
+                            Hub.Giver = Key
+                            Hub[#Hub + 1] = Name
+                            for _, QuestID in ipairs(GiverQuests[Key]) do Hub[#Hub + 1] = QuestID end
+                        end
+                    end
+                end
+            end
+        end
+        coroutine.yield()
+    end
+
+    Private:DrawAvailableQuests()
+end
+
 local function ResizeAvailableQuests()
     local IconSize = GetIconSize()
     for Icon in Private.AvailableQuestIcons:EnumerateActive() do Icon:SetSize(IconSize, IconSize) end
@@ -228,20 +336,7 @@ local function WorldMap_OnHide()
 end
 
 function Private:CreateAvailableQuests()
-    local Faction = UnitFactionGroup("player")
-    if not Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable or not Private.AvailableQuestGivers[Faction] then
-        Private.AvailableQuests, Private.AvailableQuestsByFaction, Private.AvailableQuestGivers = nil, nil, nil
-        return
-    end
-
-    for QuestID, Quest in pairs(Private.AvailableQuestsByFaction[Faction]) do Private.AvailableQuests[QuestID] = Quest end
-    Private.AvailableQuestsByFaction = nil
-    Private.AvailableQuestGivers = Private.AvailableQuestGivers[Faction]
-
-    local _, _, RaceID = UnitRace("player")
-    local _, _, ClassID = UnitClass("player")
-    Player.RaceBit = RaceBits[RaceID] or (2 ^ (RaceID - 1))
-    Player.ClassBit = 2 ^ (ClassID - 1)
+    if not Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable or not QuestieDB then return end
 
     local Canvas = WorldMapFrame:GetCanvas()
     local Overlay = CreateFrame("Frame", nil, Canvas)
@@ -255,6 +350,7 @@ function Private:CreateAvailableQuests()
     hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ResizeAvailableQuests)
     WorldMapFrame:HookScript("OnShow", WorldMap_OnShow)
     WorldMapFrame:HookScript("OnHide", WorldMap_OnHide)
+    Private:QueueQuestieJob(BuildAvailableQuests)
 end
 
 function Private:UpdateAvailableQuests()

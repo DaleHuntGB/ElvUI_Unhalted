@@ -46,7 +46,6 @@ function AddOn:OnEnable()
         -- [[ Forever ]]
         Private:SetupAmmoCounter()
         Private:SetupFeedPet()
-        Private:SetupOptimalRanks()
         Private:SetupAutoPurchase()
         Private:SetupBeastLore()
         Private:SetupDungeonJournal()
@@ -65,4 +64,6 @@ function AddOn:OnEnable()
         Private:SetupBossBanner()
         Private:SetupTalkingHead()
     end
+
+    Private.PackedData = nil
 end

@@ -381,12 +381,15 @@ local Defaults = {
                     Opacity = 1,
                     FontSize = 18,
                 },
+                QuestObjectives = {
+                    Enable = true,
+                    IconSize = 20,
+                },
                 TaxiNodes = {
                     ["*"] = {},
                 },
             },
             Hunter = {
-                HighlightOptimalRanks = true,
                 MergeIcons = true,
                 UseBestFood = true,
             },

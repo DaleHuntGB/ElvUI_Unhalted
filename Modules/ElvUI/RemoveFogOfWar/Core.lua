@@ -50,6 +50,7 @@ end
 function Private:SetupRemoveFogOfWar()
     if not Private.DB.global.ElvUI.RemoveFogOfWar then return end
 
+    Private.FogOfWarOverlays = Private:UnpackData(Private.isForever and "FogOfWar_Forever" or "FogOfWar_Retail")
     for Pin in WorldMapFrame:EnumeratePinsByTemplate("MapExplorationPinTemplate") do
         Private.FogOfWarPool = CreateUnsecuredTexturePool(Pin, Pin.dataProvider:GetDrawLayer())
         hooksecurefunc(Pin, "RefreshOverlays", RevealOverlays)

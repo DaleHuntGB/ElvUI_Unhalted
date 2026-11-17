@@ -2,6 +2,7 @@
 ## Group: ElvUI
 ## Interface: 16001, 120105
 ## RequiredDeps: ElvUI
+## OptionalDeps: QuestieDB
 ## Version: @project-version@
 ## SavedVariables: UHDB
 ## X-Curse-Project-ID: 1692219
@@ -9,6 +10,7 @@
 ## Notes: |cFF6080FFUnhalted|r|cFF808080UI|r is built on |cFF1784d1ElvUI|r with a focus on providing quality of life & cosmetics to improve overall gameplay.
 
 Core/Constants.lua
+Core/Data.lua
 Core/Core.lua
 Core/Defaults.lua
 Core/GUI.lua
@@ -36,7 +38,6 @@ Modules/DamageMeter/Drilldown.lua
 Modules/DamageMeter/Rows.lua
 Modules/DamageMeter/Window.lua
 
-Modules/DungeonJournal/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/DungeonJournal/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/DungeonJournal/Rows.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/DungeonJournal/Window.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
@@ -46,7 +47,6 @@ Modules/ElvUI/EnhancedMovers.lua
 Modules/ElvUI/FocusTexture.lua
 Modules/ElvUI/InterruptOnCooldown.lua
 Modules/ElvUI/LootRollFix.lua
-Modules/ElvUI/RemoveFogOfWar/Data.lua
 Modules/ElvUI/RemoveFogOfWar/Core.lua
 
 Modules/MinimapStats/InstanceDifficulty.lua
@@ -64,16 +64,14 @@ Modules/Miscellaneous/MergeIcons.lua [AllowLoadGameType camelot][ExcludeLoadGame
 Modules/Miscellaneous/MouseCursor.lua
 Modules/Miscellaneous/Hunter/AmmoCounter.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/Hunter/FeedPet.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Miscellaneous/Hunter/OptimalRanks.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
-Modules/Navigation/Data.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/AvailableQuestsData.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/LevelZonesData.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Planner.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Arrow.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Map.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/Questie.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/AvailableQuests.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/LevelZones.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
+Modules/Navigation/QuestObjectives.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/FlightTimer.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
