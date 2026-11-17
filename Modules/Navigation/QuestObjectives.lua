@@ -4,7 +4,7 @@ local RefreshDelay = 0.2
 local MergeDistance = 25
 local BadgeInset = 0.8
 local PathThickness, PathAlpha = 2, 0.75
-local RefreshEvents = { "QUEST_LOG_UPDATE", "QUEST_WATCH_LIST_CHANGED" }
+local RefreshEvents = { "QUEST_LOG_UPDATE", "SUPER_TRACKING_CHANGED" }
 local CircleMask = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local MissingIcon = 134400
 local NpcKind, ObjectKind, ItemKind, AreaKind = 1, 2, 3, 4
@@ -142,43 +142,41 @@ local function DrawQuestObjectives()
     local MapID = WorldMapFrame:GetMapID()
     if not MapID then return end
 
+    local QuestID = C_SuperTrack.GetSuperTrackedQuestID()
+    local Entries = QuestID and QuestID > 0 and Private:GetQuestieObjectives(QuestID)
+    if not Entries then return end
+
     IconSize = GetIconSize()
-    for WatchIndex = 1, C_QuestLog.GetNumQuestWatches() do
-        local QuestID = C_QuestLog.GetQuestIDForQuestWatchIndex(WatchIndex)
-        local Entries = QuestID and Private:GetQuestieObjectives(QuestID)
-        if Entries then
-            for Index, Objective in ipairs(C_QuestLog.GetQuestObjectives(QuestID)) do
-                local Entry = Entries[Index]
-                if Entry and not Objective.finished then
-                    wipe(Placed)
-                    local Kind = Entry[1]
-                    if Kind == ItemKind then
-                        local Item = Private:GetQuestieItem(Entry[2])
-                        local Texture = C_Item.GetItemIconByID(Entry[2]) or MissingIcon
-                        local DropSources = Item[1]
-                        for Source = 1, #DropSources, 2 do
-                            local Npc = Private:GetQuestieNpc(DropSources[Source])
-                            DrawPaths(DropSources[Source], Npc, MapID)
-                            PlaceIcons(Npc[2][MapID], Texture, QuestID, Index, Npc[1], DropSources[Source + 1])
-                        end
-                        for _, ObjectID in ipairs(Item[2]) do
-                            local Object = Private:GetQuestieObject(ObjectID)
-                            PlaceIcons(Object[2][MapID], Texture, QuestID, Index, Object[1], 0)
-                        end
-                    elseif Kind == AreaKind then
-                        PlaceIcons(Entry[2][MapID], AreaAtlas, QuestID, Index, nil, 0)
-                    elseif Kind == NpcKind then
-                        for Source = 2, #Entry do
-                            local Npc = Private:GetQuestieNpc(Entry[Source])
-                            DrawPaths(Entry[Source], Npc, MapID)
-                            PlaceIcons(Npc[2][MapID], Npc[3] and TalkAtlas or KillAtlas, QuestID, Index, Npc[1], 0)
-                        end
-                    elseif Kind == ObjectKind then
-                        for Source = 2, #Entry do
-                            local Object = Private:GetQuestieObject(Entry[Source])
-                            PlaceIcons(Object[2][MapID], ObjectAtlas, QuestID, Index, Object[1], 0)
-                        end
-                    end
+    for Index, Objective in ipairs(C_QuestLog.GetQuestObjectives(QuestID)) do
+        local Entry = Entries[Index]
+        if Entry and not Objective.finished then
+            wipe(Placed)
+            local Kind = Entry[1]
+            if Kind == ItemKind then
+                local Item = Private:GetQuestieItem(Entry[2])
+                local Texture = C_Item.GetItemIconByID(Entry[2]) or MissingIcon
+                local DropSources = Item[1]
+                for Source = 1, #DropSources, 2 do
+                    local Npc = Private:GetQuestieNpc(DropSources[Source])
+                    DrawPaths(DropSources[Source], Npc, MapID)
+                    PlaceIcons(Npc[2][MapID], Texture, QuestID, Index, Npc[1], DropSources[Source + 1])
+                end
+                for _, ObjectID in ipairs(Item[2]) do
+                    local Object = Private:GetQuestieObject(ObjectID)
+                    PlaceIcons(Object[2][MapID], Texture, QuestID, Index, Object[1], 0)
+                end
+            elseif Kind == AreaKind then
+                PlaceIcons(Entry[2][MapID], AreaAtlas, QuestID, Index, nil, 0)
+            elseif Kind == NpcKind then
+                for Source = 2, #Entry do
+                    local Npc = Private:GetQuestieNpc(Entry[Source])
+                    DrawPaths(Entry[Source], Npc, MapID)
+                    PlaceIcons(Npc[2][MapID], Npc[3] and TalkAtlas or KillAtlas, QuestID, Index, Npc[1], 0)
+                end
+            elseif Kind == ObjectKind then
+                for Source = 2, #Entry do
+                    local Object = Private:GetQuestieObject(Entry[Source])
+                    PlaceIcons(Object[2][MapID], ObjectAtlas, QuestID, Index, Object[1], 0)
                 end
             end
         end
