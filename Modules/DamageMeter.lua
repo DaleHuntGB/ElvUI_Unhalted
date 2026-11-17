@@ -6,6 +6,8 @@ local Spacing = 0
 local Inset = 1
 local TextPadding = 3
 local MaxRowsPerSection = 10
+local MeleeIcon = "Interface\\Icons\\INV_Sword_04"
+local AttackName = C_Spell.GetSpellName(88163)
 
 local SingleMeterTypes = {
     [Enum.DamageMeterType.Absorbs] = true,
@@ -26,7 +28,7 @@ local PetSectionMeterTypes = {
     [Enum.DamageMeterType.Dps] = true,
 }
 
-local SeenCreatures = {}
+local Creatures = {}
 
 local EnvironmentalIcons = {
     DROWNING = "spell_shadow_demonbreath",
@@ -101,9 +103,10 @@ local function RefreshDeathRecap(Drilldown, Row, CreateEntry)
         local SpellID = EventType == "SWING_DAMAGE" and 88163 or Event.spellId
         local SpellName = EventType == "SWING_DAMAGE" and ACTION_SWING or EnvironmentalType and (_G["ACTION_ENVIRONMENTAL_DAMAGE_" .. EnvironmentalType] or UNKNOWN) or Event.spellName
         local hasSpellID = Private:IsSecret(SpellID) or (SpellID and SpellID ~= 0)
-        local SpellTexture = EnvironmentalType and "Interface\\Icons\\" .. (EnvironmentalIcons[EnvironmentalType] or "ability_creature_cursed_05") or hasSpellID and C_Spell.GetSpellTexture(SpellID)
+        local SpellTexture = EnvironmentalType and "Interface\\Icons\\" .. (EnvironmentalIcons[EnvironmentalType] or "ability_creature_cursed_05") or EventType == "SWING_DAMAGE" and MeleeIcon or hasSpellID and C_Spell.GetSpellTexture(SpellID)
         if hasSpellID and not Private:IsSecret(SpellName) and not SpellName then SpellName = C_Spell.GetSpellName(SpellID) end
         if not Private:IsSecret(SpellName) and not SpellName then SpellName = UNKNOWN end
+        if not Private:IsSecret(SpellName) and SpellName == AttackName then SpellTexture = MeleeIcon end
         if not Private:IsSecret(SpellTexture) and not SpellTexture then SpellTexture = 134400 end
         Entry.Icon:SetTexture(SpellTexture)
         Entry.Name_Text:SetText(SpellName)
@@ -256,11 +259,11 @@ local function CreateDrilldown(Row)
             wipe(Layout)
             if PetSectionMeterTypes[DB.MeterType] then
                 AddSection(Layout, CombatSpells)
-                wipe(SeenCreatures)
+                wipe(Creatures)
                 for i = 1, #CombatSpells do
                     local CreatureName = GetCreatureName(CombatSpells[i])
-                    if CreatureName and not SeenCreatures[CreatureName] then
-                        SeenCreatures[CreatureName] = true
+                    if CreatureName and not Creatures[CreatureName] then
+                        Creatures[CreatureName] = true
                         Layout[#Layout + 1] = CreatureName
                         AddSection(Layout, CombatSpells, CreatureName)
                     end
@@ -336,11 +339,11 @@ local function CreateDrilldown(Row)
                         end
                         Entry.Name_Text:SetText(Private:StripRealm(UnitName, UnitDetails.unitClassFilename))
                     elseif not Private:IsSecret(SpellID) and SpellID == 0 then
-                        Entry.Icon:SetTexture("Interface\\Icons\\INV_Sword_04")
+                        Entry.Icon:SetTexture(MeleeIcon)
                         Entry.Name_Text:SetText(ACTION_SWING)
                     else
                         local SpellName = C_Spell.GetSpellName(SpellID)
-                        local SpellTexture = C_Spell.GetSpellTexture(SpellID)
+                        local SpellTexture = not Private:IsSecret(SpellName) and SpellName == AttackName and MeleeIcon or C_Spell.GetSpellTexture(SpellID)
                         if not Private:IsSecret(SpellName) and not SpellName then SpellName = UNKNOWN end
                         Entry.Icon:SetTexture(SpellTexture)
                         Entry.Name_Text:SetText(SpellName)
