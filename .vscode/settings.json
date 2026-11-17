@@ -100,7 +100,11 @@
         "EssentialCooldownViewer",
         "UtilityCooldownViewer",
         "GetDifficultyColor",
-        "LibQuestieDB"
+        "LibQuestieDB",
+        "CooldownFrame_Set",
+        "GameTooltip_SetDefaultAnchor",
+        "RegisterStateDriver",
+        "nop"
     ],
     "Lua.type.weakUnionCheck": true
 }

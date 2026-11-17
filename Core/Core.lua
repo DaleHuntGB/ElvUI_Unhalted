@@ -35,6 +35,7 @@ function AddOn:OnEnable()
     Private:SetupCombatTimer()
     Private:SetupCrosshair()
     Private:SyncCVars()
+    Private:SetupExtraQuestButton()
     Private:SetupMouseCursor()
     -- [[ Toggles ]]
     Private:SetupAutoDelete()

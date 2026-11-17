@@ -355,6 +355,9 @@ local Defaults = {
                 Toggles = {},
                 Sliders = {},
             },
+            ExtraQuestButton = {
+                Enable = true,
+            },
             MouseCursor = {
                 Enable = false,
                 Size = {24, 24},
