@@ -65,7 +65,6 @@ Modules/Miscellaneous/MouseCursor.lua
 Modules/Miscellaneous/Hunter/AmmoCounter.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Miscellaneous/Hunter/FeedPet.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
-Modules/Navigation/Planner.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Arrow.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Map.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Questie.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]

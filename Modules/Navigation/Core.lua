@@ -1,30 +1,27 @@
 local Private = select(2, ...)
 
-local ReplanDistance, ArrivalDistance, CheckInterval = 25, 15, 0.5
-local MaxSteps = 5
+local CheckInterval = 0.5
 local OtherContinentPenalty = 1e12
 local NpcKind, ItemKind, AreaKind = 1, 3, 4
 
 local GoalVector = CreateVector2D(0, 0)
 local State = {
-    GoalContinent = 0, GoalX = 0, GoalY = 0, GoalName = "", GoalQuestID = 0, GoalMapID = 0,
-    PlanContinent = -1, PlanX = 0, PlanY = 0,
+    GoalContinent = 0, GoalX = 0, GoalY = 0, GoalQuestID = 0,
     Elapsed = 0, Distance = -1,
-    isDirty = false, isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = false,
+    isGoalStale = false, isOnTaxi = false, isInHotSpot = false, hasDirection = true,
 }
 
 local function GetGoalMapPosition()
     local QuestID = C_SuperTrack.GetSuperTrackedQuestID()
     if QuestID and QuestID > 0 then
-        local Name = C_QuestLog.GetTitleForQuestID(QuestID) or "Quest"
         local QuestieDB = Private:GetQuestieDB()
         local Entries = QuestieDB and Private:GetQuestieObjectives(QuestID)
         if Entries then
             local Targets = {}
             if C_QuestLog.IsComplete(QuestID) then
                 local FinishedBy = QuestieDB.Quest.finishedBy(QuestID)
-                for _, NpcID in ipairs(FinishedBy[1] or {}) do Targets[#Targets + 1] = Private:GetQuestieNpc(NpcID) end
-                for _, ObjectID in ipairs(FinishedBy[2] or {}) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID) end
+                for _, NpcID in ipairs(FinishedBy[1] or {}) do Targets[#Targets + 1] = Private:GetQuestieNpc(NpcID)[2] end
+                for _, ObjectID in ipairs(FinishedBy[2] or {}) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID)[2] end
             else
                 for Index, Objective in ipairs(C_QuestLog.GetQuestObjectives(QuestID)) do
                     local Entry = Entries[Index]
@@ -32,12 +29,12 @@ local function GetGoalMapPosition()
                         local Kind = Entry[1]
                         if Kind == ItemKind then
                             local Item = Private:GetQuestieItem(Entry[2])
-                            for Source = 1, #Item[1], 2 do Targets[#Targets + 1] = Private:GetQuestieNpc(Item[1][Source]) end
-                            for _, ObjectID in ipairs(Item[2]) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID) end
+                            for Source = 1, #Item[1], 2 do Targets[#Targets + 1] = Private:GetQuestieNpc(Item[1][Source])[2] end
+                            for _, ObjectID in ipairs(Item[2]) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID)[2] end
                         elseif Kind == AreaKind then
-                            Targets[#Targets + 1] = { Objective.text, Entry[2] }
+                            Targets[#Targets + 1] = Entry[2]
                         else
-                            for Source = 2, #Entry do Targets[#Targets + 1] = Kind == NpcKind and Private:GetQuestieNpc(Entry[Source]) or Private:GetQuestieObject(Entry[Source]) end
+                            for Source = 2, #Entry do Targets[#Targets + 1] = (Kind == NpcKind and Private:GetQuestieNpc(Entry[Source]) or Private:GetQuestieObject(Entry[Source]))[2] end
                         end
                     end
                 end
@@ -45,36 +42,36 @@ local function GetGoalMapPosition()
 
             local PlayerX, PlayerY, _, PlayerContinent = UnitPosition("player")
             if Private:IsSecret(PlayerX) or not PlayerX then PlayerX, PlayerY, PlayerContinent = 0, 0, -1 end
-            local BestMapID, BestX, BestY, BestName, BestDistance = 0, 0, 0, "", math.huge
-            for _, Target in ipairs(Targets) do
-                for MapID, Points in pairs(Target[2]) do
-                    for Point = 1, #Points, 2 do
-                        GoalVector:SetXY(Points[Point] / 100, Points[Point + 1] / 100)
+            local BestMapID, BestX, BestY, BestDistance = 0, 0, 0, math.huge
+            for _, Points in ipairs(Targets) do
+                for MapID, MapPoints in pairs(Points) do
+                    for Point = 1, #MapPoints, 2 do
+                        GoalVector:SetXY(MapPoints[Point] / 100, MapPoints[Point + 1] / 100)
                         local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
                         if Position then
                             local X, Y = Position:GetXY()
                             local Distance = (X - PlayerX) ^ 2 + (Y - PlayerY) ^ 2 + (Continent == PlayerContinent and 0 or OtherContinentPenalty)
-                            if Distance < BestDistance then BestMapID, BestX, BestY, BestName, BestDistance = MapID, Points[Point] / 100, Points[Point + 1] / 100, Target[1], Distance end
+                            if Distance < BestDistance then BestMapID, BestX, BestY, BestDistance = MapID, MapPoints[Point] / 100, MapPoints[Point + 1] / 100, Distance end
                         end
                     end
                 end
             end
-            if BestMapID > 0 then return BestMapID, BestX, BestY, BestName, QuestID end
+            if BestMapID > 0 then return BestMapID, BestX, BestY, QuestID end
         end
 
         local MapID = GetQuestUiMapID(QuestID, true)
         local Quests = MapID and MapID > 0 and C_QuestLog.GetQuestsOnMap(MapID)
         if Quests then
             for _, Quest in ipairs(Quests) do
-                if Quest.questID == QuestID then return MapID, Quest.x, Quest.y, Name, QuestID end
+                if Quest.questID == QuestID then return MapID, Quest.x, Quest.y, QuestID end
             end
         end
         local WaypointMapID, X, Y = C_QuestLog.GetNextWaypoint(QuestID)
-        return WaypointMapID, X, Y, Name, QuestID
+        return WaypointMapID, X, Y, QuestID
     end
 
     local Waypoint = C_SuperTrack.IsSuperTrackingUserWaypoint() and C_Map.GetUserWaypoint()
-    if Waypoint then return Waypoint.uiMapID, Waypoint.position.x, Waypoint.position.y, "Map Pin" end
+    if Waypoint then return Waypoint.uiMapID, Waypoint.position.x, Waypoint.position.y, 0 end
 end
 
 local function SetDirectionShown(isShown)
@@ -84,95 +81,48 @@ local function SetDirectionShown(isShown)
     Private.NavigationArrow.Distance:SetShown(isShown)
 end
 
-local function ClearRoute()
-    Private.NavigationRoute = nil
-    Private.NavigationArrow:Hide()
-end
-
 local function StopNavigation()
     Private.NavigationFrame:SetScript("OnUpdate", nil)
-    ClearRoute()
-end
-
-local function CheckRoute(Continent, X, Y)
-    State.isOnTaxi = UnitOnTaxi("player")
-    if State.isOnTaxi then return end
-
-    local DeltaX, DeltaY = X - State.PlanX, Y - State.PlanY
-    if not State.isDirty and Continent == State.PlanContinent and DeltaX * DeltaX + DeltaY * DeltaY <= ReplanDistance * ReplanDistance then return end
-
-    local KnownTaxiNodes = Private.DB.global.Miscellaneous.Navigation.TaxiNodes[Private.DB.keys.char]
-    State.isDirty, State.PlanContinent, State.PlanX, State.PlanY = false, Continent, X, Y
-
-    local Route = Private:PlanNavigationRoute(Continent, X, Y, State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalMapID, KnownTaxiNodes)
-    if not Route then ClearRoute() return end
-
-    local Target = Route[1].Points[2]
-    local TargetX, TargetY = Target[2] - X, Target[3] - Y
-    if #Route > 1 and Route[1].Mode == "Run" and TargetX * TargetX + TargetY * TargetY < ArrivalDistance * ArrivalDistance then table.remove(Route, 1) end
-
-    local Steps = {}
-    for Index = 1, math.min(#Route, MaxSteps) do
-        Steps[Index] = (Index == 1 and "|cFFFFFFFF" or "|cFF808080") .. Route[Index].Mode .. ": " .. Route[Index].Name .. "|r"
-    end
-
-    Private.NavigationRoute = Route
-    Private.NavigationArrow.Steps:SetText(table.concat(Steps, "\n"))
-    Private.NavigationArrow:SetShown(not State.isInHotSpot)
+    Private.NavigationArrow:Hide()
 end
 
 local function Navigation_OnUpdate(_, TimeElapsed)
     local X, Y, _, Continent = UnitPosition("player")
-    if Private:IsSecret(X) or not X then
-        if Private.NavigationRoute then ClearRoute() State.isDirty = true end
-        return
-    end
+    if Private:IsSecret(X) or not X then SetDirectionShown(false) return end
 
     State.Elapsed = State.Elapsed + TimeElapsed
     if State.Elapsed >= CheckInterval then
         State.Elapsed = 0
+        State.isOnTaxi = UnitOnTaxi("player")
         local isInside = State.GoalQuestID ~= 0 and C_Minimap.IsInsideQuestBlob(State.GoalQuestID)
-        local isInHotSpot = not Private:IsSecret(isInside) and isInside or false
-        if isInHotSpot ~= State.isInHotSpot then
-            State.isInHotSpot = isInHotSpot
-            if Private.NavigationRoute then Private.NavigationArrow:SetShown(not isInHotSpot) end
-        end
-        CheckRoute(Continent, X, Y)
+        State.isInHotSpot = not Private:IsSecret(isInside) and isInside or false
+        Private.NavigationArrow:SetShown(not State.isInHotSpot)
     end
+    if State.isInHotSpot then return end
 
-    local Route = Private.NavigationRoute
-    if not Route or State.isInHotSpot then return end
-
-    local Points = Route[1].Points
-    local Target = Points[#Points]
     local Facing = GetPlayerFacing()
-    if State.isOnTaxi or Target[1] ~= Continent or Private:IsSecret(Facing) or not Facing then SetDirectionShown(false) return end
+    if State.isOnTaxi or State.GoalContinent ~= Continent or Private:IsSecret(Facing) or not Facing then SetDirectionShown(false) return end
     SetDirectionShown(true)
 
-    local DeltaX, DeltaY = Target[2] - X, Target[3] - Y
+    local DeltaX, DeltaY = State.GoalX - X, State.GoalY - Y
     local Yards = math.floor(math.sqrt(DeltaX * DeltaX + DeltaY * DeltaY) + 0.5)
     if Yards ~= State.Distance then
         State.Distance = Yards
         Private.NavigationArrow.Distance:SetFormattedText("%d yd", Yards)
-        if Yards < ArrivalDistance and #Route > 1 and Route[1].Mode == "Run" then State.isDirty = true end
     end
     Private.NavigationArrow.Arrow:SetRotation(math.atan2(DeltaY, DeltaX) - Facing)
 end
 
 local function UpdateGoal()
-    local MapID, MapX, MapY, Name, QuestID = GetGoalMapPosition()
+    local MapID, MapX, MapY, QuestID = GetGoalMapPosition()
     if not MapID or not MapX then StopNavigation() return end
     GoalVector:SetXY(MapX, MapY)
     local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
     if not Continent or not Position then StopNavigation() return end
 
-    local X, Y = Position:GetXY()
-    QuestID = QuestID or 0
-    local isNavigating = Private.NavigationFrame:GetScript("OnUpdate") ~= nil
-    if isNavigating and Continent == State.GoalContinent and X == State.GoalX and Y == State.GoalY and QuestID == State.GoalQuestID and MapID == State.GoalMapID then return end
-
-    State.GoalContinent, State.GoalX, State.GoalY, State.GoalName, State.GoalQuestID, State.GoalMapID = Continent, X, Y, Name, QuestID, MapID
-    State.isDirty, State.Elapsed = true, CheckInterval
+    State.GoalX, State.GoalY = Position:GetXY()
+    State.GoalContinent, State.GoalQuestID = Continent, QuestID or 0
+    State.Elapsed, State.Distance = CheckInterval, -1
     Private.NavigationFrame:SetScript("OnUpdate", Navigation_OnUpdate)
 end
 
@@ -193,7 +143,6 @@ local function Navigation_OnEvent(_, Event)
             KnownTaxiNodes[TaxiNode.nodeID] = (NodeType == "CURRENT" or NodeType == "REACHABLE") or nil
         end
     end
-    State.isDirty = true
     Private:DrawNavigationMap()
 end
 
@@ -222,8 +171,7 @@ function Private:UpdateNavigation()
     else
         NavigationFrame:UnregisterAllEvents()
         NavigationFrame:SetScript("OnEvent", nil)
-        NavigationFrame:SetScript("OnUpdate", nil)
-        ClearRoute()
+        StopNavigation()
     end
 end
 

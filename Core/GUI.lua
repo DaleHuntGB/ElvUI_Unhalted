@@ -769,7 +769,7 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Layout.args.Size.relWidth = 0.33
 
     Private.GUI.args.Miscellaneous.args.Navigation = ACH:Group("Navigation", nil, 7, "tab", nil, nil, nil, function() return not Private.isForever end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Enable = ACH:Toggle("Enable", "Guides you to your |cFFFFCC00tracked quest|r or |cFFFFCC00map pin|r with an arrow, its distance and the steps to get there.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Enable = value Private:UpdateNavigation() end)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.Enable = ACH:Toggle("Enable", "Guides you to your |cFFFFCC00tracked quest|r or |cFFFFCC00map pin|r with an arrow and its distance.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Enable = value Private:UpdateNavigation() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable.relWidth = 1
     Private.GUI.args.Miscellaneous.args.Navigation.args.FlightPaths = ACH:Toggle("Flight Paths", "Shows your faction's |cFFFFCC00flight paths|r on the world map. The ones you have yet to learn are faded.", 2, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.FlightPaths end, function(_, value) Private.DB.global.Miscellaneous.Navigation.FlightPaths = value Private:DrawNavigationMap() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)

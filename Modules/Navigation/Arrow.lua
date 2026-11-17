@@ -11,7 +11,6 @@ function Private:UpdateNavigationArrow()
     NavigationArrow:ClearAllPoints()
     NavigationArrow:SetPoint(DB.Layout[1], UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     Private.E:SetFont(NavigationArrow.Distance, Font, DB.Text.FontSize, FontStyle)
-    Private.E:SetFont(NavigationArrow.Steps, Font, DB.Text.FontSize, FontStyle)
 end
 
 function Private:CreateNavigationArrow()
@@ -24,11 +23,6 @@ function Private:CreateNavigationArrow()
 
     NavigationArrow.Distance = NavigationArrow:CreateFontString(nil, "OVERLAY")
     NavigationArrow.Distance:SetPoint("TOP", NavigationArrow, "BOTTOM", 0, -3)
-
-    NavigationArrow.Steps = NavigationArrow:CreateFontString(nil, "OVERLAY")
-    NavigationArrow.Steps:SetPoint("TOP", NavigationArrow.Distance, "BOTTOM", 0, -3)
-    NavigationArrow.Steps:SetJustifyH("CENTER")
-    NavigationArrow.Steps:SetSpacing(3)
 
     Private.NavigationArrow = NavigationArrow
     Private:UpdateNavigationArrow()
