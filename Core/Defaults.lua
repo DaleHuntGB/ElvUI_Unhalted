@@ -384,6 +384,7 @@ local Defaults = {
                 QuestObjectives = {
                     Enable = true,
                     IconSize = 20,
+                    PatrolPaths = true,
                 },
                 TaxiNodes = {
                     ["*"] = {},

@@ -3,17 +3,17 @@ local Private = select(2, ...)
 local RefreshDelay = 0.2
 local MergeDistance = 25
 local BadgeInset = 0.8
-local MaxDropSources, CommonDropRate, MinDropRate = 15, 5, 1
+local PathThickness, PathAlpha = 2, 0.75
 local RefreshEvents = { "QUEST_LOG_UPDATE", "QUEST_WATCH_LIST_CHANGED" }
 local CircleMask = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local MissingIcon = 134400
 local NpcKind, ObjectKind, ItemKind, AreaKind = 1, 2, 3, 4
 local KillAtlas, TalkAtlas, ObjectAtlas, AreaAtlas = "dungeonskull", "crosshair_speak_64", "mechagon-projects", "xmarksthespot"
+local KillPathColour, TalkPathColour = { 1, 0.35, 0.29 }, { 1, 0.82, 0 }
 
 local QuestieDB = Private:GetQuestieDB()
-local Objectives, Npcs, Objects, Items = {}, {}, {}, {}
-local Placed = {}
-local Faction, IconSize = "", 0
+local Placed, DrawnPaths = {}, {}
+local IconSize = 0
 local isRefreshQueued = false
 
 local function GetIconSize()
@@ -25,56 +25,6 @@ local function SizeIcon(Icon, Size)
     Icon:SetSize(Size, Size)
     Icon.Mask:SetSize(Inner, Inner)
     Icon.Badge:SetSize(Inner, Inner)
-end
-
-local function GetNpc(NpcID)
-    local Npc = Npcs[NpcID]
-    if Npc then return Npc end
-    local Spawns = QuestieDB.Npc.spawns(NpcID)
-    local isTalk = QuestieDB.Npc.npcFlags(NpcID) % 4 > 0 and (QuestieDB.Npc.friendlyToFaction(NpcID) or ""):find(Faction, 1, true) ~= nil
-    Npc = { QuestieDB.Npc.name(NpcID) or "", Spawns and Private:GetQuestieSpawnPoints(Spawns) or {}, isTalk }
-    Npcs[NpcID] = Npc
-    return Npc
-end
-
-local function GetObject(ObjectID)
-    local Object = Objects[ObjectID]
-    if Object then return Object end
-    local Spawns = QuestieDB.Object.spawns(ObjectID)
-    Object = { QuestieDB.Object.name(ObjectID) or "", Spawns and Private:GetQuestieSpawnPoints(Spawns) or {} }
-    Objects[ObjectID] = Object
-    return Object
-end
-
-local function GetItem(ItemID)
-    local Item = Items[ItemID]
-    if Item then return Item end
-
-    local Rates = {}
-    local Drops = QuestieDB.Support.Get("QuestieClassicItemDrops").wowheadData
-    local Start = Drops:find("\n    [" .. ItemID .. "] = {", 1, true)
-    if Start then
-        for NpcID, Rate in Drops:sub(Start, Drops:find("\n    }", Start, true)):gmatch("%[(%d+)%] = ([%d%.]+)") do Rates[tonumber(NpcID)] = tonumber(Rate) end
-    end
-
-    local Sources, Kept = QuestieDB.Item.npcDrops(ItemID) or {}, {}
-    for _, NpcID in ipairs(Sources) do
-        local Rate = Rates[NpcID]
-        if #Sources > MaxDropSources and (Rate or 0) >= CommonDropRate or #Sources <= MaxDropSources and (not Rate or Rate >= MinDropRate) then Kept[#Kept + 1] = NpcID end
-    end
-    if #Sources > MaxDropSources then
-        table.sort(Kept, function(A, B) return Rates[A] > Rates[B] end)
-        for Index = #Kept, MaxDropSources + 1, -1 do Kept[Index] = nil end
-    end
-
-    local DropSources = {}
-    for _, NpcID in ipairs(Kept) do
-        DropSources[#DropSources + 1] = NpcID
-        DropSources[#DropSources + 1] = math.floor((Rates[NpcID] or 0) + 0.5)
-    end
-    Item = { DropSources, QuestieDB.Item.objectDrops(ItemID) or {} }
-    Items[ItemID] = Item
-    return Item
 end
 
 local function AddSource(Icon, Name, Rate)
@@ -104,6 +54,26 @@ local function ObjectiveIcon_OnEnter(Icon)
         end
     end
     GameTooltip:Show()
+end
+
+local function DrawPaths(NpcID, Npc, MapID)
+    local Paths = Npc[4][MapID]
+    if not Paths or DrawnPaths[NpcID] or not Private.DB.global.Miscellaneous.Navigation.QuestObjectives.PatrolPaths then return end
+    DrawnPaths[NpcID] = true
+
+    local Overlay = Private.QuestObjectiveOverlay
+    local Width, Height = Overlay:GetWidth(), Overlay:GetHeight()
+    local Colour = Npc[3] and TalkPathColour or KillPathColour
+    for _, Path in ipairs(Paths) do
+        for Point = 3, #Path, 2 do
+            local Line = Private.QuestObjectivePaths:Acquire()
+            Line:SetStartPoint("TOPLEFT", Overlay, Path[Point - 2] / 100 * Width, -Path[Point - 1] / 100 * Height)
+            Line:SetEndPoint("TOPLEFT", Overlay, Path[Point] / 100 * Width, -Path[Point + 1] / 100 * Height)
+            Line:SetThickness(PathThickness)
+            Line:SetColorTexture(Colour[1], Colour[2], Colour[3], PathAlpha)
+            Line:Show()
+        end
+    end
 end
 
 local function PlaceIcons(Points, Texture, QuestID, Index, Name, Rate)
@@ -165,6 +135,8 @@ end
 
 function Private:DrawQuestObjectives()
     Private.QuestObjectiveIcons:ReleaseAll()
+    Private.QuestObjectivePaths:ReleaseAll()
+    wipe(DrawnPaths)
     if not Private.DB.global.Miscellaneous.Navigation.Enable or not WorldMapFrame:IsShown() then return end
 
     local MapID = WorldMapFrame:GetMapID()
@@ -173,25 +145,7 @@ function Private:DrawQuestObjectives()
     IconSize = GetIconSize()
     for WatchIndex = 1, C_QuestLog.GetNumQuestWatches() do
         local QuestID = C_QuestLog.GetQuestIDForQuestWatchIndex(WatchIndex)
-        local Entries = QuestID and Objectives[QuestID]
-        if QuestID and not Entries and QuestieDB.Quest.Exists(QuestID) then
-            local First = QuestieDB.ObjectiveFirst
-            local Data = QuestieDB.Quest.objectives(QuestID) or {}
-            Entries = {}
-            for _, Creature in ipairs(Data[1] or {}) do Entries[#Entries + 1] = { NpcKind, Creature[1] } end
-            for _, Object in ipairs(Data[2] or {}) do table.insert(Entries, First.objectObjectiveFirst[QuestID] and 1 or #Entries + 1, { ObjectKind, Object[1] }) end
-            for _, Item in ipairs(Data[3] or {}) do table.insert(Entries, First.itemObjectiveFirst[QuestID] and 1 or #Entries + 1, { ItemKind, Item[1] }) end
-            if Data[4] then Entries[#Entries + 1] = false end
-            for _, Credit in ipairs(Data[5] or {}) do
-                local Entry = { NpcKind, unpack(Credit[1]) }
-                if not tContains(Credit[1], Credit[2]) then Entry[#Entry + 1] = Credit[2] end
-                table.insert(Entries, First.killCreditObjectiveFirst[QuestID] and 1 or #Entries + 1, Entry)
-            end
-            for _ in ipairs(Data[6] or {}) do table.insert(Entries, First.spellObjectiveFirst[QuestID] and 1 or #Entries + 1, false) end
-            local Trigger = QuestieDB.Quest.triggerEnd(QuestID)
-            if Trigger then table.insert(Entries, First.eventObjectiveFirst[QuestID] and 1 or #Entries + 1, { AreaKind, Private:GetQuestieSpawnPoints(Trigger[2] or {}) }) end
-            Objectives[QuestID] = Entries
-        end
+        local Entries = QuestID and Private:GetQuestieObjectives(QuestID)
         if Entries then
             for Index, Objective in ipairs(C_QuestLog.GetQuestObjectives(QuestID)) do
                 local Entry = Entries[Index]
@@ -199,24 +153,30 @@ function Private:DrawQuestObjectives()
                     wipe(Placed)
                     local Kind = Entry[1]
                     if Kind == ItemKind then
-                        local Item = GetItem(Entry[2])
+                        local Item = Private:GetQuestieItem(Entry[2])
                         local Texture = C_Item.GetItemIconByID(Entry[2]) or MissingIcon
                         local DropSources = Item[1]
                         for Source = 1, #DropSources, 2 do
-                            local Npc = GetNpc(DropSources[Source])
+                            local Npc = Private:GetQuestieNpc(DropSources[Source])
+                            DrawPaths(DropSources[Source], Npc, MapID)
                             PlaceIcons(Npc[2][MapID], Texture, QuestID, Index, Npc[1], DropSources[Source + 1])
                         end
                         for _, ObjectID in ipairs(Item[2]) do
-                            local Object = GetObject(ObjectID)
+                            local Object = Private:GetQuestieObject(ObjectID)
                             PlaceIcons(Object[2][MapID], Texture, QuestID, Index, Object[1], 0)
                         end
                     elseif Kind == AreaKind then
                         PlaceIcons(Entry[2][MapID], AreaAtlas, QuestID, Index, nil, 0)
-                    else
+                    elseif Kind == NpcKind then
                         for Source = 2, #Entry do
-                            local Record = Kind == NpcKind and GetNpc(Entry[Source]) or GetObject(Entry[Source])
-                            local Atlas = Kind == ObjectKind and ObjectAtlas or Record[3] and TalkAtlas or KillAtlas
-                            PlaceIcons(Record[2][MapID], Atlas, QuestID, Index, Record[1], 0)
+                            local Npc = Private:GetQuestieNpc(Entry[Source])
+                            DrawPaths(Entry[Source], Npc, MapID)
+                            PlaceIcons(Npc[2][MapID], Npc[3] and TalkAtlas or KillAtlas, QuestID, Index, Npc[1], 0)
+                        end
+                    elseif Kind == ObjectKind then
+                        for Source = 2, #Entry do
+                            local Object = Private:GetQuestieObject(Entry[Source])
+                            PlaceIcons(Object[2][MapID], ObjectAtlas, QuestID, Index, Object[1], 0)
                         end
                     end
                 end
@@ -254,8 +214,6 @@ end
 function Private:CreateQuestObjectives()
     if not Private.DB.global.Miscellaneous.Navigation.QuestObjectives.Enable or not QuestieDB then return end
 
-    Faction = UnitFactionGroup("player") == "Horde" and "H" or "A"
-
     local Canvas = WorldMapFrame:GetCanvas()
     local Overlay = CreateFrame("Frame", nil, Canvas)
     Overlay:SetAllPoints(Canvas)
@@ -263,6 +221,7 @@ function Private:CreateQuestObjectives()
     Overlay:SetScript("OnEvent", OnEvent)
     Private.QuestObjectiveOverlay = Overlay
     Private.QuestObjectiveIcons = CreateUnsecuredFramePool("Frame", Overlay)
+    Private.QuestObjectivePaths = CreateUnsecuredRegionPoolInstance(nil, function() return Overlay:CreateLine(nil, "ARTWORK") end)
 
     hooksecurefunc(WorldMapFrame, "OnMapChanged", Private.DrawQuestObjectives)
     hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ResizeQuestObjectives)

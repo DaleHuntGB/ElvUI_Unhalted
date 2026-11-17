@@ -2,6 +2,8 @@ local Private = select(2, ...)
 
 local ReplanDistance, ArrivalDistance, CheckInterval = 25, 15, 0.5
 local MaxSteps = 5
+local OtherContinentPenalty = 1e12
+local NpcKind, ItemKind, AreaKind = 1, 3, 4
 
 local GoalVector = CreateVector2D(0, 0)
 local State = {
@@ -15,6 +17,51 @@ local function GetGoalMapPosition()
     local QuestID = C_SuperTrack.GetSuperTrackedQuestID()
     if QuestID and QuestID > 0 then
         local Name = C_QuestLog.GetTitleForQuestID(QuestID) or "Quest"
+        local QuestieDB = Private:GetQuestieDB()
+        local Entries = QuestieDB and Private:GetQuestieObjectives(QuestID)
+        if Entries then
+            local Targets = {}
+            if C_QuestLog.IsComplete(QuestID) then
+                local FinishedBy = QuestieDB.Quest.finishedBy(QuestID)
+                for _, NpcID in ipairs(FinishedBy[1] or {}) do Targets[#Targets + 1] = Private:GetQuestieNpc(NpcID) end
+                for _, ObjectID in ipairs(FinishedBy[2] or {}) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID) end
+            else
+                for Index, Objective in ipairs(C_QuestLog.GetQuestObjectives(QuestID)) do
+                    local Entry = Entries[Index]
+                    if Entry and not Objective.finished then
+                        local Kind = Entry[1]
+                        if Kind == ItemKind then
+                            local Item = Private:GetQuestieItem(Entry[2])
+                            for Source = 1, #Item[1], 2 do Targets[#Targets + 1] = Private:GetQuestieNpc(Item[1][Source]) end
+                            for _, ObjectID in ipairs(Item[2]) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID) end
+                        elseif Kind == AreaKind then
+                            Targets[#Targets + 1] = { Objective.text, Entry[2] }
+                        else
+                            for Source = 2, #Entry do Targets[#Targets + 1] = Kind == NpcKind and Private:GetQuestieNpc(Entry[Source]) or Private:GetQuestieObject(Entry[Source]) end
+                        end
+                    end
+                end
+            end
+
+            local PlayerX, PlayerY, _, PlayerContinent = UnitPosition("player")
+            if Private:IsSecret(PlayerX) or not PlayerX then PlayerX, PlayerY, PlayerContinent = 0, 0, -1 end
+            local BestMapID, BestX, BestY, BestName, BestDistance = 0, 0, 0, "", math.huge
+            for _, Target in ipairs(Targets) do
+                for MapID, Points in pairs(Target[2]) do
+                    for Point = 1, #Points, 2 do
+                        GoalVector:SetXY(Points[Point] / 100, Points[Point + 1] / 100)
+                        local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
+                        if Position then
+                            local X, Y = Position:GetXY()
+                            local Distance = (X - PlayerX) ^ 2 + (Y - PlayerY) ^ 2 + (Continent == PlayerContinent and 0 or OtherContinentPenalty)
+                            if Distance < BestDistance then BestMapID, BestX, BestY, BestName, BestDistance = MapID, Points[Point] / 100, Points[Point + 1] / 100, Target[1], Distance end
+                        end
+                    end
+                end
+            end
+            if BestMapID > 0 then return BestMapID, BestX, BestY, BestName, QuestID end
+        end
+
         local MapID = GetQuestUiMapID(QuestID, true)
         local Quests = MapID and MapID > 0 and C_QuestLog.GetQuestsOnMap(MapID)
         if Quests then
