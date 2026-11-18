@@ -21,7 +21,12 @@ local function RevealOverlays(Pin)
 
     wipe(ExploredOverlays)
     local Explored = C_MapExplorationInfo.GetExploredMapTextures(MapID)
-    if Explored then for _, Info in ipairs(Explored) do ExploredOverlays[Info.fileDataIDs[1]] = true end end
+    if Explored then
+        for _, Info in ipairs(Explored) do
+            local FileDataID = Info.fileDataIDs[1]
+            if FileDataID then ExploredOverlays[FileDataID] = true end
+        end
+    end
 
     local Layer = C_Map.GetMapArtLayers(MapID)[Map:GetCanvasContainer():GetCurrentLayerIndex()]
     local TileWidth, TileHeight = Layer.tileWidth, Layer.tileHeight
