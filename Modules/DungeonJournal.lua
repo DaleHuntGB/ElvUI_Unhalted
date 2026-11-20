@@ -47,6 +47,7 @@ local JournalTextures = "Interface\\EncounterJournal\\UI-EncounterJournalTexture
 local DefaultDungeonArt = "Interface\\EncounterJournal\\UI-EJ-DUNGEONBUTTON-Default"
 local DefaultPortrait = "Interface\\EncounterJournal\\UI-EJ-BOSS-Default"
 local PortraitMask = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
+local PortraitLoadTime = 3
 local IconBorder = "Interface\\Common\\WhiteIconFrame"
 local RecipeIcon = "Interface\\Icons\\INV_Scroll_03"
 local MissingIcon = 134400
@@ -140,6 +141,70 @@ local function GetDungeonJournalLoot(Dungeon, Boss, ClassFile, Slot)
     return Loot, Total
 end
 
+-- [[ Portraits ]]
+local function ParkPortrait(Journal, Texture)
+    if Texture.Button then Texture:RemoveMaskTexture(Texture.Button.ArtMask) end
+    Texture.Button = nil
+    Texture:SetParent(Journal.PortraitHolder)
+    Texture:ClearAllPoints()
+    Texture:SetAllPoints(Journal.PortraitHolder)
+end
+
+local function UpdateBossPortrait(Button)
+    local Texture = Private.DungeonJournal.Portraits[Button.Boss]
+    local isReady = Texture ~= nil and Texture.ReadyAt <= GetTime()
+    if isReady and Texture.Button ~= Button then
+        if Texture.Button then ParkPortrait(Private.DungeonJournal, Texture) end
+        Texture:SetParent(Button)
+        Texture:ClearAllPoints()
+        Texture:SetPoint("TOP", Button, "TOPLEFT", 35, -7)
+        Texture:SetSize(58, 43)
+        Texture:SetTexCoord(0, 1, 0, 43 / 58)
+        Texture:AddMaskTexture(Button.ArtMask)
+        Texture.Button = Button
+    end
+    Button.Portrait:SetShown(not Button.Boss.All and not isReady)
+end
+
+local function RefreshBossPortraits()
+    local Journal = Private.DungeonJournal
+    if Journal:IsShown() then Journal.BossList:ForEachFrame(UpdateBossPortrait) end
+end
+
+local function ResetBossButton(Button)
+    local Texture = Private.DungeonJournal.Portraits[Button.Boss]
+    if Texture and Texture.Button == Button then ParkPortrait(Private.DungeonJournal, Texture) end
+end
+
+local function ReleaseBossPortraits(Journal)
+    for _, Texture in pairs(Journal.Portraits) do
+        ParkPortrait(Journal, Texture)
+        Texture:SetTexture(nil)
+        Journal.SparePortraits[#Journal.SparePortraits + 1] = Texture
+    end
+    wipe(Journal.Portraits)
+    Journal.PortraitDungeon = nil
+end
+
+local function RenderBossPortraits(Journal)
+    if Journal.PortraitDungeon ~= Journal.Dungeon then ReleaseBossPortraits(Journal) end
+    Journal.PortraitDungeon = Journal.Dungeon
+
+    local ReadyAt, isRendering = GetTime() + PortraitLoadTime, false
+    for _, Boss in ipairs(Journal.Dungeon.Bosses) do
+        if Boss.DisplayID and not Journal.Portraits[Boss] then
+            local Texture = table.remove(Journal.SparePortraits) or Journal.PortraitHolder:CreateTexture(nil, "OVERLAY")
+            Texture:SetAllPoints(Journal.PortraitHolder)
+            SetPortraitTextureFromCreatureDisplayID(Texture, Boss.DisplayID)
+            Texture.ReadyAt = ReadyAt
+            Journal.Portraits[Boss] = Texture
+            isRendering = true
+        end
+    end
+    Journal.BossList:ForEachFrame(UpdateBossPortrait)
+    if isRendering then C_Timer.After(PortraitLoadTime, RefreshBossPortraits) end
+end
+
 -- [[ Rows ]]
 local function CreateDungeonJournalText(Parent, Template, OnParchment)
     local Text = Parent:CreateFontString(nil, "OVERLAY", Template)
@@ -228,6 +293,7 @@ local function InitDungeonJournalBossButton(Button, Boss)
         DungeonArtMask:SetPoint("TOP", Button.DungeonArt, "TOP")
         DungeonArtMask:SetTexture(PortraitMask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         Button.DungeonArt:AddMaskTexture(DungeonArtMask)
+        Button.ArtMask = DungeonArtMask
         Button.Name = CreateDungeonJournalText(Button, "GameFontNormalMed3")
         Button.Name:SetWidth(160)
         Button.Name:SetPoint("LEFT", Button, "LEFT", 105, -3)
@@ -237,7 +303,6 @@ local function InitDungeonJournalBossButton(Button, Boss)
     end
 
     Button.Boss = Boss
-    Button.Portrait:SetShown(not Boss.All)
     Button.DungeonArt:SetShown(Boss.All == true)
     if Boss.Recipes then
         Button.DungeonArt:SetTexture(RecipeIcon)
@@ -247,6 +312,7 @@ local function InitDungeonJournalBossButton(Button, Boss)
     elseif not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then
         Button.Portrait:SetTexture(DefaultPortrait)
     end
+    UpdateBossPortrait(Button)
     Button.Name:SetText(Boss.Rare and Boss.Name .. "\n|cFF9D9D9D(" .. (Boss.RareLabel or "Rare") .. ")|r" or Boss.Name)
     UpdateDungeonJournalBossSelection(Button)
 end
@@ -373,6 +439,7 @@ local function Journal_SelectDungeon(Journal, Dungeon)
     Journal.Encounter:Show()
     Journal.BackButton:Show()
     Journal_RefreshBosses(Journal)
+    RenderBossPortraits(Journal)
 end
 
 local function Journal_SelectBoss(Journal, Boss)
@@ -398,15 +465,18 @@ local function Journal_OnShow(Journal)
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
 
     local InstanceName, InstanceType = GetInstanceInfo()
-    if InstanceType ~= "party" then return end
-    for _, Dungeon in ipairs(Private.DungeonJournalData) do
-        if Dungeon.Name == InstanceName and Dungeon ~= Journal.Dungeon then Journal_SelectDungeon(Journal, Dungeon) end
+    if InstanceType == "party" then
+        for _, Dungeon in ipairs(Private.DungeonJournalData) do
+            if Dungeon.Name == InstanceName and Dungeon ~= Journal.Dungeon then Journal_SelectDungeon(Journal, Dungeon) end
+        end
     end
+    if Journal.Dungeon then RenderBossPortraits(Journal) end
 end
 
 local function Journal_OnHide(Journal)
     Journal:UnregisterEvent("ITEM_DATA_LOAD_RESULT")
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
+    ReleaseBossPortraits(Journal)
 end
 
 local function Journal_OnEvent(Journal, _, ItemID, Success)
@@ -477,6 +547,11 @@ function Private:SetupDungeonJournal()
         if not Journal.LevelFilter and Level <= Bracket[2] then Journal.LevelFilter = Bracket end
     end
     Private.DungeonJournal = Journal
+
+    Journal.Portraits, Journal.SparePortraits = {}, {}
+    Journal.PortraitHolder = CreateFrame("Frame", nil, UIParent)
+    Journal.PortraitHolder:SetSize(64, 64)
+    Journal.PortraitHolder:SetPoint("TOPLEFT", UIParent, "TOPRIGHT", 10000, 0)
 
     Journal.Inset = CreateFrame("Frame", nil, Journal, "InsetFrameTemplate")
     Journal.Inset:SetPoint("TOPLEFT", Journal, "TOPLEFT", 4, -60)
@@ -563,6 +638,7 @@ function Private:SetupDungeonJournal()
     local BossView = CreateScrollBoxListLinearView(15, 0, 0, 20, 15)
     BossView:SetElementExtent(55)
     BossView:SetElementInitializer("Button", InitDungeonJournalBossButton)
+    BossView:SetElementResetter(ResetBossButton)
     Journal.BossList = CreateScrollList(Encounter, BossView)
     Journal.BossList:SetSize(338, 372)
     Journal.BossList:SetPoint("BOTTOMLEFT", Encounter, "BOTTOMLEFT", 25, 1)
