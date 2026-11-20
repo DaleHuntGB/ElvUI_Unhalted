@@ -379,6 +379,10 @@ local Defaults = {
                     Enable = true,
                     IconSize = 20,
                 },
+                InstancePortals = {
+                    Enable = true,
+                    IconSize = 24,
+                },
                 LevelZones = {
                     Enable = true,
                     Opacity = 1,

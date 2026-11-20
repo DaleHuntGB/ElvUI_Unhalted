@@ -104,7 +104,8 @@
         "CooldownFrame_Set",
         "GameTooltip_SetDefaultAnchor",
         "RegisterStateDriver",
-        "nop"
+        "nop",
+        "RAID"
     ],
     "Lua.type.weakUnionCheck": true
 }

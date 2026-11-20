@@ -496,6 +496,43 @@ Private.DungeonJournalData = {
     },
 }
 
+-- [[ Instance Portals ]]
+Private.InstancePortals = {
+    { 1454, 53.0, 48.9, "Ragefire Chasm" },
+    { 1455, 43.5, 52.0, "Hall of Thanes" },
+    { 1420, 63.4, 67.4, "Ruins of Lordaeron" },
+    { 1413, 46.0, 36.3, "Wailing Caverns" },
+    { 1436, 42.5, 71.7, "The Deadmines" },
+    { 1421, 44.7, 67.8, "Shadowfang Keep" },
+    { 1440, 14.5, 14.2, "Blackfathom Deeps" },
+    { 1453, 50.4, 66.2, "The Stockade" },
+    { 1437, 47.7, 56.2, "Excavation Site: Wetlands" },
+    { 1416, 8.5, 59.3, "City of Dalaran" },
+    { 1426, 24.3, 39.8, "Gnomeregan" },
+    { 1413, 42.3, 89.9, "Razorfen Kraul" },
+    { 1420, 85.1, 31.4, "Scarlet Monastery: Graveyard", "Scarlet Monastery: Library", "Scarlet Monastery: Armory", "Scarlet Monastery: Cathedral" },
+    { 1434, 21.4, 27.9, "The Drowned City" },
+    { 1413, 50.9, 92.9, "Razorfen Downs" },
+    { 2548, 37.5, 37.3, "Krol'dok Stronghold" },
+    { 1418, 44.2, 12.2, "Uldaman" },
+    { 1418, 65.3, 42.6, "Uldaman" },
+    { 1446, 38.7, 19.9, "Zul'Farrak" },
+    { 1443, 29.2, 62.5, "Maraudon" },
+    { 1445, 75.3, 14.1, "Alcaz Prison" },
+    { 1435, 70.0, 52.9, "Sunken Temple" },
+    { 1427, 34.8, 84.0, "Blackrock Depths", "Lower Blackrock Spire", "Upper Blackrock Spire", "Molten Core", "Blackwing Lair" },
+    { 1428, 29.4, 38.2, "Blackrock Depths", "Lower Blackrock Spire", "Upper Blackrock Spire", "Molten Core", "Blackwing Lair" },
+    { 1444, 62.0, 33.3, "Dire Maul: East", "Dire Maul: West", "Dire Maul: North" },
+    { 1447, 38.6, 33.2, "Blackmaw Hold" },
+    { 1422, 69.7, 73.4, "Scholomance" },
+    { 1449, 48.1, 6.1, "Shaper's Terrace" },
+    { 1423, 26.1, 10.4, "Stratholme: Living" },
+    { 1423, 44.0, 19.0, "Stratholme: Undead" },
+    { 1445, 52.3, 76.1, "Onyxia's Lair" },
+    { 1434, 54.0, 17.6, "Zul'Gurub" },
+    { 1451, 29.0, 92.8, "Ruins of Ahn'Qiraj", "Ahn'Qiraj Temple" },
+}
+
 -- [[ Navigation ]]
 Private.NavigationTaxiNodes = {
     [2] = { 0, -8833, 479, "Stormwind", 1 },
