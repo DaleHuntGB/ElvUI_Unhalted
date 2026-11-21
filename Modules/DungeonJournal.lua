@@ -69,6 +69,7 @@ local ParchmentTopCrop = 46 / 682
 local AllBosses = { Name = "All Bosses", All = true }
 local AllRecipes = { Name = "Recipes & Patterns", All = true, Recipes = true }
 local LevelBrackets = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
+local ItemSources = {}
 
 -- [[ Filters ]]
 local function IsLootShown(ItemID, ClassFile, Slot)
@@ -551,6 +552,19 @@ local function CreateScrollList(Parent, View)
     return ScrollBox
 end
 
+-- [[ Item Sources ]]
+local function ItemTooltip_PostCall(Tooltip, Data)
+    if Tooltip ~= GameTooltip and Tooltip ~= ItemRefTooltip then return end
+    local ItemID = Data.id
+    if Private:IsSecret(ItemID) or not ItemID then return end
+
+    local Lines = ItemSources[ItemID]
+    if not Lines then return end
+    for _, Line in ipairs(Lines) do
+        Tooltip:AddLine(Line, 1, 1, 1)
+    end
+end
+
 -- [[ Setup ]]
 function Private:SetupDungeonJournal()
     local Journal = CreateFrame("Frame", "UnhaltedDungeonJournal", UIParent, "PortraitFrameTemplate")
@@ -697,4 +711,20 @@ function Private:SetupDungeonJournal()
     Journal:SetScript("OnShow", Journal_OnShow)
     Journal:SetScript("OnHide", Journal_OnHide)
     Journal:SetScript("OnEvent", Journal_OnEvent)
+
+    local SourceLabel = "|c" .. Private.E.AccentColour .. "Drops from:|r "
+    for _, Dungeon in ipairs(Private.DungeonJournalData) do
+        local DungeonSources = {}
+        for _, Boss in ipairs(Dungeon.Bosses) do
+            for _, ItemID in ipairs(Boss.Loot) do
+                local Source = DungeonSources[ItemID]
+                DungeonSources[ItemID] = Source and Source ~= Boss.Name and "Multiple Bosses" or Boss.Name
+            end
+        end
+        for ItemID, Source in pairs(DungeonSources) do
+            ItemSources[ItemID] = ItemSources[ItemID] or {}
+            table.insert(ItemSources[ItemID], SourceLabel .. Source .. " (" .. Dungeon.Name .. ")")
+        end
+    end
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, ItemTooltip_PostCall)
 end

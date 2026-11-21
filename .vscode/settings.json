@@ -107,7 +107,8 @@
         "nop",
         "RAID",
         "PanelTemplates_SetTab",
-        "PanelTemplates_SetNumTabs"
+        "PanelTemplates_SetNumTabs",
+        "ItemRefTooltip"
     ],
     "Lua.type.weakUnionCheck": true
 }
