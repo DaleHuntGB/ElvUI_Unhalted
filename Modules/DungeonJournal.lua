@@ -69,7 +69,11 @@ local ParchmentTopCrop = 46 / 682
 local AllBosses = { Name = "All Bosses", All = true }
 local AllRecipes = { Name = "Recipes & Patterns", All = true, Recipes = true }
 local LevelBrackets = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
-local ItemSources = {}
+local SourceLabel = "|c" .. Private.E.AccentColour .. "Source:|r "
+local CurrentZoneScore = 1000
+local WorldDropSources = 50
+local QuestieDB = Private:GetQuestieDB()
+local JournalSources, ItemSources = {}, {}
 
 -- [[ Filters ]]
 local function IsLootShown(ItemID, ClassFile, Slot)
@@ -553,12 +557,69 @@ local function CreateScrollList(Parent, View)
 end
 
 -- [[ Item Sources ]]
+local function GetItemSources(ItemID)
+    local ItemClassID = select(6, C_Item.GetItemInfoInstant(ItemID))
+    if ItemClassID ~= Enum.ItemClass.Weapon and ItemClassID ~= Enum.ItemClass.Armor and ItemClassID ~= Enum.ItemClass.Recipe then return false end
+
+    local Lines = {}
+    for _, Line in ipairs(JournalSources[ItemID] or {}) do Lines[#Lines + 1] = Line end
+    if not QuestieDB or not QuestieDB.Item.Exists(ItemID) then return Lines[1] and Lines or false end
+
+    local Item, Npc, Quest = QuestieDB.Item, QuestieDB.Npc, QuestieDB.Quest
+    local _, _, RaceID = UnitRace("player")
+    local _, _, ClassID = UnitClass("player")
+    local RaceBit, ClassBit = QuestieDB.Enum.raceMaskById[RaceID], 2 ^ (ClassID - 1)
+    local Faction = UnitFactionGroup("player") == "Horde" and "H" or "A"
+    local Drops, Quests, Vendors = {}, {}, {}
+
+    local DropNpcs = not JournalSources[ItemID] and Item.npcDrops(ItemID) or {}
+    if #DropNpcs > WorldDropSources then
+        Lines[#Lines + 1] = SourceLabel .. "World Drop"
+    elseif DropNpcs[1] then
+        local Rates, DropRates = {}, Private:GetQuestieItem(ItemID)[1]
+        for Index = 1, #DropRates, 2 do Rates[DropRates[Index]] = DropRates[Index + 1] end
+        for _, NpcID in ipairs(DropNpcs) do
+            if Npc.Exists(NpcID) then Drops[#Drops + 1] = { Npc.name(NpcID), Npc.zoneID(NpcID), Rates[NpcID] or 0 } end
+        end
+    end
+    for _, QuestID in ipairs(Item.questRewards(ItemID) or {}) do
+        local Races, Classes = Quest.requiredRaces(QuestID), Quest.requiredClasses(QuestID)
+        if not Private.HiddenQuests[QuestID] and Quest.Exists(QuestID) and (Races == 0 or Races % (RaceBit * 2) >= RaceBit) and (Classes == 0 or Classes % (ClassBit * 2) >= ClassBit) then
+            Quests[#Quests + 1] = { Quest.name(QuestID), Quest.zoneOrSort(QuestID), 0 }
+        end
+    end
+    for _, NpcID in ipairs(Item.vendors(ItemID) or {}) do
+        if (Npc.friendlyToFaction(NpcID) or ""):find(Faction, 1, true) then Vendors[#Vendors + 1] = { Npc.name(NpcID), Npc.zoneID(NpcID), 0 } end
+    end
+
+    local CurrentZone = GetRealZoneText()
+    for _, Kind in ipairs({ { Drops }, { Quests, "Quest" }, { Vendors, "Vendor" } }) do
+        local Sources, BestIndex, BestScore = Kind[1], 0, -1
+        for Index, Source in ipairs(Sources) do
+            local Score = Source[2] > 0 and C_Map.GetAreaInfo(Source[2]) == CurrentZone and Source[3] + CurrentZoneScore or Source[3]
+            if Score > BestScore then BestIndex, BestScore = Index, Score end
+        end
+        local Best = Sources[BestIndex]
+        if Best then
+            local Zone = Best[2] > 0 and C_Map.GetAreaInfo(Best[2])
+            local Note = #Sources > 1 and (Kind[2] and Kind[2] .. ", +" or "+") .. (#Sources - 1) .. " more" or Kind[2]
+            Lines[#Lines + 1] = SourceLabel .. Best[1] .. (Zone and " - " .. Zone or "") .. (Note and " (" .. Note .. ")" or "")
+        end
+    end
+
+    return Lines[1] and Lines or false
+end
+
 local function ItemTooltip_PostCall(Tooltip, Data)
     if Tooltip ~= GameTooltip and Tooltip ~= ItemRefTooltip then return end
     local ItemID = Data.id
     if Private:IsSecret(ItemID) or not ItemID then return end
 
     local Lines = ItemSources[ItemID]
+    if Lines == nil then
+        Lines = GetItemSources(ItemID)
+        ItemSources[ItemID] = Lines
+    end
     if not Lines then return end
     for _, Line in ipairs(Lines) do
         Tooltip:AddLine(Line, 1, 1, 1)
@@ -712,7 +773,6 @@ function Private:SetupDungeonJournal()
     Journal:SetScript("OnHide", Journal_OnHide)
     Journal:SetScript("OnEvent", Journal_OnEvent)
 
-    local SourceLabel = "|c" .. Private.E.AccentColour .. "Source:|r "
     for _, Dungeon in ipairs(Private.DungeonJournalData) do
         local DungeonSources = {}
         for _, Boss in ipairs(Dungeon.Bosses) do
@@ -722,9 +782,15 @@ function Private:SetupDungeonJournal()
             end
         end
         for ItemID, Source in pairs(DungeonSources) do
-            ItemSources[ItemID] = ItemSources[ItemID] or {}
-            table.insert(ItemSources[ItemID], SourceLabel .. Source .. " - " .. Dungeon.Name)
+            JournalSources[ItemID] = JournalSources[ItemID] or {}
+            table.insert(JournalSources[ItemID], SourceLabel .. Source .. " - " .. Dungeon.Name)
         end
     end
     TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, ItemTooltip_PostCall)
+
+    if QuestieDB then
+        local ZoneWatcher = CreateFrame("Frame")
+        ZoneWatcher:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        ZoneWatcher:SetScript("OnEvent", function() wipe(ItemSources) end)
+    end
 end
