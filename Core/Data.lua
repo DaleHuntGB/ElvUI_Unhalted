@@ -494,6 +494,43 @@ Private.DungeonJournalData = {
             { Name = "General Drakkisath", Portrait = 607612, Loot = { 13141, 13098, 13142, 12602, 22253, 22267, 22269, 22268, 16730, 16726, 16674, 16666, 16706, 16721, 16688, 16690, 16700, 12592, 15730, 13519 } },
         },
     },
+    {
+        Name = "Barrow Deeps", Zone = "Mount Hyjal", Raid = true, Size = 10, New = true,
+        Bosses = {
+            { Name = "Chillhowl", Loot = { 277172 } },
+            { Name = "Elder Tangleclaw", Loot = { 277175 } },
+            { Name = "Khalith the Dreadspinner", Loot = { 277174 } },
+            { Name = "Well of Sorrow", Loot = { 277178 } },
+            { Name = "Amethrax", Loot = { 277179 } },
+            { Name = "Del'lynar Songwood", Loot = {} },
+            { Name = "Ravus and Darlissa", Loot = {} },
+            { Name = "Sonya Darkhallow", Loot = {} },
+        },
+    },
+    {
+        Name = "Hyjal Summit", Zone = "Mount Hyjal", Raid = true, Size = 20, New = true,
+        Bosses = {
+            { Name = "Bandalar", Loot = {} },
+            { Name = "Ancient of Decay", Loot = {} },
+            { Name = "Time-Lost Battalion", Loot = {} },
+            { Name = "Sylvestris Dusksong", Loot = {} },
+            { Name = "Old Gloomlurker", Loot = {} },
+            { Name = "Gharalis the Abyssal", Loot = {} },
+            { Name = "Kathris the Haunted", Loot = {} },
+            { Name = "Anara Chillwind", Loot = {} },
+            { Name = "Elder Minderel", Loot = {} },
+            { Name = "Tracker Stillwind", Loot = {} },
+            { Name = "Council of Thorns", Loot = {} },
+            { Name = "Nythus the Dreambound", Loot = {} },
+            { Name = "The Wild King", Loot = {} },
+        },
+    },
+    {
+        Name = "Onyxia's Lair", Zone = "Dustwallow Marsh", Raid = true, Size = 40, Button = 1396589,
+        Bosses = {
+            { Name = "Onyxia", Portrait = 1379025, Loot = { 18423, 18422, 15410, 18705, 17966, 11938 } },
+        },
+    },
 }
 
 -- [[ Instance Portals ]]

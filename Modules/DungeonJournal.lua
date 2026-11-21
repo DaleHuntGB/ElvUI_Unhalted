@@ -109,12 +109,14 @@ local function HasDungeonJournalRecipes(Dungeon, ClassFile, Slot)
     return false
 end
 
-local function GetDungeonJournalDungeons(Bracket, ClassFile, Slot)
+local function GetDungeonJournalDungeons(ShowRaids, Bracket, ClassFile, Slot)
     local Dungeons = {}
     for _, Dungeon in ipairs(Private.DungeonJournalData) do
-        local InBracket = not Bracket or (Dungeon.Levels[1] <= Bracket[2] and Dungeon.Levels[2] >= Bracket[1])
-        local HasLoot = not Slot or #GetDungeonJournalBosses(Dungeon, ClassFile, Slot) > 0 or HasDungeonJournalRecipes(Dungeon, ClassFile, Slot)
-        if InBracket and HasLoot then Dungeons[#Dungeons + 1] = Dungeon end
+        if (Dungeon.Raid == true) == ShowRaids then
+            local InBracket = ShowRaids or not Bracket or (Dungeon.Levels[1] <= Bracket[2] and Dungeon.Levels[2] >= Bracket[1])
+            local HasLoot = not Slot or #GetDungeonJournalBosses(Dungeon, ClassFile, Slot) > 0 or HasDungeonJournalRecipes(Dungeon, ClassFile, Slot)
+            if InBracket and HasLoot then Dungeons[#Dungeons + 1] = Dungeon end
+        end
     end
     return Dungeons
 end
@@ -233,11 +235,16 @@ local function SetDungeonArt(Texture, Dungeon, Coords, LoadingScreenCoords)
     Texture:SetTexCoord(Coords[1], Coords[2], Coords[3], Coords[4])
 end
 
+local function FormatDungeonJournalLevels(Dungeon, LevelFormat)
+    if Dungeon.Raid then return string.format("%d Players", Dungeon.Size) end
+    return string.format(LevelFormat, Dungeon.Levels[1], Dungeon.Levels[2])
+end
+
 local function DungeonButton_OnEnter(Button)
     local Dungeon = Button.Dungeon
     GameTooltip:SetOwner(Button, "ANCHOR_RIGHT")
     GameTooltip:SetText(Dungeon.Name, 1, 1, 1)
-    GameTooltip:AddLine(string.format("Level %d-%d", Dungeon.Levels[1], Dungeon.Levels[2]))
+    GameTooltip:AddLine(FormatDungeonJournalLevels(Dungeon, "Level %d-%d"))
     GameTooltip:AddLine(Dungeon.Zone, 0.8, 0.8, 0.8)
     GameTooltip:Show()
 end
@@ -263,7 +270,7 @@ local function InitDungeonJournalDungeonButton(Button, Dungeon)
     Button.Dungeon = Dungeon
     SetDungeonArt(Button.Art, Dungeon, DungeonCard, LoadingScreenCard)
     Button.Name:SetText(Dungeon.Name)
-    Button.Levels:SetFormattedText("%d-%d", Dungeon.Levels[1], Dungeon.Levels[2])
+    Button.Levels:SetText(FormatDungeonJournalLevels(Dungeon, "%d-%d"))
     Button.New:SetShown(Dungeon.New == true)
 end
 
@@ -398,10 +405,11 @@ local function Journal_RefreshLoot(Journal)
     Journal.LootList:SetDataProvider(CreateDataProvider(Loot))
     Journal.BossTitle:SetText(Journal.Boss.Name)
 
+    local InstanceType = Journal.Dungeon.Raid and "raid" or "dungeon"
     if #Journal.Dungeon.Bosses == 0 then
-        Journal.LootEmpty:SetText("The bosses for this dungeon haven't been published yet.")
+        Journal.LootEmpty:SetFormattedText("The bosses for this %s haven't been published yet.", InstanceType)
     elseif Total == 0 then
-        Journal.LootEmpty:SetText(Journal.Boss.All and "The loot for this dungeon hasn't been published yet." or "The loot for this boss hasn't been published yet.")
+        Journal.LootEmpty:SetFormattedText("The loot for this %s hasn't been published yet.", Journal.Boss.All and InstanceType or "boss")
     else
         Journal.LootEmpty:SetText("No loot matches the current filters.")
     end
@@ -430,11 +438,32 @@ local function Journal_ShowDungeons(Journal)
     Journal.DungeonSelect:Show()
 end
 
+local function Journal_Refresh(Journal)
+    local Dungeons = GetDungeonJournalDungeons(Journal.ShowRaids, Journal.LevelFilter, Journal.ClassFilter, Journal.SlotFilter)
+    Journal.DungeonGrid:SetDataProvider(CreateDataProvider(Dungeons))
+    Journal.DungeonsEmpty:SetText(Journal.ShowRaids and "No raids match the current filters." or "No dungeons match the current filters.")
+    Journal.DungeonsEmpty:SetShown(#Dungeons == 0)
+
+    if tContains(Dungeons, Journal.Dungeon) then
+        Journal_RefreshBosses(Journal)
+    else
+        Journal_ShowDungeons(Journal)
+    end
+end
+
+local function Journal_SetTab(Journal, ShowRaids)
+    Journal.ShowRaids = ShowRaids
+    PanelTemplates_SetTab(Journal, (ShowRaids and Journal.RaidsTab or Journal.DungeonsTab):GetID())
+    Journal.LevelDropdown:SetEnabled(not ShowRaids)
+    Journal_Refresh(Journal)
+end
+
 local function Journal_SelectDungeon(Journal, Dungeon)
+    if (Dungeon.Raid == true) ~= Journal.ShowRaids then Journal_SetTab(Journal, Dungeon.Raid == true) end
     Journal.Dungeon = Dungeon
     Journal.Boss = AllBosses
     Journal.DungeonTitle:SetText(Dungeon.Name)
-    Journal.DungeonLevels:SetFormattedText("Level %d-%d", Dungeon.Levels[1], Dungeon.Levels[2])
+    Journal.DungeonLevels:SetText(FormatDungeonJournalLevels(Dungeon, "Level %d-%d"))
     Journal.DungeonSelect:Hide()
     Journal.Encounter:Show()
     Journal.BackButton:Show()
@@ -448,24 +477,12 @@ local function Journal_SelectBoss(Journal, Boss)
     Journal_RefreshLoot(Journal)
 end
 
-local function Journal_Refresh(Journal)
-    local Dungeons = GetDungeonJournalDungeons(Journal.LevelFilter, Journal.ClassFilter, Journal.SlotFilter)
-    Journal.DungeonGrid:SetDataProvider(CreateDataProvider(Dungeons))
-    Journal.DungeonsEmpty:SetShown(#Dungeons == 0)
-
-    if tContains(Dungeons, Journal.Dungeon) then
-        Journal_RefreshBosses(Journal)
-    else
-        Journal_ShowDungeons(Journal)
-    end
-end
-
 local function Journal_OnShow(Journal)
     Journal:RegisterEvent("ITEM_DATA_LOAD_RESULT")
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
 
     local InstanceName, InstanceType = GetInstanceInfo()
-    if InstanceType == "party" then
+    if InstanceType == "party" or InstanceType == "raid" then
         for _, Dungeon in ipairs(Private.DungeonJournalData) do
             if Dungeon.Name == InstanceName and Dungeon ~= Journal.Dungeon then Journal_SelectDungeon(Journal, Dungeon) end
         end
@@ -493,6 +510,19 @@ local function BackButton_OnEnter(Button)
     GameTooltip:SetOwner(Button, "ANCHOR_RIGHT")
     GameTooltip:SetText(BACK)
     GameTooltip:Show()
+end
+
+local function Tab_OnClick(Tab)
+    PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
+    Journal_SetTab(Private.DungeonJournal, Tab == Private.DungeonJournal.RaidsTab)
+end
+
+local function CreateJournalTab(Journal, ID, Text)
+    local Tab = CreateFrame("Button", nil, Journal, "PanelTabButtonTemplate")
+    Tab:SetID(ID)
+    Tab:SetText(Text)
+    Tab:SetScript("OnClick", Tab_OnClick)
+    return Tab
 end
 
 local function Filter_IsSelected(Option)
@@ -590,6 +620,12 @@ function Private:SetupDungeonJournal()
     Journal.ClassDropdown = CreateFilterDropdown(Journal, DropdownWidth, ClassOptions)
     Journal.ClassDropdown:SetPoint("LEFT", Journal.LevelDropdown, "RIGHT", 10, 0)
 
+    Journal.DungeonsTab = CreateJournalTab(Journal, 1, "Dungeons")
+    Journal.DungeonsTab:SetPoint("TOPLEFT", Journal, "BOTTOMLEFT", 11, 2)
+    Journal.RaidsTab = CreateJournalTab(Journal, 2, "Raids")
+    Journal.Tabs = { Journal.DungeonsTab, Journal.RaidsTab }
+    PanelTemplates_SetNumTabs(Journal, #Journal.Tabs)
+
     local DungeonSelect = CreateFrame("Frame", nil, Journal)
     DungeonSelect:SetPoint("TOPLEFT", Journal.Inset, "TOPLEFT", 0, -2)
     DungeonSelect:SetPoint("BOTTOMRIGHT", Journal.Inset, "BOTTOMRIGHT", -3, 0)
@@ -610,7 +646,6 @@ function Private:SetupDungeonJournal()
 
     Journal.DungeonsEmpty = CreateDungeonJournalText(DungeonSelect, "GameFontHighlightLarge", true)
     Journal.DungeonsEmpty:SetPoint("CENTER", DungeonSelect, "CENTER", 0, 0)
-    Journal.DungeonsEmpty:SetText("No dungeons match the current filters.")
 
     local Encounter = CreateFrame("Frame", nil, Journal)
     Encounter:SetSize(785, 425)
@@ -657,7 +692,7 @@ function Private:SetupDungeonJournal()
     Journal.LootEmpty:SetPoint("CENTER", Journal.LootList, "CENTER", 0, 0)
     Journal.LootEmpty:SetWidth(300)
 
-    Journal_Refresh(Journal)
+    Journal_SetTab(Journal, false)
 
     Journal:SetScript("OnShow", Journal_OnShow)
     Journal:SetScript("OnHide", Journal_OnHide)
