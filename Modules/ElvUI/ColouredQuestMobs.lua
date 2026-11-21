@@ -5,6 +5,7 @@ local RescanDelay = 0.2
 local QuestMobs = {}
 local HookedHealth = {}
 local isRescanQueued = false
+local isQuestLogStale = true
 
 local function ScanQuestMob(Unit)
     if IsInInstance() or UnitIsPlayer(Unit) or C_Secrets.ShouldUnitIdentityBeSecret(Unit) then return false end
@@ -66,7 +67,10 @@ end
 local function OnEvent(_, Event, Unit)
     if Event == "NAME_PLATE_UNIT_REMOVED" then
         QuestMobs[Unit] = nil
-    elseif not isRescanQueued then
+    elseif Event == "UNIT_QUEST_LOG_CHANGED" then
+        isQuestLogStale = true
+    elseif isQuestLogStale and not isRescanQueued then
+        isQuestLogStale = false
         isRescanQueued = true
         C_Timer.After(RescanDelay, RescanQuestMobs)
     end
@@ -91,6 +95,7 @@ function Private:UpdateColouredQuestMobs()
 
     if Private.DB.global.ElvUI.ColouredQuestMobs.Enable then
         EventFrame:RegisterEvent("QUEST_LOG_UPDATE")
+        EventFrame:RegisterUnitEvent("UNIT_QUEST_LOG_CHANGED", "player")
         EventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
     else
         EventFrame:UnregisterAllEvents()

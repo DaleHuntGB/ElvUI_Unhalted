@@ -16,9 +16,14 @@ local function FetchStats()
     end
 end
 
-local function SystemStats_OnEnter()
-    if Private.isForever then return end
+local function RefreshSystemStats()
+    local Frame = Private.SystemStatsFrame
+    Frame.Text:SetText(FetchStats())
+    Frame:SetWidth(Frame.Text:GetUnboundedStringWidth())
+    Frame:SetHeight(Frame.Text:GetStringHeight())
+end
 
+local function SystemStats_OnEnter()
     local AccentColour = Private.E.AccentColour
     local RaidsCompleted = {}
     local MythicPlusRunsCompleted = {}
@@ -87,78 +92,40 @@ local function SystemStats_OnEnter()
 end
 
 local function SystemStats_OnLeave()
-    if Private.isForever then return end
     GameTooltip:Hide()
 end
 
 function Private:SetupSystemStats()
-    local DB = Private.DB.global.MinimapStats.SystemStats
+    local SystemStatsFrame = CreateFrame("Frame", nil, UIParent)
+    SystemStatsFrame:SetFrameStrata("MEDIUM")
+    SystemStatsFrame.Text = SystemStatsFrame:CreateFontString(nil, "OVERLAY")
+    SystemStatsFrame.Text:SetWordWrap(false)
+    SystemStatsFrame.Text:SetNonSpaceWrap(true)
+    Private.SystemStatsFrame = SystemStatsFrame
 
-    Private.SystemStatsFrame = CreateFrame("Frame", nil, UIParent)
-    Private.SystemStatsFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
-    Private.SystemStatsFrame:SetFrameStrata("MEDIUM")
-
-    Private.SystemStatsFrame.TimeSinceLastUpdate = 0
-
-    Private.SystemStatsFrame.Text = Private.SystemStatsFrame:CreateFontString(nil, "OVERLAY")
-    Private.SystemStatsFrame.Text:SetPoint(DB.Layout[1], Private.SystemStatsFrame, DB.Layout[1], 0, 0)
-    Private.E:SetFont(Private.SystemStatsFrame.Text, Private:FetchFont(Private.E.db.general.font), DB.FontSize, Private.E.db.general.fontStyle)
-    Private.SystemStatsFrame.Text:SetText(FetchStats())
-    Private.SystemStatsFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
-    Private.SystemStatsFrame.Text:SetWordWrap(false)
-    Private.SystemStatsFrame.Text:SetNonSpaceWrap(true)
-    Private.SystemStatsFrame:SetWidth(Private.SystemStatsFrame.Text:GetUnboundedStringWidth())
-    Private.SystemStatsFrame:SetHeight(Private.SystemStatsFrame.Text:GetStringHeight())
-
-    if DB.Enable then
-        Private.SystemStatsFrame:SetScript("OnUpdate", function(_, timeElapsed)
-            Private.SystemStatsFrame.TimeSinceLastUpdate = (Private.SystemStatsFrame.TimeSinceLastUpdate or 0) + timeElapsed
-            if Private.SystemStatsFrame.TimeSinceLastUpdate >= DB.UpdateInterval then
-                Private.SystemStatsFrame.Text:SetText(FetchStats())
-                Private.SystemStatsFrame:SetWidth(Private.SystemStatsFrame.Text:GetUnboundedStringWidth())
-                Private.SystemStatsFrame:SetHeight(Private.SystemStatsFrame.Text:GetStringHeight())
-                Private.SystemStatsFrame.TimeSinceLastUpdate = 0
-            end
-        end)
-        Private.SystemStatsFrame:SetScript("OnEnter", SystemStats_OnEnter)
-        Private.SystemStatsFrame:SetScript("OnLeave", SystemStats_OnLeave)
-    end
-
-    Private.SystemStatsFrame:SetShown(DB.Enable)
+    Private:UpdateSystemStats()
 end
 
 function Private:UpdateSystemStats()
     local DB = Private.DB.global.MinimapStats.SystemStats
+    local SystemStatsFrame = Private.SystemStatsFrame
+    local hasTooltip = DB.Enable and not Private.isForever
 
-    Private.E:SetFont(Private.SystemStatsFrame.Text, Private:FetchFont(Private.E.db.general.font), DB.FontSize, Private.E.db.general.fontStyle)
-    Private.SystemStatsFrame.Text:SetText(FetchStats())
-    Private.SystemStatsFrame.Text:SetWordWrap(false)
-    Private.SystemStatsFrame.Text:SetNonSpaceWrap(true)
-    Private.SystemStatsFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
+    Private.E:SetFont(SystemStatsFrame.Text, Private:FetchFont(Private.E.db.general.font), DB.FontSize, Private.E.db.general.fontStyle)
+    SystemStatsFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
+    SystemStatsFrame:ClearAllPoints()
+    SystemStatsFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
+    SystemStatsFrame.Text:ClearAllPoints()
+    SystemStatsFrame.Text:SetPoint(DB.Layout[1], SystemStatsFrame, DB.Layout[1], 0, 0)
+    SystemStatsFrame:SetScript("OnEnter", hasTooltip and SystemStats_OnEnter or nil)
+    SystemStatsFrame:SetScript("OnLeave", hasTooltip and SystemStats_OnLeave or nil)
 
-    if DB.Enable then
-        Private.SystemStatsFrame:SetScript("OnUpdate", function(_, timeElapsed)
-            Private.SystemStatsFrame.TimeSinceLastUpdate = (Private.SystemStatsFrame.TimeSinceLastUpdate or 0) + timeElapsed
-            if Private.SystemStatsFrame.TimeSinceLastUpdate >= DB.UpdateInterval then
-                Private.SystemStatsFrame.Text:SetText(FetchStats())
-                Private.SystemStatsFrame:SetWidth(Private.SystemStatsFrame.Text:GetUnboundedStringWidth())
-                Private.SystemStatsFrame:SetHeight(Private.SystemStatsFrame.Text:GetStringHeight())
-                Private.SystemStatsFrame.TimeSinceLastUpdate = 0
-            end
-        end)
-        Private.SystemStatsFrame:SetScript("OnEnter", SystemStats_OnEnter)
-        Private.SystemStatsFrame:SetScript("OnLeave", SystemStats_OnLeave)
-    else
-        Private.SystemStatsFrame:SetScript("OnUpdate", nil)
-        Private.SystemStatsFrame:SetScript("OnEnter", nil)
-        Private.SystemStatsFrame:SetScript("OnLeave", nil)
+    if SystemStatsFrame.Ticker then
+        SystemStatsFrame.Ticker:Cancel()
+        SystemStatsFrame.Ticker = nil
     end
+    if DB.Enable then SystemStatsFrame.Ticker = C_Timer.NewTicker(DB.UpdateInterval, RefreshSystemStats) end
 
-    Private.SystemStatsFrame:ClearAllPoints()
-    Private.SystemStatsFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
-    Private.SystemStatsFrame.Text:ClearAllPoints()
-    Private.SystemStatsFrame.Text:SetPoint(DB.Layout[1], Private.SystemStatsFrame, DB.Layout[1], 0, 0)
-    Private.SystemStatsFrame:SetWidth(Private.SystemStatsFrame.Text:GetUnboundedStringWidth())
-    Private.SystemStatsFrame:SetHeight(Private.SystemStatsFrame.Text:GetStringHeight())
-    Private.SystemStatsFrame:SetShown(DB.Enable)
+    RefreshSystemStats()
+    SystemStatsFrame:SetShown(DB.Enable)
 end

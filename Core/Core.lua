@@ -14,7 +14,10 @@ function AddOn:OnEnable()
     Private:SetupBugSackSkin()
     -- [[ Alerts ]]
     Private:SetupCombatAlert()
+    Private:SetupInnervateAlert()
+    Private:SetupPowerInfusionAlert()
     -- [[ Blizzard ]]
+    Private:SetupObjectiveTracker()
     Private:SetupObjectiveTrackerBanner()
     Private:SetupUIErrorsFrame()
     -- [[ Damage Meter ]]
@@ -23,7 +26,6 @@ function AddOn:OnEnable()
     Private:SetupColouredQuestMobs()
     Private:SetupEnhancedMovers()
     Private:SetupFocusTexture()
-    Private:SetupInterruptOnCooldown()
     Private:SetupLootRollFix()
     Private:SetupRemoveFogOfWar()
     -- [[ Minimap Stats ]]
@@ -52,13 +54,11 @@ function AddOn:OnEnable()
         Private:SetupDungeonJournal()
         Private:SetupMergeIcons()
         Private:SetupNavigation()
-        Private:SetupObjectiveTracker()
         Private:SetupWorldMapZoneLevels()
     else
         -- [[ Retail ]]
-        Private:SetupInnervateAlert()
-        Private:SetupPowerInfusionAlert()
         Private:SetupTimeSpiralAlert()
+        Private:SetupInterruptOnCooldown()
         Private:SetupCombatResurrection()
         Private:SetupMythicPlusTimer()
         Private:SetupAutoSignUp()

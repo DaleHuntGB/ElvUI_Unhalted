@@ -33,11 +33,12 @@ function Private:SyncCVars()
     if not DB.Sync then return end
 
     for CVar, Group in pairs(CVars) do
+        local Current = C_CVar.GetCVar(CVar)
         if DB[Group][CVar] == nil then
-            DB[Group][CVar] = C_CVar.GetCVar(CVar)
+            DB[Group][CVar] = Current
         end
 
-        Private:SetCVar(CVar, DB[Group][CVar])
+        if tostring(DB[Group][CVar]) ~= Current then Private:SetCVar(CVar, DB[Group][CVar]) end
     end
 end
 

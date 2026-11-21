@@ -8,74 +8,42 @@ local AtlasData = {
     [5] = 92
 }
 
+local function UpdatePosition(MouseCursorFrame)
+    local MouseX, MouseY = GetCursorPosition()
+    if MouseX == MouseCursorFrame.CursorX and MouseY == MouseCursorFrame.CursorY then return end
+    MouseCursorFrame.CursorX, MouseCursorFrame.CursorY = MouseX, MouseY
+    local UIScale = UIParent:GetEffectiveScale()
+    MouseCursorFrame:SetPoint(MouseCursorFrame.Point, UIParent, "BOTTOMLEFT", MouseX / UIScale + MouseCursorFrame.OffsetX, MouseY / UIScale + MouseCursorFrame.OffsetY)
+end
+
 function Private:SetupMouseCursor()
-    local DB = Private.DB.global.Miscellaneous.MouseCursor
-
     local MouseCursorFrame = CreateFrame("Frame", nil, UIParent)
-    MouseCursorFrame:SetShown(DB.Enable)
-    MouseCursorFrame:SetSize(DB.Size[1], DB.Size[2])
-    MouseCursorFrame.Anchor = CreateFrame("Frame", nil, UIParent)
-    MouseCursorFrame.Anchor:SetSize(DB.Size[1], DB.Size[2])
-
     MouseCursorFrame.Texture = MouseCursorFrame:CreateTexture(nil, "OVERLAY")
     MouseCursorFrame.Texture:SetAllPoints(MouseCursorFrame)
-    if Private.MouseCursors[DB.Texture].isAtlas then
-        MouseCursorFrame.Texture:SetAtlas(Private.MouseCursors[DB.Texture].Path)
-        MouseCursorFrame:SetSize(AtlasData[5], AtlasData[5])
-        MouseCursorFrame.Anchor:SetSize(AtlasData[5], AtlasData[5])
-    else
-        MouseCursorFrame.Texture:SetTexture(Private.MouseCursors[DB.Texture].Path)
-        MouseCursorFrame.Texture:SetTexCoord(0, 1, 0, 1)
-    end
-    MouseCursorFrame.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
-
-    MouseCursorFrame.CursorX, MouseCursorFrame.CursorY = -1, -1
-    MouseCursorFrame.UpdatePosition = function(MCF)
-        local MouseX, MouseY = GetCursorPosition()
-        if MouseX == MCF.CursorX and MouseY == MCF.CursorY then return end
-        MCF.CursorX, MCF.CursorY = MouseX, MouseY
-        local UIScale = UIParent:GetEffectiveScale()
-        if Private.MouseCursors[DB.Texture].isAtlas then
-            MouseCursorFrame.Anchor:ClearAllPoints()
-            MouseCursorFrame.Anchor:SetPoint(AtlasData[2], UIParent, "BOTTOMLEFT", MouseX / UIScale, MouseY / UIScale)
-            MouseCursorFrame:ClearAllPoints()
-            MouseCursorFrame:SetPoint(AtlasData[1], MouseCursorFrame.Anchor, AtlasData[2], AtlasData[3], AtlasData[4])
-        else
-            MouseCursorFrame.Anchor:ClearAllPoints()
-            MouseCursorFrame.Anchor:SetPoint(DB.Layout[2], UIParent, "BOTTOMLEFT", MouseX / UIScale, MouseY / UIScale)
-            MouseCursorFrame:ClearAllPoints()
-            MouseCursorFrame:SetPoint(DB.Layout[1], MouseCursorFrame.Anchor, DB.Layout[2], DB.Layout[3], DB.Layout[4])
-        end
-    end
-
-    if DB.Enable then
-        MouseCursorFrame:SetScript("OnUpdate", MouseCursorFrame.UpdatePosition)
-    end
-
     Private.MouseCursorFrame = MouseCursorFrame
+
+    Private:UpdateMouseCursor()
 end
 
 function Private:UpdateMouseCursor()
     local DB = Private.DB.global.Miscellaneous.MouseCursor
-    if Private.MouseCursorFrame then
-        Private.MouseCursorFrame:SetShown(DB.Enable)
-        Private.MouseCursorFrame:SetSize(DB.Size[1], DB.Size[2])
-        Private.MouseCursorFrame.Anchor:SetSize(DB.Size[1], DB.Size[2])
-        if Private.MouseCursors[DB.Texture].isAtlas then
-            Private.MouseCursorFrame.Texture:SetAtlas(Private.MouseCursors[DB.Texture].Path)
-            Private.MouseCursorFrame:SetSize(AtlasData[5], AtlasData[5])
-            Private.MouseCursorFrame.Anchor:SetSize(AtlasData[5], AtlasData[5])
-        else
-            Private.MouseCursorFrame.Texture:SetTexture(Private.MouseCursors[DB.Texture].Path)
-            Private.MouseCursorFrame.Texture:SetTexCoord(0, 1, 0, 1)
-        end
-        Private.MouseCursorFrame.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
-        Private.MouseCursorFrame.CursorX = -1
+    local MouseCursorFrame = Private.MouseCursorFrame
+    local Cursor = Private.MouseCursors[DB.Texture]
+    local Layout = Cursor.isAtlas and AtlasData or DB.Layout
 
-        if DB.Enable then
-            Private.MouseCursorFrame:SetScript("OnUpdate", Private.MouseCursorFrame.UpdatePosition)
-        else
-            Private.MouseCursorFrame:SetScript("OnUpdate", nil)
-        end
+    if Cursor.isAtlas then
+        MouseCursorFrame.Texture:SetAtlas(Cursor.Path)
+        MouseCursorFrame:SetSize(AtlasData[5], AtlasData[5])
+    else
+        MouseCursorFrame.Texture:SetTexture(Cursor.Path)
+        MouseCursorFrame.Texture:SetTexCoord(0, 1, 0, 1)
+        MouseCursorFrame:SetSize(DB.Size[1], DB.Size[2])
     end
+    MouseCursorFrame.Texture:SetVertexColor(DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.Colour[4])
+
+    MouseCursorFrame:ClearAllPoints()
+    MouseCursorFrame.Point, MouseCursorFrame.OffsetX, MouseCursorFrame.OffsetY = Layout[1], Layout[3], Layout[4]
+    MouseCursorFrame.CursorX, MouseCursorFrame.CursorY = -1, -1
+    MouseCursorFrame:SetScript("OnUpdate", DB.Enable and UpdatePosition or nil)
+    MouseCursorFrame:SetShown(DB.Enable)
 end

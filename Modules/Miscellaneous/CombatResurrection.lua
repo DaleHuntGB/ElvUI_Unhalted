@@ -37,7 +37,7 @@ local function CombatResurrection_OnEvent(Frame, Event)
         Frame.InChallenge = false
     elseif Event == "PLAYER_ENTERING_WORLD" or Event == "ZONE_CHANGED_NEW_AREA" or Event == "PLAYER_DIFFICULTY_CHANGED" then
         Frame.InEncounter = C_InstanceEncounter.IsEncounterInProgress()
-        Frame.InChallenge = not Private.isForever and C_ChallengeMode.IsChallengeModeActive()
+        Frame.InChallenge = C_ChallengeMode.IsChallengeModeActive()
         Frame:ClearAllPoints()
         Frame:SetPoint(DB.Layout[1], _G[DB.AnchorParent] or UIParent, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     end
@@ -91,11 +91,9 @@ function Private:SetupCombatResurrection()
         Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         Frame:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
-        if not Private.isForever then
-            Frame:RegisterEvent("CHALLENGE_MODE_START")
-            Frame:RegisterEvent("CHALLENGE_MODE_RESET")
-            Frame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
-        end
+        Frame:RegisterEvent("CHALLENGE_MODE_START")
+        Frame:RegisterEvent("CHALLENGE_MODE_RESET")
+        Frame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
         Frame:SetScript("OnEvent", CombatResurrection_OnEvent)
     end
 end
@@ -136,11 +134,9 @@ function Private:UpdateCombatResurrection()
         Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
         Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         Frame:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
-        if not Private.isForever then
-            Frame:RegisterEvent("CHALLENGE_MODE_START")
-            Frame:RegisterEvent("CHALLENGE_MODE_RESET")
-            Frame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
-        end
+        Frame:RegisterEvent("CHALLENGE_MODE_START")
+        Frame:RegisterEvent("CHALLENGE_MODE_RESET")
+        Frame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
         Frame:SetScript("OnEvent", CombatResurrection_OnEvent)
     else
         Frame:UnregisterEvent("ENCOUNTER_START")
@@ -149,11 +145,9 @@ function Private:UpdateCombatResurrection()
         Frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
         Frame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
         Frame:UnregisterEvent("PLAYER_DIFFICULTY_CHANGED")
-        if not Private.isForever then
-            Frame:UnregisterEvent("CHALLENGE_MODE_START")
-            Frame:UnregisterEvent("CHALLENGE_MODE_RESET")
-            Frame:UnregisterEvent("CHALLENGE_MODE_COMPLETED")
-        end
+        Frame:UnregisterEvent("CHALLENGE_MODE_START")
+        Frame:UnregisterEvent("CHALLENGE_MODE_RESET")
+        Frame:UnregisterEvent("CHALLENGE_MODE_COMPLETED")
         Frame:SetScript("OnEvent", nil)
         Frame:SetScript("OnUpdate", nil)
         Frame.InEncounter, Frame.InChallenge = false, false

@@ -64,75 +64,43 @@ local function Time_OnLeave()
     GameTooltip:Hide()
 end
 
+local function RefreshTime()
+    local TimeFrame = Private.TimeFrame
+    TimeFrame.Text:SetText(FetchTime())
+    TimeFrame:SetWidth(TimeFrame.Text:GetStringWidth())
+    TimeFrame:SetHeight(TimeFrame.Text:GetStringHeight())
+end
+
 function Private:SetupTime()
-    local DB = Private.DB.global.MinimapStats.Time
+    local TimeFrame = CreateFrame("Frame", nil, UIParent)
+    TimeFrame:SetFrameStrata("MEDIUM")
+    TimeFrame.Text = TimeFrame:CreateFontString(nil, "BACKGROUND")
+    TimeFrame.Text:SetWordWrap(false)
+    TimeFrame.Text:SetNonSpaceWrap(true)
+    Private.TimeFrame = TimeFrame
 
-    Private.TimeFrame = CreateFrame("Frame", nil, UIParent)
-    Private.TimeFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
-    Private.TimeFrame:SetFrameStrata("MEDIUM")
-
-    Private.TimeFrame.TimeSinceLastUpdate = 0
-
-    Private.TimeFrame.Text = Private.TimeFrame:CreateFontString(nil, "BACKGROUND")
-    Private.TimeFrame.Text:SetPoint(DB.Layout[1], Private.TimeFrame, DB.Layout[1], 0, 0)
-    Private.E:SetFont(Private.TimeFrame.Text, Private:FetchFont(Private.E.db.general.font), DB.FontSize, Private.E.db.general.fontStyle)
-    Private.TimeFrame.Text:SetText(FetchTime())
-    Private.TimeFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
-    Private.TimeFrame.Text:SetWordWrap(false)
-    Private.TimeFrame.Text:SetNonSpaceWrap(true)
-
-    Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
-    Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
-
-    if DB.Enable then
-        Private.TimeFrame:SetScript("OnUpdate", function(_, timeElapsed)
-            Private.TimeFrame.TimeSinceLastUpdate = (Private.TimeFrame.TimeSinceLastUpdate or 0) + timeElapsed
-            if Private.TimeFrame.TimeSinceLastUpdate >= DB.UpdateInterval then
-                Private.TimeFrame.Text:SetText(FetchTime())
-                Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
-                Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
-                Private.TimeFrame.TimeSinceLastUpdate = 0
-            end
-        end)
-        Private.TimeFrame:SetScript("OnEnter", Time_OnEnter)
-        Private.TimeFrame:SetScript("OnLeave", Time_OnLeave)
-    end
-
-    Private.TimeFrame:SetShown(DB.Enable)
+    Private:UpdateTime()
 end
 
 function Private:UpdateTime()
     local DB = Private.DB.global.MinimapStats.Time
+    local TimeFrame = Private.TimeFrame
 
-    Private.E:SetFont(Private.TimeFrame.Text, Private:FetchFont(Private.E.db.general.font), DB.FontSize, Private.E.db.general.fontStyle)
-    Private.TimeFrame.Text:SetText(FetchTime())
-    Private.TimeFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
-    Private.TimeFrame.Text:SetWordWrap(false)
-    Private.TimeFrame.Text:SetNonSpaceWrap(true)
+    Private.E:SetFont(TimeFrame.Text, Private:FetchFont(Private.E.db.general.font), DB.FontSize, Private.E.db.general.fontStyle)
+    TimeFrame.Text:SetTextColor(DB.Colour[1], DB.Colour[2], DB.Colour[3])
+    TimeFrame:ClearAllPoints()
+    TimeFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
+    TimeFrame.Text:ClearAllPoints()
+    TimeFrame.Text:SetPoint(DB.Layout[1], TimeFrame, DB.Layout[1], 0, 0)
+    TimeFrame:SetScript("OnEnter", DB.Enable and Time_OnEnter or nil)
+    TimeFrame:SetScript("OnLeave", DB.Enable and Time_OnLeave or nil)
 
-    if DB.Enable then
-        Private.TimeFrame:SetScript("OnUpdate", function(_, timeElapsed)
-            Private.TimeFrame.TimeSinceLastUpdate = (Private.TimeFrame.TimeSinceLastUpdate or 0) + timeElapsed
-            if Private.TimeFrame.TimeSinceLastUpdate >= DB.UpdateInterval then
-                Private.TimeFrame.Text:SetText(FetchTime())
-                Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
-                Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
-                Private.TimeFrame.TimeSinceLastUpdate = 0
-            end
-        end)
-        Private.TimeFrame:SetScript("OnEnter", Time_OnEnter)
-        Private.TimeFrame:SetScript("OnLeave", Time_OnLeave)
-    else
-        Private.TimeFrame:SetScript("OnUpdate", nil)
-        Private.TimeFrame:SetScript("OnEnter", nil)
-        Private.TimeFrame:SetScript("OnLeave", nil)
+    if TimeFrame.Ticker then
+        TimeFrame.Ticker:Cancel()
+        TimeFrame.Ticker = nil
     end
+    if DB.Enable then TimeFrame.Ticker = C_Timer.NewTicker(DB.UpdateInterval, RefreshTime) end
 
-    Private.TimeFrame:ClearAllPoints()
-    Private.TimeFrame:SetPoint(DB.Layout[1], _G["Minimap"], DB.Layout[2], DB.Layout[3], DB.Layout[4])
-    Private.TimeFrame.Text:ClearAllPoints()
-    Private.TimeFrame.Text:SetPoint(DB.Layout[1], Private.TimeFrame, DB.Layout[1], 0, 0)
-    Private.TimeFrame:SetWidth(Private.TimeFrame.Text:GetStringWidth())
-    Private.TimeFrame:SetHeight(Private.TimeFrame.Text:GetStringHeight())
-    Private.TimeFrame:SetShown(DB.Enable)
+    RefreshTime()
+    TimeFrame:SetShown(DB.Enable)
 end

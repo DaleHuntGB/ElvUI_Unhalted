@@ -119,7 +119,7 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.Combat.args.FontGroup.args.ExitCombatColour = ACH:Color("Exiting Combat: Colour", nil, 9, false, "relative", function() return unpack(Private.DB.global.Alerts.Combat.Text.Exit.Colour) end, function(_, r, g, b) Private.DB.global.Alerts.Combat.Text.Exit.Colour = {r, g, b} Private:UpdateCombatAlert() end, function() return not Private.DB.global.Alerts.Combat.Enable end)
     Private.GUI.args.Alerts.args.Combat.args.FontGroup.args.ExitCombatColour.relWidth = 0.5
 
-    Private.GUI.args.Alerts.args.Innervate = ACH:Group("|T136048:18:18|t Innervate", nil, 2, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.Alerts.args.Innervate = ACH:Group("|T136048:18:18|t Innervate", nil, 2, "tab")
 
     Private.GUI.args.Alerts.args.Innervate.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.Innervate.Enable end, function(_, value) Private.DB.global.Alerts.Innervate.Enable = value Private:UpdateInnervateAlert() end)
     Private.GUI.args.Alerts.args.Innervate.args.Enable.descStyle = "inline"
@@ -147,7 +147,7 @@ function Private:SetupGUI()
     Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.args.SoundChannel = ACH:Select("Sound Channel", nil, 2, {["Master"] = "Master", ["SFX"] = "SFX", ["Music"] = "Music", ["Ambience"] = "Ambience"}, nil, "relative", function() return Private.DB.global.Alerts.Innervate.SoundChannel end, function(_, value) Private.DB.global.Alerts.Innervate.SoundChannel = value Private:UpdateInnervateAlert() end, function() return not Private.DB.global.Alerts.Innervate.Enable end)
     Private.GUI.args.Alerts.args.Innervate.args.SoundGroup.args.SoundChannel.relWidth = 0.5
 
-    Private.GUI.args.Alerts.args.PowerInfusion = ACH:Group("|T135939:18:18|t Power Infusion", nil, 3, "tab", nil, nil, nil, function() return Private.isForever end)
+    Private.GUI.args.Alerts.args.PowerInfusion = ACH:Group("|T135939:18:18|t Power Infusion", nil, 3, "tab")
 
     Private.GUI.args.Alerts.args.PowerInfusion.args.Enable = ACH:Toggle("Enable", nil, 1, nil, nil, "relative", function() return Private.DB.global.Alerts.PowerInfusion.Enable end, function(_, value) Private.DB.global.Alerts.PowerInfusion.Enable = value Private:UpdatePowerInfusionAlert() end)
     Private.GUI.args.Alerts.args.PowerInfusion.args.Enable.descStyle = "inline"
@@ -213,7 +213,7 @@ function Private:SetupGUI()
     Private.GUI.args.Blizzard.args.Miscellaneous.args.WorldMapZoneLevels.descStyle = "inline"
     Private.GUI.args.Blizzard.args.Miscellaneous.args.WorldMapZoneLevels.relWidth = 1
 
-    Private.GUI.args.Blizzard.args.ObjectiveTracker = ACH:Group("Objective Tracker", nil, 1, nil, nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.Blizzard.args.ObjectiveTracker = ACH:Group("Objective Tracker", nil, 1)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting = ACH:Group("Sorting", nil, 1)
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.inline = true
     Private.GUI.args.Blizzard.args.ObjectiveTracker.args.Sorting.args.Enable = ACH:Toggle("Enable", "Orders your tracked quests by their |cFFFFCC00level|r or |cFFFFCC00proximity|r.", 1, nil, nil, "relative", function() return Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable end, function(_, value) Private.DB.global.Blizzard.ObjectiveTracker.Sorting.Enable = value Private:UpdateObjectiveTracker() end)

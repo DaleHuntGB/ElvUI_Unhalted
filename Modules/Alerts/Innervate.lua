@@ -67,7 +67,7 @@ function Private:UpdateInnervateAlert()
         Private.InnervateAlertSound = C_UnitAuras.AddAuraSound(
             Enum.UnitAuraSoundTrigger.Added, {
                 unitToken = "player",
-                spellID = 10060,
+                spellID = 29166,
                 soundFileName = Private:FetchSound(DB.Sound),
                 outputChannel = DB.SoundChannel,
             }

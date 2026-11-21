@@ -1,19 +1,19 @@
 local Private = select(2, ...)
 
-local function CombatAlert_OnEvent(_, Event, ...)
-    local DB = Private.DB.global.Alerts.Combat
+local function HideCombatAlert()
+    Private.CombatAlertFrame.HideTimer = nil
+    Private.CombatAlertFrame:Hide()
+end
 
-    if Event == "PLAYER_REGEN_ENABLED" then
-        Private.CombatAlertFrame.Text:SetText(DB.Text.Exit.Text)
-        Private.CombatAlertFrame.Text:SetTextColor(DB.Text.Exit.Colour[1], DB.Text.Exit.Colour[2], DB.Text.Exit.Colour[3], 1)
-        Private.CombatAlertFrame:Show()
-        C_Timer.After(DB.HoldTime, function() Private.CombatAlertFrame:Hide() end)
-    elseif Event == "PLAYER_REGEN_DISABLED" then
-        Private.CombatAlertFrame.Text:SetText(DB.Text.Enter.Text)
-        Private.CombatAlertFrame.Text:SetTextColor(DB.Text.Enter.Colour[1], DB.Text.Enter.Colour[2], DB.Text.Enter.Colour[3], 1)
-        Private.CombatAlertFrame:Show()
-        C_Timer.After(DB.HoldTime, function() Private.CombatAlertFrame:Hide() end)
-    end
+local function CombatAlert_OnEvent(CombatAlertFrame, Event)
+    local DB = Private.DB.global.Alerts.Combat
+    local TextDB = Event == "PLAYER_REGEN_DISABLED" and DB.Text.Enter or DB.Text.Exit
+
+    CombatAlertFrame.Text:SetText(TextDB.Text)
+    CombatAlertFrame.Text:SetTextColor(TextDB.Colour[1], TextDB.Colour[2], TextDB.Colour[3], 1)
+    CombatAlertFrame:Show()
+    if CombatAlertFrame.HideTimer then CombatAlertFrame.HideTimer:Cancel() end
+    CombatAlertFrame.HideTimer = C_Timer.NewTimer(DB.HoldTime, HideCombatAlert)
 end
 
 function Private:SetupCombatAlert()
