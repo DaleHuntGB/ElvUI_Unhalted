@@ -321,11 +321,13 @@ function Private:SetupGUI()
 
         Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows = ACH:Group("Rows & Texts", nil, 2, "tab")
         Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.Texture = ACH:SharedMediaStatusbar("Texture", nil, 1, "relative", function() return Private.DB.global.DamageMeter[i].Texture end, function(_, value) Private.DB.global.DamageMeter[i].Texture = value Private:UpdateWindow(_G["DamageMeter_0"..i], Private.DB.global.DamageMeter[i]) end, function() return not Private.DB.global.DamageMeter[i].Enable end)
-        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.Texture.relWidth = 0.5
-        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.NumOfRows = ACH:Range("Rows", nil, 2, {min = 1, max = 12, softMin = 1, softMax = 8, step = 1}, "relative", function() return Private.DB.global.DamageMeter[i].Rows end, function(_, value) Private.DB.global.DamageMeter[i].Rows = value Private:UpdateWindow(_G["DamageMeter_0"..i], Private.DB.global.DamageMeter[i]) end, function() return not Private.DB.global.DamageMeter[i].Enable end)
-        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.NumOfRows.relWidth = 0.5
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.Texture.relWidth = 0.33
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.AlwaysShowMe = ACH:Toggle("Always Show Me", nil, 2, nil, nil, "relative", function() return Private.DB.global.DamageMeter[i].AlwaysShowMe end, function(_, value) Private.DB.global.DamageMeter[i].AlwaysShowMe = value Private:UpdateWindow(_G["DamageMeter_0"..i], Private.DB.global.DamageMeter[i]) end, function() return not Private.DB.global.DamageMeter[i].Enable end)
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.AlwaysShowMe.relWidth = 0.33
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.NumOfRows = ACH:Range("Rows", nil, 3, {min = 1, max = 12, softMin = 1, softMax = 8, step = 1}, "relative", function() return Private.DB.global.DamageMeter[i].Rows end, function(_, value) Private.DB.global.DamageMeter[i].Rows = value Private:UpdateWindow(_G["DamageMeter_0"..i], Private.DB.global.DamageMeter[i]) end, function() return not Private.DB.global.DamageMeter[i].Enable end)
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.NumOfRows.relWidth = 0.33
 
-        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.TextGroup = ACH:Group("Text", nil, 3)
+        Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.TextGroup = ACH:Group("Text", nil, 4)
         Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.TextGroup.inline = true
 
         Private.GUI.args.DamageMeter.args["Window" .. i].args.Rows.args.TextGroup.args.NameGroup = ACH:Group("Name", nil, 1, "tab")

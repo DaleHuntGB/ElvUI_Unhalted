@@ -982,7 +982,7 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
         local Height = DB.Size[2] - 2
         local RowHeight = Height / DB.Rows
         Frame.LocalPlayerIndex = 0
-        if CombatSources and LocalPlayerMeterTypes[DB.MeterType] then
+        if CombatSources and DB.AlwaysShowMe and LocalPlayerMeterTypes[DB.MeterType] then
             for i = 1, SourceCount do
                 if CombatSources[i].isLocalPlayer then
                     Frame.LocalPlayerIndex = i
