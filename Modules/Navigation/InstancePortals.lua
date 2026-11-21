@@ -29,7 +29,7 @@ local function PortalIcon_OnEnter(Icon)
     for Index = 4, #Icon.Portal do
         local Name = Icon.Portal[Index]
         local Dungeon = JournalDungeons[Name]
-        if Dungeon then
+        if Dungeon and not Dungeon.Raid then
             local Levels = Dungeon.Levels
             local Colour = GetQuestDifficultyColor(math.min(math.max(PlayerLevel, Levels[1]), Levels[2]))
             GameTooltip:AddDoubleLine(Name, string.format("Level %d-%d", Levels[1], Levels[2]), 1, 1, 1, Colour.r, Colour.g, Colour.b)
@@ -87,8 +87,14 @@ function Private:SetupInstancePortals()
         local Left, Right, Top, Bottom = C_Map.GetMapRectOnMap(ZoneMapID, ContinentMapID)
         Portal.Positions = { [ZoneMapID] = { X, Y }, [ContinentMapID] = { Left + X * (Right - Left), Top + Y * (Bottom - Top) } }
         Portal.Dungeons = {}
-        for Index = 4, #Portal do Portal.Dungeons[#Portal.Dungeons + 1] = JournalDungeons[Portal[Index]] end
-        Portal.Atlas = #Portal.Dungeons > 0 and DungeonAtlas or RaidAtlas
+        Portal.Atlas = RaidAtlas
+        for Index = 4, #Portal do
+            local Dungeon = JournalDungeons[Portal[Index]]
+            if Dungeon then
+                Portal.Dungeons[#Portal.Dungeons + 1] = Dungeon
+                if not Dungeon.Raid then Portal.Atlas = DungeonAtlas end
+            end
+        end
     end
 
     local Canvas = WorldMapFrame:GetCanvas()
