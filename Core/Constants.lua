@@ -235,6 +235,14 @@ function Private:AbbreviateValue(value)
     return AbbreviateNumbers(value, AbbreviateOptions)
 end
 
+function Private:GetOverlayTileSize(Index, Count, Size, TileSize)
+    if Index < Count then return TileSize, TileSize end
+    local PixelSize = (Size - 1) % TileSize + 1
+    local FileSize = 16
+    while FileSize < PixelSize do FileSize = FileSize * 2 end
+    return PixelSize, FileSize
+end
+
 function Private:GetWorldMapAreaLabel()
     for DataProvider in pairs(WorldMapFrame.dataProviders) do
         if DataProvider.OnSetAreaLabel == AreaLabelDataProviderMixin.OnSetAreaLabel then return DataProvider.Label end

@@ -28,6 +28,18 @@ local PetSectionMeterTypes = {
     [Enum.DamageMeterType.Dps] = true,
 }
 
+local LocalPlayerMeterTypes = {
+    [Enum.DamageMeterType.DamageDone] = true,
+    [Enum.DamageMeterType.Dps] = true,
+    [Enum.DamageMeterType.HealingDone] = true,
+    [Enum.DamageMeterType.Hps] = true,
+    [Enum.DamageMeterType.Absorbs] = true,
+    [Enum.DamageMeterType.Interrupts] = true,
+    [Enum.DamageMeterType.Dispels] = true,
+    [Enum.DamageMeterType.DamageTaken] = true,
+    [Enum.DamageMeterType.AvoidableDamageTaken] = true,
+}
+
 local Creatures = {}
 
 local EnvironmentalIcons = {
@@ -893,6 +905,10 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
         local FirstSource = math.floor(Offset / RowHeight) + 1
         local LastSource = math.min(SourceCount, math.ceil((Offset + Height) / RowHeight))
         local RowCount = math.max(0, LastSource - FirstSource + 1)
+        local TopSource = math.floor(Offset / RowHeight + 0.5) + 1
+        local BottomSource = TopSource + DB.Rows - 1
+        local LocalPlayerIndex = Frame.LocalPlayerIndex
+        local PinnedSource = LocalPlayerIndex > 0 and LocalPlayerIndex < TopSource and TopSource or LocalPlayerIndex > BottomSource and BottomSource or 0
 
         for i = 1, RowCount do
             local SourceIndex = FirstSource + i - 1
@@ -909,7 +925,7 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
                 Row:SetPoint("TOPRIGHT", Frame.ScrollChild, "TOPRIGHT", 0, -((SourceIndex - 1) * RowHeight))
                 Row.SourceIndex = SourceIndex
             end
-            Row:Update(CombatSources[SourceIndex], CombatSession.maxAmount)
+            Row:Update(CombatSources[SourceIndex == PinnedSource and LocalPlayerIndex or SourceIndex], CombatSession.maxAmount)
         end
         for i = RowCount + 1, #Frame.Rows do
             Frame.Rows[i]:Clear()
@@ -965,6 +981,15 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
         local SourceCount = CombatSources and #CombatSources or 0
         local Height = DB.Size[2] - 2
         local RowHeight = Height / DB.Rows
+        Frame.LocalPlayerIndex = 0
+        if CombatSources and LocalPlayerMeterTypes[DB.MeterType] then
+            for i = 1, SourceCount do
+                if CombatSources[i].isLocalPlayer then
+                    Frame.LocalPlayerIndex = i
+                    break
+                end
+            end
+        end
         Frame.ScrollRange = math.max(0, SourceCount * RowHeight - Height)
         Frame.ScrollChild:SetSize(DB.Size[1] - 2, Height + Frame.ScrollRange)
         if ResetScroll then
@@ -1068,6 +1093,7 @@ local function CreateWindow(DamageMeterDB, DamageMeterCount)
     end
 
     Frame.ScrollRange = 0
+    Frame.LocalPlayerIndex = 0
     Frame.ScrollRows = Window_OnMouseWheel
     Frame:EnableMouse(true)
     Frame:EnableMouseWheel(true)

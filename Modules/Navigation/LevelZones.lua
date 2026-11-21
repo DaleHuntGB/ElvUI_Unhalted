@@ -2,7 +2,6 @@ local Private = select(2, ...)
 
 local AreaLevelZones = {}
 local AreaNameLabelType = MAP_AREA_LABEL_TYPE.AREA_NAME
-local BorderThickness = 2
 local GapDistance, SampleSpread, MinSamples = 6, 6, 5
 local MaxCreatureLevel, MaxLevelSpan = 63, 8
 local CritterFactions = { [31] = true, [188] = true, [190] = true }
@@ -20,7 +19,7 @@ local function FindLevelZone(Zones, X, Y)
         local Bounds = LevelZone.Bounds
         if X >= Bounds[1] and X <= Bounds[3] and Y >= Bounds[2] and Y <= Bounds[4] then
             local isInside = false
-            for Ring = 4, #LevelZone do
+            for Ring = 5, #LevelZone do
                 local Border = LevelZone[Ring]
                 local Count = #Border
                 local LastX, LastY = Border[Count - 1], Border[Count]
@@ -38,7 +37,7 @@ local function FindLevelZone(Zones, X, Y)
     for ZoneIndex, LevelZone in ipairs(Zones) do
         local Bounds = LevelZone.Bounds
         if X >= Bounds[1] - GapDistance and X <= Bounds[3] + GapDistance and Y >= Bounds[2] - GapDistance and Y <= Bounds[4] + GapDistance then
-            for Ring = 4, #LevelZone do
+            for Ring = 5, #LevelZone do
                 local Border = LevelZone[Ring]
                 local Count = #Border
                 local LastX, LastY = Border[Count - 1], Border[Count]
@@ -75,22 +74,27 @@ local function DrawLevelZones(Pin)
 
     local DB = Private.DB.global.Miscellaneous.Navigation.LevelZones
     local Font, FontStyle = Private:FetchFont(Private.E.db.general.font), Private.E.db.general.fontStyle
+    local Layer = C_Map.GetMapArtLayers(MapID)[1]
+    local TileWidth, TileHeight = Layer.tileWidth, Layer.tileHeight
     for _, LevelZone in ipairs(LevelZones) do
         if LevelZone.Level then
             local Colour = GetLevelZoneColour(LevelZone)
-            for Ring = 4, #LevelZone do
-                local Border = LevelZone[Ring]
-                local Count = #Border
-                local LastX, LastY = Border[Count - 1], Border[Count]
-                for Index = 1, Count, 2 do
-                    local X, Y = Border[Index], Border[Index + 1]
-                    local Line = Private.LevelZonePool:Acquire()
-                    Line:SetStartPoint("TOPLEFT", Pin, LastX, -LastY)
-                    Line:SetEndPoint("TOPLEFT", Pin, X, -Y)
-                    Line:SetThickness(BorderThickness)
-                    Line:SetColorTexture(Colour.r, Colour.g, Colour.b, DB.Opacity)
-                    Line:Show()
-                    LastX, LastY = X, Y
+            local Overlay = LevelZone[4]
+            local Width, Height, OffsetX, OffsetY = Overlay[1], Overlay[2], Overlay[3], Overlay[4]
+            local Columns, Rows = math.ceil(Width / TileWidth), math.ceil(Height / TileHeight)
+            for Row = 1, Rows do
+                local PixelHeight, FileHeight = Private:GetOverlayTileSize(Row, Rows, Height, TileHeight)
+                for Column = 1, Columns do
+                    local PixelWidth, FileWidth = Private:GetOverlayTileSize(Column, Columns, Width, TileWidth)
+                    local X, Y = OffsetX + TileWidth * (Column - 1), -(OffsetY + TileHeight * (Row - 1))
+                    local Tile = Private.LevelZonePool:Acquire()
+                    Tile:SetSize(PixelWidth, PixelHeight)
+                    Tile:SetPoint("TOPLEFT", Pin, "TOPLEFT", X, Y)
+                    Tile:SetColorTexture(Colour.r, Colour.g, Colour.b, DB.Opacity)
+                    Tile.Mask:SetSize(FileWidth, FileHeight)
+                    Tile.Mask:SetPoint("TOPLEFT", Pin, "TOPLEFT", X, Y)
+                    Tile.Mask:SetTexture(Overlay[4 + (Row - 1) * Columns + Column], "CLAMP", "CLAMP", "TRILINEAR")
+                    Tile:Show()
                 end
             end
 
@@ -98,7 +102,7 @@ local function DrawLevelZones(Pin)
             Private.E:SetFont(Level, Font, DB.FontSize, FontStyle)
             Level:SetPoint("CENTER", Pin, "TOPLEFT", LevelZone[1], -LevelZone[2])
             Level:SetText(LevelZone.Level)
-            Level:SetTextColor(Colour.r, Colour.g, Colour.b, DB.Opacity)
+            Level:SetTextColor(Colour.r, Colour.g, Colour.b)
             Level:Show()
 
             for _, AreaID in ipairs(LevelZone[3]) do
@@ -115,7 +119,7 @@ local function BuildLevelRanges()
     for _, Zones in pairs(Private.LevelZones) do
         for _, LevelZone in ipairs(Zones) do
             local MinX, MinY, MaxX, MaxY = math.huge, math.huge, -math.huge, -math.huge
-            for Ring = 4, #LevelZone do
+            for Ring = 5, #LevelZone do
                 local Border = LevelZone[Ring]
                 for Index = 1, #Border, 2 do
                     MinX, MaxX = math.min(MinX, Border[Index]), math.max(MaxX, Border[Index])
@@ -189,7 +193,12 @@ function Private:SetupLevelZones()
 
     for Pin in WorldMapFrame:EnumeratePinsByTemplate("MapExplorationPinTemplate") do
         local DrawLayer, SubLevel = Pin.dataProvider:GetDrawLayer()
-        Private.LevelZonePool = CreateUnsecuredRegionPoolInstance(nil, function() return Pin:CreateLine(nil, DrawLayer, nil, SubLevel + 2) end)
+        Private.LevelZonePool = CreateUnsecuredRegionPoolInstance(nil, function()
+            local Tile = Pin:CreateTexture(nil, DrawLayer, nil, SubLevel + 2)
+            Tile.Mask = Pin:CreateMaskTexture()
+            Tile:AddMaskTexture(Tile.Mask)
+            return Tile
+        end)
         Private.LevelZoneTextPool = CreateUnsecuredFontStringPool(Pin, "OVERLAY")
         Private.LevelZonePin = Pin
         hooksecurefunc(Pin, "RefreshOverlays", DrawLevelZones)

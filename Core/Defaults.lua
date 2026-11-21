@@ -385,7 +385,7 @@ local Defaults = {
                 },
                 LevelZones = {
                     Enable = true,
-                    Opacity = 1,
+                    Opacity = 0.4,
                     FontSize = 18,
                 },
                 QuestObjectives = {

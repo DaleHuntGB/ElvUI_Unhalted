@@ -1,14 +1,6 @@
 local Private = select(2, ...)
 local ExploredOverlays = {}
 
-local function GetTileSize(Index, Count, Size, TileSize)
-    if Index < Count then return TileSize, TileSize end
-    local PixelSize = (Size - 1) % TileSize + 1
-    local FileSize = 16
-    while FileSize < PixelSize do FileSize = FileSize * 2 end
-    return PixelSize, FileSize
-end
-
 local function RevealOverlays(Pin)
     local Pool = Private.FogOfWarPool
     Pool:ReleaseAll()
@@ -36,9 +28,9 @@ local function RevealOverlays(Pin)
             local Width, Height, OffsetX, OffsetY = Overlay[1], Overlay[2], Overlay[3], Overlay[4]
             local Columns, Rows = math.ceil(Width / TileWidth), math.ceil(Height / TileHeight)
             for Row = 1, Rows do
-                local PixelHeight, FileHeight = GetTileSize(Row, Rows, Height, TileHeight)
+                local PixelHeight, FileHeight = Private:GetOverlayTileSize(Row, Rows, Height, TileHeight)
                 for Column = 1, Columns do
-                    local PixelWidth, FileWidth = GetTileSize(Column, Columns, Width, TileWidth)
+                    local PixelWidth, FileWidth = Private:GetOverlayTileSize(Column, Columns, Width, TileWidth)
                     local Texture = Pool:Acquire()
                     Texture:SetSize(PixelWidth, PixelHeight)
                     Texture:SetTexCoord(0, PixelWidth / FileWidth, 0, PixelHeight / FileHeight)
