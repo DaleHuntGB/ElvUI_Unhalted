@@ -712,7 +712,7 @@ function Private:SetupDungeonJournal()
     Journal:SetScript("OnHide", Journal_OnHide)
     Journal:SetScript("OnEvent", Journal_OnEvent)
 
-    local SourceLabel = "|c" .. Private.E.AccentColour .. "Drops from:|r "
+    local SourceLabel = "|c" .. Private.E.AccentColour .. "Source:|r "
     for _, Dungeon in ipairs(Private.DungeonJournalData) do
         local DungeonSources = {}
         for _, Boss in ipairs(Dungeon.Bosses) do
@@ -723,7 +723,7 @@ function Private:SetupDungeonJournal()
         end
         for ItemID, Source in pairs(DungeonSources) do
             ItemSources[ItemID] = ItemSources[ItemID] or {}
-            table.insert(ItemSources[ItemID], SourceLabel .. Source .. " (" .. Dungeon.Name .. ")")
+            table.insert(ItemSources[ItemID], SourceLabel .. Source .. " - " .. Dungeon.Name)
         end
     end
     TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, ItemTooltip_PostCall)
