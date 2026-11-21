@@ -105,7 +105,9 @@
         "GameTooltip_SetDefaultAnchor",
         "RegisterStateDriver",
         "nop",
-        "RAID"
+        "RAID",
+        "PanelTemplates_SetTab",
+        "PanelTemplates_SetNumTabs"
     ],
     "Lua.type.weakUnionCheck": true
 }
