@@ -80,6 +80,7 @@ Modules/Toggles/AutoDelete.lua
 Modules/Toggles/AutoQuest.lua
 Modules/Toggles/AutoSignUp.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
 Modules/Toggles/BossBanner.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]
+Modules/Toggles/BulkPurchase.lua
 Modules/Toggles/LossOfControl.lua
 Modules/Toggles/SkipCinematics.lua
 Modules/Toggles/TalkingHead.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]

@@ -108,7 +108,13 @@
         "RAID",
         "PanelTemplates_SetTab",
         "PanelTemplates_SetNumTabs",
-        "ItemRefTooltip"
+        "ItemRefTooltip",
+        "MERCHANT_ITEMS_PER_PAGE",
+        "MerchantItem1",
+        "StackSplitFrame",
+        "MerchantFrame",
+        "StackSplitRightButton_OnClick",
+        "MERCHANT_HIGH_PRICE_COST"
     ],
     "Lua.type.weakUnionCheck": true
 }

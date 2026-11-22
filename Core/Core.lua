@@ -42,6 +42,7 @@ function AddOn:OnEnable()
     -- [[ Toggles ]]
     Private:SetupAutoDelete()
     Private:SetupAutoQuest()
+    Private:SetupBulkPurchase()
     Private:SetupLossOfControl()
     Private:SkipCinematics()
 

@@ -451,6 +451,7 @@ local Defaults = {
             AutoDelete = true,
             AutoQuest = true,
             AutoSignUp = true,
+            BulkPurchase = true,
             HideBossBanner = true,
             HideLossOfControl = true,
             HideTalkingHead = true,
