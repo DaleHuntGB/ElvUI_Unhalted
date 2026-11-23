@@ -826,12 +826,8 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones.args.FontSize = ACH:Range("Font Size", nil, 3, {min = 8, max = 64, softMin = 10, softMax = 32, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.LevelZones.FontSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.LevelZones.FontSize = value Private:UpdateLevelZones() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private.DB.global.Miscellaneous.Navigation.LevelZones.Enable or not Private:GetQuestieDB() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones.args.FontSize.relWidth = 0.5
 
-    Private.GUI.args.Miscellaneous.args.Questing = ACH:Group("Questing", nil, 8, "tab")
-    Private.GUI.args.Miscellaneous.args.Questing.args.ExtraQuestButton = ACH:Toggle("Extra Quest Button", "Shows the item for your |cFFFFCC00currently tracked quest|r on a button that looks like ElvUI's Boss Button. It uses the |cFFFFCC00Extra Action Button|r keybind.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.ExtraQuestButton.Enable end, function(_, value) Private.DB.global.Miscellaneous.ExtraQuestButton.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end, function() return not Private.E.ActionBars.Initialized end)
-    Private.GUI.args.Miscellaneous.args.Questing.args.ExtraQuestButton.descStyle = "inline"
-    Private.GUI.args.Miscellaneous.args.Questing.args.ExtraQuestButton.relWidth = 1
-
-    Private.GUI.args.Miscellaneous.args.Questing.args.QuestObjectives = ACH:Group("Quest Objectives" .. (Private:IsAddOnLoaded("QuestieDB") and "" or " - Requires |cFFFFCC00QuestieDB|r"), nil, 2, nil, nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.Miscellaneous.args.Questing = ACH:Group("Questing", nil, 8, "tab", nil, nil, nil, function() return not Private.isForever end)
+    Private.GUI.args.Miscellaneous.args.Questing.args.QuestObjectives = ACH:Group("Quest Objectives" .. (Private:IsAddOnLoaded("QuestieDB") and "" or " - Requires |cFFFFCC00QuestieDB|r"), nil, 1)
     Private.GUI.args.Miscellaneous.args.Questing.args.QuestObjectives.inline = true
     Private.GUI.args.Miscellaneous.args.Questing.args.QuestObjectives.args.Enable = ACH:Toggle("Enable", "Marks where to |cFFFFCC00kill, loot, talk to or use|r things for your currently tracked quest on the world map. Hover for details.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.QuestObjectives.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.QuestObjectives.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private:GetQuestieDB() end)
     Private.GUI.args.Miscellaneous.args.Questing.args.QuestObjectives.args.Enable.descStyle = "inline"
