@@ -1,16 +1,12 @@
 local Private = select(2, ...)
 
-local JobBudget = 4
-local MaxDropSources, CommonDropRate, MinDropRate = 15, 5, 1
-local NpcKind, ObjectKind, ItemKind, AreaKind = 1, 2, 3, 4
-
 local UiMaps = {}
 local Jobs = {}
 local Npcs, Objects, Items, Objectives = {}, {}, {}, {}
 local Faction = ""
 
 local function RunJobs(Ticker)
-    local Deadline = debugprofilestop() + JobBudget
+    local Deadline = debugprofilestop() + 4
     while Jobs[1] and debugprofilestop() < Deadline do
         local isOk, Message = coroutine.resume(Jobs[1])
         if not isOk then geterrorhandler()(Message) end
@@ -113,11 +109,11 @@ function Private:GetQuestieItem(ItemID)
     local Sources, Kept = QuestieDB.Item.npcDrops(ItemID) or {}, {}
     for _, NpcID in ipairs(Sources) do
         local Rate = Rates[NpcID]
-        if #Sources > MaxDropSources and (Rate or 0) >= CommonDropRate or #Sources <= MaxDropSources and (not Rate or Rate >= MinDropRate) then Kept[#Kept + 1] = NpcID end
+        if #Sources > 15 and (Rate or 0) >= 5 or #Sources <= 15 and (not Rate or Rate >= 1) then Kept[#Kept + 1] = NpcID end
     end
-    if #Sources > MaxDropSources then
+    if #Sources > 15 then
         table.sort(Kept, function(A, B) return Rates[A] > Rates[B] end)
-        for Index = #Kept, MaxDropSources + 1, -1 do Kept[Index] = nil end
+        for Index = #Kept, 16, -1 do Kept[Index] = nil end
     end
 
     local DropSources = {}
@@ -140,18 +136,18 @@ function Private:GetQuestieObjectives(QuestID)
     local First = QuestieDB.ObjectiveFirst
     local Data = QuestieDB.Quest.objectives(QuestID) or {}
     Entries = {}
-    for _, Creature in ipairs(Data[1] or {}) do Entries[#Entries + 1] = { NpcKind, Creature[1] } end
-    for _, Object in ipairs(Data[2] or {}) do table.insert(Entries, First.objectObjectiveFirst[QuestID] and 1 or #Entries + 1, { ObjectKind, Object[1] }) end
-    for _, Item in ipairs(Data[3] or {}) do table.insert(Entries, First.itemObjectiveFirst[QuestID] and 1 or #Entries + 1, { ItemKind, Item[1] }) end
+    for _, Creature in ipairs(Data[1] or {}) do Entries[#Entries + 1] = { 1, Creature[1] } end
+    for _, Object in ipairs(Data[2] or {}) do table.insert(Entries, First.objectObjectiveFirst[QuestID] and 1 or #Entries + 1, { 2, Object[1] }) end
+    for _, Item in ipairs(Data[3] or {}) do table.insert(Entries, First.itemObjectiveFirst[QuestID] and 1 or #Entries + 1, { 3, Item[1] }) end
     if Data[4] then Entries[#Entries + 1] = false end
     for _, Credit in ipairs(Data[5] or {}) do
-        local Entry = { NpcKind, unpack(Credit[1]) }
+        local Entry = { 1, unpack(Credit[1]) }
         if not tContains(Credit[1], Credit[2]) then Entry[#Entry + 1] = Credit[2] end
         table.insert(Entries, First.killCreditObjectiveFirst[QuestID] and 1 or #Entries + 1, Entry)
     end
     for _ in ipairs(Data[6] or {}) do table.insert(Entries, First.spellObjectiveFirst[QuestID] and 1 or #Entries + 1, false) end
     local Trigger = QuestieDB.Quest.triggerEnd(QuestID)
-    if Trigger then table.insert(Entries, First.eventObjectiveFirst[QuestID] and 1 or #Entries + 1, { AreaKind, Private:GetQuestieSpawnPoints(Trigger[2] or {}) }) end
+    if Trigger then table.insert(Entries, First.eventObjectiveFirst[QuestID] and 1 or #Entries + 1, { 4, Private:GetQuestieSpawnPoints(Trigger[2] or {}) }) end
     Objectives[QuestID] = Entries
     return Entries
 end

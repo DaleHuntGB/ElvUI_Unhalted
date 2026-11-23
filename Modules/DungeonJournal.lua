@@ -43,35 +43,19 @@ local EquipLocSlots = {
     INVTYPE_RANGED = "Ranged", INVTYPE_RANGEDRIGHT = "Ranged", INVTYPE_THROWN = "Ranged", INVTYPE_RELIC = "Ranged",
 }
 
-local JournalTextures = "Interface\\EncounterJournal\\UI-EncounterJournalTextures"
-local DefaultDungeonArt = "Interface\\EncounterJournal\\UI-EJ-DUNGEONBUTTON-Default"
-local DefaultPortrait = "Interface\\EncounterJournal\\UI-EJ-BOSS-Default"
-local PortraitMask = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
-local PortraitLoadTime = 3
-local IconBorder = "Interface\\Common\\WhiteIconFrame"
-local RecipeIcon = "Interface\\Icons\\INV_Scroll_03"
-local MissingIcon = 134400
-
 local DungeonButtonUp = { 0.00195313, 0.34179688, 0.42871094, 0.52246094 }
 local DungeonButtonDown = { 0.00195313, 0.34179688, 0.33300781, 0.42675781 }
 local DungeonButtonHighlight = { 0.34570313, 0.68554688, 0.33300781, 0.42675781 }
 local BossButtonUp = { 0.00195313, 0.63671875, 0.21386719, 0.26757813 }
 local BossButtonDown = { 0.00195313, 0.63671875, 0.10253906, 0.15625000 }
 local BossButtonHighlight = { 0.00195313, 0.63671875, 0.15820313, 0.21191406 }
-local LootRowFrame = { 0.00195313, 0.62890625, 0.61816406, 0.66210938 }
 local DungeonCard = { 0, 0.68359375, 0, 0.7421875 }
 local DungeonThumbnail = { 0.18359375, 0.5, 0.13671875, 0.60546875 }
 local LoadingScreenCard = { 0.1534, 0.8466, 0.1603, 0.8397 }
 local LoadingScreenThumbnail = { 0.2421, 0.7579, 0.1603, 0.8397 }
-local RecipeThumbnail = { 0.08, 0.92, 0.1886, 0.8114 }
-local ParchmentAtlas = "spellbook-Page-Right-C60"
-local ParchmentTopCrop = 46 / 682
 local AllBosses = { Name = "All Bosses", All = true }
 local AllRecipes = { Name = "Recipes & Patterns", All = true, Recipes = true }
 local LevelBrackets = { { 10, 19 }, { 20, 29 }, { 30, 39 }, { 40, 49 }, { 50, 60 } }
-local SourceLabel = "|c" .. Private.E.AccentColour .. "Source:|r "
-local CurrentZoneScore = 1000
-local WorldDropSources = 50
 local QuestieDB = Private:GetQuestieDB()
 local JournalSources, ItemSources = {}, {}
 
@@ -197,7 +181,7 @@ local function RenderBossPortraits(Journal)
     if Journal.PortraitDungeon ~= Journal.Dungeon then ReleaseBossPortraits(Journal) end
     Journal.PortraitDungeon = Journal.Dungeon
 
-    local ReadyAt, isRendering = GetTime() + PortraitLoadTime, false
+    local ReadyAt, isRendering = GetTime() + 3, false
     for _, Boss in ipairs(Journal.Dungeon.Bosses) do
         if Boss.DisplayID and not Journal.Portraits[Boss] then
             local Texture = table.remove(Journal.SparePortraits) or Journal.PortraitHolder:CreateTexture(nil, "OVERLAY")
@@ -209,7 +193,7 @@ local function RenderBossPortraits(Journal)
         end
     end
     Journal.BossList:ForEachFrame(UpdateBossPortrait)
-    if isRendering then C_Timer.After(PortraitLoadTime, RefreshBossPortraits) end
+    if isRendering then C_Timer.After(3, RefreshBossPortraits) end
 end
 
 -- [[ Rows ]]
@@ -223,11 +207,11 @@ local function CreateDungeonJournalText(Parent, Template, OnParchment)
 end
 
 local function SetButtonArt(Button, Coords, Pushed, Highlight)
-    Button:SetNormalTexture(JournalTextures)
+    Button:SetNormalTexture("Interface\\EncounterJournal\\UI-EncounterJournalTextures")
     Button:GetNormalTexture():SetTexCoord(Coords[1], Coords[2], Coords[3], Coords[4])
-    Button:SetPushedTexture(JournalTextures)
+    Button:SetPushedTexture("Interface\\EncounterJournal\\UI-EncounterJournalTextures")
     Button:GetPushedTexture():SetTexCoord(Pushed[1], Pushed[2], Pushed[3], Pushed[4])
-    Button:SetHighlightTexture(JournalTextures)
+    Button:SetHighlightTexture("Interface\\EncounterJournal\\UI-EncounterJournalTextures")
     Button:GetHighlightTexture():SetTexCoord(Highlight[1], Highlight[2], Highlight[3], Highlight[4])
 end
 
@@ -236,7 +220,7 @@ local function SetDungeonArt(Texture, Dungeon, Coords, LoadingScreenCoords)
         Texture:SetTexCoord(LoadingScreenCoords[1], LoadingScreenCoords[2], LoadingScreenCoords[3], LoadingScreenCoords[4])
         return
     end
-    if not (Dungeon.Button and Texture:SetTexture(Dungeon.Button)) then Texture:SetTexture(DefaultDungeonArt) end
+    if not (Dungeon.Button and Texture:SetTexture(Dungeon.Button)) then Texture:SetTexture("Interface\\EncounterJournal\\UI-EJ-DUNGEONBUTTON-Default") end
     Texture:SetTexCoord(Coords[1], Coords[2], Coords[3], Coords[4])
 end
 
@@ -303,7 +287,7 @@ local function InitDungeonJournalBossButton(Button, Boss)
         local DungeonArtMask = Button:CreateMaskTexture()
         DungeonArtMask:SetSize(58, 58)
         DungeonArtMask:SetPoint("TOP", Button.DungeonArt, "TOP")
-        DungeonArtMask:SetTexture(PortraitMask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        DungeonArtMask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
         Button.DungeonArt:AddMaskTexture(DungeonArtMask)
         Button.ArtMask = DungeonArtMask
         Button.Name = CreateDungeonJournalText(Button, "GameFontNormalMed3")
@@ -317,12 +301,12 @@ local function InitDungeonJournalBossButton(Button, Boss)
     Button.Boss = Boss
     Button.DungeonArt:SetShown(Boss.All == true)
     if Boss.Recipes then
-        Button.DungeonArt:SetTexture(RecipeIcon)
-        Button.DungeonArt:SetTexCoord(RecipeThumbnail[1], RecipeThumbnail[2], RecipeThumbnail[3], RecipeThumbnail[4])
+        Button.DungeonArt:SetTexture("Interface\\Icons\\INV_Scroll_03")
+        Button.DungeonArt:SetTexCoord(0.08, 0.92, 0.1886, 0.8114)
     elseif Boss.All then
         SetDungeonArt(Button.DungeonArt, Private.DungeonJournal.Dungeon, DungeonThumbnail, LoadingScreenThumbnail)
     elseif not (Boss.Portrait and Button.Portrait:SetTexture(Boss.Portrait)) then
-        Button.Portrait:SetTexture(DefaultPortrait)
+        Button.Portrait:SetTexture("Interface\\EncounterJournal\\UI-EJ-BOSS-Default")
     end
     UpdateBossPortrait(Button)
     Button.Name:SetText(Boss.Rare and Boss.Name .. "\n|cFF9D9D9D(" .. (Boss.RareLabel or "Rare") .. ")|r" or Boss.Name)
@@ -363,11 +347,11 @@ local function InitDungeonJournalLootRow(Row, Loot)
         Row.Frame = Row:CreateTexture(nil, "BORDER")
         Row.Frame:SetSize(321, 45)
         Row.Frame:SetPoint("LEFT", Row, "LEFT", 0, 0)
-        Row.Frame:SetTexture(JournalTextures)
-        Row.Frame:SetTexCoord(LootRowFrame[1], LootRowFrame[2], LootRowFrame[3], LootRowFrame[4])
+        Row.Frame:SetTexture("Interface\\EncounterJournal\\UI-EncounterJournalTextures")
+        Row.Frame:SetTexCoord(0.00195313, 0.62890625, 0.61816406, 0.66210938)
         Row.IconBorder = Row:CreateTexture(nil, "OVERLAY", nil, 1)
         Row.IconBorder:SetAllPoints(Row.Icon)
-        Row.IconBorder:SetTexture(IconBorder)
+        Row.IconBorder:SetTexture("Interface\\Common\\WhiteIconFrame")
         Row.Name = CreateDungeonJournalText(Row, "GameFontNormalMed3", true)
         Row.Name:SetWidth(250)
         Row.Name:SetPoint("TOPLEFT", Row.Icon, "TOPRIGHT", 7, -7)
@@ -394,7 +378,7 @@ local function InitDungeonJournalLootRow(Row, Loot)
         Slot = Slot .. ", " .. ItemSubType
     end
     Row.ItemID = Loot.ItemID
-    Row.Icon:SetTexture(Icon or MissingIcon)
+    Row.Icon:SetTexture(Icon or 134400)
     Row.Slot:SetText(Slot)
     Row.Source:SetText(Loot.Boss or "")
     UpdateDungeonJournalLootRow(Row)
@@ -573,8 +557,8 @@ local function GetItemSources(ItemID)
     local Drops, Quests, Vendors = {}, {}, {}
 
     local DropNpcs = not JournalSources[ItemID] and Item.npcDrops(ItemID) or {}
-    if #DropNpcs > WorldDropSources then
-        Lines[#Lines + 1] = SourceLabel .. "World Drop"
+    if #DropNpcs > 50 then
+        Lines[#Lines + 1] = "|c" .. Private.E.AccentColour .. "Source:|r World Drop"
     elseif DropNpcs[1] then
         local Rates, DropRates = {}, Private:GetQuestieItem(ItemID)[1]
         for Index = 1, #DropRates, 2 do Rates[DropRates[Index]] = DropRates[Index + 1] end
@@ -596,14 +580,14 @@ local function GetItemSources(ItemID)
     for _, Kind in ipairs({ { Drops }, { Quests, "Quest" }, { Vendors, "Vendor" } }) do
         local Sources, BestIndex, BestScore = Kind[1], 0, -1
         for Index, Source in ipairs(Sources) do
-            local Score = Source[2] > 0 and C_Map.GetAreaInfo(Source[2]) == CurrentZone and Source[3] + CurrentZoneScore or Source[3]
+            local Score = Source[2] > 0 and C_Map.GetAreaInfo(Source[2]) == CurrentZone and Source[3] + 1000 or Source[3]
             if Score > BestScore then BestIndex, BestScore = Index, Score end
         end
         local Best = Sources[BestIndex]
         if Best then
             local Zone = Best[2] > 0 and C_Map.GetAreaInfo(Best[2])
             local Note = #Sources > 1 and (Kind[2] and Kind[2] .. ", +" or "+") .. (#Sources - 1) .. " more" or Kind[2]
-            Lines[#Lines + 1] = SourceLabel .. Best[1] .. (Zone and " - " .. Zone or "") .. (Note and " (" .. Note .. ")" or "")
+            Lines[#Lines + 1] = "|c" .. Private.E.AccentColour .. "Source:|r " .. Best[1] .. (Zone and " - " .. Zone or "") .. (Note and " (" .. Note .. ")" or "")
         end
     end
 
@@ -706,11 +690,11 @@ function Private:SetupDungeonJournal()
     DungeonSelect:SetPoint("BOTTOMRIGHT", Journal.Inset, "BOTTOMRIGHT", -3, 0)
     Journal.DungeonSelect = DungeonSelect
 
-    local Parchment = C_Texture.GetAtlasInfo(ParchmentAtlas)
+    local Parchment = C_Texture.GetAtlasInfo("spellbook-Page-Right-C60")
     local Background = DungeonSelect:CreateTexture(nil, "BACKGROUND")
     Background:SetAllPoints(DungeonSelect)
     Background:SetTexture(Parchment.file)
-    Background:SetTexCoord(Parchment.leftTexCoord, Parchment.rightTexCoord, Parchment.topTexCoord + (Parchment.bottomTexCoord - Parchment.topTexCoord) * ParchmentTopCrop, Parchment.bottomTexCoord)
+    Background:SetTexCoord(Parchment.leftTexCoord, Parchment.rightTexCoord, Parchment.topTexCoord + (Parchment.bottomTexCoord - Parchment.topTexCoord) * 46 / 682, Parchment.bottomTexCoord)
 
     local DungeonView = CreateScrollBoxListGridView(4, 5, 0, 0, 0, 15, 15)
     DungeonView:SetElementInitializer("Button", InitDungeonJournalDungeonButton)
@@ -736,7 +720,7 @@ function Private:SetupDungeonJournal()
     local Header = Encounter:CreateTexture(nil, "BORDER")
     Header:SetSize(386, 39)
     Header:SetPoint("TOPLEFT", Encounter, "TOPLEFT", 0, -11)
-    Header:SetTexture(JournalTextures)
+    Header:SetTexture("Interface\\EncounterJournal\\UI-EncounterJournalTextures")
     Header:SetTexCoord(0, 0.755859375, 0.9599609375, 1)
 
     Journal.DungeonTitle = CreateDungeonJournalText(Encounter, "GameFontNormalLarge")
@@ -783,7 +767,7 @@ function Private:SetupDungeonJournal()
         end
         for ItemID, Source in pairs(DungeonSources) do
             JournalSources[ItemID] = JournalSources[ItemID] or {}
-            table.insert(JournalSources[ItemID], SourceLabel .. Source .. " - " .. Dungeon.Name)
+            table.insert(JournalSources[ItemID], "|c" .. Private.E.AccentColour .. "Source:|r " .. Source .. " - " .. Dungeon.Name)
         end
     end
     TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, ItemTooltip_PostCall)

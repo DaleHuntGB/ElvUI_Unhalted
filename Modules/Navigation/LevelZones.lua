@@ -1,9 +1,6 @@
 local Private = select(2, ...)
 
 local AreaLevelZones = {}
-local AreaNameLabelType = MAP_AREA_LABEL_TYPE.AREA_NAME
-local GapDistance, SampleSpread, MinSamples = 6, 6, 5
-local MaxCreatureLevel, MaxLevelSpan = 63, 8
 local CritterFactions = { [31] = true, [188] = true, [190] = true }
 
 local QuestieDB = Private:GetQuestieDB()
@@ -33,10 +30,10 @@ local function FindLevelZone(Zones, X, Y)
         end
     end
 
-    local Nearest, NearestDistance = 0, GapDistance * GapDistance
+    local Nearest, NearestDistance = 0, 36
     for ZoneIndex, LevelZone in ipairs(Zones) do
         local Bounds = LevelZone.Bounds
-        if X >= Bounds[1] - GapDistance and X <= Bounds[3] + GapDistance and Y >= Bounds[2] - GapDistance and Y <= Bounds[4] + GapDistance then
+        if X >= Bounds[1] - 6 and X <= Bounds[3] + 6 and Y >= Bounds[2] - 6 and Y <= Bounds[4] + 6 then
             for Ring = 5, #LevelZone do
                 local Border = LevelZone[Ring]
                 local Count = #Border
@@ -134,7 +131,7 @@ local function BuildLevelRanges()
 
     for _, NpcID in ipairs(Npc.GetAllIds()) do
         local MinLevel, MaxLevel, FactionID = Npc.minLevel(NpcID), Npc.maxLevel(NpcID), Npc.factionID(NpcID)
-        if (Npc.friendlyToFaction(NpcID) or "") == "" and Npc.npcFlags(NpcID) == 0 and Npc.rank(NpcID) <= 1 and MaxLevel <= MaxCreatureLevel and MaxLevel - MinLevel <= MaxLevelSpan and not CritterFactions[FactionID] and not (MinLevel == 1 and MaxLevel == 1 and FactionID == 0) then
+        if (Npc.friendlyToFaction(NpcID) or "") == "" and Npc.npcFlags(NpcID) == 0 and Npc.rank(NpcID) <= 1 and MaxLevel <= 63 and MaxLevel - MinLevel <= 8 and not CritterFactions[FactionID] and not (MinLevel == 1 and MaxLevel == 1 and FactionID == 0) then
             local Spawns = Npc.spawns(NpcID)
             if Spawns then
                 for MapID, Points in pairs(Private:GetQuestieSpawnPoints(Spawns)) do
@@ -158,7 +155,7 @@ local function BuildLevelRanges()
     end
 
     for LevelZone, Levels in pairs(Samples) do
-        if #Levels >= MinSamples * 2 then
+        if #Levels >= 10 then
             local Middles = {}
             for Index = 1, #Levels, 2 do Middles[#Middles + 1] = (Levels[Index] + Levels[Index + 1]) / 2 end
             table.sort(Middles)
@@ -166,11 +163,11 @@ local function BuildLevelRanges()
             local Median = (Middles[math.floor(Half + 0.5)] + Middles[math.ceil(Half + 0.5)]) / 2
             local Lows, Highs = {}, {}
             for Index = 1, #Levels, 2 do
-                if math.abs((Levels[Index] + Levels[Index + 1]) / 2 - Median) <= SampleSpread then
+                if math.abs((Levels[Index] + Levels[Index + 1]) / 2 - Median) <= 6 then
                     Lows[#Lows + 1], Highs[#Highs + 1] = Levels[Index], Levels[Index + 1]
                 end
             end
-            if #Lows >= MinSamples then
+            if #Lows >= 5 then
                 table.sort(Lows)
                 table.sort(Highs)
                 local Low, High = Lows[math.floor((#Lows - 1) * 0.25 + 0.5) + 1], Highs[math.floor((#Highs - 1) * 0.75 + 0.5) + 1]
@@ -216,7 +213,7 @@ function Private:SetupLevelZones()
         if Name == LastName then return end
         LastName = Name
 
-        local AreaNameInfo = Label.labelInfoByType[AreaNameLabelType]
+        local AreaNameInfo = Label.labelInfoByType[MAP_AREA_LABEL_TYPE.AREA_NAME]
         local LevelZone = AreaNameInfo and AreaNameInfo.name == Name and AreaLevelZones[Name]
         if not LevelZone then
             LevelText:Hide()

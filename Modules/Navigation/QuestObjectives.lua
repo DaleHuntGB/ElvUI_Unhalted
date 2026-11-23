@@ -1,14 +1,6 @@
 local Private = select(2, ...)
 
-local RefreshDelay = 0.2
-local MergeDistance = 25
-local BadgeInset = 0.8
-local PathThickness, PathAlpha = 2, 0.75
 local RefreshEvents = { "QUEST_LOG_UPDATE", "SUPER_TRACKING_CHANGED" }
-local CircleMask = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
-local MissingIcon = 134400
-local NpcKind, ObjectKind, ItemKind, AreaKind = 1, 2, 3, 4
-local KillAtlas, TalkAtlas, ObjectAtlas, AreaAtlas = "dungeonskull", "crosshair_speak_64", "mechagon-projects", "xmarksthespot"
 local KillPathColour, TalkPathColour = { 1, 0.35, 0.29 }, { 1, 0.82, 0 }
 
 local QuestieDB = Private:GetQuestieDB()
@@ -16,15 +8,10 @@ local Placed, DrawnPaths = {}, {}
 local IconSize = 0
 local isRefreshQueued = false
 
-local function GetIconSize()
-    return Private.DB.global.Miscellaneous.Navigation.QuestObjectives.IconSize / WorldMapFrame:GetCanvas():GetScale()
-end
-
 local function SizeIcon(Icon, Size)
-    local Inner = Size * BadgeInset
     Icon:SetSize(Size, Size)
-    Icon.Mask:SetSize(Inner, Inner)
-    Icon.Badge:SetSize(Inner, Inner)
+    Icon.Mask:SetSize(Size * 0.8, Size * 0.8)
+    Icon.Badge:SetSize(Size * 0.8, Size * 0.8)
 end
 
 local function AddSource(Icon, Name, Rate)
@@ -69,8 +56,8 @@ local function DrawPaths(NpcID, Npc, MapID)
             local Line = Private.QuestObjectivePaths:Acquire()
             Line:SetStartPoint("TOPLEFT", Overlay, Path[Point - 2] / 100 * Width, -Path[Point - 1] / 100 * Height)
             Line:SetEndPoint("TOPLEFT", Overlay, Path[Point] / 100 * Width, -Path[Point + 1] / 100 * Height)
-            Line:SetThickness(PathThickness)
-            Line:SetColorTexture(Colour[1], Colour[2], Colour[3], PathAlpha)
+            Line:SetThickness(2)
+            Line:SetColorTexture(Colour[1], Colour[2], Colour[3], 0.75)
             Line:Show()
         end
     end
@@ -87,7 +74,7 @@ local function PlaceIcons(Points, Texture, QuestID, Index, Name, Rate)
         for Other = 1, #Placed do
             local Icon = Placed[Other]
             local DeltaX, DeltaY = (Icon.X - X) * 10.02, (Icon.Y - Y) * 6.68
-            if DeltaX * DeltaX + DeltaY * DeltaY <= MergeDistance * MergeDistance then
+            if DeltaX * DeltaX + DeltaY * DeltaY <= 625 then
                 AddSource(Icon, Name, Rate)
                 Merged = true
                 break
@@ -97,7 +84,7 @@ local function PlaceIcons(Points, Texture, QuestID, Index, Name, Rate)
             local Icon = Private.QuestObjectiveIcons:Acquire()
             if not Icon.Badge then
                 Icon.Mask = Icon:CreateMaskTexture()
-                Icon.Mask:SetTexture(CircleMask, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                Icon.Mask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
                 Icon.Mask:SetPoint("CENTER")
                 Icon.Badge = Icon:CreateTexture(nil, "ARTWORK")
                 Icon.Badge:SetPoint("CENTER")
@@ -146,15 +133,15 @@ local function DrawQuestObjectives()
     local Entries = QuestID and QuestID > 0 and Private:GetQuestieObjectives(QuestID)
     if not Entries then return end
 
-    IconSize = GetIconSize()
+    IconSize = Private.DB.global.Miscellaneous.Navigation.QuestObjectives.IconSize / WorldMapFrame:GetCanvas():GetScale()
     for Index, Objective in ipairs(C_QuestLog.GetQuestObjectives(QuestID)) do
         local Entry = Entries[Index]
         if Entry and not Objective.finished then
             wipe(Placed)
             local Kind = Entry[1]
-            if Kind == ItemKind then
+            if Kind == 3 then
                 local Item = Private:GetQuestieItem(Entry[2])
-                local Texture = C_Item.GetItemIconByID(Entry[2]) or MissingIcon
+                local Texture = C_Item.GetItemIconByID(Entry[2]) or 134400
                 local DropSources = Item[1]
                 for Source = 1, #DropSources, 2 do
                     local Npc = Private:GetQuestieNpc(DropSources[Source])
@@ -165,18 +152,18 @@ local function DrawQuestObjectives()
                     local Object = Private:GetQuestieObject(ObjectID)
                     PlaceIcons(Object[2][MapID], Texture, QuestID, Index, Object[1], 0)
                 end
-            elseif Kind == AreaKind then
-                PlaceIcons(Entry[2][MapID], AreaAtlas, QuestID, Index, nil, 0)
-            elseif Kind == NpcKind then
+            elseif Kind == 4 then
+                PlaceIcons(Entry[2][MapID], "xmarksthespot", QuestID, Index, nil, 0)
+            elseif Kind == 1 then
                 for Source = 2, #Entry do
                     local Npc = Private:GetQuestieNpc(Entry[Source])
                     DrawPaths(Entry[Source], Npc, MapID)
-                    PlaceIcons(Npc[2][MapID], Npc[3] and TalkAtlas or KillAtlas, QuestID, Index, Npc[1], 0)
+                    PlaceIcons(Npc[2][MapID], Npc[3] and "crosshair_speak_64" or "dungeonskull", QuestID, Index, Npc[1], 0)
                 end
-            elseif Kind == ObjectKind then
+            elseif Kind == 2 then
                 for Source = 2, #Entry do
                     local Object = Private:GetQuestieObject(Entry[Source])
-                    PlaceIcons(Object[2][MapID], ObjectAtlas, QuestID, Index, Object[1], 0)
+                    PlaceIcons(Object[2][MapID], "mechagon-projects", QuestID, Index, Object[1], 0)
                 end
             end
         end
@@ -184,7 +171,7 @@ local function DrawQuestObjectives()
 end
 
 local function ResizeQuestObjectives()
-    local Size = GetIconSize()
+    local Size = Private.DB.global.Miscellaneous.Navigation.QuestObjectives.IconSize / WorldMapFrame:GetCanvas():GetScale()
     for Icon in Private.QuestObjectiveIcons:EnumerateActive() do SizeIcon(Icon, Size) end
 end
 
@@ -196,7 +183,7 @@ end
 local function OnEvent()
     if isRefreshQueued then return end
     isRefreshQueued = true
-    C_Timer.After(RefreshDelay, RefreshQuestObjectives)
+    C_Timer.After(0.2, RefreshQuestObjectives)
 end
 
 local function WorldMap_OnShow()

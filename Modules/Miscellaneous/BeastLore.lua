@@ -123,9 +123,6 @@ function Private:SetupBeastLore()
         {SpellID = 1265890, Rank = 3, NPCs = {858, 4377, 4378, 4379, 4414, 4415, 270664}},
     }
 
-    local Label = "|c" .. Private.E.AccentColour .. "Ability:|r "
-    local KnownColour = "|cFF40CC40"
-    local UnknownColour = "|cFFCC4040"
     local NPCAbilities = {}
 
     for _, Ability in ipairs(Abilities) do
@@ -133,10 +130,10 @@ function Private:SetupBeastLore()
         if SpellName then
             if Ability.Rank then
                 local Rank = "|r [Rank " .. Ability.Rank .. "]"
-                Ability.KnownLine = Label .. KnownColour .. SpellName .. Rank
-                Ability.UnknownLine = Label .. UnknownColour .. SpellName .. Rank
+                Ability.KnownLine = "|c" .. Private.E.AccentColour .. "Ability:|r |cFF40CC40" .. SpellName .. Rank
+                Ability.UnknownLine = "|c" .. Private.E.AccentColour .. "Ability:|r |cFFCC4040" .. SpellName .. Rank
             else
-                Ability.Line = Label .. SpellName
+                Ability.Line = "|c" .. Private.E.AccentColour .. "Ability:|r " .. SpellName
             end
             for _, NPCID in ipairs(Ability.NPCs) do
                 NPCAbilities[NPCID] = NPCAbilities[NPCID] or {}

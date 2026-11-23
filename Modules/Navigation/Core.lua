@@ -1,9 +1,5 @@
 local Private = select(2, ...)
 
-local CheckInterval = 0.5
-local OtherContinentPenalty = 1e12
-local NpcKind, ItemKind, AreaKind = 1, 3, 4
-
 local GoalVector = CreateVector2D(0, 0)
 local State = {
     GoalContinent = 0, GoalX = 0, GoalY = 0, GoalQuestID = 0,
@@ -27,14 +23,14 @@ local function GetGoalMapPosition()
                     local Entry = Entries[Index]
                     if Entry and not Objective.finished then
                         local Kind = Entry[1]
-                        if Kind == ItemKind then
+                        if Kind == 3 then
                             local Item = Private:GetQuestieItem(Entry[2])
                             for Source = 1, #Item[1], 2 do Targets[#Targets + 1] = Private:GetQuestieNpc(Item[1][Source])[2] end
                             for _, ObjectID in ipairs(Item[2]) do Targets[#Targets + 1] = Private:GetQuestieObject(ObjectID)[2] end
-                        elseif Kind == AreaKind then
+                        elseif Kind == 4 then
                             Targets[#Targets + 1] = Entry[2]
                         else
-                            for Source = 2, #Entry do Targets[#Targets + 1] = (Kind == NpcKind and Private:GetQuestieNpc(Entry[Source]) or Private:GetQuestieObject(Entry[Source]))[2] end
+                            for Source = 2, #Entry do Targets[#Targets + 1] = (Kind == 1 and Private:GetQuestieNpc(Entry[Source]) or Private:GetQuestieObject(Entry[Source]))[2] end
                         end
                     end
                 end
@@ -50,7 +46,7 @@ local function GetGoalMapPosition()
                         local Continent, Position = C_Map.GetWorldPosFromMapPos(MapID, GoalVector)
                         if Position then
                             local X, Y = Position:GetXY()
-                            local Distance = (X - PlayerX) ^ 2 + (Y - PlayerY) ^ 2 + (Continent == PlayerContinent and 0 or OtherContinentPenalty)
+                            local Distance = (X - PlayerX) ^ 2 + (Y - PlayerY) ^ 2 + (Continent == PlayerContinent and 0 or 1e12)
                             if Distance < BestDistance then BestMapID, BestX, BestY, BestDistance = MapID, MapPoints[Point] / 100, MapPoints[Point + 1] / 100, Distance end
                         end
                     end
@@ -91,7 +87,7 @@ local function Navigation_OnUpdate(_, TimeElapsed)
     if Private:IsSecret(X) or not X then SetDirectionShown(false) return end
 
     State.Elapsed = State.Elapsed + TimeElapsed
-    if State.Elapsed >= CheckInterval then
+    if State.Elapsed >= 0.5 then
         State.Elapsed = 0
         State.isOnTaxi = UnitOnTaxi("player")
         local isInside = State.GoalQuestID ~= 0 and C_Minimap.IsInsideQuestBlob(State.GoalQuestID)
@@ -122,7 +118,7 @@ local function UpdateGoal()
 
     State.GoalX, State.GoalY = Position:GetXY()
     State.GoalContinent, State.GoalQuestID = Continent, QuestID or 0
-    State.Elapsed, State.Distance = CheckInterval, -1
+    State.Elapsed, State.Distance = 0.5, -1
     Private.NavigationFrame:SetScript("OnUpdate", Navigation_OnUpdate)
 end
 

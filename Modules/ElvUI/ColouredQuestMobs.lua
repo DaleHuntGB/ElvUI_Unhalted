@@ -1,7 +1,6 @@
 local Private = select(2, ...)
 local NP = Private.E:GetModule("NamePlates")
 local LineType = Enum.TooltipDataLineType
-local RescanDelay = 0.2
 local QuestMobs = {}
 local HookedHealth = {}
 local isRescanQueued = false
@@ -72,7 +71,7 @@ local function OnEvent(_, Event, Unit)
     elseif isQuestLogStale and not isRescanQueued then
         isQuestLogStale = false
         isRescanQueued = true
-        C_Timer.After(RescanDelay, RescanQuestMobs)
+        C_Timer.After(0.2, RescanQuestMobs)
     end
 end
 

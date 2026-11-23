@@ -1,8 +1,5 @@
 local Private = select(2, ...)
 
-local IconAtlas, RepeatableIconAtlas = "QuestNormal", "QuestDaily"
-local RefreshDelay = 0.2
-local HubRadius = 1.5
 local UndiscoveredStandings = { [87] = -36000, [576] = -36000, [910] = -36000 }
 local ExcludedSorts = { [-1000] = true, [-641] = true, [-644] = true, [-404] = true, [-402] = true, [-378] = true, [-376] = true, [-375] = true, [-374] = true, [-370] = true, [-369] = true, [-368] = true, [-366] = true, [-365] = true, [-364] = true, [-41] = true, [-22] = true, [-21] = true }
 local RefreshEvents = { "QUEST_LOG_UPDATE", "PLAYER_LEVEL_UP", "SKILL_LINES_CHANGED", "UPDATE_FACTION" }
@@ -130,17 +127,17 @@ local function GetHubIcon(Hub)
         local QuestID = Hub[Index]
         if type(QuestID) == "number" and IsAvailable(QuestID) then
             local Requirements = Quests[QuestID][3]
-            if not (Requirements and Requirements.Repeatable) then return IconAtlas end
+            if not (Requirements and Requirements.Repeatable) then return "QuestNormal" end
             isRepeatableOnly = true
         end
     end
-    return isRepeatableOnly and RepeatableIconAtlas
+    return isRepeatableOnly and "QuestDaily"
 end
 
 local function FindHub(Hubs, X, Y)
     for _, Hub in ipairs(Hubs) do
         local DeltaX, DeltaY = Hub[1] * 100 - X, Hub[2] * 100 - Y
-        if DeltaX * DeltaX + DeltaY * DeltaY <= HubRadius * HubRadius then return Hub end
+        if DeltaX * DeltaX + DeltaY * DeltaY <= 2.25 then return Hub end
     end
 end
 
@@ -169,10 +166,6 @@ local function QuestIcon_OnEnter(Icon)
     GameTooltip:Show()
 end
 
-local function GetIconSize()
-    return Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize / WorldMapFrame:GetCanvas():GetScale()
-end
-
 local function DrawAvailableQuests()
     local Pool = Private.AvailableQuestIcons
     Pool:ReleaseAll()
@@ -189,7 +182,7 @@ local function DrawAvailableQuests()
     AddSkills(GetProfessions())
     local Overlay = Private.AvailableQuestOverlay
     local Width, Height = Overlay:GetWidth(), Overlay:GetHeight()
-    local IconSize = GetIconSize()
+    local IconSize = Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize / WorldMapFrame:GetCanvas():GetScale()
     for _, Hub in ipairs(Hubs) do
         local Atlas = GetHubIcon(Hub)
         if Atlas then
@@ -310,7 +303,7 @@ local function BuildAvailableQuests()
 end
 
 local function ResizeAvailableQuests()
-    local IconSize = GetIconSize()
+    local IconSize = Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize / WorldMapFrame:GetCanvas():GetScale()
     for Icon in Private.AvailableQuestIcons:EnumerateActive() do Icon:SetSize(IconSize, IconSize) end
 end
 
@@ -322,7 +315,7 @@ end
 local function OnEvent()
     if isRefreshQueued then return end
     isRefreshQueued = true
-    C_Timer.After(RefreshDelay, RefreshAvailableQuests)
+    C_Timer.After(0.2, RefreshAvailableQuests)
 end
 
 local function WorldMap_OnShow()

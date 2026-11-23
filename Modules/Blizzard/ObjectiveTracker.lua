@@ -1,7 +1,5 @@
 local Private = select(2, ...)
 
-local ProximityInterval, ResortDistance = 1, 10
-
 local Blocks, QuestBlocks, Placement, Applied = {}, {}, {}, {}
 local BlockIndex, BlockValue, BlockComplete, QuestLevels = {}, {}, {}, {}
 local isDescending = false
@@ -105,7 +103,7 @@ local function RefreshProximity()
     local X, Y = UnitPosition("player")
     if Private:IsSecret(X) or not X then return end
     local DeltaX, DeltaY = X - State.SortX, Y - State.SortY
-    if DeltaX * DeltaX + DeltaY * DeltaY < ResortDistance * ResortDistance then return end
+    if DeltaX * DeltaX + DeltaY * DeltaY < 100 then return end
     State.SortX, State.SortY = X, Y
     PlaceQuestBlocks(QuestObjectiveTracker, false)
 end
@@ -124,7 +122,7 @@ function Private:UpdateObjectiveTracker()
 
     local isProximity = DB.Enable and DB.SortBy == "PROXIMITY"
     if isProximity and not State.Ticker then
-        State.Ticker = C_Timer.NewTicker(ProximityInterval, RefreshProximity)
+        State.Ticker = C_Timer.NewTicker(1, RefreshProximity)
     elseif not isProximity and State.Ticker then
         State.Ticker:Cancel()
         State.Ticker = false

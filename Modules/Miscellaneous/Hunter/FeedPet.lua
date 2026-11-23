@@ -1,7 +1,5 @@
 local Private = select(2, ...)
 
-local FeedPetSpellID = 6991
-
 local function FeedPet_PreClick(Button)
     if InCombatLockdown() then return end
     if not Private.DB.global.Miscellaneous.Hunter.UseBestFood then
@@ -34,6 +32,6 @@ function Private:SetupFeedPet()
     local FeedPetButton = CreateFrame("Button", "FeedPet", nil, "SecureActionButtonTemplate")
     FeedPetButton:RegisterForClicks("AnyUp")
     FeedPetButton:SetAttribute("useOnKeyDown", false)
-    FeedPetButton:SetAttribute("spell", FeedPetSpellID)
+    FeedPetButton:SetAttribute("spell", 6991)
     FeedPetButton:SetScript("PreClick", FeedPet_PreClick)
 end

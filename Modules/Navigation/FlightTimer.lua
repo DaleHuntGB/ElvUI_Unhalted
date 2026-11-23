@@ -1,7 +1,5 @@
 local Private = select(2, ...)
 
-local RequestTimeout = 5
-
 local TaxiNodeBySlot = {}
 local State = {
     Name = "", Seconds = 0, RequestTime = 0, StartTime = 0, Remaining = -1,
@@ -45,7 +43,7 @@ end
 
 local function FlightTimer_OnEvent(FlightTimer, Event)
     if Event == "PLAYER_CONTROL_LOST" then
-        if GetTime() - State.RequestTime > RequestTimeout then return end
+        if GetTime() - State.RequestTime > 5 then return end
         State.RequestTime, State.StartTime, State.Remaining = 0, GetTime(), -1
         if State.Seconds > 0 then
             FlightTimer.Name:SetText(State.Name)

@@ -1,9 +1,5 @@
 local Private = select(2, ...)
 
-local KnownFlightTexture = "Interface\\TaxiFrame\\UI-Taxi-Icon-Green"
-local UnknownFlightTexture = "Interface\\TaxiFrame\\UI-Taxi-Icon-White"
-local MapFlightSize = 16
-
 local MapVector = CreateVector2D(0, 0)
 
 local function FlightIcon_OnEnter(Icon)
@@ -24,7 +20,7 @@ function Private:DrawNavigationMap()
     local Overlay = Private.NavigationMapOverlay
     local Canvas = WorldMapFrame:GetCanvas()
     local Width, Height = Canvas:GetWidth(), Canvas:GetHeight()
-    local FlightSize = MapFlightSize / Canvas:GetScale()
+    local FlightSize = 16 / Canvas:GetScale()
     local Faction = UnitFactionGroup("player") == "Horde" and 2 or 1
     local KnownTaxiNodes = DB.TaxiNodes[Private.DB.keys.char]
     for TaxiNodeID, TaxiNode in pairs(Private.NavigationTaxiNodes) do
@@ -43,7 +39,7 @@ function Private:DrawNavigationMap()
                 Icon:SetScript("OnLeave", GameTooltip_Hide)
             end
             Icon.Name = TaxiNode[4]
-            Icon.Texture:SetTexture(isKnown and KnownFlightTexture or UnknownFlightTexture)
+            Icon.Texture:SetTexture(isKnown and "Interface\\TaxiFrame\\UI-Taxi-Icon-Green" or "Interface\\TaxiFrame\\UI-Taxi-Icon-White")
             Icon.Texture:SetVertexColor(1, 1, 1, isKnown and 1 or 0.6)
             Icon:SetSize(FlightSize, FlightSize)
             Icon:SetPoint("CENTER", Overlay, "TOPLEFT", X * Width, -Y * Height)
@@ -53,7 +49,7 @@ function Private:DrawNavigationMap()
 end
 
 local function ResizeNavigationMap()
-    local FlightSize = MapFlightSize / WorldMapFrame:GetCanvas():GetScale()
+    local FlightSize = 16 / WorldMapFrame:GetCanvas():GetScale()
     for Icon in Private.NavigationMapIcons:EnumerateActive() do Icon:SetSize(FlightSize, FlightSize) end
 end
 

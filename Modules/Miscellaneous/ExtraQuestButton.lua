@@ -1,9 +1,6 @@
 local Private = select(2, ...)
 local AB = Private.E:GetModule("ActionBars")
 
-local ButtonSize = 52
-local StyleTexture = "Interface\\ExtraButton\\Default"
-local ExtraActionBinding = "EXTRAACTIONBUTTON1"
 local White = { r = 1, g = 1, b = 1 }
 local Events = { "QUEST_LOG_UPDATE", "SUPER_TRACKING_CHANGED", "BAG_UPDATE_COOLDOWN", "SPELL_RANGE_CHECK_UPDATE", "UPDATE_BINDINGS", "PLAYER_REGEN_ENABLED" }
 local BossButtonUpdates = { "ExtraButtons_UpdateAlpha", "ExtraButtons_UpdateScale", "ExtraButtons_GlobalFade", "UpdateExtraBindings", "UpdateButtonSettings" }
@@ -37,12 +34,12 @@ local function UpdateLayout(Button)
     local Holder = Button:GetParent()
     Holder.db = DB
     Holder:SetParent(DB.inheritGlobalFade and AB.fadeParent or Private.E.UIParent)
-    Holder:SetSize(ButtonSize * DB.scale, ButtonSize * DB.scale)
+    Holder:SetSize(52 * DB.scale, 52 * DB.scale)
     Button:SetScale(DB.scale * Private.E.uiscale)
     Button:SetAlpha(DB.alpha)
     Button.style:SetAlpha(not DB.clean and DB.alpha or 0)
 
-    local Key1, Key2 = GetBindingKey(ExtraActionBinding)
+    local Key1, Key2 = GetBindingKey("EXTRAACTIONBUTTON1")
     Button.HotKey:SetText(Key1)
     AB:FixKeybindText(Button)
     AB:FixKeybindColor(Button)
@@ -123,10 +120,10 @@ function Private:SetupExtraQuestButton()
 
     local Holder = CreateFrame("Frame", "UnhaltedExtraQuestButtonHolder", Private.E.UIParent)
     Holder:SetPoint("BOTTOM", Private.E.UIParent, "BOTTOM", -150, 300)
-    Holder:SetSize(ButtonSize, ButtonSize)
+    Holder:SetSize(52, 52)
 
     local Button = CreateFrame("Button", "UnhaltedExtraQuestButton", Holder, "SecureActionButtonTemplate, SecureHandlerStateTemplate")
-    Button:SetSize(ButtonSize, ButtonSize)
+    Button:SetSize(52, 52)
     Button:SetPoint("CENTER")
     Button:SetIgnoreParentScale(true)
     Button:RegisterForClicks("AnyUp", "AnyDown")
@@ -135,13 +132,13 @@ function Private:SetupExtraQuestButton()
     Button:Hide()
     Button.QuestID = 0
     Button.RangeSpellID = 0
-    Button.commandName = ExtraActionBinding
+    Button.commandName = "EXTRAACTIONBUTTON1"
 
     Button.icon = Button:CreateTexture()
     Button.HotKey = Button:CreateFontString(nil, "OVERLAY", "NumberFontNormalGray")
     Button.Count = Button:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
     Button.style = Button:CreateTexture()
-    Button.style:SetTexture(StyleTexture)
+    Button.style:SetTexture("Interface\\ExtraButton\\Default")
     Button.style:SetSize(256, 128)
     Button.style:SetPoint("CENTER")
     Button.cooldown = CreateFrame("Cooldown", nil, Button, "CooldownFrameTemplate")

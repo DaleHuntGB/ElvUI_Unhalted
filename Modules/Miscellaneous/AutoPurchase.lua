@@ -1,9 +1,5 @@
 local Private = select(2, ...)
 
-local PurchaseDelay = 0.5
-local PurchaseTimeout = 5
-local AmmoBagFamily = 0x3
-
 local PendingItems = {}
 local EmptySlots = 0
 
@@ -13,7 +9,7 @@ local function PurchaseItem(Index, ItemID, Target, Info, Money)
 
     local BundleSize = math.max(Info.stackCount, 1)
     local MaxStack = C_Item.GetItemMaxStackSizeByID(ItemID) or 1
-    local ItemFamily = bit.band(C_Item.GetItemFamily(ItemID) or 0, AmmoBagFamily)
+    local ItemFamily = bit.band(C_Item.GetItemFamily(ItemID) or 0, 0x3)
     local Capacity = ItemFamily ~= 0 and 0
     local StackRoom = 0
     if Capacity then
@@ -94,7 +90,7 @@ local function PurchaseItems()
     if not next(PendingItems) then return end
     local APF = Private.AutoPurchaseFrame
     APF:RegisterEvent("BAG_UPDATE_DELAYED")
-    APF.TimeoutTimer = C_Timer.NewTimer(PurchaseTimeout, FinishPurchases)
+    APF.TimeoutTimer = C_Timer.NewTimer(5, FinishPurchases)
 end
 
 local function AutoPurchase_OnEvent(APF, Event)
@@ -109,7 +105,7 @@ local function AutoPurchase_OnEvent(APF, Event)
     if APF.PurchaseTimer then APF.PurchaseTimer:Cancel() end
     if Event == "MERCHANT_SHOW" then
         if next(PendingItems) then FinishPurchases() end
-        APF.PurchaseTimer = C_Timer.NewTimer(PurchaseDelay, PurchaseItems)
+        APF.PurchaseTimer = C_Timer.NewTimer(0.5, PurchaseItems)
     end
 end
 

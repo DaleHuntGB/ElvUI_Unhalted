@@ -21,11 +21,9 @@ local CVars = {
     nameplateMaxDistance = "Sliders"
 }
 
-local FallbackMaxNameplateDistance = 41
-
 function Private:GetMaxNameplateDistance()
     local MaxDistance = C_GameRules.GetGameRuleAsFloat(Enum.GameRule.MaxNameplateDistance)
-    return MaxDistance > 0 and MaxDistance or FallbackMaxNameplateDistance
+    return MaxDistance > 0 and MaxDistance or 41
 end
 
 function Private:SyncCVars()

@@ -6,7 +6,6 @@ local PrivateImportString = "!E2!bVW7cuM2FG0zmRQpU/o7totl6mFSD0t2Jl3mErwiscKDuQA
 local GlobalImportString = "!E2!TVFLktMwFJyiOMTAyjdgw2p2xv/EjjOxUzOsqGf7OVbVsyQkOeBZcZWYqRrOxYYLJAt2yFQI2ahK3a9br1tTtEOOCui5eBCKmgykJ4RqGAeD+hBLoZlhgkdlvk6DsNz0IF2SHTx0yDOxZ3z3+/3NfQsNWul/8JifIX9QMBvYqaQBY12/Gj2l9aCN6NfAkfRh6dbziPMBlP6RGSHIMOnyuhMqc1denG8+edtNkW/CDtmuM7e3Pocer2Wrs+pj3rYazU3Ch34tGDf69T/q8UwFrbDwFCKHivDkz9d1qNiTcz9AY7cFpyyDL6wx3ZtXv2IrMTaQflkkBnsnxT3SlApOY/B5YFJic4pWIoUK6RR6oq/ATHHJegwHouOFenxbAiE371IhjFNIrBkQe/rbzSFtmJYEY2FGwijNXT/fln4kqJkWO3uGQvVgloVtoizWrhf4yQx7NqA++vNjh2VLoLuE75nB42JuvWLEzPh8ZeCH2zS9bHRlkUlUddkp1J3FnLAYtc36/TIakf03Xo9+nGdBolGCrUko7+e36e5uR6IC+gM="
 
 local HealthColourKeys = { "health", "health_backdrop", "healthclass", "colorhealthbyvalue", "customhealthbackdrop" }
-local ColourBackdrop = 0x34 / 255
 
 function Private:SwapUnitFrameColours()
     if Private.E:AlertCombat() then return end
@@ -18,7 +17,7 @@ function Private:SwapUnitFrameColours()
     if isColour then
         Colours.healthclass = true
         Colours.customhealthbackdrop = true
-        Colours.health_backdrop.r, Colours.health_backdrop.g, Colours.health_backdrop.b = ColourBackdrop, ColourBackdrop, ColourBackdrop
+        Colours.health_backdrop.r, Colours.health_backdrop.g, Colours.health_backdrop.b = 0x34 / 255, 0x34 / 255, 0x34 / 255
     else
         for _, Key in ipairs(HealthColourKeys) do
             local Value = Reference.colors[Key]

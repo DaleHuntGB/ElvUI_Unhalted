@@ -1,12 +1,6 @@
 local Private = select(2, ...)
 
-local DungeonAtlas, RaidAtlas = "Dungeon", "Raid"
-
 local JournalDungeons = {}
-
-local function GetIconSize()
-    return Private.DB.global.Miscellaneous.Navigation.InstancePortals.IconSize / WorldMapFrame:GetCanvas():GetScale()
-end
 
 local function OpenDungeon(Dungeon)
     Private.DungeonJournal:Show()
@@ -52,7 +46,7 @@ function Private:UpdateInstancePortals()
 
     local Overlay = Private.InstancePortalOverlay
     local Width, Height = Overlay:GetWidth(), Overlay:GetHeight()
-    local IconSize = GetIconSize()
+    local IconSize = Private.DB.global.Miscellaneous.Navigation.InstancePortals.IconSize / WorldMapFrame:GetCanvas():GetScale()
     for _, Portal in ipairs(Private.InstancePortals) do
         local Position = Portal.Positions[MapID]
         if Position then
@@ -75,7 +69,7 @@ function Private:UpdateInstancePortals()
 end
 
 local function ResizeInstancePortals()
-    local IconSize = GetIconSize()
+    local IconSize = Private.DB.global.Miscellaneous.Navigation.InstancePortals.IconSize / WorldMapFrame:GetCanvas():GetScale()
     for Icon in Private.InstancePortalIcons:EnumerateActive() do Icon:SetSize(IconSize, IconSize) end
 end
 
@@ -87,12 +81,12 @@ function Private:SetupInstancePortals()
         local Left, Right, Top, Bottom = C_Map.GetMapRectOnMap(ZoneMapID, ContinentMapID)
         Portal.Positions = { [ZoneMapID] = { X, Y }, [ContinentMapID] = { Left + X * (Right - Left), Top + Y * (Bottom - Top) } }
         Portal.Dungeons = {}
-        Portal.Atlas = RaidAtlas
+        Portal.Atlas = "Raid"
         for Index = 4, #Portal do
             local Dungeon = JournalDungeons[Portal[Index]]
             if Dungeon then
                 Portal.Dungeons[#Portal.Dungeons + 1] = Dungeon
-                if not Dungeon.Raid then Portal.Atlas = DungeonAtlas end
+                if not Dungeon.Raid then Portal.Atlas = "Dungeon" end
             end
         end
     end
