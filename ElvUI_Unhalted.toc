@@ -58,13 +58,11 @@ Modules/Miscellaneous/Hunter/AmmoCounter.lua [AllowLoadGameType camelot][Exclude
 Modules/Miscellaneous/Hunter/FeedPet.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/Navigation/Constants.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/Arrow.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Map.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/AvailableQuests.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/InstancePortals.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/LevelZones.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/QuestObjectives.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
-Modules/Navigation/FlightTimer.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 Modules/Navigation/Core.lua [AllowLoadGameType camelot][ExcludeLoadGameType standard]
 
 Modules/MythicPlusTimer.lua [AllowLoadGameType standard][ExcludeLoadGameType camelot]

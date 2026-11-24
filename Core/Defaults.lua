@@ -369,13 +369,6 @@ local Defaults = {
             Navigation = {
                 Enable = true,
                 FlightPaths = true,
-                FlightTimer = true,
-                ArrowTexture = "ARROW_01",
-                Size = 40,
-                Layout = {"CENTER", "CENTER", 0, 180},
-                Text = {
-                    FontSize = 12,
-                },
                 AvailableQuests = {
                     Enable = true,
                     IconSize = 20,

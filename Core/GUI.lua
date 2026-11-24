@@ -772,52 +772,30 @@ function Private:SetupGUI()
     Private.GUI.args.Miscellaneous.args.MouseCursor.args.Layout.args.Size.relWidth = 0.33
 
     Private.GUI.args.Miscellaneous.args.Navigation = ACH:Group("Navigation", nil, 7, "tab", nil, nil, nil, function() return not Private.isForever end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Enable = ACH:Toggle("Enable", "Guides you to your |cFFFFCC00tracked quest|r or |cFFFFCC00map pin|r with an arrow and its distance.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Enable = value Private:UpdateNavigation() end)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.Enable = ACH:Toggle("Enable", "Adds |cFFFFCC00quests, flight paths, instances|r and |cFFFFCC00level ranges|r to the world map.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Enable = value Private:UpdateNavigation() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.Enable.relWidth = 1
-    Private.GUI.args.Miscellaneous.args.Navigation.args.FlightTimer = ACH:Toggle("Flight Timer", "Counts down to landing while you are on a |cFFFFCC00flight path|r.", 2, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.FlightTimer end, function(_, value) Private.DB.global.Miscellaneous.Navigation.FlightTimer = value Private:UpdateNavigationFlightTimer() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.FlightTimer.relWidth = 0.5
 
-    local NavigationArrowPreviews = {}
-    for Key, Arrow in pairs(Private.NavigationArrows) do NavigationArrowPreviews[Key] = Arrow.Preview end
-    Private.GUI.args.Miscellaneous.args.Navigation.args.ArrowTexture = ACH:Select("Arrow Texture", nil, 3, NavigationArrowPreviews, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.ArrowTexture end, function(_, value) Private.DB.global.Miscellaneous.Navigation.ArrowTexture = value Private:UpdateNavigationArrow() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.ArrowTexture.relWidth = 0.5
-
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout = ACH:Group("Layout", nil, 4)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.inline = true
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.AnchorFrom = ACH:Select("Anchor From", nil, 1, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Layout[1] end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Layout[1] = value Private:UpdateNavigationArrow() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.AnchorFrom.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.AnchorTo = ACH:Select("Anchor To", nil, 2, Private.AnchorPoints, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Layout[2] end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Layout[2] = value Private:UpdateNavigationArrow() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.AnchorTo.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.XOffset = ACH:Range("X Offset", nil, 3, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Layout[3] end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Layout[3] = value Private:UpdateNavigationArrow() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.XOffset.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.YOffset = ACH:Range("Y Offset", nil, 4, {min = -3000, max = 3000, softMin = -1000, softMax = 1000, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Layout[4] end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Layout[4] = value Private:UpdateNavigationArrow() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.YOffset.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.Size = ACH:Range("Arrow Size", nil, 5, {min = 8, max = 128, softMin = 16, softMax = 96, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Size end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Size = value Private:UpdateNavigationArrow() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.Size.relWidth = 0.5
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize = ACH:Range("Font Size", nil, 6, {min = 8, max = 128, softMin = 8, softMax = 32, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.Text.FontSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.Text.FontSize = value Private:UpdateNavigationArrow() Private:UpdateNavigationFlightTimer() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
-    Private.GUI.args.Miscellaneous.args.Navigation.args.Layout.args.FontSize.relWidth = 0.5
-
-    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests = ACH:Group("Available Quests" .. (Private:IsAddOnLoaded("QuestieDB") and "" or " - Requires |cFFFFCC00QuestieDB|r"), nil, 5)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests = ACH:Group("Available Quests" .. (Private:IsAddOnLoaded("QuestieDB") and "" or " - Requires |cFFFFCC00QuestieDB|r"), nil, 2)
     Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.Enable = ACH:Toggle("Enable", "Marks quest givers on the world map with the |cFFFFCC00quests|r you can accept. Hover to read them.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private:GetQuestieDB() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.Enable.relWidth = 1
     Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.IconSize = ACH:Range("Icon Size", nil, 2, {min = 12, max = 40, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.AvailableQuests.IconSize = value Private:UpdateAvailableQuests() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private.DB.global.Miscellaneous.Navigation.AvailableQuests.Enable or not Private:GetQuestieDB() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.AvailableQuests.args.IconSize.relWidth = 0.5
 
-    Private.GUI.args.Miscellaneous.args.Navigation.args.FlightPaths = ACH:Group("Flight Paths", nil, 6)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.FlightPaths = ACH:Group("Flight Paths", nil, 3)
     Private.GUI.args.Miscellaneous.args.Navigation.args.FlightPaths.args.Enable = ACH:Toggle("Enable", "Shows your faction's |cFFFFCC00flight paths|r on the world map. The ones you have yet to learn are faded.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.FlightPaths end, function(_, value) Private.DB.global.Miscellaneous.Navigation.FlightPaths = value Private:DrawNavigationMap() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.FlightPaths.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.FlightPaths.args.Enable.relWidth = 1
 
-    Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals = ACH:Group("Instance Portals", nil, 7)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals = ACH:Group("Instance Portals", nil, 4)
     Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals.args.Enable = ACH:Toggle("Enable", "Marks |cFFFFCC00dungeon and raid entrances|r on the world map. Hover for the instances and their level ranges.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.InstancePortals.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.InstancePortals.Enable = value Private:UpdateInstancePortals() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals.args.Enable.relWidth = 1
     Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals.args.IconSize = ACH:Range("Icon Size", nil, 2, {min = 12, max = 40, step = 1}, "relative", function() return Private.DB.global.Miscellaneous.Navigation.InstancePortals.IconSize end, function(_, value) Private.DB.global.Miscellaneous.Navigation.InstancePortals.IconSize = value Private:UpdateInstancePortals() end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private.DB.global.Miscellaneous.Navigation.InstancePortals.Enable end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.InstancePortals.args.IconSize.relWidth = 0.5
 
-    Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones = ACH:Group("Level Zones" .. (Private:IsAddOnLoaded("QuestieDB") and "" or " - Requires |cFFFFCC00QuestieDB|r"), nil, 8)
+    Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones = ACH:Group("Level Zones" .. (Private:IsAddOnLoaded("QuestieDB") and "" or " - Requires |cFFFFCC00QuestieDB|r"), nil, 5)
     Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones.args.Enable = ACH:Toggle("Enable", "Shades each area of a zone's world map and shows the |cFFFFCC00level range|r of its creatures.", 1, nil, nil, "relative", function() return Private.DB.global.Miscellaneous.Navigation.LevelZones.Enable end, function(_, value) Private.DB.global.Miscellaneous.Navigation.LevelZones.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end, function() return not Private.DB.global.Miscellaneous.Navigation.Enable or not Private:GetQuestieDB() end)
     Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones.args.Enable.descStyle = "inline"
     Private.GUI.args.Miscellaneous.args.Navigation.args.LevelZones.args.Enable.relWidth = 1
