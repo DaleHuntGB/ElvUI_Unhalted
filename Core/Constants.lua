@@ -103,6 +103,11 @@ Private.NavigationArrows = {
     ["ARROW_04"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_04.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_04.png:18:18|t" },
     ["ARROW_05"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_05.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_05.png:18:18|t" },
     ["ARROW_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_06.png:18:18|t" },
+    ["ARROW_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_07.png:18:18|t" },
+    ["ARROW_08"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_08.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_08.png:18:18|t" },
+    ["ARROW_09"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_09.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_09.png:18:18|t" },
+    ["ARROW_10"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_10.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_10.png:18:18|t" },
+    ["ARROW_11"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_11.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_11.png:18:18|t" },
 }
 
 Private.RaidDifficultyIDs = {

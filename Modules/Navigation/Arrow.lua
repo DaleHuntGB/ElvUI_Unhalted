@@ -139,7 +139,7 @@ function Private:UpdateNavigationArrow()
     if not NavigationArrow then return end
     local DB = Private.DB.global.Miscellaneous.Navigation
 
-    NavigationArrow.Arrow:SetTexture(Private.NavigationArrows[DB.Arrow.Texture].Path)
+    NavigationArrow.Arrow:SetTexture((Private.NavigationArrows[DB.Arrow.Texture] or Private.NavigationArrows.ARROW_01).Path)
     NavigationArrow:SetSize(DB.Arrow.Size, DB.Arrow.Size)
     NavigationArrow:ClearAllPoints()
     NavigationArrow:SetPoint(DB.Arrow.Layout[1], UIParent, DB.Arrow.Layout[2], DB.Arrow.Layout[3], DB.Arrow.Layout[4])
