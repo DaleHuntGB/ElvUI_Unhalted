@@ -16,6 +16,7 @@ function Private:UpdateNavigation()
     if not NavigationFrame then return end
     local DB = Private.DB.global.Miscellaneous.Navigation
 
+    Private:UpdateNavigationArrow()
     Private:DrawNavigationMap()
     Private:UpdateAvailableQuests()
     Private:UpdateInstancePortals()
@@ -33,6 +34,7 @@ end
 
 function Private:SetupNavigation()
     Private.NavigationFrame = CreateFrame("Frame")
+    Private:SetupNavigationArrow()
     Private:SetupNavigationMap()
     Private:SetupAvailableQuests()
     Private:SetupInstancePortals()

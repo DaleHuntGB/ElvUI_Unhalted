@@ -96,6 +96,15 @@ Private.MouseCursors = {
     ["CURSOR_10"] = { Path = "talents-search-notonactionbarhidden", Preview = "|A:talents-search-notonactionbarhidden:32:32|a", isAtlas = true }
 }
 
+Private.NavigationArrows = {
+    ["ARROW_01"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_01.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_01.png:18:18|t" },
+    ["ARROW_02"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_02.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_02.png:18:18|t" },
+    ["ARROW_03"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_03.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_03.png:18:18|t" },
+    ["ARROW_04"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_04.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_04.png:18:18|t" },
+    ["ARROW_05"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_05.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_05.png:18:18|t" },
+    ["ARROW_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Navigation\\Arrow_06.png:18:18|t" },
+}
+
 Private.RaidDifficultyIDs = {
     [14] = "Normal",
     [15] = "Heroic",

@@ -8,11 +8,6 @@ local Defaults = {
                 Layout = {"TOPRIGHT", "TOPRIGHT", -1.1, -1.1},
                 Size = {18, 18},
             },
-            RestedXP = {
-                Enable = true,
-                Lines = 3,
-                FontSize = 12,
-            },
         },
         Alerts = {
             Combat = {
@@ -374,6 +369,13 @@ local Defaults = {
             Navigation = {
                 Enable = true,
                 FlightPaths = true,
+                Arrow = {
+                    Enable = true,
+                    Texture = "ARROW_01",
+                    Size = 40,
+                    Layout = {"CENTER", "CENTER", 0, 180},
+                    FontSize = 12,
+                },
                 AvailableQuests = {
                     Enable = true,
                     IconSize = 20,
