@@ -92,8 +92,18 @@ Private.MouseCursors = {
     ["CURSOR_06"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_06.png:18:18|t", isAtlas = false },
     ["CURSOR_07"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_07.png:18:18|t", isAtlas = false },
     ["CURSOR_08"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_08.png:18:18|t", isAtlas = false },
-    ["CURSOR_09"] = { Path = "talents-search-notonactionbar", Preview = "|A:talents-search-notonactionbar:32:32|a", isAtlas = true },
-    ["CURSOR_10"] = { Path = "talents-search-notonactionbarhidden", Preview = "|A:talents-search-notonactionbarhidden:32:32|a", isAtlas = true }
+    ["CURSOR_09"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_09.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_09.png:18:18|t", isAtlas = false },
+    ["CURSOR_10"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_10.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_10.png:18:18|t", isAtlas = false },
+    ["CURSOR_11"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_11.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_11.png:18:18|t", isAtlas = false },
+    ["CURSOR_12"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_12.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_12.png:18:18|t", isAtlas = false },
+    ["CURSOR_13"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_13.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_13.png:18:18|t", isAtlas = false },
+    ["CURSOR_14"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_14.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_14.png:18:18|t", isAtlas = false },
+    ["CURSOR_15"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_15.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_15.png:18:18|t", isAtlas = false },
+    ["CURSOR_16"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_16.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_16.png:18:18|t", isAtlas = false },
+    ["CURSOR_17"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_17.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_17.png:18:18|t", isAtlas = false },
+    ["CURSOR_18"] = { Path = "Interface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_18.png", Preview = "|TInterface\\AddOns\\ElvUI_Unhalted\\Media\\Textures\\Cursors\\Cursor_18.png:18:18|t", isAtlas = false },
+    ["CURSOR_19"] = { Path = "talents-search-notonactionbar", Preview = "|A:talents-search-notonactionbar:32:32|a", isAtlas = true },
+    ["CURSOR_20"] = { Path = "talents-search-notonactionbarhidden", Preview = "|A:talents-search-notonactionbarhidden:32:32|a", isAtlas = true }
 }
 
 Private.NavigationArrows = {
