@@ -2,7 +2,7 @@
 ## Group: ElvUI
 ## Interface: 16001, 120105
 ## RequiredDeps: ElvUI
-## OptionalDeps: QuestieDB
+## OptionalDeps: QuestieDB, RXPGuides
 ## Version: @project-version@
 ## SavedVariables: UHDB
 ## X-Curse-Project-ID: 1692219
@@ -19,6 +19,7 @@ Core/SharedMedia.lua
 
 Modules/AddOnSkins/BigWigs.lua
 Modules/AddOnSkins/BugSack.lua
+Modules/AddOnSkins/RestedXP.lua
 
 Modules/Alerts/Combat.lua
 Modules/Alerts/Innervate.lua

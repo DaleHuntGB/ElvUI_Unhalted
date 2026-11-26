@@ -110,7 +110,8 @@
         "StackSplitFrame",
         "MerchantFrame",
         "StackSplitRightButton_OnClick",
-        "MERCHANT_HIGH_PRICE_COST"
+        "MERCHANT_HIGH_PRICE_COST",
+        "RXP"
     ],
     "Lua.type.weakUnionCheck": true
 }

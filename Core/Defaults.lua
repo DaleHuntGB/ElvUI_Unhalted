@@ -8,6 +8,11 @@ local Defaults = {
                 Layout = {"TOPRIGHT", "TOPRIGHT", -1.1, -1.1},
                 Size = {18, 18},
             },
+            RestedXP = {
+                Enable = true,
+                Lines = 3,
+                FontSize = 12,
+            },
         },
         Alerts = {
             Combat = {

@@ -12,6 +12,7 @@ function AddOn:OnEnable()
     -- [[ AddOnSkins ]]
     Private:SetupBigWigsSkin()
     Private:SetupBugSackSkin()
+    Private:SetupRestedXPSkin()
     -- [[ Alerts ]]
     Private:SetupCombatAlert()
     Private:SetupInnervateAlert()

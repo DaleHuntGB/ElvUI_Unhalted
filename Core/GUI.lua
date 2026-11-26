@@ -82,6 +82,20 @@ function Private:SetupGUI()
     Private.GUI.args.AddOnSkins.args.BugSack.args.LayoutGroup.args.Size = ACH:Range("Size", nil, 5, {min = 8, max = 128, softMin = 12, softMax = 64, step = 1}, "relative", function() return Private.DB.global.AddOnSkins.BugSack.Size[1] end, function(_, value) Private.DB.global.AddOnSkins.BugSack.Size[1] = value Private.DB.global.AddOnSkins.BugSack.Size[2] = value Private:UpdateBugSackSkin() end, function() return not Private.DB.global.AddOnSkins.BugSack.Enable end)
     Private.GUI.args.AddOnSkins.args.BugSack.args.LayoutGroup.args.Size.relWidth = 0.33
 
+    Private.GUI.args.AddOnSkins.args.RestedXP = ACH:Group("RestedXP", nil, 2, "tab", nil, nil, nil, function() return not C_AddOns.IsAddOnLoaded("RXPGuides") end)
+
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.Enable = ACH:Toggle("Enable", "Replaces the |cFFFFCC00RestedXP|r guide window with a compact panel. Scroll it to change step, and right-click it for the RestedXP menu.", 1, nil, nil, "relative", function() return Private.DB.global.AddOnSkins.RestedXP.Enable end, function(_, value) Private.DB.global.AddOnSkins.RestedXP.Enable = value Private.E:StaticPopup_Show("CONFIG_RL") end)
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.Enable.descStyle = "inline"
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.Enable.relWidth = 1
+
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.LayoutGroup = ACH:Group("Layout", nil, 2, "tab")
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.LayoutGroup.inline = true
+
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.LayoutGroup.args.Lines = ACH:Range("Lines", nil, 1, {min = 1, max = 20, step = 1}, "relative", function() return Private.DB.global.AddOnSkins.RestedXP.Lines end, function(_, value) Private.DB.global.AddOnSkins.RestedXP.Lines = value Private:UpdateRestedXPSkin() end, function() return not Private.DB.global.AddOnSkins.RestedXP.Enable end)
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.LayoutGroup.args.Lines.relWidth = 0.5
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.LayoutGroup.args.FontSize = ACH:Range("Font Size", nil, 2, {min = 8, max = 32, step = 1}, "relative", function() return Private.DB.global.AddOnSkins.RestedXP.FontSize end, function(_, value) Private.DB.global.AddOnSkins.RestedXP.FontSize = value Private:UpdateRestedXPSkin() end, function() return not Private.DB.global.AddOnSkins.RestedXP.Enable end)
+    Private.GUI.args.AddOnSkins.args.RestedXP.args.LayoutGroup.args.FontSize.relWidth = 0.5
+
     Private.GUI.args.Alerts = ACH:Group("Alerts", nil, 2, "tab")
 
     Private.GUI.args.Alerts.args.Combat = ACH:Group("Combat", nil, 1, "tab")
